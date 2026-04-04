@@ -1,0 +1,144 @@
+.contact-section {
+  padding: 8rem 0;
+  background-color: #f8fafc;
+}
+
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 6rem;
+}
+
+.get-in-touch h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.get-in-touch h2 span {
+  color: var(--primary);
+}
+
+.contact-intro {
+  color: var(--text-muted);
+  margin-bottom: 3.5rem;
+}
+
+.contact-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+
+.contact-item {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.details h4 {
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.details p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.appointment-form {
+  background: white;
+  padding: 4rem;
+  border-radius: 30px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.appointment-form h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.appointment-form p {
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.appointment-form label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.appointment-form input,
+.appointment-form select,
+.appointment-form textarea {
+  padding: 0.8rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.appointment-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+}
+
+.appointment-form textarea {
+  height: 120px;
+  resize: none;
+}
+
+.form-submit {
+  width: 100%;
+  padding: 1rem !important;
+  font-size: 1rem;
+  border-radius: 12px !important;
+}
+
+@media (max-width: 1024px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-group.row {
+    grid-template-columns: 1fr;
+  }
+  .contact-items {
+    grid-template-columns: 1fr;
+  }
+}

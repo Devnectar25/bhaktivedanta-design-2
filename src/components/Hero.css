@@ -1,0 +1,145 @@
+.hero-section {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #0c182d;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Centered architectural focus for institutional scale */
+  object-position: center 30%; 
+  filter: saturate(0.9) brightness(1.05); /* Professional clinical exterior editing */
+  transform: scale(1.02);
+}
+
+.hero-bg .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* High-end institutional gradient for maximal authoritative messaging */
+  background: linear-gradient(
+    90deg,
+    rgba(12, 24, 45, 0.98) 0%,   /* Solid at the edge for crisp typography */
+    rgba(12, 24, 45, 0.7) 45%,    /* Immersive institutional blue depth */
+    rgba(12, 24, 45, 0.1) 100%
+  ),
+  linear-gradient(
+    to bottom,
+    rgba(12, 24, 45, 0.5) 0px,    /* Top shadow for menu clarity */
+    transparent 200px
+  );
+  z-index: 2;
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(to top, rgba(12, 24, 45, 0.7), transparent);
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding-top: 50px;
+}
+
+.hero-text {
+  max-width: 720px;
+  color: white;
+}
+
+.hero-label {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  padding: 0.5rem 1.4rem;
+  border-radius: 999px;
+  margin-bottom: 2.25rem;
+  font-size: 0.75rem; 
+  letter-spacing: 2.5px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hero-text h1 {
+  font-size: 3.75rem; 
+  margin-bottom: 1.75rem;
+  line-height: 1.05;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  letter-spacing: -1.75px;
+}
+
+.hero-text h1 span {
+  color: #f59e0b; /* Professional Warm Amber highlight */
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.hero-subheading {
+  font-size: 1.1rem;
+  margin-bottom: 3.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 580px;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.hero-actions .btn-primary {
+  background-color: #f59e0b;
+  color: #0c182d;
+  font-weight: 800;
+  padding: 0.9rem 2.25rem;
+  border-radius: 999px;
+}
+
+.hero-actions .btn-outline {
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.9rem 2.25rem;
+  border-radius: 999px;
+  backdrop-filter: blur(5px);
+}
+
+.hero-actions .btn-outline:hover {
+  background-color: white;
+  color: #0c182d;
+}
+
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 2.75rem;
+  }
+}

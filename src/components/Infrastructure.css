@@ -1,0 +1,87 @@
+.infra-section {
+  padding: 8rem 0;
+  background-color: #f1f5f9;
+}
+
+.infra-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+}
+
+.infra-card {
+  position: relative;
+  height: 350px;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.infra-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.infra-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.infra-card:hover .infra-bg img {
+  transform: scale(1.1);
+}
+
+.infra-bg .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgba(30, 58, 138, 0.9) 0%, rgba(30, 58, 138, 0.4) 100%);
+  z-index: 2;
+}
+
+.infra-content {
+  position: relative;
+  height: 100%;
+  z-index: 10;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: white;
+}
+
+.infra-content h3 {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.infra-content p {
+  opacity: 0.8;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+}
+
+.btn-icon {
+  background: transparent;
+  color: white;
+  font-weight: 600;
+  width: fit-content;
+  border-bottom: 2px solid var(--secondary);
+  border-radius: 0;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .infra-grid {
+    grid-template-columns: 1fr;
+  }
+}

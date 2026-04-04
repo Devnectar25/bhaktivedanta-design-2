@@ -1,0 +1,82 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  color: white; 
+}
+
+.navbar.scrolled {
+  height: 70px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  height: 60px;
+  object-fit: contain;
+  /* Applying a high-contrast white filter for the rich blue 3D theme visibility */
+  filter: brightness(0) invert(1) !important;
+  transition: filter 0.3s ease;
+}
+
+.navbar.scrolled .logo {
+  filter: none !important; /* Authentic blue branding on the white background */
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white; 
+  transition: color 0.3s ease;
+}
+
+.navbar.scrolled .nav-links a {
+  color: var(--primary); 
+}
+
+.nav-links a:hover {
+  color: #f59e0b;
+}
+
+.appointment-btn {
+  font-size: 0.9rem;
+  padding: 0.65rem 1.6rem !important;
+  border-radius: 999px !important;
+  background-color: #f59e0b;
+  color: #0c4a6e;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+}

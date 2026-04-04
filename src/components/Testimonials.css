@@ -1,0 +1,93 @@
+.testimonials-section {
+  padding: 8rem 0;
+  background-color: var(--white);
+  text-align: center;
+}
+
+.testimonial-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.testimonial-card {
+  padding: 4rem;
+  background: #f8fafc;
+  border-radius: 30px;
+  box-shadow: var(--shadow);
+  margin-bottom: 3rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.quote {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--primary);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+  font-style: italic;
+}
+
+.patient-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-info .patient-name {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--text-dark);
+}
+
+.patient-info .patient-tag {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.testimonial-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.control-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.dots {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  opacity: 0.3;
+}
+
+.dots .dot.active {
+  background: var(--primary);
+  opacity: 1;
+}
