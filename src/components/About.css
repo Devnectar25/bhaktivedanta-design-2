@@ -1,5 +1,5 @@
 .about-section {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background-color: var(--white);
   overflow: hidden;
 }
@@ -20,9 +20,21 @@
   box-shadow: var(--shadow-lg);
 }
 
+.quick-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.quick-icon {
+  height: 50px;
+  object-fit: contain;
+}
+
 .quick-logo {
-  height: 60px;
-  margin-bottom: 1.5rem;
+  height: 50px;
   filter: brightness(0) invert(1);
 }
 
@@ -131,5 +143,17 @@
   .about-container {
     grid-template-columns: 1fr;
     gap: 4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-content h2 {
+    font-size: 2rem;
+  }
+  .quick-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-features {
+    grid-template-columns: 1fr;
   }
 }

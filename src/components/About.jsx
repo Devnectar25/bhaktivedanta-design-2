@@ -7,7 +7,10 @@ const About = () => {
     <section id="about" className="about-section">
       <div className="container about-container">
         <div className="quick-access glass fade-in">
-           <img src="/logo.png" alt="Logo" className="quick-logo" />
+           <div className="quick-logo-wrap">
+             <img src="/icon.png" alt="Icon" className="quick-icon" />
+             <img src="/logo.png" alt="Logo" className="quick-logo" />
+           </div>
            <h3>Quick Healthcare Access</h3>
            <p>Providing seamless, compassionate care at your fingertips.</p>
            <div className="quick-grid">

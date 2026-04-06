@@ -1,10 +1,11 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Stats from './components/Stats';
+import InfoSlider from './components/InfoSlider';
 import About from './components/About';
 import Services from './components/Services';
 import Doctors from './components/Doctors';
+import Stats from './components/Stats';
 import Infrastructure from './components/Infrastructure';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
@@ -17,10 +18,11 @@ function App() {
       <Navbar />
       <main>
         <Hero />
-        <Stats />
+        <InfoSlider />
         <About />
         <Services />
         <Doctors />
+        <Stats />
         <Infrastructure />
         <Testimonials />
         <Contact />

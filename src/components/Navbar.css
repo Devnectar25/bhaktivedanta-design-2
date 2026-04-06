@@ -7,18 +7,21 @@
   display: flex;
   align-items: center;
   z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: transparent;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 0, 0, 0.15); /* Slight dark overlay for initial visibility */
+  backdrop-filter: blur(8px); /* Blur effect as requested */
+  -webkit-backdrop-filter: blur(8px);
   color: white; 
 }
 
 .navbar.scrolled {
   height: 70px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   color: var(--primary);
-  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .nav-content {
@@ -31,52 +34,171 @@
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  height: 50px;
+  object-fit: contain;
+  transition: all 0.35s ease;
 }
 
 .logo {
-  height: 60px;
+  height: 55px;
   object-fit: contain;
-  /* Applying a high-contrast white filter for the rich blue 3D theme visibility */
-  filter: brightness(0) invert(1) !important;
-  transition: filter 0.3s ease;
+  transition: filter 0.35s ease;
+  filter: brightness(0) invert(1); /* Typographic logo stays white */
 }
 
 .navbar.scrolled .logo {
-  filter: none !important; /* Authentic blue branding on the white background */
+  filter: none !important; /* Revert logo only on scrolled state */
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .nav-links a {
   font-weight: 700;
   font-size: 0.95rem;
-  color: white; 
+  color: white; /* Initial white links */
   transition: color 0.3s ease;
 }
 
 .navbar.scrolled .nav-links a {
-  color: var(--primary); 
+  color: var(--primary); /* Deep blue for scrolled white state */
 }
 
 .nav-links a:hover {
-  color: #f59e0b;
+  color: #fbbf24; /* Amber accent on hover */
 }
 
 .appointment-btn {
   font-size: 0.9rem;
-  padding: 0.65rem 1.6rem !important;
+  padding: 0.75rem 1.8rem !important;
   border-radius: 999px !important;
-  background-color: #f59e0b;
-  color: #0c4a6e;
+  background-color: #ea580c;
+  color: white;
   font-weight: 800;
+  box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25);
+  transition: all 0.3s ease;
+}
+
+.appointment-btn:hover {
+  background-color: #fb923c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(234, 88, 12, 0.35);
+}
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.mobile-toggle .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.navbar.scrolled .mobile-toggle .bar {
+  background-color: var(--primary);
+}
+
+.mobile-toggle.active .bar:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.mobile-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-toggle.active .bar:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
 }
 
 @media (max-width: 900px) {
-  .nav-links {
+  .desktop-only {
     display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+
+  .mobile-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 350px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    padding: 100px 40px;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a {
+    color: var(--primary) !important;
+    font-size: 1.2rem;
+  }
+
+  .logo-icon {
+    height: 35px;
+  }
+
+  .logo {
+    height: 40px;
+  }
+  
+  .navbar.scrolled .mobile-toggle .bar {
+    background-color: var(--primary);
+  }
+  
+  .navbar:not(.scrolled) .mobile-toggle.active .bar {
+    background-color: var(--primary);
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-icon {
+    height: 38px; /* Slightly larger */
+  }
+  .logo {
+    display: block; /* Show logo properly as requested */
+    height: 32px;
+  }
+  .nav-links {
+    width: 100%;
   }
 }

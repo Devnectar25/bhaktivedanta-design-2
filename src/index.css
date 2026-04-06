@@ -22,7 +22,7 @@
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
@@ -47,9 +47,24 @@ button {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
+.section-padding {
+  padding: 5rem 0; /* Reduced from the general 8rem used in components */
+}
+
+.compact-panel {
+  padding: 2.5rem;
+  border-radius: 20px;
 }
 
 /* Animations */

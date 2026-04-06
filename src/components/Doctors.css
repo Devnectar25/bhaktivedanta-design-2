@@ -1,5 +1,5 @@
 .doctors-section {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background-color: var(--white);
   overflow: hidden;
   perspective: 2000px;
@@ -11,14 +11,14 @@
 }
 
 .section-header.container {
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
 .doctors-track {
   display: flex;
   gap: 2rem;
-  padding: 2rem 0;
+  padding: 0rem 0;
   width: max-content;
   
   /* Infinite horizontal scroll animation */
@@ -127,4 +127,24 @@
 .btn-profile:hover {
   background-color: var(--primary);
   color: white;
+}
+@media (max-width: 768px) {
+  .doctor-card {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .doctors-section {
+    padding: 3rem 0;
+  }
+  .doctor-card {
+    width: 240px;
+  }
+  .doctor-image {
+    height: 240px;
+  }
+  .doctor-info {
+    padding: 1.5rem;
+  }
 }

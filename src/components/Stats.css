@@ -7,10 +7,10 @@
 }
 
 .stats-container {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
   align-items: center;
-  gap: 2rem;
 }
 
 .stat-card {
@@ -34,16 +34,15 @@
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .stats-container {
-    flex-wrap: wrap;
-  }
-  .stat-card {
-    flex-basis: 45%;
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 2.5rem;
   }
 }
 @media (max-width: 480px) {
-  .stat-card {
-    flex-basis: 100%;
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 2.5rem;
   }
 }

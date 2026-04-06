@@ -142,3 +142,16 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .contact-section {
+    padding: 3rem 0;
+  }
+  .appointment-form {
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+  }
+  .get-in-touch h2 {
+    font-size: 1.8rem;
+  }
+}

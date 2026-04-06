@@ -8,10 +8,9 @@ const Footer = () => {
       <div className="container footer-grid">
         <div className="footer-col about-col">
           <div className="footer-logo">
-             <img src="/logo.png" alt="Logo" className="logo" />
-             <div className="logo-text">
-               <span className="name">BHAKTIVEDANTA HOSPITAL</span>
-               <span className="tagline">& Research Institute</span>
+             <div className="footer-logo-wrap">
+               <img src="/icon.png" alt="Icon" className="footer-icon" />
+               <img src="/logo.png" alt="Logo" className="logo" />
              </div>
           </div>
           <p className="footer-desc">

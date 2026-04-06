@@ -3,10 +3,12 @@ import './Stats.css';
 
 const Stats = () => {
   const stats = [
-    { number: '30+', label: 'Years of Excellence' },
-    { number: '500+', label: 'Expert Doctors' },
-    { number: '1M+', label: 'Happy Patients' },
-    { number: '50+', label: 'Medical Services' }
+    { number: '5M+', label: 'Lives Impacted' },
+    { number: '150K+', label: 'Surgeries' },
+    { number: '25+', label: 'Years Excellence' },
+    { number: '300+', label: 'Expert Doctors' },
+    { number: '98%', label: 'Patient Comfort' },
+    { number: '15+', label: 'DNB Depts' }
   ];
 
   return (

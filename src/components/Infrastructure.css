@@ -1,6 +1,11 @@
 .infra-section {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background-color: #f1f5f9;
+}
+
+.infra-section .section-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .infra-grid {
@@ -83,5 +88,15 @@
 @media (max-width: 768px) {
   .infra-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .infra-card {
+    height: 300px;
+    border-radius: 20px;
+  }
+  .infra-content {
+    padding: 1.5rem;
   }
 }
