@@ -59,10 +59,11 @@
   position: relative;
   z-index: 10;
   width: 100%;
+  margin-top: 3rem; /* Moving the text slightly down as requested */
 }
 
 .hero-text {
-  max-width: 700px;
+  max-width: 850px;
   color: white; /* High-contrast white typography for professional dark theme */
 }
 

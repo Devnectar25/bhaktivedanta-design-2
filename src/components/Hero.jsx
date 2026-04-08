@@ -11,8 +11,7 @@ const Hero = () => {
       
       <div className="container hero-content">
         <div className="hero-text fade-in">
-          <p className="hero-label">Trusted Healthcare Solution</p>
-          <h1>Compassionate Care <br />with <span>Advanced Technology</span></h1>
+          <h1>Compassionate Care with <span>Advanced Technology</span></h1>
           <p className="hero-subheading">
             Where expert healing wisdom meets modern medical excellence. 
             We are dedicated to your wellness and the highest standards of care.
