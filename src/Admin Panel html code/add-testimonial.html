@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Testimonial | Bhaktivedanta Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "on-secondary-container": "#684000",
+                "primary-fixed": "#dce1ff",
+                "surface-container": "#e6eeff",
+                "error-container": "#ffdad6",
+                "background": "#f8f9ff",
+                "error": "#ba1a1a",
+                "on-tertiary-fixed-variant": "#004395",
+                "on-surface-variant": "#444651",
+                "surface": "#f8f9ff",
+                "on-secondary": "#ffffff",
+                "on-background": "#121c2a",
+                "primary-fixed-dim": "#b6c4ff",
+                "on-tertiary": "#ffffff",
+                "on-tertiary-fixed": "#001a42",
+                "on-error": "#ffffff",
+                "secondary-fixed-dim": "#ffb95f",
+                "surface-container-low": "#eff4ff",
+                "secondary-container": "#fea619",
+                "on-surface": "#121c2a",
+                "surface-variant": "#d9e3f6",
+                "tertiary-fixed": "#d8e2ff",
+                "surface-container-high": "#dee9fc",
+                "on-secondary-fixed": "#2a1700",
+                "on-error-container": "#93000a",
+                "surface-dim": "#d0dbed",
+                "secondary-fixed": "#ffddb8",
+                "secondary": "#d97706",
+                "on-secondary-fixed-variant": "#653e00",
+                "surface-container-lowest": "#ffffff",
+                "outline": "#757682",
+                "inverse-primary": "#b6c4ff",
+                "on-tertiary-container": "#82abff",
+                "tertiary-fixed-dim": "#adc6ff",
+                "on-primary-container": "#90a8ff",
+                "on-primary-fixed": "#00164e",
+                "tertiary-container": "#003d88",
+                "surface-container-highest": "#d9e3f6",
+                "primary-container": "#1e3a8a",
+                "primary": "#1e3a8a",
+                "on-primary-fixed-variant": "#264191",
+                "surface-bright": "#f8f9ff",
+                "outline-variant": "#c5c5d3",
+                "inverse-surface": "#27313f",
+                "tertiary": "#00285e",
+                "surface-tint": "#4059aa",
+                "on-primary": "#ffffff",
+                "inverse-on-surface": "#eaf1ff"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+              },
+              "spacing": {
+                "lg": "40px",
+                "sm": "12px",
+                "md": "24px",
+                "xl": "64px",
+                "xs": "4px",
+                "margin-mobile": "16px",
+                "gutter": "24px",
+                "margin-desktop": "32px",
+                "base": "8px"
+              },
+              "fontFamily": {
+                "headline-lg-mobile": ["Inter"],
+                "body-sm": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-xl": ["Inter"],
+                "label-sm": ["Inter"],
+                "headline-md": ["Inter"],
+                "body-lg": ["Inter"],
+                "label-lg": ["Inter"]
+              },
+              "fontSize": {
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d9e3f6;
+            border-radius: 10px;
+        }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- Side Navigation Rail -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Header & Main Content Area -->
+<main class="ml-[280px] min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 px-margin-desktop h-xl flex justify-between items-center">
+<div class="flex items-center gap-md flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-lg pr-md py-xs text-body-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant transition-all" placeholder="Search files, patients, or tasks..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex items-center gap-sm pl-xs">
+<div class="text-right hidden sm:block">
+<p class="font-label-lg text-primary leading-tight">Admin User</p>
+<p class="text-[10px] text-outline uppercase tracking-wider">Hospital Manager</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container overflow-hidden ring-2 ring-primary/10">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a professional healthcare administrator in a bright clinical setting with soft natural light. The lighting is crisp and the mood is focused and authoritative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpXpgCb0LSEo556uZlJPigO_-WqneK_mlQlNHKbzHQseH5b1VexM1q_fCer23qbOm9HAsHZNqSMqyeySXwxFo561E5U5MXE67aNYVFD8qckhLLqJZ8kz4VYtqEPxMX0Oo3dAQgK0H0jfdlwh0n7RsGdy1c5_Z217KQv1vaNoYLMDsrCH3LJqSz7RCLPPV1iAs6qrjKrnFyhDstcx5q194SNdY6QcxGam7BAhYcxYCqMCvaZzD2H-YuMSquM-YGnO4RNfhEOxM0tuY"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="px-8 pb-8 pt-[88px] max-w-[1440px] mx-auto">
+<!-- Breadcrumbs -->
+<nav class="mb-md flex items-center gap-xs text-label-sm">
+<a class="text-outline hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="chevron_right">chevron_right</span>
+<a class="text-outline hover:text-primary transition-colors" href="#">Testimonials</a>
+<span class="material-symbols-outlined text-[16px] text-outline-variant" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-bold">Add Testimonial</span>
+</nav>
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-xs">Add New Testimonial</h2>
+<p class="text-body-md text-on-surface-variant">Create and publish patient success stories to showcase clinical excellence.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm rounded-lg font-label-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-all">Cancel</button>
+<button class="px-md py-sm rounded-lg font-label-lg bg-surface-container-high text-primary hover:bg-surface-container-highest transition-all">Save Draft</button>
+<button class="px-md py-sm rounded-lg font-label-lg bg-secondary-container text-on-secondary-container shadow-sm hover:brightness-105 active:scale-[0.98] transition-all flex items-center gap-xs">
+<span class="material-symbols-outlined" data-icon="publish">publish</span>
+                        Publish Testimonial
+                    </button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Form Section -->
+<div class="col-span-12 lg:col-span-8 space-y-gutter">
+<!-- Patient & Identity Section -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-[4px_4px_15px_rgba(30,58,138,0.04)]">
+<div class="flex items-center gap-sm mb-md pb-sm border-b border-outline-variant/10">
+<span class="material-symbols-outlined text-primary" data-icon="person_outline">person_outline</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Patient Information</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Patient Name</label>
+<input class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="patientName" placeholder="e.g. Robert Wilson" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Patient Designation / Short Info</label>
+<input class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="patientInfo" placeholder="e.g. Retired Teacher, Mumbai" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Treatment Category</label>
+<select class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+<option value="">Select Category</option>
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Orthopedics</option>
+<option>Gastroenterology</option>
+<option>General Surgery</option>
+</select>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Doctor Associated</label>
+<select class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+<option value="">Select Doctor</option>
+<option>Dr. Sameer Kulkarni (Cardio)</option>
+<option>Dr. Anjali Verma (Neuro)</option>
+<option>Dr. Peter D'Souza (Ortho)</option>
+</select>
+</div>
+<div class="md:col-span-2 space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Patient Photo Upload</label>
+<div class="border-2 border-dashed border-outline-variant/50 rounded-xl p-md flex flex-col items-center justify-center bg-surface-container-low/30 hover:bg-surface-container-low transition-all cursor-pointer group">
+<span class="material-symbols-outlined text-outline group-hover:text-primary mb-sm text-[32px]" data-icon="cloud_upload">cloud_upload</span>
+<p class="text-body-sm text-on-surface-variant"><span class="text-primary font-bold">Click to upload</span> or drag and drop</p>
+<p class="text-label-sm text-outline mt-xs">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Content & Message Section -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-[4px_4px_15px_rgba(30,58,138,0.04)]">
+<div class="flex items-center gap-sm mb-md pb-sm border-b border-outline-variant/10">
+<span class="material-symbols-outlined text-primary" data-icon="rate_review">rate_review</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Testimonial Content</h3>
+</div>
+<div class="space-y-md">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md items-center">
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Review Title</label>
+<input class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="reviewTitle" placeholder="e.g. Life-saving Cardiac Care" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Treatment Date</label>
+<input class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" type="date"/>
+</div>
+</div>
+<div class="space-y-xs">
+<div class="flex justify-between items-center">
+<label class="text-label-sm text-on-surface-variant block">Star Rating</label>
+<div class="flex gap-xs" id="starContainer">
+<button class="material-symbols-outlined text-secondary hover:scale-110 transition-transform fill-icon" data-icon="star" data-val="1">star</button>
+<button class="material-symbols-outlined text-secondary hover:scale-110 transition-transform fill-icon" data-icon="star" data-val="2">star</button>
+<button class="material-symbols-outlined text-secondary hover:scale-110 transition-transform fill-icon" data-icon="star" data-val="3">star</button>
+<button class="material-symbols-outlined text-secondary hover:scale-110 transition-transform fill-icon" data-icon="star" data-val="4">star</button>
+<button class="material-symbols-outlined text-secondary hover:scale-110 transition-transform fill-icon" data-icon="star" data-val="5">star</button>
+</div>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Review Message</label>
+<textarea class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" id="reviewMsg" placeholder="Share the patient's journey and experience at Bhaktivedanta Hospital..." rows="6"></textarea>
+</div>
+</div>
+</section>
+<!-- SEO Section -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-[4px_4px_15px_rgba(30,58,138,0.04)]">
+<div class="flex items-center gap-sm mb-md pb-sm border-b border-outline-variant/10">
+<span class="material-symbols-outlined text-primary" data-icon="travel_explore">travel_explore</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">SEO Optimization</h3>
+</div>
+<div class="space-y-md">
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Meta Title</label>
+<input class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Patient Testimonial - Cardiology - Bhaktivedanta Hospital" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Meta Description</label>
+<textarea class="w-full border-outline-variant rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Read about the successful recovery story of our patient at Bhaktivedanta Hospital." rows="2"></textarea>
+</div>
+</div>
+</section>
+</div>
+<!-- Sidebar Controls & Preview -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Status & Visibility -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-[4px_4px_15px_rgba(30,58,138,0.04)]">
+<div class="flex items-center gap-sm mb-md pb-sm border-b border-outline-variant/10">
+<span class="material-symbols-outlined text-primary" data-icon="visibility">visibility</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Publishing Settings</h3>
+</div>
+<div class="space-y-md">
+<div class="space-y-xs">
+<label class="text-label-sm text-on-surface-variant block">Status</label>
+<select class="w-full border-outline-variant rounded-lg bg-surface-container-low/50 font-label-lg py-sm">
+<option value="published">Published</option>
+<option selected="" value="draft">Draft</option>
+<option value="pending">Pending Review</option>
+</select>
+</div>
+<div class="pt-sm space-y-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline" data-icon="home">home</span>
+<span class="text-body-sm text-on-surface">Show On Homepage</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="stars">stars</span>
+<span class="text-body-sm text-on-surface">Featured Testimonial</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline" data-icon="toggle_on">toggle_on</span>
+<span class="text-body-sm text-on-surface">Status Active</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Preview Card -->
+<div class="sticky top-[104px] space-y-sm">
+<p class="text-label-lg text-primary uppercase tracking-widest pl-xs">Live Preview</p>
+<div class="bg-surface-container-lowest rounded-2xl p-lg border border-outline-variant/30 shadow-[0_10px_40px_rgba(30,58,138,0.06)] relative overflow-hidden group">
+<!-- Background Decoration -->
+<div class="absolute -right-4 -top-4 opacity-5">
+<span class="material-symbols-outlined text-[120px]" data-icon="format_quote">format_quote</span>
+</div>
+<div class="relative z-10">
+<div class="flex gap-xs mb-sm">
+<span class="material-symbols-outlined text-secondary text-[20px] fill-icon" data-icon="star">star</span>
+<span class="material-symbols-outlined text-secondary text-[20px] fill-icon" data-icon="star">star</span>
+<span class="material-symbols-outlined text-secondary text-[20px] fill-icon" data-icon="star">star</span>
+<span class="material-symbols-outlined text-secondary text-[20px] fill-icon" data-icon="star">star</span>
+<span class="material-symbols-outlined text-secondary text-[20px] fill-icon" data-icon="star">star</span>
+</div>
+<h4 class="font-headline-md text-on-surface mb-sm leading-snug" id="previewTitle">Patient Testimonial</h4>
+<p class="text-body-sm text-on-surface-variant italic line-clamp-4 mb-md" id="previewMsg">"The care and attention I received at Bhaktivedanta Hospital was exceptional. Every staff member treated me like family throughout my treatment..."</p>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden ring-4 ring-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="Close-up emotional portrait of a middle-aged woman looking hopeful in a soft-lit, airy environment with a shallow depth of field. The style is compassionate and human-centric with clinical white and blue tones in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3nG-fQMXgh1yYqzG1ZxlHWMibpgG_u7BAXxonrSuSvYGga0fW0S_Sm92l39XcDSNmUD0ejb8pi5k3KmZI9tlfzNfFPcvquDWudA3QTVLgS71IJ-WrAWCawzJm31O03ffl3O8XbcfRfNWcppxWkF_sRSC0Gr4A75QZe5cO3b8mbukOuYSY9sUTyDoqOc64rg4NDjofdRW8IhXpe4THBEEGYMqgCOph4sk0XiM9bBG2i6Is32e1nAB6IBL93nJ33tYM_seC2sffBjc"/>
+</div>
+<div>
+<p class="font-bold text-on-surface leading-tight" id="previewName">Robert Wilson</p>
+<p class="text-label-sm text-outline" id="previewInfo">Retired Professional, Mumbai</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 rounded-lg p-sm border border-primary/10 flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="info">info</span>
+<p class="text-label-sm text-on-primary-fixed-variant">This is how the testimonial will appear in the "What our Patients Say" carousel on the website.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer-ish Mobile Actions -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-outline-variant/30 p-md flex gap-sm z-50">
+<button class="flex-1 py-sm rounded-lg font-label-lg bg-surface-container-high text-primary">Draft</button>
+<button class="flex-[2] py-sm rounded-lg font-label-lg bg-secondary-container text-on-secondary-container">Publish</button>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for live preview sync
+        const inputs = {
+            name: document.getElementById('patientName'),
+            info: document.getElementById('patientInfo'),
+            title: document.getElementById('reviewTitle'),
+            msg: document.getElementById('reviewMsg')
+        };
+
+        const previews = {
+            name: document.getElementById('previewName'),
+            info: document.getElementById('previewInfo'),
+            title: document.getElementById('previewTitle'),
+            msg: document.getElementById('previewMsg')
+        };
+
+        inputs.name.addEventListener('input', (e) => previews.name.innerText = e.target.value || 'Robert Wilson');
+        inputs.info.addEventListener('input', (e) => previews.info.innerText = e.target.value || 'Retired Professional, Mumbai');
+        inputs.title.addEventListener('input', (e) => previews.title.innerText = e.target.value || 'Patient Testimonial');
+        inputs.msg.addEventListener('input', (e) => previews.msg.innerText = e.target.value ? `"${e.target.value}"` : '"The care and attention I received at Bhaktivedanta Hospital was exceptional..."');
+
+        // Star Rating micro-interaction
+        const stars = document.querySelectorAll('#starContainer button');
+        stars.forEach((star, idx) => {
+            star.addEventListener('click', () => {
+                stars.forEach((s, i) => {
+                    if (i <= idx) {
+                        s.style.fontVariationSettings = "'FILL' 1";
+                    } else {
+                        s.style.fontVariationSettings = "'FILL' 0";
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>

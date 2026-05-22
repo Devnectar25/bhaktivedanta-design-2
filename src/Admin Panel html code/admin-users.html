@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bhaktivedanta Hospital Admin - Admin Users Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "surface": "#f8f9ff",
+                    "inverse-surface": "#27313f",
+                    "surface-container-low": "#eff4ff",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#00164e",
+                    "primary-container": "#1e3a8a",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "tertiary-fixed": "#d8e2ff",
+                    "tertiary": "#00285e",
+                    "surface-container-highest": "#d9e3f6",
+                    "on-tertiary-container": "#82abff",
+                    "surface-container": "#e6eeff",
+                    "surface-bright": "#f8f9ff",
+                    "on-tertiary-fixed-variant": "#004395",
+                    "surface-container-high": "#dee9fc",
+                    "on-secondary": "#ffffff",
+                    "surface-tint": "#4059aa",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-secondary-fixed": "#2a1700",
+                    "on-tertiary-fixed": "#001a42",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#dce1ff",
+                    "on-secondary-container": "#684000",
+                    "on-primary-container": "#90a8ff",
+                    "background": "#f8f9ff",
+                    "secondary-container": "#fea619",
+                    "tertiary-container": "#003d88",
+                    "secondary": "#d97706",
+                    "on-surface": "#121c2a",
+                    "secondary-fixed": "#ffddb8",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "inverse-on-surface": "#eaf1ff",
+                    "primary": "#1e3a8a",
+                    "on-primary": "#ffffff",
+                    "on-surface-variant": "#444651",
+                    "surface-variant": "#d9e3f6",
+                    "outline": "#757682",
+                    "surface-dim": "#d0dbed",
+                    "on-background": "#121c2a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "md": "24px",
+                    "lg": "40px",
+                    "xl": "64px",
+                    "margin-mobile": "16px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .custom-shadow { box-shadow: 0 4px 15px -1px rgba(30, 58, 138, 0.04); }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface dark:bg-surface-dim shadow-sm flex justify-between items-center px-xl z-40">
+<div class="flex items-center gap-md">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-sm focus:ring-2 focus:ring-primary w-80 transition-all" placeholder="Search resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high transition-all flex items-center justify-center relative">
+<span class="material-symbols-outlined text-primary">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-xs"></div>
+<div class="flex items-center gap-base cursor-pointer hover:bg-surface-container-high p-1 rounded-full pr-3 transition-all">
+<img alt="Admin Profile" class="w-8 h-8 rounded-full object-cover" data-alt="A professional headshot of a female hospital administrator in her late 40s. She wears clinical but fashionable attire with a kind, authoritative expression. The background is a soft-focus clean medical office interior with blue and white color accents, reflecting a high-end healthcare corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpTHU3HSfwYla_tMxw8qAveVGyYEOpy6A48bsLJ5r88cuIwMg9bCHCyMf79GD9xvL4vUjM7YZoxwifLuIN14soVyAyOqbYNZHzha8F4In9UedAsX3H9cgbURUDGtX0ImV18Nz76rnbK5QZwA2zjehX_T9kvAGAvtsuomgx4XCgbG3LuPUqCJVJJ2R_HqgrbVmOgEABeKS-zpiiTLaJSfXqFloDT7-JseZu_2VmSceR1B3nqG9RmD9I1cyV4hIAJqaI5YttNg5xdko"/>
+<span class="text-label-lg font-bold text-primary">Dr. Sarah Jenkins</span>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 min-h-screen p-xl max-w-[1440px]">
+<!-- Breadcrumb & Header -->
+<div class="mb-lg">
+<nav aria-label="Breadcrumb" class="flex text-label-sm text-on-surface-variant mb-base">
+<ol class="inline-flex items-center space-x-1 md:space-x-3">
+<li class="inline-flex items-center">
+<a class="hover:text-primary" href="#">Dashboard</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-[16px] mr-1">chevron_right</span>
+<span class="text-primary font-semibold">Admin Users</span>
+</div>
+</li>
+</ol>
+</nav>
+<div class="flex justify-between items-start">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-primary">Admin Users Management</h2>
+<p class="text-body-md text-on-surface-variant mt-1">Manage hospital admin users, access permissions, and user roles</p>
+</div>
+<button class="bg-primary text-on-primary px-md py-3 rounded-xl font-label-lg flex items-center gap-xs hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">person_add</span>
+                    Add Admin User
+                </button>
+</div>
+</div>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-gutter mb-lg">
+<!-- Total -->
+<div class="bg-white p-md rounded-xl custom-shadow flex flex-col gap-xs border-l-4 border-primary">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total Admin Users</span>
+<div class="flex items-baseline gap-base">
+<span class="text-headline-lg font-bold text-primary">48</span>
+<span class="text-label-sm text-success text-green-600 font-bold flex items-center">+3%</span>
+</div>
+</div>
+<!-- Active -->
+<div class="bg-white p-md rounded-xl custom-shadow flex flex-col gap-xs border-l-4 border-green-500">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Active Users</span>
+<div class="flex items-baseline gap-base">
+<span class="text-headline-lg font-bold text-primary">42</span>
+<span class="text-label-sm text-on-surface-variant font-medium">87% overall</span>
+</div>
+</div>
+<!-- Super Admins -->
+<div class="bg-white p-md rounded-xl custom-shadow flex flex-col gap-xs border-l-4 border-secondary">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Super Admins</span>
+<div class="flex items-baseline gap-base">
+<span class="text-headline-lg font-bold text-primary">06</span>
+<span class="text-label-sm text-on-surface-variant font-medium">Core access</span>
+</div>
+</div>
+<!-- Editors -->
+<div class="bg-white p-md rounded-xl custom-shadow flex flex-col gap-xs border-l-4 border-tertiary-container">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Editors</span>
+<div class="flex items-baseline gap-base">
+<span class="text-headline-lg font-bold text-primary">32</span>
+<span class="text-label-sm text-on-surface-variant font-medium">Content only</span>
+</div>
+</div>
+<!-- Disabled -->
+<div class="bg-white p-md rounded-xl custom-shadow flex flex-col gap-xs border-l-4 border-error">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Disabled</span>
+<div class="flex items-baseline gap-base">
+<span class="text-headline-lg font-bold text-primary">04</span>
+<span class="text-label-sm text-error font-medium">Inactive</span>
+</div>
+</div>
+</div>
+<!-- Filters Area -->
+<div class="bg-white p-md rounded-xl custom-shadow mb-lg">
+<div class="grid grid-cols-1 md:grid-cols-6 gap-md items-end">
+<div class="col-span-2">
+<label class="text-label-sm font-bold text-on-surface-variant mb-xs block">Search User</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-lg border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all" placeholder="Name, Email, or ID" type="text"/>
+</div>
+</div>
+<div>
+<label class="text-label-sm font-bold text-on-surface-variant mb-xs block">Role</label>
+<select class="w-full py-2 px-3 rounded-lg border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all">
+<option>All Roles</option>
+<option>Super Admin</option>
+<option>Editor</option>
+<option>Doctor</option>
+<option>Viewer</option>
+</select>
+</div>
+<div>
+<label class="text-label-sm font-bold text-on-surface-variant mb-xs block">Department</label>
+<select class="w-full py-2 px-3 rounded-lg border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all">
+<option>All Depts</option>
+<option>Cardiology</option>
+<option>HR</option>
+<option>Operations</option>
+<option>IT Support</option>
+</select>
+</div>
+<div>
+<label class="text-label-sm font-bold text-on-surface-variant mb-xs block">Status</label>
+<select class="w-full py-2 px-3 rounded-lg border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary transition-all">
+<option>All Status</option>
+<option>Active</option>
+<option>Inactive</option>
+<option>Suspended</option>
+</select>
+</div>
+<div class="flex gap-base">
+<button class="flex-1 bg-surface-container text-primary font-label-lg py-2 rounded-lg hover:bg-surface-container-high transition-all">Reset</button>
+<button class="flex-1 bg-primary-container text-on-primary-container font-label-lg py-2 rounded-lg hover:opacity-90 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">filter_alt</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-white rounded-xl custom-shadow overflow-hidden">
+<div class="p-md border-b border-surface-container flex justify-between items-center">
+<h3 class="text-headline-md font-bold text-primary">All Admin Users</h3>
+<div class="flex items-center gap-md">
+<span class="text-label-sm text-on-surface-variant">Showing 1-10 of 48 users</span>
+<div class="flex gap-xs">
+<button class="w-8 h-8 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg border border-outline-variant flex items-center justify-center hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant uppercase text-[11px] font-bold tracking-widest">
+<th class="px-md py-4">User Details</th>
+<th class="px-md py-4">Contact</th>
+<th class="px-md py-4">Role &amp; Dept</th>
+<th class="px-md py-4">Last Login</th>
+<th class="px-md py-4">Status</th>
+<th class="px-md py-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Table Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-all group">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<img alt="Dr. Michael Chen" class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a male Asian doctor in a white lab coat, early 30s. He has professional posture and a friendly, confident smile. The lighting is bright and clean, consistent with a high-end hospital administration environment. Minimalist corporate clinic background with blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpury8-NL1FDws6jnZPkEAkz2Yhk2zaXeS1oBATEgbzYrIq8ihmzDH9aNMBReN_VZKlbTmqjEPjt2_aE74ZdU2A00JiSIPTCScIGg6b3p49f_p9Kc3rKWSyEdj0QigZpgiAFx8ZU_dlHT2qW3mtJqyx94P4uKEoHvILTgRgLU-IvWeu4T_JDI53z9GCr5twAOheD28ISrqUr6I7S0y2tmWMV-InxOLwLtnXswWn0-AWXUOHjtW_gsZB7A1RZEQ1GSmXAXYjg6YzWk"/>
+<div>
+<p class="text-label-lg font-bold text-primary">Dr. Michael Chen</p>
+<p class="text-body-sm text-on-surface-variant">UID-88291</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">m.chen@hospital.com</p>
+<p class="text-body-sm text-on-surface-variant">+1 (555) 012-3456</p>
+</td>
+<td class="px-md py-4">
+<span class="block text-body-sm font-bold text-secondary">Super Admin</span>
+<span class="text-body-sm text-on-surface-variant">Cardiology Department</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm">Today, 09:45 AM</p>
+<p class="text-label-sm text-on-surface-variant">IP: 192.168.1.44</p>
+</td>
+<td class="px-md py-4">
+<span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-1 rounded-full border border-green-200">ACTIVE</span>
+</td>
+<td class="px-md py-4">
+<div class="flex justify-center items-center gap-xs">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all" title="View Profile">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all" title="Reset Password">
+<span class="material-symbols-outlined text-[20px]">lock_reset</span>
+</button>
+<button class="p-2 hover:bg-error-container/20 rounded-lg text-error transition-all" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-all group">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<img alt="Sarah Connor" class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a middle-aged professional woman with glasses, smiling warmly. She wears a professional navy blazer over a light blouse. The image is set in a modern medical administration office with soft natural lighting and a high-key airy feel, maintaining the blue and white hospital brand palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWzIxiHg-PUESxOunzR7ppjSysg03hJ5Xe5ltwyZGZVJTP_P9ssBrHZyiIgF8cE19SvBIscWGgNVeAKmERMNbImm-vOLzWb4WBvnZqhdCiDw4mrcbVtihztnV20pnh0g2ghIskk2HzPcUqHnl_Uzk5C6cK-NcS0rsqos5pVpGwRMGAA-66kFBGnBnHBtoxYxcjwdkweDKHSUXPFC8PV2VWbGMgkjujG62zIRPPOTq0Y_PKNjl6HkmMt2qLJqrdpFepD70KLNNdaP0"/>
+<div>
+<p class="text-label-lg font-bold text-primary">Sarah Connor</p>
+<p class="text-body-sm text-on-surface-variant">UID-88295</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">s.connor@hospital.com</p>
+<p class="text-body-sm text-on-surface-variant">+1 (555) 099-1234</p>
+</td>
+<td class="px-md py-4">
+<span class="block text-body-sm font-bold text-tertiary">Editor</span>
+<span class="text-body-sm text-on-surface-variant">Marketing &amp; News</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm">Yesterday, 04:12 PM</p>
+<p class="text-label-sm text-on-surface-variant">IP: 192.168.1.12</p>
+</td>
+<td class="px-md py-4">
+<span class="bg-surface-container-highest text-on-surface-variant text-[11px] font-bold px-2 py-1 rounded-full border border-outline-variant">INACTIVE</span>
+</td>
+<td class="px-md py-4">
+<div class="flex justify-center items-center gap-xs">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all"><span class="material-symbols-outlined text-[20px]">lock_reset</span></button>
+<button class="p-2 hover:bg-error-container/20 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-all group">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<img alt="John Miller" class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a male IT administrator in a professional dark gray polo shirt. He has a focused and serious expression. The lighting is crisp and modern, set in a technologically advanced office or server room with subtle blue ambient lighting in the background, matching the corporate healthcare design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3W5KXwKeRNQk7RNl4X5uMy2rZAdJ9KVe00Vh-GVfXNlHbBeSRl_9dTEz6F5InHbWo0PGZC8HubrI_cEouxnEmXBj9kfZmmJxPvd64-GVmkphBS001xv9FjWxM371Gctz7WOCg0iTMDKBDhdtXBgW6lQrNoSlML3KvrbSbv5qv1gLPLLdQH4Vusv7ITIDGPayvb_4hxI1kmCJvet2bUAczbS0w-xf_wBpe2Mq82IwuLJ-gMRoJ8glVCKOxB2CuBwPnF0jTz0e-0Dg"/>
+<div>
+<p class="text-label-lg font-bold text-primary">John Miller</p>
+<p class="text-body-sm text-on-surface-variant">UID-88301</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">j.miller@hospital.com</p>
+<p class="text-body-sm text-on-surface-variant">+1 (555) 088-7654</p>
+</td>
+<td class="px-md py-4">
+<span class="block text-body-sm font-bold text-tertiary">IT Admin</span>
+<span class="text-body-sm text-on-surface-variant">Support &amp; Systems</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm">3 days ago</p>
+<p class="text-label-sm text-on-surface-variant">IP: 10.0.0.15</p>
+</td>
+<td class="px-md py-4">
+<span class="bg-error-container text-error text-[11px] font-bold px-2 py-1 rounded-full border border-error/20">SUSPENDED</span>
+</td>
+<td class="px-md py-4">
+<div class="flex justify-center items-center gap-xs">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all"><span class="material-symbols-outlined text-[20px]">lock_reset</span></button>
+<button class="p-2 hover:bg-error-container/20 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-surface-container-lowest transition-all group">
+<td class="px-md py-4">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold">RB</div>
+<div>
+<p class="text-label-lg font-bold text-primary">Robert Brown</p>
+<p class="text-body-sm text-on-surface-variant">UID-88310</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">r.brown@hospital.com</p>
+<p class="text-body-sm text-on-surface-variant">+1 (555) 077-4321</p>
+</td>
+<td class="px-md py-4">
+<span class="block text-body-sm font-bold text-tertiary">HR Manager</span>
+<span class="text-body-sm text-on-surface-variant">Human Resources</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm">Today, 11:20 AM</p>
+<p class="text-label-sm text-on-surface-variant">IP: 192.168.1.98</p>
+</td>
+<td class="px-md py-4">
+<span class="bg-green-100 text-green-800 text-[11px] font-bold px-2 py-1 rounded-full border border-green-200">ACTIVE</span>
+</td>
+<td class="px-md py-4">
+<div class="flex justify-center items-center gap-xs">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-all"><span class="material-symbols-outlined text-[20px]">lock_reset</span></button>
+<button class="p-2 hover:bg-error-container/20 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-md py-4 bg-surface-container-lowest border-t border-surface-container flex items-center justify-between">
+<p class="text-body-sm text-on-surface-variant">Page 1 of 5</p>
+<div class="flex gap-1">
+<button class="px-3 py-1 rounded-lg bg-primary text-on-primary font-bold text-body-sm">1</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-medium text-body-sm">2</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-medium text-body-sm">3</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-medium text-body-sm">...</button>
+<button class="px-3 py-1 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-medium text-body-sm">5</button>
+</div>
+</div>
+</div>
+<!-- Role Permissions Info (Bento Style) -->
+<div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="md:col-span-2 bg-primary p-lg rounded-2xl flex flex-col justify-between relative overflow-hidden text-on-primary">
+<div class="relative z-10">
+<h4 class="text-headline-md font-bold mb-base">Role-Based Access Control (RBAC)</h4>
+<p class="text-body-md text-on-primary/80 max-w-lg mb-lg">Bhaktivedanta Admin utilizes a strict RBAC system to ensure data security and HIPAA compliance. All administrative actions are logged with timestamps and IP addresses.</p>
+<div class="flex gap-md">
+<div class="bg-white/10 p-md rounded-xl backdrop-blur-sm border border-white/10 flex-1">
+<span class="material-symbols-outlined mb-2">shield_person</span>
+<p class="text-label-lg font-bold">Security Audits</p>
+<p class="text-label-sm opacity-70">Review login attempts and permission changes daily.</p>
+</div>
+<div class="bg-white/10 p-md rounded-xl backdrop-blur-sm border border-white/10 flex-1">
+<span class="material-symbols-outlined mb-2">history</span>
+<p class="text-label-lg font-bold">Action Logs</p>
+<p class="text-label-sm opacity-70">Full traceability for every record modification.</p>
+</div>
+</div>
+</div>
+<!-- Abstract visual element -->
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+<div class="absolute -left-10 -top-10 w-40 h-40 bg-secondary/20 rounded-full blur-2xl"></div>
+</div>
+<div class="bg-white p-lg rounded-2xl custom-shadow border border-outline-variant/30">
+<h4 class="text-label-lg font-bold text-primary mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px]">security</span>
+                    Access Quick Guide
+                </h4>
+<ul class="space-y-md">
+<li class="flex items-start gap-base">
+<div class="w-2 h-2 rounded-full bg-secondary mt-2"></div>
+<div>
+<p class="text-label-sm font-bold">Super Admin</p>
+<p class="text-body-sm text-on-surface-variant">Full system control, user management, and global settings.</p>
+</div>
+</li>
+<li class="flex items-start gap-base">
+<div class="w-2 h-2 rounded-full bg-tertiary mt-2"></div>
+<div>
+<p class="text-label-sm font-bold">Editor</p>
+<p class="text-body-sm text-on-surface-variant">Manage content, services, news, and events.</p>
+</div>
+</li>
+<li class="flex items-start gap-base">
+<div class="w-2 h-2 rounded-full bg-outline mt-2"></div>
+<div>
+<p class="text-label-sm font-bold">Viewer</p>
+<p class="text-body-sm text-on-surface-variant">Read-only access to specific departmental reports.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Potential action on row click
+                console.log('Row clicked');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

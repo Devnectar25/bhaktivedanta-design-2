@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Testimonials Management | Bhaktivedanta Hospital Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#684000",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container": "#e6eeff",
+                        "error-container": "#ffdad6",
+                        "background": "#f8f9ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "on-surface-variant": "#444651",
+                        "surface": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#121c2a",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#001a42",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-container": "#fea619",
+                        "on-surface": "#121c2a",
+                        "surface-variant": "#d9e3f6",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface-container-high": "#dee9fc",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d0dbed",
+                        "secondary-fixed": "#ffddb8",
+                        "secondary": "#d97706",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#757682",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary-container": "#82abff",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#90a8ff",
+                        "on-primary-fixed": "#00164e",
+                        "tertiary-container": "#003d88",
+                        "surface-container-highest": "#d9e3f6",
+                        "primary-container": "#1e3a8a",
+                        "primary": "#1e3a8a",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface-bright": "#f8f9ff",
+                        "outline-variant": "#c5c5d3",
+                        "inverse-surface": "#27313f",
+                        "tertiary": "#00285e",
+                        "surface-tint": "#4059aa",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "40px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="text-on-background antialiased overflow-x-hidden">
+<!-- Side Navigation Rail -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Top App Bar -->
+<header class="sticky top-0 right-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 flex justify-between items-center h-xl px-margin-desktop w-[calc(100%-280px)] ml-[280px]">
+<div class="flex items-center gap-md flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary text-body-sm transition-all outline-none" placeholder="Search for testimonials, patients, or treatments..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<button class="flex items-center gap-sm hover:bg-surface-container-high py-1 px-3 rounded-full transition-all">
+<img alt="Admin" class="w-8 h-8 rounded-full border border-primary/20" data-alt="A professional headshot of a female hospital administrator in her 40s wearing a dark navy blazer and a subtle stethoscope necklace, set against a clean, brightly lit modern medical office background with soft bokeh. The lighting is flattering and professional, embodying trust and authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTz4xF5pjwZ7XXQmIcY4fDzWi_saPwBwjRr1L5jyjxIswjwCM-Bs_CJRVES30tiIIYYFUJBs56xuYIzYPwAmBxvJWeyupdsNdb8dd7uiqzuAjzutsEV9CeUUHbfaxw0FB4pP9KhDl326pR7GGjd8kEzzCk1-PnqffeGZ5KmcPQsSuFBvcFAGeBm8exbz3j8JSpl7XyVms0UFhNOmIVTUGJj--qAST5v6_tZ47mZcoRIJ1SkPjVm6rWbiX5PSoq0P-uVFo9ZCJD8ws"/>
+<span class="font-label-lg text-label-lg text-on-surface">Admin User</span>
+<span class="material-symbols-outlined text-outline" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] px-8 pb-8 pt-[88px] min-h-[calc(100vh-64px)]">
+<!-- Breadcrumbs & Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+<div>
+<nav class="flex items-center gap-xs text-label-sm text-outline mb-2">
+<span class="hover:text-primary cursor-pointer">Dashboard</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-bold">Testimonials</span>
+</nav>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-1">Testimonials Management</h2>
+<p class="text-body-md text-on-surface-variant">Manage patient testimonials and success stories</p>
+</div>
+<button class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-md py-3 rounded-xl font-label-lg text-label-lg hover:brightness-95 active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Add New Testimonial
+            </button>
+</div>
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-lg">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_0_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-sm text-outline uppercase tracking-wider">Total Testimonials</span>
+<div class="w-8 h-8 rounded-lg bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="forum">forum</span>
+</div>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface">1,284</span>
+<div class="flex items-center gap-1 text-green-600 mt-2 text-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+<span>12% from last month</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_0_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-sm text-outline uppercase tracking-wider">Published</span>
+<div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-700 text-[20px]" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface">1,152</span>
+<div class="flex items-center gap-1 text-on-surface-variant mt-2 text-label-sm">
+<span>90% of total</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_0_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-sm text-outline uppercase tracking-wider">Featured</span>
+<div class="w-8 h-8 rounded-lg bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface">48</span>
+<div class="flex items-center gap-1 text-on-surface-variant mt-2 text-label-sm">
+<span>Selected for homepage</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_0_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 flex flex-col">
+<div class="flex items-center justify-between mb-2">
+<span class="text-label-sm text-outline uppercase tracking-wider">Pending Reviews</span>
+<div class="w-8 h-8 rounded-lg bg-error-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-error text-[20px]" data-icon="pending">pending</span>
+</div>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface">23</span>
+<div class="flex items-center gap-1 text-error mt-2 text-label-sm">
+<span class="material-symbols-outlined text-[14px]" data-icon="priority_high">priority_high</span>
+<span>Needs immediate action</span>
+</div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-outline-variant/20 shadow-sm mb-gutter">
+<div class="flex flex-wrap items-center gap-md">
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm text-outline mb-1">Search Patient</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg py-2 pl-3 pr-10 focus:ring-1 focus:ring-primary outline-none text-body-sm" placeholder="Name or Case ID" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-[20px]" data-icon="person_search">person_search</span>
+</div>
+</div>
+<div class="w-[140px]">
+<label class="block text-label-sm text-outline mb-1">Rating</label>
+<select class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg py-2 px-3 focus:ring-1 focus:ring-primary outline-none text-body-sm appearance-none">
+<option>All Ratings</option>
+<option>5 Stars</option>
+<option>4 Stars</option>
+<option>3 Stars</option>
+</select>
+</div>
+<div class="w-[140px]">
+<label class="block text-label-sm text-outline mb-1">Featured</label>
+<select class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg py-2 px-3 focus:ring-1 focus:ring-primary outline-none text-body-sm appearance-none">
+<option>All</option>
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+<div class="w-[140px]">
+<label class="block text-label-sm text-outline mb-1">Status</label>
+<select class="w-full bg-surface-container-low border border-outline-variant/30 rounded-lg py-2 px-3 focus:ring-1 focus:ring-primary outline-none text-body-sm appearance-none">
+<option>All Status</option>
+<option>Published</option>
+<option>Pending</option>
+<option>Draft</option>
+</select>
+</div>
+<div class="pt-5">
+<button class="flex items-center gap-2 text-primary hover:bg-primary-container/10 px-md py-2 rounded-lg font-label-lg text-label-lg transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="restart_alt">restart_alt</span>
+                        Reset Filters
+                    </button>
+</div>
+</div>
+</div>
+<!-- Main Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant/30">
+<tr>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Patient</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Treatment</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold w-1/4">Message</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Rating</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Featured</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Status</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold">Created</th>
+<th class="px-md py-4 text-label-sm text-outline uppercase tracking-wider font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant/30" data-alt="A warm, smiling middle-aged man with kind eyes and short grey hair, wearing a casual linen shirt. The portrait is high-definition, shot with a shallow depth of field in a sunlit garden, radiating happiness and health recovery. The color palette is natural and vibrant, emphasizing a positive healthcare outcome." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8q1wkfE0fhQVzWkQHgCOpVdwwk3E4S1gcZXCLwe_3lOoVxAHJILdM2Y93zI2dAGCxSP2hOU7ePaLoGihiLudPJ1zoxu5EgcUacM90-8hF8QMphaSSR5eyTu17QM6_giniQzrpcqmMSX37WJOXJi7kNYLOVpCbZD59PdJ-bK0kLkLf7h4LlXATLeVv5IcIsy5HWPAOoZJ3obg2cN5I1LiAsoaLc833w1YlfC72ICnG_j-m0MqNTvlXWBqdP1fluwJiKcOLHqBV2Lg"/>
+<div>
+<div class="text-label-lg font-bold text-on-surface">Amit Raikar</div>
+<div class="text-body-sm text-outline">P-98421</div>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="text-body-sm px-2 py-1 bg-primary-container/10 text-primary rounded-md border border-primary/10">Heart Surgery</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm text-on-surface-variant line-clamp-2 italic leading-relaxed">
+                                    "The care I received during my bypass surgery was exemplary. The staff treated me like family..."
+                                </p>
+</td>
+<td class="px-md py-4">
+<div class="flex gap-0.5 text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-label-sm font-bold flex items-center w-fit gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    Yes
+                                </span>
+</td>
+<td class="px-md py-4">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-label-sm font-bold border border-green-200">Published</span>
+</td>
+<td class="px-md py-4 text-body-sm text-outline">Oct 12, 2023</td>
+<td class="px-md py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all" title="View Detail"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all" title="Edit"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-error/10 rounded-lg text-error transition-all" title="Delete"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant/30" data-alt="A portrait of a serene older woman with silver hair pulled back in a neat bun, wearing a soft pastel lavender saree. She has a gentle smile and calm expression, photographed against a soft-focus hospital recovery room background with warm morning light. The image captures a sense of dignity and peace in a professional healthcare setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoIURpMViDD2NbXNe4cCqEnN7NnQWZdCRpqK6yJirLYk1hihkTVaf6-XyjKcx6NWCJZLsDKLzOGNk_UElNx0JCHbUf5cLSdU8fYfYRw7uGLfzaLidIlfCxpIUh5BGpuWKVUMdtLij4QfvXiHU2d8FRveQ3n5jpRLLEqYonIE2KyGu-LlbdgukMniUlSZFQEJ08HwnNIP2qbRGOuIlSrnktpZLKVRWj2PvlPMx6G3OZLKwsOtRKw_pi9jI806ISoPt5kBS1f2HddMQ"/>
+<div>
+<div class="text-label-lg font-bold text-on-surface">Sunita Pandey</div>
+<div class="text-body-sm text-outline">P-88120</div>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="text-body-sm px-2 py-1 bg-primary-container/10 text-primary rounded-md border border-primary/10">ICU Recovery</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm text-on-surface-variant line-clamp-2 italic leading-relaxed">
+                                    "When things were critical, the nurses didn't leave my side for a second. Truly grateful."
+                                </p>
+</td>
+<td class="px-md py-4">
+<div class="flex gap-0.5 text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star">star</span>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="bg-outline-variant/30 text-outline px-3 py-1 rounded-full text-label-sm font-bold">No</span>
+</td>
+<td class="px-md py-4">
+<span class="bg-error-container/20 text-error px-3 py-1 rounded-full text-label-sm font-bold border border-error/10">Pending</span>
+</td>
+<td class="px-md py-4 text-body-sm text-outline">Oct 10, 2023</td>
+<td class="px-md py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-error/10 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant/30" data-alt="A young man in his late 20s with a sharp haircut and professional attire, appearing energetic and healthy. He is leaning against a clean white wall in a modern office building lobby. The lighting is crisp and bright, conveying a fast-paced but successful recovery and return to work. The overall vibe is modern, successful, and vibrant." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1BFpx7IPKhg6stSUEcS5VnUd6r3mNYAWVl0_CPd89SIDYIlhuw42EJmgQDuCXAHBCj_vVPLvKq_n6m8_H_M2RlpDKyLY-mmHZFLMXsMur5fZT8rOb26vSBJMC8V-VUOydn5H08Ru0Hd81jkEfcG5zebtP-3MSDYotrhv-ekSgBCYK0YXN7HXbXei-rnD_eQg05VegG_g0JiTqNiiLRC-HBB_Rp8S6o1DQiB45NGlDJcws98Q0D5x1E0tMZNSbBylHyNyQXX5STPk"/>
+<div>
+<div class="text-label-lg font-bold text-on-surface">Vikram Khanna</div>
+<div class="text-body-sm text-outline">P-77402</div>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="text-body-sm px-2 py-1 bg-primary-container/10 text-primary rounded-md border border-primary/10">Orthopedic Surgery</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm text-on-surface-variant line-clamp-2 italic leading-relaxed">
+                                    "I'm back to running after just 3 months post-surgery. Dr. Sharma is a miracle worker."
+                                </p>
+</td>
+<td class="px-md py-4">
+<div class="flex gap-0.5 text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-label-sm font-bold flex items-center w-fit gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                                    Yes
+                                </span>
+</td>
+<td class="px-md py-4">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-label-sm font-bold border border-green-200">Published</span>
+</td>
+<td class="px-md py-4 text-body-sm text-outline">Oct 05, 2023</td>
+<td class="px-md py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-error/10 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-lowest/50 transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-outline-variant/30" data-alt="A portrait of a cheerful mother in her 30s holding her young daughter, both laughing. They are seated in a brightly decorated pediatric waiting room that looks friendly and welcoming. High-key lighting, soft textures, and a heartwarming atmosphere that captures the essence of compassionate pediatric care and family relief." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKDb2vYr8lJRk02DollRtvg5Hha7APSe6u3Rn2ZR2avpFV-8iuqKWnoeadm_KI6rFyFAg4pz2clzwS8UdvlT2adWKMkBo4qcUVSUc22j8JkO0vkX5MTWoOEqL42DEfJuOZLA9mFottqXtm9yMqwlo9rzPgepsXO-2r7LokzruJKXRwJU-EZCXkd03C8PuBMThySnZDYjkUL7_nlWx-laAA2YPCDWOyIAv08EaCTS6DqW8x8yYIq2ti6GR4_twfqwFaa-BiwXUbB1s"/>
+<div>
+<div class="text-label-lg font-bold text-on-surface">Riya Agarwal</div>
+<div class="text-body-sm text-outline">P-65293</div>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="text-body-sm px-2 py-1 bg-primary-container/10 text-primary rounded-md border border-primary/10">Pediatrics</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm text-on-surface-variant line-clamp-2 italic leading-relaxed">
+                                    "The pediatric wing is amazing. My daughter felt so comfortable during her stay..."
+                                </p>
+</td>
+<td class="px-md py-4">
+<div class="flex gap-0.5 text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="bg-outline-variant/30 text-outline px-3 py-1 rounded-full text-label-sm font-bold">No</span>
+</td>
+<td class="px-md py-4">
+<span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full text-label-sm font-bold border border-outline-variant/30">Draft</span>
+</td>
+<td class="px-md py-4 text-body-sm text-outline">Sep 28, 2023</td>
+<td class="px-md py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 hover:bg-error/10 rounded-lg text-error transition-all"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-md py-4 bg-surface-container-low flex flex-col md:flex-row items-center justify-between gap-md border-t border-outline-variant/30">
+<p class="text-body-sm text-outline">Showing <span class="font-bold text-on-surface">1 - 10</span> of <span class="font-bold text-on-surface">1,284</span> testimonials</p>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded-lg border border-outline-variant/30 flex items-center justify-center text-outline hover:bg-white transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-label-lg text-label-lg shadow-sm">1</button>
+<button class="w-8 h-8 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-white transition-all font-label-lg">2</button>
+<button class="w-8 h-8 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-white transition-all font-label-lg">3</button>
+<span class="text-outline">...</span>
+<button class="w-8 h-8 rounded-lg border border-outline-variant/30 flex items-center justify-center text-on-surface hover:bg-white transition-all font-label-lg">129</button>
+<button class="w-8 h-8 rounded-lg border border-outline-variant/30 flex items-center justify-center text-outline hover:bg-white transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                console.log('Row clicked for quick view modal trigger');
+            });
+        });
+
+        // Search highlight mock
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            if(e.target.value.length > 2) {
+                console.log('Searching for:', e.target.value);
+            }
+        });
+    </script>
+</body></html>

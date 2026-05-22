@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Queries Management | Bhaktivedanta Hospital Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#d8e2ff",
+                    "surface-container-highest": "#d9e3f6",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "outline": "#757682",
+                    "on-tertiary-fixed": "#001a42",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "on-tertiary-container": "#82abff",
+                    "on-secondary": "#ffffff",
+                    "outline-variant": "#c5c5d3",
+                    "background": "#f8f9ff",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-tertiary-fixed-variant": "#004395",
+                    "on-primary-fixed": "#00164e",
+                    "inverse-primary": "#b6c4ff",
+                    "on-surface-variant": "#444651",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#1e3a8a",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface-bright": "#f8f9ff",
+                    "primary-fixed": "#dce1ff",
+                    "primary": "#1e3a8a",
+                    "on-secondary-fixed": "#2a1700",
+                    "surface-dim": "#d0dbed",
+                    "secondary-fixed": "#ffddb8",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#e6eeff",
+                    "secondary": "#d97706",
+                    "secondary-container": "#fea619",
+                    "on-secondary-container": "#684000",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "inverse-surface": "#27313f",
+                    "on-primary-container": "#90a8ff",
+                    "surface": "#f8f9ff",
+                    "surface-variant": "#d9e3f6",
+                    "surface-tint": "#4059aa",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#00285e",
+                    "surface-container-high": "#dee9fc",
+                    "on-background": "#121c2a",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface": "#121c2a",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#003d88",
+                    "on-primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "gutter": "24px",
+                    "md": "24px",
+                    "margin-desktop": "32px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "xl": "64px",
+                    "xs": "4px",
+                    "lg": "40px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .custom-shadow {
+            box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.04);
+        }
+        .sidebar-active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fea619;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #dce1ff; border-radius: 10px; }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen">
+<!-- SideNavBar (Fixed) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 ml-[280px] w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full w-64 focus:ring-2 focus:ring-primary/20 transition-all text-sm" placeholder="Quick search queries..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary-container rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-primary">Dr. A. Sharma</p>
+<p class="text-xs text-on-surface-variant">Admin</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10 group-hover:border-primary/40 transition-all" data-alt="A professional medical professional portrait for a healthcare administrator profile image. The lighting is crisp and soft, set against a blurred clinical background. The doctor wears a clean white coat with a stethoscope around their neck, embodying trust and precision in a modern hospital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYuxzTG5etagsmggo3ADih1_ibN4KrvAMXD8xuWJyBzgMRwvmpiC3qXJp6n-j_2cv1a6NKM63Kci7PWgi1diWzEesmiHI-5dyTmVDpVwf1V0F5cl2WtnRS_ZLA8db8HFGCfvaZRyuUXb6xTrxwkpQUiyYaEoePataU6CowKbJCd8p8dPIrtC4G3k1gHu8p34D9oRt3sdelrRC_PHym5Y1JimcfbiPuwmzceViBo1j0HCHF_9iXPdd2D7rGgAH6cqfroN8ljHdmLqA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<div class="p-gutter max-w-[1440px] mx-auto">
+<!-- Breadcrumbs & Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex items-center gap-2 text-on-surface-variant text-sm mb-2">
+<span>Dashboard</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-medium">Contact Queries</span>
+</nav>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-1">Contact Queries Management</h2>
+<p class="text-on-surface-variant">Manage website contact form submissions and patient inquiries efficiently.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-lg font-label-lg text-label-lg hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+<span>+ Add Manual Query</span>
+</button>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-md mb-8">
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-primary">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">Total Queries</p>
+<h3 class="text-3xl font-black text-primary">1,284</h3>
+<div class="flex items-center gap-1 text-green-600 text-xs mt-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12%</span>
+</div>
+</div>
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-blue-500">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">New Queries</p>
+<h3 class="text-3xl font-black text-blue-600">42</h3>
+<p class="text-xs text-on-surface-variant mt-2">Requires Action</p>
+</div>
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-orange-400">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">In Progress</p>
+<h3 class="text-3xl font-black text-orange-500">156</h3>
+<p class="text-xs text-on-surface-variant mt-2">Currently being handled</p>
+</div>
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-green-500">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">Resolved</p>
+<h3 class="text-3xl font-black text-green-600">842</h3>
+<p class="text-xs text-on-surface-variant mt-2">Closed successfully</p>
+</div>
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-outline">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">Closed</p>
+<h3 class="text-3xl font-black text-outline">244</h3>
+<p class="text-xs text-on-surface-variant mt-2">Archived items</p>
+</div>
+<div class="glass-card custom-shadow p-5 rounded-xl border-l-4 border-secondary-container">
+<p class="text-xs font-bold text-outline uppercase tracking-wider mb-2">Today</p>
+<h3 class="text-3xl font-black text-secondary-container">12</h3>
+<p class="text-xs text-on-surface-variant mt-2">Last 24 hours</p>
+</div>
+</div>
+<!-- Filters Bar -->
+<div class="glass-card custom-shadow p-4 rounded-xl mb-gutter flex flex-wrap items-center gap-4">
+<div class="flex-1 min-w-[200px] relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-outline-variant rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="Search patient name or ID..." type="text"/>
+</div>
+<select class="bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option>Query Type</option>
+<option>General Inquiry</option>
+<option>Appointment</option>
+<option>Billing</option>
+<option>Emergency</option>
+</select>
+<select class="bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option>Status</option>
+<option>New</option>
+<option>In Progress</option>
+<option>Resolved</option>
+</select>
+<select class="bg-white border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+<option>Priority</option>
+<option>High</option>
+<option>Medium</option>
+<option>Low</option>
+</select>
+<div class="flex items-center gap-2 border border-outline-variant rounded-lg px-4 py-2 text-sm bg-white cursor-pointer">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+<span class="text-on-surface">Date Range</span>
+</div>
+<button class="text-primary font-bold text-sm px-4 py-2 hover:bg-primary/5 rounded-lg transition-all">Reset Filters</button>
+</div>
+<!-- Table Section -->
+<div class="glass-card custom-shadow rounded-2xl overflow-hidden border-none">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Query ID</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Patient Details</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Subject &amp; Type</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant text-center">Priority</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Date Received</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-bold text-primary">#QRY-4902</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Aditya Verma</span>
+<span class="text-xs text-outline">aditya.v@email.com</span>
+<span class="text-xs text-outline">+91 98765 43210</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Second Opinion for Surgery</span>
+<span class="text-xs bg-surface-container-highest text-primary px-2 py-0.5 rounded-full w-fit mt-1">General Inquiry</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">High</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 24, 2023 10:30 AM</td>
+<td class="px-6 py-5">
+<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">New</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all" title="View"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 text-outline hover:bg-outline/10 rounded-lg transition-all" title="Edit"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all" title="Reply"><span class="material-symbols-outlined text-lg">reply</span></button>
+</div>
+</td>
+</tr>
+<!-- Repeatable Rows for visual depth -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-bold text-primary">#QRY-4899</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Priya Sundaram</span>
+<span class="text-xs text-outline">p.sundaram@provider.com</span>
+<span class="text-xs text-outline">+91 88776 55443</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Health Checkup Package Cost</span>
+<span class="text-xs bg-surface-container-highest text-primary px-2 py-0.5 rounded-full w-fit mt-1">Appointment</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="bg-yellow-100 text-yellow-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Medium</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 24, 2023 09:15 AM</td>
+<td class="px-6 py-5">
+<span class="bg-orange-100 text-orange-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">In Progress</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 text-outline hover:bg-outline/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">reply</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-bold text-primary">#QRY-4885</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Sanjay Patel</span>
+<span class="text-xs text-outline">sanjay.patel@gmail.com</span>
+<span class="text-xs text-outline">+91 91234 56789</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Billing Discrepancy Ward #12</span>
+<span class="text-xs bg-surface-container-highest text-primary px-2 py-0.5 rounded-full w-fit mt-1">Billing</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">High</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 23, 2023 04:45 PM</td>
+<td class="px-6 py-5">
+<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">New</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 text-outline hover:bg-outline/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">reply</span></button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-5 font-bold text-primary">#QRY-4870</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">Meera Iyer</span>
+<span class="text-xs text-outline">meera.iyer@live.com</span>
+<span class="text-xs text-outline">+91 70123 44556</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col">
+<span class="font-medium text-on-surface">Medical Record Request</span>
+<span class="text-xs bg-surface-container-highest text-primary px-2 py-0.5 rounded-full w-fit mt-1">General Inquiry</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Low</span>
+</td>
+<td class="px-6 py-5 text-sm text-on-surface-variant">Oct 23, 2023 02:00 PM</td>
+<td class="px-6 py-5">
+<span class="bg-green-100 text-green-800 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Resolved</span>
+</td>
+<td class="px-6 py-5 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">visibility</span></button>
+<button class="p-2 text-outline hover:bg-outline/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">edit</span></button>
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">reply</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-6 bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<p class="text-sm text-on-surface-variant">Showing <span class="font-bold text-primary">1 - 10</span> of <span class="font-bold text-primary">1,284</span> queries</p>
+<div class="flex items-center gap-1">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-white transition-all"><span class="material-symbols-outlined">first_page</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-white transition-all"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold transition-all">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent text-on-surface hover:bg-white transition-all">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent text-on-surface hover:bg-white transition-all">3</button>
+<span class="px-2 text-outline">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent text-on-surface hover:bg-white transition-all">129</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-white transition-all"><span class="material-symbols-outlined">chevron_right</span></button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant text-outline hover:bg-white transition-all"><span class="material-symbols-outlined">last_page</span></button>
+</div>
+</div>
+</div>
+<!-- Dashboard Analytics Preview (Glassmorphism Effect) -->
+<div class="mt-gutter grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<div class="glass-card custom-shadow p-gutter rounded-2xl h-[300px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-headline-md text-headline-md text-primary">Query Volume Trends</h4>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs text-outline">Monthly average</span>
+</div>
+</div>
+<div class="flex-1 flex items-end gap-2 pb-2 overflow-hidden">
+<!-- Mock Chart Bars -->
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[40%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[65%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[50%]"></div>
+<div class="flex-1 bg-primary rounded-t-md cursor-pointer h-[85%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[75%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[60%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[90%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[45%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[55%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[70%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[65%]"></div>
+<div class="flex-1 bg-surface-container-highest rounded-t-md hover:bg-primary transition-all cursor-pointer h-[80%]"></div>
+</div>
+<div class="flex justify-between text-[10px] text-outline mt-2 px-1">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span><span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
+</div>
+</div>
+<div class="glass-card custom-shadow p-gutter rounded-2xl">
+<h4 class="font-headline-md text-headline-md text-primary mb-6">Inquiry Distribution</h4>
+<div class="space-y-4">
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface">General Inquiries</span>
+<span class="font-bold">42%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[42%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface">Appointment Requests</span>
+<span class="font-bold">28%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-blue-400 h-full w-[28%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface">Billing &amp; Payments</span>
+<span class="font-bold">18%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary-container h-full w-[18%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm">
+<span class="text-on-surface">Others</span>
+<span class="font-bold">12%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-outline h-full w-[12%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Future: open detail modal
+                console.log('Row clicked');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

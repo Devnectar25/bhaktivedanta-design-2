@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Doctor | Bhaktivedanta Hospital Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c5c5d3",
+                        "surface-container": "#e6eeff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "inverse-primary": "#b6c4ff",
+                        "secondary": "#d97706",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-background": "#121c2a",
+                        "on-tertiary-container": "#82abff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "inverse-surface": "#27313f",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "secondary-container": "#fea619",
+                        "surface": "#f8f9ff",
+                        "on-surface-variant": "#444651",
+                        "surface-variant": "#d9e3f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "primary-fixed": "#dce1ff",
+                        "surface-dim": "#d0dbed",
+                        "primary": "#1e3a8a",
+                        "on-tertiary-fixed": "#001a42",
+                        "tertiary-container": "#003d88",
+                        "surface-container-high": "#dee9fc",
+                        "on-secondary-fixed": "#2a1700",
+                        "primary-container": "#1e3a8a",
+                        "tertiary": "#00285e",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#eff4ff",
+                        "surface-container-highest": "#d9e3f6",
+                        "surface-tint": "#4059aa",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "error-container": "#ffdad6",
+                        "outline": "#757682",
+                        "on-surface": "#121c2a",
+                        "secondary-fixed": "#ffddb8",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#00164e",
+                        "on-secondary-container": "#684000",
+                        "on-primary-fixed-variant": "#264191",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "margin-desktop": "32px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "lg": "40px",
+                        "md": "24px",
+                        "xl": "64px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background font-body-md text-on-surface custom-scrollbar">
+<!-- FIXED SIDEBAR -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- MAIN CONTENT AREA -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TOP NAV BAR -->
+<header class="sticky top-0 z-40 w-full flex justify-between items-center px-8 py-4 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex items-center space-x-4">
+<div class="flex items-center bg-surface-container rounded-full px-4 py-2 w-96 border border-outline-variant/20 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-sm font-body-sm" placeholder="Search for staff, patients, records..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 h-2 w-2 bg-secondary-container rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<div class="flex items-center space-x-3 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="font-label-lg text-primary">Dr. Anand Patel</p>
+<p class="text-xs text-on-surface-variant">Super Admin</p>
+</div>
+<img alt="Administrator Profile" class="h-10 w-10 rounded-full object-cover border-2 border-primary-container" data-alt="A professional headshot of a mature hospital administrator with a kind expression, wearing a clinical coat and a stethoscope. The background is a clean, softly lit modern hospital office with cool blue and white tones, matching the high-end healthcare dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW62AyZcYm95LhB9TD-GjGHkDaQ_heVvYb4D13CTuaaWDnnxakYNfWhcG0ce-IBs4ngEZufUcp-sn4TpLZZeI2wIsuMKUPEf51Imskm0_UJ5WTLSt1WyG3LYOm6H9FhfizKPesYPx5nwyl_eJllckoNxoaBNJWNpcoOjdJMTgxazcUFxQCyyWKza9FiLzo2vnPgSA9SARiw6IdBWktA9sgIJLk-Xxltj0wTXIV4lbbwa6dYQXZ2kKvD04DABsZFEWDm-kGvTGdhOI"/>
+</div>
+</div>
+</header>
+<!-- PAGE CONTENT -->
+<div class="px-8 pb-8 pt-[88px] max-w-[1440px] mx-auto w-full">
+<!-- BREADCRUMBS -->
+<nav class="flex items-center space-x-2 text-on-surface-variant text-sm mb-6">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Doctors</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-semibold">Add Doctor</span>
+</nav>
+<!-- HEADER SECTION -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Add New Doctor</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Create doctor profile for hospital website</p>
+</div>
+<div class="flex items-center space-x-4">
+<button class="px-6 py-2.5 rounded-lg border border-outline text-on-surface hover:bg-surface-container transition-all font-label-lg">Cancel</button>
+<button class="px-6 py-2.5 rounded-lg border border-primary text-primary hover:bg-primary-container/10 transition-all font-label-lg">Save Draft</button>
+<button class="px-8 py-2.5 rounded-lg bg-secondary-container text-on-primary font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all flex items-center space-x-2">
+<span class="material-symbols-outlined text-lg">publish</span>
+<span>Publish Doctor</span>
+</button>
+</div>
+</div>
+<!-- FORM GRID -->
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- LEFT COLUMN -->
+<div class="col-span-8 space-y-8">
+<!-- SECTION 1: PERSONAL INFORMATION -->
+<section class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 p-8">
+<div class="flex items-center space-x-3 mb-8 border-b border-outline-variant/10 pb-4">
+<span class="material-symbols-outlined text-primary">person</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Personal Information</h3>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<!-- Drag & Drop Photo -->
+<div class="col-span-2 flex items-center space-x-8 mb-4">
+<div class="relative group">
+<div class="h-32 w-32 rounded-2xl bg-surface-container flex items-center justify-center border-2 border-dashed border-outline-variant overflow-hidden">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant" id="preview-icon">add_a_photo</span>
+<img class="hidden absolute inset-0 w-full h-full object-cover" data-alt="A portrait placeholder for a medical professional doctor. Minimalist and clean aesthetic." id="image-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARaXeu4luOd8GQQLzu8wu-OFmQWyR6q11VQmjO9CVE8Qa5omvHneBdrg_Wi-Xa1lMk-N6_ck1IzebvAJBWox8X3ng5uwUeYaxUWkksnNEo03mrijsKUlCR6-1_T3RABeSR508ZmKO_9OjurzGjM6I80oFy4pIUR0q11TN5f6q23TPwRPKRJCAEi_cznj0NbxbdKCdSvg6c9epN7qYSvngqcLX1IIqBuRBhiL58hBsnKBegMWU928brCJcUpOcTTlsGlGqosuKiazY"/>
+</div>
+<button class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div class="flex-1 border-2 border-dashed border-outline-variant/30 rounded-xl p-6 bg-surface-bright text-center hover:border-primary/50 transition-colors cursor-pointer">
+<p class="font-label-lg text-primary">Click to upload or drag and drop</p>
+<p class="text-xs text-on-surface-variant mt-1">SVG, PNG, JPG (max. 800x800px)</p>
+</div>
+</div>
+<div class="col-span-2">
+<label class="block text-label-lg text-on-surface-variant mb-2">Full Name</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Dr. John Doe" type="text"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Gender</label>
+<select class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20">
+<option>Select Gender</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Date of Birth</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" type="date"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Email Address</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="john.doe@bhaktivedanta.com" type="email"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Phone Number</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="col-span-2">
+<label class="block text-label-lg text-on-surface-variant mb-2">Emergency Contact</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Contact Name &amp; Phone" type="text"/>
+</div>
+</div>
+</section>
+<!-- SECTION 2: PROFESSIONAL INFORMATION -->
+<section class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 p-8">
+<div class="flex items-center space-x-3 mb-8 border-b border-outline-variant/10 pb-4">
+<span class="material-symbols-outlined text-primary">school</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Professional Information</h3>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="col-span-2">
+<label class="block text-label-lg text-on-surface-variant mb-2">Qualification</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="MBBS, MD, PhD in Cardiology" type="text"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Medical Registration Number</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="MRN-8872-X" type="text"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Experience (Years)</label>
+<input class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="12" type="number"/>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Department</label>
+<select class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20">
+<option>Select Department</option>
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Pediatrics</option>
+<option>General Surgery</option>
+</select>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Speciality</label>
+<select class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20">
+<option>Select Speciality</option>
+<option>Invasive Cardiology</option>
+<option>Electrophysiology</option>
+<option>Heart Failure Specialist</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-label-lg text-on-surface-variant mb-2">Consultation Fee ($)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">$</span>
+<input class="w-full pl-8 p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20 transition-all" placeholder="150.00" type="text"/>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: AVAILABILITY & STATUS -->
+<section class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 p-8">
+<div class="flex items-center space-x-3 mb-8 border-b border-outline-variant/10 pb-4">
+<span class="material-symbols-outlined text-primary">event_available</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Availability Status</h3>
+</div>
+<div class="grid grid-cols-2 gap-8 items-center">
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Current Status</label>
+<select class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright focus:ring-2 focus:ring-primary/20">
+<option>Available</option>
+<option>Busy</option>
+<option>On Leave</option>
+</select>
+</div>
+<div class="flex flex-col space-y-4">
+<label class="flex items-center cursor-pointer group">
+<div class="relative">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+<span class="ml-3 text-label-lg font-semibold text-on-surface">Active Profile</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input class="h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-lg text-on-surface">Featured Doctor</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN -->
+<div class="col-span-4 space-y-8 sticky top-32">
+<!-- LIVE PREVIEW CARD -->
+<div class="bg-primary rounded-2xl shadow-xl overflow-hidden text-on-primary">
+<div class="p-6 border-b border-white/10 bg-white/5">
+<h4 class="font-headline-md text-headline-md">Public Preview</h4>
+<p class="text-xs text-on-primary/60">How it appears on hospital portal</p>
+</div>
+<div class="p-8 flex flex-col items-center text-center">
+<img alt="Doctor Preview" class="h-32 w-32 rounded-full border-4 border-secondary-container object-cover mb-4 shadow-lg" data-alt="A professional medical portrait of a confident doctor in a bright, modern clinic. The doctor is smiling gently, conveying trust and expertise. High-key lighting, soft blue background, premium professional photography style." id="preview-image-card" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnrPezxr2BmLtps1xFSVmvhKi8W0lfRSFVvsGD-gpWw3qphwi9RU2ISZXtykhJ-3KTN5tY8IXlxgFBYfHe9X7JxHXptVz_pwVCGFDpwh7HfXZbydJSlDC6RDAbbS-OV_-z1z98HHLTLTsFpmIg_axSvcPRJOvEANZxt6wyv1NMLtL_M7YEqB5kYHw18LFqJcHmOy2f_RW85xZeK7jpYL144Pn8W0RkcE0NrJ4pclseTMYS1LZHFTa2GMJfJblvpqEpkok7wbahcqI"/>
+<h5 class="font-headline-md text-xl font-bold" id="preview-name">Dr. John Doe</h5>
+<p class="text-secondary-fixed-dim font-medium mb-2" id="preview-qual">MBBS, Cardiology Specialist</p>
+<div class="flex items-center space-x-2 text-on-primary/80 text-sm mb-4">
+<span class="material-symbols-outlined text-sm">work_history</span>
+<span>12+ Years Experience</span>
+</div>
+<div class="flex space-x-2">
+<span class="px-3 py-1 rounded-full bg-white/10 text-xs">Heart Surgery</span>
+<span class="px-3 py-1 rounded-full bg-white/10 text-xs">Echocardiogram</span>
+</div>
+<button class="mt-8 w-full py-3 bg-secondary-container text-on-primary font-bold rounded-xl shadow-md">Book Appointment</button>
+</div>
+</div>
+<!-- PROFILE & SEO -->
+<div class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/20 p-6 space-y-6">
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Short Bio</label>
+<textarea class="w-full p-3 rounded-lg border border-outline-variant bg-surface-bright text-sm" placeholder="Brief introduction for card view..." rows="3"></textarea>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Schedule (Days)</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 rounded-md bg-primary text-on-primary text-xs font-bold transition-all">Mon</button>
+<button class="px-3 py-1 rounded-md bg-primary text-on-primary text-xs font-bold transition-all">Tue</button>
+<button class="px-3 py-1 rounded-md bg-primary text-on-primary text-xs font-bold transition-all">Wed</button>
+<button class="px-3 py-1 rounded-md bg-primary text-on-primary text-xs font-bold transition-all">Thu</button>
+<button class="px-3 py-1 rounded-md bg-primary text-on-primary text-xs font-bold transition-all">Fri</button>
+<button class="px-3 py-1 rounded-md bg-surface-container text-on-surface-variant text-xs">Sat</button>
+<button class="px-3 py-1 rounded-md bg-surface-container text-on-surface-variant text-xs">Sun</button>
+</div>
+</div>
+<div>
+<label class="block text-label-lg text-on-surface-variant mb-2">Social Links</label>
+<div class="space-y-3">
+<div class="flex items-center bg-surface-bright rounded-lg border border-outline-variant">
+<span class="px-3 text-on-surface-variant"><img alt="LinkedIn" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFqDilGzW3AWbMgIMi7dUBr_ghFpWIDK50yOEcYZ623a4w9EQRNIO2AxVrFIQMLXIz80Mt8uDzywIay1z87vDPoQL8HAdkubvSctMpiRsioEsrwSeuSwUojAc9iA5rucxaB0zz-oqs_DWtuLE2sOCeCEMKQFucf7t_rkG9RtmZdcYDzqnTR2JggrHrhOnNFtbSPv8ZGL3QOZ8ExFE2NqKgiCxNRg4f_54-TzUEBZoWihpN_hnpBD2xewUQy2Yt7mRiWd4D6-3sziM"/></span>
+<input class="w-full border-none bg-transparent text-sm focus:ring-0" placeholder="LinkedIn URL" type="text"/>
+</div>
+<div class="flex items-center bg-surface-bright rounded-lg border border-outline-variant">
+<span class="px-3 text-on-surface-variant"><img alt="Facebook" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLiL9qWwtOvXqzLJjNDvBaV5X-y1s3_4NlqJckA1GtG4UtnZjTLACy6QwoDjo1QmfixiayxAT1Oizl7Rza4ND_-4Ss_r0gXKqO9fybsOqljdEtBmVGplJsa3Z-vwKX92rMJpcYELJ0Lfo6vU7WsvUErunzkvSHnzzBMn7tIHuykVeHFVCkq9d5-ZEtMv9TodrHjEw4A3YfjIfbHAGKewUlmPG00oyxTiF_JXQs5UHe-6fKIekWx5XW0Dk2op0aZ9kAF8tl9mfDCrw"/></span>
+<input class="w-full border-none bg-transparent text-sm focus:ring-0" placeholder="Facebook URL" type="text"/>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/30">
+<h5 class="font-label-lg text-primary mb-4 flex items-center"><span class="material-symbols-outlined text-lg mr-2">search</span> SEO Settings</h5>
+<div class="space-y-4">
+<input class="w-full p-2.5 rounded-lg border border-outline-variant bg-surface-bright text-sm" placeholder="Meta Title" type="text"/>
+<textarea class="w-full p-2.5 rounded-lg border border-outline-variant bg-surface-bright text-sm" placeholder="Meta Description"></textarea>
+</div>
+</div>
+<div class="space-y-3 pt-6 border-t border-outline-variant/30">
+<label class="flex items-center space-x-3 cursor-pointer">
+<input checked="" class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-lg text-on-surface-variant">Show on Homepage</span>
+</label>
+<label class="flex items-center space-x-3 cursor-pointer">
+<input checked="" class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-lg text-on-surface-variant">Show in Featured Doctors</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- FOOTER ACTION BAR (Mobile) -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white p-4 shadow-up flex justify-between items-center z-50">
+<button class="text-on-surface-variant font-label-lg">Cancel</button>
+<button class="px-6 py-2 bg-secondary-container text-on-primary rounded-lg font-bold">Publish Doctor</button>
+</div>
+</div>
+</main>
+<script>
+        // Simple Interaction: Sync Preview Name
+        const nameInput = document.querySelector('input[placeholder="Dr. John Doe"]');
+        const previewName = document.getElementById('preview-name');
+        
+        nameInput.addEventListener('input', (e) => {
+            previewName.textContent = e.target.value || "Dr. John Doe";
+        });
+
+        const qualInput = document.querySelector('input[placeholder="MBBS, MD, PhD in Cardiology"]');
+        const previewQual = document.getElementById('preview-qual');
+        
+        qualInput.addEventListener('input', (e) => {
+            previewQual.textContent = e.target.value || "MBBS, Cardiology Specialist";
+        });
+
+        // Toggle Days Micro-interaction
+        const dayButtons = document.querySelectorAll('.gap-2 button');
+        dayButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(btn.classList.contains('bg-primary')) {
+                    btn.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+                    btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+                } else {
+                    btn.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+                    btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+                }
+            });
+        });
+
+        // Drag and Drop Visual Feedback
+        const dropZone = document.querySelector('.cursor-pointer');
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary', 'bg-primary-container/10');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary', 'bg-primary-container/10');
+        });
+    </script>
+</body></html>

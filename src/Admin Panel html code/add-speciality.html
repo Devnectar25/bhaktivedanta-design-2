@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Speciality | Bhaktivedanta Hospital Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: rgba(255, 255, 255, 0.12);
+            border-right: 4px solid #fea619;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5c5d3;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#fea619",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#003d88",
+                        "surface-container-low": "#eff4ff",
+                        "on-surface": "#121c2a",
+                        "secondary-fixed": "#ffddb8",
+                        "primary-fixed": "#dce1ff",
+                        "outline-variant": "#c5c5d3",
+                        "on-surface-variant": "#444651",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#00285e",
+                        "surface-container-highest": "#d9e3f6",
+                        "on-primary-container": "#90a8ff",
+                        "primary-container": "#1e3a8a",
+                        "background": "#f8f9ff",
+                        "tertiary-fixed": "#d8e2ff",
+                        "surface-container": "#e6eeff",
+                        "on-primary-fixed": "#00164e",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-tertiary-container": "#82abff",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "surface-container-high": "#dee9fc",
+                        "on-secondary-container": "#684000",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#4059aa",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "secondary": "#d97706",
+                        "on-tertiary-fixed": "#001a42",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-bright": "#f8f9ff",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "on-background": "#121c2a",
+                        "primary": "#1e3a8a",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-dim": "#d0dbed",
+                        "surface-variant": "#d9e3f6",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-surface": "#27313f",
+                        "surface": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#b6c4ff",
+                        "outline": "#757682"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "xl": "64px",
+                        "margin-mobile": "16px",
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "margin-desktop": "32px",
+                        "base": "8px",
+                        "md": "24px",
+                        "sm": "12px"
+                    },
+                    fontFamily: {
+                        "label-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-[#1e3a8a] shadow-[4px_0_15px_rgba(0,0,0,0.2)] flex flex-col py-lg z-50 overflow-hidden">
+<div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div>
+<nav class="flex-1 overflow-y-auto px-sm custom-scrollbar space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white font-bold bg-white/10 transition-colors" href="#"><span class="material-symbols-outlined">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px bg-white/10 my-sm mx-md"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px bg-white/10 my-sm mx-md"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav>
+<div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-on-error py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all shadow-lg"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">settings</span><span class="font-label-lg text-label-lg">Settings</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-red-500/20 hover:text-red-300 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-red-300">logout</span><span class="font-label-lg text-label-lg">Logout</span></a></div></div>
+</aside>
+<!-- HEADER -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-xl bg-surface/80 backdrop-blur-md z-40 px-margin-desktop flex items-center justify-between border-b border-outline-variant/30">
+<div>
+
+<nav class="flex items-center gap-2 text-xs text-outline font-medium mt-1">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Specialities</a>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary-container">Add Speciality</span>
+</nav>
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative hidden lg:block">
+<input class="w-[320px] bg-surface-container-low border-none rounded-full px-md py-2 text-sm focus:ring-2 focus:ring-primary-fixed-dim transition-all pl-10" placeholder="Search records, doctors, settings..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30"></div>
+<div class="flex items-center gap-sm">
+<div class="text-right hidden sm:block">
+<p class="font-label-lg text-label-lg text-on-surface">Dr. Rahul Mehta</p>
+<p class="text-[10px] text-outline font-bold uppercase tracking-wider">Super Admin</p>
+</div>
+<img alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover" data-alt="A professional close-up portrait of a South Asian male hospital administrator in a clinical environment. He is wearing a modern blue suit with a subtle pattern and a light white shirt, projecting confidence and authority. The lighting is bright and clean, typical of a high-end corporate medical office, with soft-focus medical equipment in the background. The overall aesthetic is premium, professional, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnnMHNF4Mbk1i_0Su4MroPTtlcX-OeLuxjEPkUxOwCtrY4XyeyKdK6xqNOr6sSBIuAUI-OZG_zEzx_LBVIsgSwyAc1tJAfEBe9hf47wMfNAWeWZSANVEpSMseQ9YsnEwSOyoPO8nHYs5ZW2jzVtdMaPFj7im6AbrqA9FlJmsA_xk0MlllWIP69aWoDbL_abngSc2g5vD37yNz1v7AWXh3K7xubIVDyD70WUihzBpEf6jJ7AZCI5D2sxk4lz-dDfC-C_Rv6HdrYteQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="ml-[280px] pt-[80px] pb-xl px-margin-desktop min-h-screen">
+<div class="max-w-[1440px] mx-auto mt-gutter">
+<div class="flex flex-col xl:flex-row gap-gutter">
+<!-- FORM SECTION -->
+<div class="flex-1">
+<div class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] overflow-hidden">
+<div class="p-md border-b border-outline-variant/20 bg-surface-container-lowest flex justify-between items-center">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Speciality Configuration</h3>
+<p class="font-body-sm text-body-sm text-outline">Enter the details below to create a new hospital speciality landing page.</p>
+</div>
+<div class="flex items-center gap-base">
+<span class="text-sm font-semibold text-outline">Status:</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success text-success"></div>
+<span class="ms-2 text-sm font-medium text-success">Active</span>
+</label>
+</div>
+</div>
+<div class="p-md grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Left Column -->
+<div class="space-y-md">
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Speciality Name</label>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim focus:border-primary transition-all" placeholder="e.g. Cardiology" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Department Category</label>
+<select class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim focus:border-primary transition-all appearance-none">
+<option>Medical</option>
+<option>Surgical</option>
+<option>Diagnostic</option>
+<option>Emergency</option>
+<option>Rehabilitation</option>
+<option>Wellness</option>
+</select>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Short Description (Max 160 chars)</label>
+<textarea class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim focus:border-primary transition-all" placeholder="A brief summary for listing cards..." rows="3"></textarea>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Full Description</label>
+<div class="border border-outline-variant/50 rounded-lg overflow-hidden">
+<div class="bg-surface-container-low border-b border-outline-variant/30 p-2 flex gap-2">
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">format_bold</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">format_italic</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">format_list_bulleted</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-sm">link</span></button>
+</div>
+<textarea class="w-full bg-surface border-none px-md py-3 focus:ring-0 transition-all" placeholder="Detailed information about the speciality, treatments, and expertise..." rows="6"></textarea>
+</div>
+</div>
+<div class="flex gap-lg items-center pt-2">
+<div class="flex-1 space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Display Order</label>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim transition-all" type="number" value="1"/>
+</div>
+<div class="flex items-center gap-2 pt-6">
+<input class="w-5 h-5 rounded text-primary border-outline-variant focus:ring-primary" id="featured" type="checkbox"/>
+<label class="font-label-lg text-label-lg text-on-surface-variant" for="featured">Featured Speciality</label>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div class="space-y-md">
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Speciality Icon Upload</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-primary-container text-3xl mb-2 group-hover:scale-110 transition-transform">upload_file</span>
+<p class="text-sm font-semibold text-primary">Click to upload or drag and drop</p>
+<p class="text-xs text-outline mt-1">SVG, PNG or ICO (max. 512x512px)</p>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Banner Image Upload</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-primary-container text-3xl mb-2 group-hover:scale-110 transition-transform">image</span>
+<p class="text-sm font-semibold text-primary">Click to upload banner image</p>
+<p class="text-xs text-outline mt-1">High-res JPEG or PNG (16:9 ratio recommended)</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Department Count</label>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="0" type="number"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Head Doctor</label>
+<select class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim transition-all appearance-none">
+<option>Select Doctor</option>
+<option>Dr. Rahul Mehta</option>
+<option>Dr. Ananya Sharma</option>
+<option>Dr. Vikram Singh</option>
+</select>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">Related Services</label>
+<div class="flex flex-wrap gap-2 p-3 bg-surface border border-outline-variant/50 rounded-lg min-h-[48px]">
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">Heart Surgery <button class="material-symbols-outlined text-[14px]">close</button></span>
+<span class="bg-primary-fixed text-on-primary-fixed px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">ECG Testing <button class="material-symbols-outlined text-[14px]">close</button></span>
+<button class="text-primary text-xs font-bold px-2 hover:underline">+ Add Service</button>
+</div>
+</div>
+<div class="space-y-md pt-4">
+<div class="px-md py-2 bg-surface-container text-primary font-bold text-xs rounded uppercase tracking-wider">SEO &amp; Metadata</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">SEO Meta Title</label>
+<input class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="Best Cardiology Services in Mumbai..." type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-lg text-label-lg text-on-surface-variant">SEO Meta Description</label>
+<textarea class="w-full bg-surface border border-outline-variant/50 rounded-lg px-md py-3 focus:ring-2 focus:ring-primary-fixed-dim transition-all" placeholder="Describe your department for search engines..." rows="2"></textarea>
+</div>
+</div>
+</div>
+</div>
+<div class="p-md bg-surface-container-low/50 border-t border-outline-variant/20 flex justify-end gap-md">
+<button class="px-xl py-3 text-on-surface-variant font-label-lg text-label-lg hover:bg-surface-container-high transition-all rounded-xl">Cancel</button>
+<button class="px-xl py-3 border border-primary-container text-primary-container font-label-lg text-label-lg hover:bg-primary-container/5 transition-all rounded-xl">Save Draft</button>
+<button class="px-xl py-3 bg-[#F59E0B] hover:bg-[#D97706] text-white font-label-lg text-label-lg transition-all rounded-xl shadow-lg shadow-secondary/20">Publish Speciality</button>
+</div>
+</div>
+</div>
+<!-- PREVIEW SECTION -->
+<div class="w-full xl:w-[400px]">
+<div class="sticky top-[104px]">
+<div class="bg-white rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] overflow-hidden border border-outline-variant/10">
+<div class="p-md border-b border-outline-variant/20">
+<h4 class="font-label-lg text-label-lg text-primary uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">visibility</span>
+                                    Live Card Preview
+                                </h4>
+</div>
+<div class="p-md bg-surface-container-low/30">
+<!-- Card Mockup -->
+<div class="bg-white rounded-2xl shadow-xl overflow-hidden group">
+<div class="relative h-48 overflow-hidden">
+<img alt="Preview Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A cinematic, wide-angle photograph of a state-of-the-art cardiology department inside a luxury hospital. The room is dominated by advanced medical monitors displaying heart rhythms in vibrant greens and blues. Clinical white walls are offset by soft, warm architectural lighting that creates a welcoming and high-tech atmosphere. The composition is clean, airy, and professional, reflecting a high standard of patient care and technological superiority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjqq2sGmiuACrrZ4MxJkh8seNictFEQ0MmxEkrjgejNhJvlh8iEjZsd4_4zHmmQ6El7ndPoGLxoQtcx_77beK1LG_5M1X9wbKS0LdMbqgZ9N35X996lmx4uQs7iomTWa4tAFCuUlMMEKonXa1cPtpo-F9BRVa6P-UaH_3DzwKtHPnQHAMViNX2A0h_hCPKBTMqawzjc_GnfSOekBafr93PxNTJJzpE_71il8QtYb2_wW_Z0T9LrOPtjkoDOJVsBvUyTrrw435aBjk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
+<div class="absolute bottom-4 left-4 flex items-center gap-3">
+<div class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+<div>
+<h5 class="text-white font-bold text-lg leading-none">Cardiology</h5>
+<p class="text-white/80 text-xs mt-1">Medical Department</p>
+</div>
+</div>
+</div>
+<div class="p-md space-y-md">
+<p class="text-on-surface-variant text-sm leading-relaxed line-clamp-3">
+                                            Our cardiology department provides world-class heart care with advanced diagnostic tools and personalized treatment plans led by renowned specialists.
+                                        </p>
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/20">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="A close-up professional headshot of a male doctor in a white clinical coat, smiling warmly. The background is a soft-focus medical hall with cool white and blue tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAT7ZCinsvVmP2k5lh7Ebru1jNa57Z36BwOKW_iWoOaOL8EiVQlw4vAtuS-5vsP9bcHddTdL1kiHA3V-v0o7etw-aTVIU-zqbMRm32WUqq9j5nu4ZiXRPuQKE3m5-fOMeuj4AZSok_xyMZNttHeJ6xzUt44Bc7hAZyxoS5xFPnwvUxnAkSu5CD-1k3gdObeoPdsG10slczb4cdRYNDHFu3M1a8S8XOawZcUSJFnGe3n84BuxG0js4lhuBNfc5pQ3IzoTdyL6YLVx8s"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="A professional portrait of a female doctor with a stethoscope around her neck, looking confident and compassionate. The lighting is clean and bright, emphasizing a premium healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXudMSt40scC0xl6nwnrZpv_C5Br6jLQiNW2Ap9y7YjQj69GYaZ2u7qZHugS-tVQzaLZhtKkZxrzYX1M4Ho9dfyZUs44W9kA-uM_xGvPLdStmZqBko5CWnSrXKJjqOduFn0QiJOzpknX16KysG2rj2JoV9nkTRQ_XDdsK4HuQVm_ROf7zqGTHCIZHZsxJtY8RsT7uWxWlHOzbZmIA0hoV4u3WLmg8DQ5jCiRC04RF_ikWu43SX097RKZAYKDTyksMUh1AWd3TlKAQ"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary">+12</div>
+</div>
+<a class="text-primary font-bold text-xs flex items-center gap-1 group/btn" href="#">
+                                                Learn More
+                                                <span class="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Meta Info Preview -->
+<div class="mt-lg p-md bg-primary-container/5 rounded-xl border border-primary-container/10">
+<h6 class="text-xs font-bold text-primary uppercase tracking-widest mb-3">Public Search Results</h6>
+<div class="space-y-2">
+<div class="text-blue-700 text-lg hover:underline cursor-pointer">Best Cardiology Services in Mumbai | Bhaktivedanta Hospital</div>
+<div class="text-green-700 text-xs">bhaktivedantahospital.com › specialities › cardiology</div>
+<p class="text-on-surface-variant text-xs">Our world-class Cardiology department offers 24/7 emergency care, advanced heart screenings, and non-invasive surgeries...</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Tips -->
+<div class="mt-md p-md bg-secondary-fixed/30 rounded-xl border border-secondary-fixed flex gap-md">
+<span class="material-symbols-outlined text-secondary text-2xl">lightbulb</span>
+<div>
+<p class="text-on-secondary-fixed font-bold text-sm">Optimization Tip</p>
+<p class="text-on-secondary-fixed-variant text-xs mt-1">Using high-quality real images of the department increases user trust by up to 40%.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions and effects
+        document.addEventListener('DOMContentLoaded', () => {
+            // Drag and drop visual feedback
+            const dropzones = document.querySelectorAll('.border-dashed');
+            dropzones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('border-primary', 'bg-surface-container-low');
+                });
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('border-primary', 'bg-surface-container-low');
+                });
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('border-primary', 'bg-surface-container-low');
+                });
+            });
+
+            // Status toggle logic
+            const statusToggle = document.querySelector('input[type="checkbox"][checked]');
+            if(statusToggle) {
+                statusToggle.addEventListener('change', function() {
+                    const statusText = this.parentElement.nextElementSibling;
+                    if(this.checked) {
+                        statusText.textContent = 'Active';
+                        statusText.classList.remove('text-outline');
+                        statusText.classList.add('text-success');
+                    } else {
+                        statusText.textContent = 'Inactive';
+                        statusText.classList.remove('text-success');
+                        statusText.classList.add('text-outline');
+                    }
+                });
+            }
+        });
+    </script>
+</body></html>

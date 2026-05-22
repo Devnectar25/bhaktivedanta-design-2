@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Health Package | Bhaktivedanta Hospital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#4059aa",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#d0dbed",
+                    "on-tertiary-fixed-variant": "#004395",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-background": "#121c2a",
+                    "tertiary-container": "#003d88",
+                    "secondary-container": "#fea619",
+                    "secondary": "#d97706",
+                    "outline": "#757682",
+                    "surface-variant": "#d9e3f6",
+                    "on-tertiary-container": "#82abff",
+                    "tertiary": "#00285e",
+                    "on-secondary-container": "#684000",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "tertiary-fixed": "#d8e2ff",
+                    "on-tertiary-fixed": "#001a42",
+                    "primary": "#1e3a8a",
+                    "on-primary-fixed": "#00164e",
+                    "surface": "#f8f9ff",
+                    "inverse-primary": "#b6c4ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "primary-container": "#1e3a8a",
+                    "on-secondary-fixed": "#2a1700",
+                    "on-primary-container": "#90a8ff",
+                    "secondary-fixed": "#ffddb8",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#dee9fc",
+                    "surface-bright": "#f8f9ff",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#d9e3f6",
+                    "primary-fixed": "#dce1ff",
+                    "on-surface": "#121c2a",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "surface-container-low": "#eff4ff",
+                    "on-surface-variant": "#444651",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "inverse-surface": "#27313f",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#e6eeff",
+                    "background": "#f8f9ff",
+                    "on-error": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "40px",
+                    "margin-desktop": "32px",
+                    "xs": "4px",
+                    "base": "8px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "md": "24px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-sm": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d9e3f6; border-radius: 10px; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.04);
+        }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden flex h-screen">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-[280px] overflow-y-auto bg-surface relative flex flex-col">
+<!-- Top Bar -->
+<header class="h-16 px-margin-desktop flex justify-between items-center bg-surface/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+<div class="flex items-center gap-md">
+<div class="relative flex items-center bg-surface-container-low px-sm py-1.5 rounded-full border border-outline-variant w-96">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-full placeholder:text-on-surface-variant/50" placeholder="Search hospital resources..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">chat_bubble</span></button>
+<div class="flex items-center gap-sm pl-md border-l border-outline-variant">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-on-surface">Dr. Rajesh Kumar</p>
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Administrator</p>
+</div>
+<img alt="Admin" class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="A professional headshot of a mature South Asian male doctor wearing a white lab coat and a stethoscope, set against a soft blue clinical background. The image has high-key studio lighting, creating a trustworthy and clean medical professional aesthetic that aligns with a premium hospital administration dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyI1TJXrH6403KixOtFFco8bpHhsT6Ck6cCHAe_FuF4KLiV3xQHMDB0iyR81LHr5u-6qWEZqcqyGqHvMsgSKqy5Z69K5mxriKyBPh98KMoNiz_EkV9dNl4YzFc6Kdop70_vGki36d8N2nNvUAvhxcWaE2FJAeje8JUPqJLXyGGyqTUtf2tMTcBwZWKQMQLTS-K-VmOSEYqA1m0WTAGm5c8avGMdGckrZenI7gp2QeeU7PWl3sTI3J77xeolnwMfimEBtD_qxy8wJQ"/>
+</div>
+</div>
+</header>
+<!-- Page Header & Content -->
+<div class="px-8 pb-8 pt-[88px] max-w-[1440px] mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-on-surface-variant font-label-lg text-label-lg mb-4">
+<a class="hover:text-primary" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary" href="#">Health Packages</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-primary font-bold">Add Package</span>
+</nav>
+<!-- Title Section -->
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary">Add New Health Package</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Create wellness and diagnostic packages for hospital website</p>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm bg-surface-container-high px-4 py-2 rounded-lg border border-outline-variant">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Featured Package</span>
+<input class="w-5 h-5 text-primary rounded border-outline-variant focus:ring-primary" type="checkbox"/>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-high px-4 py-2 rounded-lg border border-outline-variant">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Status</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+<span class="ml-2 font-label-lg text-label-lg text-on-surface">Active</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Form Content -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Primary Info -->
+<div class="col-span-8 space-y-gutter">
+<!-- Basic Information Card -->
+<div class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">info</span>
+                            General Information
+                        </h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Package Name</label>
+<input class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all" placeholder="e.g. Comprehensive Cardiac Screening" type="text"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Category</label>
+<select class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all appearance-none">
+<option>Select Category</option>
+<option>Preventive Care</option>
+<option>Diagnostic</option>
+<option>Surgical</option>
+<option>Wellness</option>
+</select>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Duration / Validity</label>
+<input class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all" placeholder="e.g. 1 Year / Single Visit" type="text"/>
+</div>
+<div class="col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Short Description</label>
+<textarea class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white transition-all" placeholder="Brief summary for list views..." rows="2"></textarea>
+</div>
+<div class="col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Full Description (Details &amp; Clinical Importance)</label>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<div class="bg-surface-container-low px-md py-2 border-b border-outline-variant flex gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">format_bold</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">format_italic</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">format_list_bulleted</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">link</button>
+</div>
+<textarea class="w-full px-md py-3 border-none focus:ring-0 bg-white" placeholder="Describe the medical package in detail..." rows="6"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Tests & Services Card -->
+<div class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">biotech</span>
+                            Tests &amp; Included Services
+                        </h3>
+<div class="space-y-4">
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Multi-select tests</label>
+<div class="flex flex-wrap gap-2">
+<span class="bg-primary/10 text-primary px-3 py-1.5 rounded-full font-label-lg flex items-center gap-1">CBC <button class="material-symbols-outlined text-sm">close</button></span>
+<span class="bg-primary/10 text-primary px-3 py-1.5 rounded-full font-label-lg flex items-center gap-1">Blood Sugar <button class="material-symbols-outlined text-sm">close</button></span>
+<span class="bg-primary/10 text-primary px-3 py-1.5 rounded-full font-label-lg flex items-center gap-1">Lipid Profile <button class="material-symbols-outlined text-sm">close</button></span>
+<span class="bg-primary/10 text-primary px-3 py-1.5 rounded-full font-label-lg flex items-center gap-1">Liver Function <button class="material-symbols-outlined text-sm">close</button></span>
+<button class="border-2 border-dashed border-outline-variant text-on-surface-variant px-4 py-1 rounded-full font-label-lg hover:border-primary hover:text-primary transition-all">+ Add Test</button>
+</div>
+</div>
+</div>
+<!-- SEO Section -->
+<div class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">language</span>
+                            SEO &amp; Metadata
+                        </h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Meta Title</label>
+<input class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white" placeholder="Maximum 60 characters" type="text"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Meta Description</label>
+<textarea class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white" placeholder="Maximum 160 characters for search results" rows="3"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Media & Pricing -->
+<div class="col-span-4 space-y-gutter">
+<!-- Pricing Card -->
+<div class="glass-card p-md rounded-xl border-t-4 border-secondary-container">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">payments</span>
+                            Pricing Details
+                        </h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Original Price (₹)</label>
+<input class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white text-headline-md font-bold" placeholder="0.00" type="number"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Discounted Price (₹)</label>
+<input class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white text-headline-md font-bold text-secondary" placeholder="0.00" type="number"/>
+<p class="text-[11px] text-on-surface-variant mt-1 italic">*This price will be displayed as the primary booking cost.</p>
+</div>
+</div>
+</div>
+<!-- Media Upload Card -->
+<div class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">image</span>
+                            Media Assets
+                        </h3>
+<div class="space-y-6">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Package Thumbnail</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-md flex flex-col items-center justify-center bg-surface hover:bg-surface-container transition-all cursor-pointer">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-2">cloud_upload</span>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Click or drag image</p>
+<p class="text-[10px] text-on-surface-variant/70 uppercase">JPG, PNG (MAX 2MB)</p>
+</div>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface-variant mb-2">Promotional Banner</label>
+<div class="h-32 border-2 border-dashed border-outline-variant rounded-xl p-base flex flex-col items-center justify-center bg-surface hover:bg-surface-container transition-all cursor-pointer overflow-hidden relative group">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" data-alt="A panoramic wide-angle photograph of a state-of-the-art medical diagnostic suite. The image features high-end medical equipment, sterile white walls, and soft blue ambient lighting that creates a calming and premium atmosphere. The composition is clean and professional, conveying a sense of advanced healthcare technology and patient safety." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHu5Kj8xgk2pEzY9cvcvjG5_h-GRM94Ad9IkTfj0LDdydPg0jTgJCpKlygLn9fkVdJkUnXcMHci7RKUVEY84OhsY4syW349yHN48iJ34MlGmKRg_JOSG9tUmIaSfoCd0lwrS649eGPoXuPXqKpbFGPDYoy_0OTLzlqlzxTM7Ak0t7vSUw6XjUW_Oa8SknkDRnxW1mznUnkXW1OQfuE3MfdX35je-UZoYOh6dCQVImpKF_cmnIKkFCTgiTeTYvd6Os7rmAT4a1pWZY"/>
+<span class="material-symbols-outlined text-primary mb-1 relative z-10">add_photo_alternate</span>
+<p class="font-label-lg text-label-lg text-primary relative z-10">Replace Banner</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Policies Card -->
+<div class="glass-card p-md rounded-xl">
+<h3 class="font-headline-md text-headline-md text-primary mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined">gavel</span>
+                            Terms &amp; Conditions
+                        </h3>
+<textarea class="w-full px-md py-3 rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white text-body-sm" placeholder="Specific T&amp;C for this package..." rows="4"></textarea>
+</div>
+</div>
+</div>
+<!-- Footer Action Bar -->
+<div class="mt-xl pt-lg border-t border-outline-variant flex justify-end items-center gap-md pb-xl">
+<button class="px-xl py-3 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high transition-colors">Cancel</button>
+<button class="px-xl py-3 rounded-lg font-label-lg text-label-lg text-primary border border-primary hover:bg-primary/5 transition-colors">Save Draft</button>
+<button class="px-xl py-3 rounded-lg font-label-lg text-label-lg bg-[#F59E0B] text-white font-bold shadow-lg shadow-[#F59E0B]/20 hover:scale-[1.02] transition-transform flex items-center gap-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">publish</span>
+                    Publish Package
+                </button>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for active toggle
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.nextElementSibling && this.nextElementSibling.classList.contains('font-label-lg')) {
+                    this.nextElementSibling.innerText = this.checked ? 'Active' : 'Inactive';
+                }
+            });
+        });
+
+        // Sticky Header Shadow transition
+        const main = document.querySelector('main');
+        const header = document.querySelector('header');
+        main.addEventListener('scroll', () => {
+            if (main.scrollTop > 10) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

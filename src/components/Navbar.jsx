@@ -28,10 +28,14 @@ const Navbar = () => {
           <a href="#doctors" onClick={() => setMobileMenuOpen(false)}>Doctors</a>
           <a href="#hospital" onClick={() => setMobileMenuOpen(false)}>Hospital</a>
           <a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a>
+          <a href="/admin/login.html" className="admin-link mobile-only" onClick={() => setMobileMenuOpen(false)}>Admin</a>
           <button className="btn-primary appointment-btn mobile-only">Book Appointment</button>
         </div>
         
-        <button className="btn-primary appointment-btn desktop-only">Book Appointment</button>
+        <div className="nav-buttons desktop-only">
+          <a href="/admin/login.html" className="admin-btn">Admin</a>
+          <button className="btn-primary appointment-btn">Book Appointment</button>
+        </div>
         
         <button 
           className={`mobile-toggle ${mobileMenuOpen ? 'active' : ''}`} 
