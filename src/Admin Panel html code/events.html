@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Events Management | MedAdmin Pro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#121c2a",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#003d88",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#d9e3f6",
+                      "surface": "#f8f9ff",
+                      "tertiary": "#00285e",
+                      "surface-container-high": "#dee9fc",
+                      "on-background": "#121c2a",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-tint": "#4059aa",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#27313f",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-primary-container": "#90a8ff",
+                      "surface-container": "#e6eeff",
+                      "secondary-container": "#fea619",
+                      "on-secondary-container": "#684000",
+                      "secondary": "#d97706",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed": "#ffddb8",
+                      "surface-dim": "#d0dbed",
+                      "on-secondary-fixed": "#2a1700",
+                      "primary-fixed": "#dce1ff",
+                      "surface-bright": "#f8f9ff",
+                      "primary": "#1e3a8a",
+                      "on-primary-fixed-variant": "#264191",
+                      "error-container": "#ffdad6",
+                      "primary-container": "#1e3a8a",
+                      "on-surface-variant": "#444651",
+                      "on-tertiary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#00164e",
+                      "inverse-primary": "#b6c4ff",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "surface-container-low": "#eff4ff",
+                      "background": "#f8f9ff",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "tertiary-fixed-dim": "#adc6ff",
+                      "on-tertiary-container": "#82abff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c5c5d3",
+                      "outline": "#757682",
+                      "on-tertiary-fixed": "#001a42",
+                      "tertiary-fixed": "#d8e2ff",
+                      "surface-container-highest": "#d9e3f6",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "lg": "40px",
+                      "xl": "64px",
+                      "margin-mobile": "16px",
+                      "base": "8px",
+                      "md": "24px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px",
+                      "sm": "12px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-lg": ["Inter"],
+                      "label-sm": ["Inter"]
+              }
+            },
+          },
+        }
+      </script>
+<style>body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .sidebar-active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-weight: 700;
+            border-radius: 0.5rem;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }</style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Main Content Wrapper -->
+<div class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[280px] h-16 flex items-center justify-between px-md z-30 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant/50 rounded-lg text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search events, venues, or staff..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden xl:block">
+<p class="text-label-lg font-bold text-on-surface">Administrator</p>
+<p class="text-label-sm text-on-surface-variant">City General Hub</p>
+</div>
+<img alt="Admin User Profile" class="w-10 h-10 rounded-full border-2 border-primary-fixed shadow-sm" data-alt="A professional portrait of a healthcare administrator in a clean, modern medical facility. The lighting is soft and bright, using a light-mode aesthetic with high-key whites and deep blue accents. The style is crisp and corporate, conveying trust, precision, and authority in a premium hospital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRb0mjCex1h121zLKKQfOCaAArlmjc8kt0g97NWp2ufoXf8uerGpzzqtf530yq08DJPfZObqrFuDgySZLfYl5no1akXpTpkI3Z7PmiJNY-tsPONvi1RCGllcDBV0CcyMNKgHOkj2xFBcYallx520BesHw5JgpJFmL1y4-uIuv1OwiVn45jb90bpYSqpVN6xl5rnYeavLzYp6b6FPl5O_7ua7anN9EGgoJ6jFXgU68YGiYT4Cc58Bkla49C0lfuBsrczEsMCnF-NrQ"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="mt-16 p-md flex-1">
+<!-- Breadcrumb & Action Area -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-lg gap-4">
+<div>
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant mb-1">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary font-semibold">Events</span>
+</nav>
+<h2 class="text-headline-lg font-bold text-on-surface">Events Management</h2>
+</div>
+<button class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-6 py-3 rounded-xl font-bold shadow-soft hover:brightness-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span>Add New Event</span>
+</button>
+</div>
+<!-- Summary Cards Bento Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-lg">
+<!-- Total Events -->
+<div class="glass-card p-md rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-primary-container/10 rounded-lg text-primary-container">
+<span class="material-symbols-outlined">event_available</span>
+</div>
+<span class="text-label-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">+12%</span>
+</div>
+<p class="text-label-lg text-on-surface-variant">Total Events</p>
+<h3 class="text-headline-xl font-bold">124</h3>
+</div>
+<!-- Upcoming -->
+<div class="glass-card p-md rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-secondary-container/10 rounded-lg text-secondary">
+<span class="material-symbols-outlined">upcoming</span>
+</div>
+</div>
+<p class="text-label-lg text-on-surface-variant">Upcoming Events</p>
+<h3 class="text-headline-xl font-bold">18</h3>
+</div>
+<!-- Completed -->
+<div class="glass-card p-md rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-tertiary-container/10 rounded-lg text-tertiary-container">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+</div>
+<p class="text-label-lg text-on-surface-variant">Completed Events</p>
+<h3 class="text-headline-xl font-bold">94</h3>
+</div>
+<!-- Featured -->
+<div class="glass-card p-md rounded-xl shadow-soft">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-tint/10 rounded-lg text-surface-tint">
+<span class="material-symbols-outlined">star</span>
+</div>
+</div>
+<p class="text-label-lg text-on-surface-variant">Featured Events</p>
+<h3 class="text-headline-xl font-bold">12</h3>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="glass-card p-md rounded-xl shadow-soft mb-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="lg:col-span-1">
+<label class="text-label-sm font-semibold mb-1 block">Search Event</label>
+<input class="w-full p-2 bg-white border border-outline-variant/30 rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20" placeholder="Name or ID..." type="text"/>
+</div>
+<div>
+<label class="text-label-sm font-semibold mb-1 block">Category</label>
+<select class="w-full p-2 bg-white border border-outline-variant/30 rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20">
+<option>All Categories</option>
+<option>Health Camp</option>
+<option>Seminar</option>
+<option>Workshop</option>
+<option>Community Outreach</option>
+</select>
+</div>
+<div>
+<label class="text-label-sm font-semibold mb-1 block">Status</label>
+<select class="w-full p-2 bg-white border border-outline-variant/30 rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20">
+<option>All Statuses</option>
+<option>Upcoming</option>
+<option>Completed</option>
+<option>Cancelled</option>
+<option>Draft</option>
+</select>
+</div>
+<div>
+<label class="text-label-sm font-semibold mb-1 block">Date Range</label>
+<input class="w-full p-2 bg-white border border-outline-variant/30 rounded-lg text-body-sm focus:ring-2 focus:ring-primary/20" type="date"/>
+</div>
+<div class="flex items-end gap-2">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity">Apply</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors" title="Reset Filters">
+<span class="material-symbols-outlined">restart_alt</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Events Table Card -->
+<div class="glass-card rounded-xl shadow-soft overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/30">
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Event</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Category</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Date &amp; Venue</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Registration</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider text-center">Featured</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-md py-4 text-label-sm font-bold text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Event Thumbnail" class="w-full h-full object-cover" data-alt="A clean, cinematic photograph of a modern community health fair held in a spacious, sun-drenched hospital atrium. Professional medical staff in crisp white uniforms interact with diverse visitors. The atmosphere is optimistic and high-tech, characterized by a bright light-mode aesthetic and a sophisticated blue and white palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM1zdVatdiuBeL-UE4SVzhaPcZHdiKB-8CYAufEFT5dYHJ61Tb4wnEZ6GgJF1-glqH7hAOthSzXPGuRs9yFO3Y0V5OaW6OrVGdqqj1c4t-zQ37DrBTs49C2T8dZktim3dkLvhUjaR6SQdtF3QmzdnDHnMHrZNeyt4J8u2EA0Rkw97Ja-LHUxjp3aDI9a6odA2_3yyN0DKlz5Wmn6BzSrEgrqp72RjUsEnHtb5kCD6ck6tXLC4KZfChLjPVzIFSMzLUEPUAobNeaOk"/>
+</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Annual Heart Health Camp</p>
+<p class="text-label-sm text-on-surface-variant">ID: EV-2024-001</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed text-label-sm rounded-full">Health Camp</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">Oct 15, 2024</p>
+<p class="text-label-sm text-on-surface-variant">Main Atrium, Block A</p>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-body-sm text-green-700 font-medium">Open</span>
+</div>
+<p class="text-label-sm text-on-surface-variant">420/500 Registered</p>
+</td>
+<td class="px-md py-4 text-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-label-sm rounded-full font-medium">Upcoming</span>
+</td>
+<td class="px-md py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Event Thumbnail" class="w-full h-full object-cover" data-alt="A high-end medical conference room with a large LED screen displaying complex surgical diagrams. The seating is tiered and minimalist, bathed in soft, diffused cool-white lighting. The mood is intellectual and authoritative, reflecting a premium medical seminar environment within a modern hospital facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwNqTC2zJhY4cvoha-IKmOoNzrqTixE98ZWXXYDcKf1TtuGk9NQIC1HJl0eg6lJXJcg4nIJagnmMV6GCtDNI0ZZGu06blmAYzGMoNjWUn5Fjai5VUx4NWi28N5ZDNRoibXyPWlYYCqrIj_mn4xkaLYCTsqLGH8f9yrvkxKiQ0fpgzBmDTvqs90GVhyKEnR7jSXo_WPOGqh-uWLK3r0MDOJoRxTvt7fP7aO68HRSCq3gwoocXi3TQMHmw4J1DmDKurWXmrxBPcHNqw"/>
+</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Neuro-Surgeons Global Summit</p>
+<p class="text-label-sm text-on-surface-variant">ID: EV-2024-002</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-label-sm rounded-full">Seminar</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">Sep 20, 2024</p>
+<p class="text-label-sm text-on-surface-variant">Conference Hall B</p>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-orange-500"></span>
+<span class="text-body-sm text-orange-700 font-medium">Limited</span>
+</div>
+<p class="text-label-sm text-on-surface-variant">148/150 Registered</p>
+</td>
+<td class="px-md py-4 text-center">
+<span class="material-symbols-outlined text-outline">star</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-blue-100 text-blue-800 text-label-sm rounded-full font-medium">Upcoming</span>
+</td>
+<td class="px-md py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container overflow-hidden">
+<img alt="Event Thumbnail" class="w-full h-full object-cover" data-alt="A close-up, professionally lit shot of a modern vaccination station in a bright, hygienic hospital setting. The lighting is clean and clinical, with high-key whites and soft blue reflections. The scene is calm and reassuring, capturing the precision and care of a public health initiative in a corporate medical facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpnSAzkpI5Gcdn-inixGupc_F0TBDo6uWMGMTsH1pkdEvWpZwlPXZ2YUT7r1-fqOEealh6vfWRdlZZ88lVMrzLKJCwmkrAhu1vDs2dBf9C2TqQ06Qbz7XwKOoFbeq7AnpTNaMbYDqbo6BF7G4Mbb1fqpSKWKYh6_l1bVh0lsCgZz287X97Yv3yVCAx_2UreUuTzztDHEgYtfCsIFrFj-6YQf1V4K0mqAmZJ5-w32iG0lvN9uLhCJcvwTcfa7Uc_t04wuVzK0IbJC4"/>
+</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Community Polio Drive</p>
+<p class="text-label-sm text-on-surface-variant">ID: EV-2023-098</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-secondary-fixed text-on-secondary-fixed text-label-sm rounded-full">Outreach</span>
+</td>
+<td class="px-md py-4">
+<p class="text-body-sm font-medium">Aug 12, 2024</p>
+<p class="text-label-sm text-on-surface-variant">City Public Park</p>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="text-body-sm text-outline font-medium">Closed</span>
+</div>
+<p class="text-label-sm text-on-surface-variant">Final: 1,204 Children</p>
+</td>
+<td class="px-md py-4 text-center">
+<span class="material-symbols-outlined text-outline">star</span>
+</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 bg-green-100 text-green-800 text-label-sm rounded-full font-medium">Completed</span>
+</td>
+<td class="px-md py-4 text-right">
+<div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 hover:bg-surface-container rounded-lg text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination & Footer -->
+<div class="px-md py-4 bg-surface-container-low flex items-center justify-between border-t border-outline-variant/30">
+<p class="text-label-sm text-on-surface-variant">Showing <span class="font-bold text-on-surface">1 - 10</span> of <span class="font-bold text-on-surface">124</span> records</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-label-sm font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface text-label-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface text-label-sm">3</button>
+<span class="px-2 text-outline">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface text-label-sm">13</button>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-lg text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Attribution -->
+<footer class="p-md text-center">
+<p class="text-label-sm text-on-surface-variant">© 2024 Bhaktivedanta Hospital Management System • MedAdmin Pro v2.4.0</p>
+</footer>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple animation for numbers on load
+        document.querySelectorAll('h3.text-headline-xl').forEach(counter => {
+            const finalValue = parseInt(counter.innerText);
+            let startValue = 0;
+            const duration = 1000;
+            const stepTime = Math.abs(Math.floor(duration / finalValue));
+            
+            const timer = setInterval(() => {
+                startValue += Math.ceil(finalValue / 20);
+                if (startValue >= finalValue) {
+                    counter.innerText = finalValue;
+                    clearInterval(timer);
+                } else {
+                    counter.innerText = startValue;
+                }
+            }, 30);
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

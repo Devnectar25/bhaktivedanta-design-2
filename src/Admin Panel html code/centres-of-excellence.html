@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centres of Excellence Management | Bhaktivedanta Hospital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#fea619",
+                        "surface-container-highest": "#d9e3f6",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d9e3f6",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "secondary-fixed": "#ffddb8",
+                        "primary-container": "#1e3a8a",
+                        "tertiary-container": "#003d88",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "on-surface-variant": "#444651",
+                        "on-primary-container": "#90a8ff",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#4059aa",
+                        "secondary": "#d97706",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed": "#00164e",
+                        "on-primary-fixed-variant": "#264191",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#d8e2ff",
+                        "outline": "#757682",
+                        "on-tertiary-fixed": "#001a42",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#2a1700",
+                        "surface-container": "#e6eeff",
+                        "on-secondary-container": "#684000",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-surface": "#27313f",
+                        "surface-container-high": "#dee9fc",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-dim": "#d0dbed",
+                        "surface-container-low": "#eff4ff",
+                        "primary": "#1e3a8a",
+                        "on-background": "#121c2a",
+                        "on-tertiary-container": "#82abff",
+                        "outline-variant": "#c5c5d3",
+                        "tertiary": "#00285e",
+                        "surface": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "background": "#f8f9ff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-surface": "#121c2a",
+                        "primary-fixed": "#dce1ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "base": "8px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-active { background: rgba(255, 255, 255, 0.1); color: #ffffff; font-weight: 700; border-radius: 0.5rem; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .shadow-level-1 { box-shadow: 0 4px 15px rgba(30, 58, 138, 0.04); }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Fixed Side Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-[280px] right-0 h-16 bg-surface/80 backdrop-blur-md flex justify-between items-center px-gutter z-40">
+<div class="flex items-center gap-md w-1/3">
+
+</div>
+<div class="flex-grow max-w-xl">
+<div class="relative flex items-center focus-within:ring-2 focus-within:ring-primary rounded-lg">
+<span class="material-symbols-outlined absolute left-sm text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg py-2 pl-10 pr-sm text-body-md focus:outline-none" placeholder="Search departments, doctors, or centers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md ml-md">
+<button class="material-symbols-outlined text-on-surface-variant p-xs hover:bg-surface-container-high rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant p-xs hover:bg-surface-container-high rounded-full transition-all">help</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-xs"></div>
+<button class="flex items-center gap-xs p-xs hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="material-symbols-outlined">arrow_drop_down</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<div class="max-w-[1440px] mx-auto p-gutter space-y-lg">
+<!-- Breadcrumb & Header Action -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div class="space-y-xs">
+<nav class="flex items-center text-label-sm text-on-surface-variant gap-xs">
+<span class="hover:text-primary cursor-pointer">Dashboard</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Centres of Excellence</span>
+</nav>
+<h2 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">Management Suite</h2>
+<p class="text-body-md text-on-surface-variant">Manage hospital specialized excellence departments and service tiers.</p>
+</div>
+<button class="bg-secondary text-on-secondary px-lg py-md rounded-xl flex items-center gap-xs font-bold shadow-md hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                    Add New Centre
+                </button>
+</div>
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="glass-card shadow-level-1 p-md rounded-xl flex flex-col gap-xs">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Total Centres</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-xl text-primary">08</span>
+<div class="p-xs bg-primary-fixed rounded-lg">
+<span class="material-symbols-outlined text-primary">hub</span>
+</div>
+</div>
+</div>
+<div class="glass-card shadow-level-1 p-md rounded-xl flex flex-col gap-xs">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Active Centres</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-xl text-secondary">08</span>
+<div class="p-xs bg-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+</div>
+</div>
+<div class="glass-card shadow-level-1 p-md rounded-xl flex flex-col gap-xs">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Featured Centres</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-xl text-tertiary">03</span>
+<div class="p-xs bg-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined text-tertiary">stars</span>
+</div>
+</div>
+</div>
+<div class="glass-card shadow-level-1 p-md rounded-xl flex flex-col gap-xs">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Depts Covered</span>
+<div class="flex items-end justify-between">
+<span class="text-headline-xl text-on-surface">12</span>
+<div class="p-xs bg-surface-container-highest rounded-lg">
+<span class="material-symbols-outlined text-on-surface-variant">category</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filters Row -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-level-1 flex flex-wrap gap-md items-end">
+<div class="flex-grow min-w-[200px] space-y-xs">
+<label class="text-label-sm font-bold text-on-surface-variant">Search by Name</label>
+<div class="relative">
+<input class="w-full bg-surface-container border-none rounded-lg py-2 px-sm text-body-md focus:ring-2 focus:ring-primary" placeholder="Centre name..." type="text"/>
+</div>
+</div>
+<div class="w-48 space-y-xs">
+<label class="text-label-sm font-bold text-on-surface-variant">Department</label>
+<select class="w-full bg-surface-container border-none rounded-lg py-2 px-sm text-body-md focus:ring-2 focus:ring-primary">
+<option>All Departments</option>
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Orthopedics</option>
+<option>Oncology</option>
+</select>
+</div>
+<div class="w-40 space-y-xs">
+<label class="text-label-sm font-bold text-on-surface-variant">Featured</label>
+<select class="w-full bg-surface-container border-none rounded-lg py-2 px-sm text-body-md focus:ring-2 focus:ring-primary">
+<option>All Status</option>
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+<div class="w-40 space-y-xs">
+<label class="text-label-sm font-bold text-on-surface-variant">Status</label>
+<select class="w-full bg-surface-container border-none rounded-lg py-2 px-sm text-body-md focus:ring-2 focus:ring-primary">
+<option>Active</option>
+<option>Inactive</option>
+<option>Pending</option>
+</select>
+</div>
+<button class="px-md py-2 text-primary font-bold hover:bg-primary-fixed rounded-lg transition-all flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+                    Reset
+                </button>
+</div>
+<!-- Main Table Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-level-1 overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase">Centre</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase">Category</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase">Description</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase">Head Doctor</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase text-center">Featured</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase text-center">Status</th>
+<th class="px-md py-md text-label-sm font-bold text-on-surface-variant uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="w-16 h-10 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a stylized medical heart icon on a clean technological background, representing cardiac sciences. The image is bright with high-key lighting, featuring soft blues and deep royal blues consistent with a clinical and premium healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtshZtvIwXlvCS8ip3RylLkF0XzadQqJMx4WJdfaJANGMTXC1MP_NiSQkVAyt1EzoLbymb49tt0xmsGHrkkphrvga4wqe-aRgyD5fTDrtT_hJdbO_wjqQbDhpbesnRbPA8r-0JO8DmAJtJ0ktbvX0B8ElLvdc8fU5YpHasJEL5ult8NbCeB43a1K0iBvw9pNbK5hDHtrWf6TJSZP942APzqasVOoXE-a30L06TrJ3JEfuvGK65DlWS-VpQUZYBP90M8H8U-HEYC90"/>
+</div>
+<span class="font-bold text-primary body-md">Cardiac Sciences</span>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-primary-fixed text-primary px-sm py-1 rounded-full text-label-sm font-bold">Cardiology</span>
+</td>
+<td class="px-md py-md max-w-[200px]">
+<p class="text-body-sm text-on-surface-variant truncate">Advanced bypass surgery and electrophysiology labs.</p>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-body-sm font-medium">Dr. Arvind Mehta</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="bg-green-100 text-green-800 px-sm py-1 rounded-full text-label-sm font-bold">Active</span>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">visibility</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit</button>
+<button class="material-symbols-outlined text-error hover:text-error-container">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="w-16 h-10 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, abstract representation of neural networks and pathways, rendered in high-definition digital art. The scene uses a professional healthcare color palette of soft whites, light blues, and deep indigo. Bright, focused lighting emphasizes the complexity and precision of neurosciences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNMmTk6dAic0iesjCBCsQHgB6XuauVZgmBXcV6mod_TDIsei9GxcJMx63Dv7UTtepuEkhEEzZrqOBi_jWMRHFOGrnL81JmdhUuSM0QP0vMTsICjKRqiNem4BZLFkPw4Lg964w3Ght-PHjoZ9NHOkLrzecUel0xNgwacUicr4nPrcEYCGLAvQrythrDyOojM-RgLlF-LSzzymHU24LXZXR5prxFrQw0Qj4wEL2mloaYKn0lO2rIXhChEjOAfgk2u-p-U3CXK6zoCUk"/>
+</div>
+<span class="font-bold text-primary body-md">Neurosciences</span>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-tertiary-fixed text-tertiary px-sm py-1 rounded-full text-label-sm font-bold">Neurology</span>
+</td>
+<td class="px-md py-md max-w-[200px]">
+<p class="text-body-sm text-on-surface-variant truncate">Specialized stroke unit and neuro-rehab facility.</p>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-body-sm font-medium">Dr. Sarah D'Souza</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="bg-green-100 text-green-800 px-sm py-1 rounded-full text-label-sm font-bold">Active</span>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">visibility</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit</button>
+<button class="material-symbols-outlined text-error hover:text-error-container">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="w-16 h-10 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality 3D render of a human bone joint model, showcasing orthopedic excellence with precision. The background is a minimalist medical environment with soft shadows and professional studio lighting, emphasizing the durability and technical nature of the specialty." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXD_1ShVobC2Ce2Chy-zfyAtrmIHDNh7RfD2r1U-2VqUWzWEfF-rTWnEahRl57gMhfYwXDOqpqR0PbkoPuxKNTxAGOVqynNPkmOtt3djb2_TKXYvnosEwGOe39F6qYIsOO2bipeHFuzbl6Fw7s8n5uyjnLOiX79s7X3esIUHTBRAQT9grpMv9l6fxlHNvMjs1L5BM2-mXJGmd1NMqTTf6foRFfstbQClM8YiSWAJCqEPCFybDYSJ0D793qGaKAmG30jGVtIAysHkE"/>
+</div>
+<span class="font-bold text-primary body-md">Orthopedic Excellence</span>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-surface-container-highest text-on-surface-variant px-sm py-1 rounded-full text-label-sm font-bold">Orthopedics</span>
+</td>
+<td class="px-md py-md max-w-[200px]">
+<p class="text-body-sm text-on-surface-variant truncate">Robotic-assisted joint replacement surgery.</p>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-body-sm font-medium">Dr. Rahul Verma</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="material-symbols-outlined text-outline">stars</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="bg-green-100 text-green-800 px-sm py-1 rounded-full text-label-sm font-bold">Active</span>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">visibility</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit</button>
+<button class="material-symbols-outlined text-error hover:text-error-container">delete</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="w-16 h-10 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A laboratory setting featuring a high-precision microscope and DNA double-helix models, signifying cancer care and advanced research. The lighting is sterile yet inviting, with a palette dominated by white and deep royal blue tones, conveying hope and scientific excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi4lRhRm-8xIPV45zQ1d0kxchHlUTzpYM47D5IfDMN-kDKCiAY0VRpuKyKxXSPglsk9NZ2w1wIwggmDiwxreF-SWC3T2JIG3twSVY3iY3IUpp1M8v8gXp7uJcnPW_Itodt53ql84iWlimabvL4pVLQvSCODNdzTE0XPJbIH9QKBM1CXgKKiVy2igdtQo_MT2UfDcKBhiysiR22Kg7PW2ij5q5_xlBJyEgQFoFBACstuUAXaA1pWk8S8zunS2-REOM0baozL8rB0D8"/>
+</div>
+<span class="font-bold text-primary body-md">Cancer Care</span>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-secondary-fixed text-secondary px-sm py-1 rounded-full text-label-sm font-bold">Oncology</span>
+</td>
+<td class="px-md py-md max-w-[200px]">
+<p class="text-body-sm text-on-surface-variant truncate">Precision radiation therapy and chemotherapy units.</p>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">person</span>
+<span class="text-body-sm font-medium">Dr. Priya Shah</span>
+</div>
+</td>
+<td class="px-md py-md text-center">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="bg-green-100 text-green-800 px-sm py-1 rounded-full text-label-sm font-bold">Active</span>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">visibility</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit</button>
+<button class="material-symbols-outlined text-error hover:text-error-container">delete</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-md py-md bg-surface-container-low flex items-center justify-between border-t border-outline-variant">
+<span class="text-body-sm text-on-surface-variant">Showing 1 to 4 of 8 entries</span>
+<div class="flex items-center gap-xs">
+<button class="p-xs hover:bg-surface-container-high rounded transition-all text-on-surface-variant disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-label-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-on-surface-variant text-label-sm transition-all">2</button>
+<button class="p-xs hover:bg-surface-container-high rounded transition-all text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Meta Info -->
+<footer class="text-center pt-lg pb-md">
+<p class="text-label-sm text-on-surface-variant/50">Bhaktivedanta Hospital &amp; Research Institute © 2024. All rights reserved.</p>
+</footer>
+</div>
+</main>
+<script>
+        // Simple logic for interactive elements
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('shadow-lg');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('shadow-lg');
+        });
+    </script>
+</body></html>

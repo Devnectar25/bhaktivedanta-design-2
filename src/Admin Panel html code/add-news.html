@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bhaktivedanta Admin - Add News Article</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#d9e3f6",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "surface-dim": "#d0dbed",
+                        "tertiary-fixed": "#d8e2ff",
+                        "secondary-fixed": "#ffddb8",
+                        "surface": "#f8f9ff",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-error": "#ffffff",
+                        "outline": "#757682",
+                        "tertiary-container": "#003d88",
+                        "surface-container": "#e6eeff",
+                        "primary": "#1e3a8a",
+                        "on-tertiary-fixed-variant": "#004395",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#27313f",
+                        "surface-bright": "#f8f9ff",
+                        "outline-variant": "#c5c5d3",
+                        "on-secondary-container": "#684000",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-tint": "#4059aa",
+                        "on-secondary-fixed": "#2a1700",
+                        "on-tertiary-fixed": "#001a42",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "secondary-container": "#fea619",
+                        "background": "#f8f9ff",
+                        "on-primary-container": "#90a8ff",
+                        "on-surface": "#121c2a",
+                        "inverse-primary": "#b6c4ff",
+                        "surface-variant": "#d9e3f6",
+                        "tertiary": "#00285e",
+                        "tertiary-fixed-dim": "#adc6ff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "error-container": "#ffdad6",
+                        "on-background": "#121c2a",
+                        "secondary": "#d97706",
+                        "surface-container-high": "#dee9fc",
+                        "primary-container": "#1e3a8a",
+                        "on-tertiary-container": "#82abff",
+                        "on-primary-fixed": "#00164e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#444651"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "xl": "64px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                        "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #1e3a8a !important; box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1) !important; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dce1ff; border-radius: 10px; }
+    </style>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation Rail -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-40 bg-surface/80 backdrop-blur-md flex justify-between items-center h-xl px-margin-desktop border-b border-outline-variant/30">
+<div class="flex items-center gap-md">
+
+</div>
+<div class="flex items-center gap-md">
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container rounded-full border-none text-body-sm font-body-sm" placeholder="Search content..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="flex items-center gap-2 pl-2 pr-4 py-1.5 hover:bg-surface-container-high rounded-full transition-all">
+<img class="w-8 h-8 rounded-full border-2 border-primary-container object-cover" data-alt="A professional portrait of a senior hospital administrator in a clean, clinical setting. The lighting is bright and modern, with a clinical atmosphere and a professional hospital administrative uniform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhwjVXlL5UzaGEzLtk2YWeurzhJWsqf1KpFq08XIcuNKouVuOtFDNoZxI3jw_fgCPpS-iUX6OcSTuRhQBE0jEGL_WS0peBrPvlY4GtJ-WdQEuAN4_eGrRSsaFDFNz8X-m-zI9DN9Hj2z-ugu4uwpcdh61qc0sGr8gPo52Adncpy916fBzBxGBVXPtAjeo-XpZXx26KmBZZ-xHrYt_IDQ61F9EjH2pLg5GbmotfJnM7cluB9vtmHfueX645TTF4kojZJ5vbyGGH7kU"/>
+<span class="font-label-lg text-label-lg">Admin. Priya</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<section class="max-w-[1440px] mx-auto px-8 pb-8 pt-[88px]">
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Left Column: Main Form -->
+<div class="flex-[2] space-y-gutter">
+<!-- General Information Card -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-primary">edit_note</span>
+<h3 class="font-headline-md text-headline-md text-primary">Article Content</h3>
+</div>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">News Title</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" id="article_title" placeholder="e.g. Breakthrough in Robotic Cardiac Surgery" type="text" value="Breakthrough in Robotic Cardiac Surgery"/>
+</div>
+<div class="grid grid-cols-2 gap-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Slug URL</label>
+<div class="flex">
+<span class="inline-flex items-center px-3 bg-surface-container text-outline text-label-sm border border-r-0 border-outline-variant rounded-l-lg">bhkt.in/</span>
+<input class="flex-1 px-md py-sm border border-outline-variant rounded-r-lg font-body-md text-body-md" id="article_slug" type="text" value="robotic-cardiac-breakthrough"/>
+</div>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Status</label>
+<select class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md appearance-none bg-no-repeat bg-[right_1rem_center] bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236B7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]">
+<option>Draft</option>
+<option selected="">Scheduled</option>
+<option>Published</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Short Summary</label>
+<textarea class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" rows="3">Bhaktivedanta Hospital successfully completes its 500th minimally invasive robotic heart procedure, setting a new benchmark for patient recovery times in the region.</textarea>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Full News Content</label>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<div class="bg-surface-container border-b border-outline-variant p-2 flex gap-2">
+<button class="p-1.5 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-body-md">format_bold</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-body-md">format_italic</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-body-md">format_list_bulleted</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-body-md">link</span></button>
+<button class="p-1.5 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined text-body-md">image</span></button>
+</div>
+<textarea class="w-full px-md py-sm border-none font-body-md text-body-md focus:ring-0" rows="12">The surgical team led by Dr. Rajesh Mehta utilized the latest Da Vinci X Robotic System to perform a complex mitral valve repair...
+
+Our center of excellence continues to push the boundaries of clinical care through technology and compassionate healing.</textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- SEO Section Card -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-md">
+<span class="material-symbols-outlined text-secondary">travel_explore</span>
+<h3 class="font-headline-md text-headline-md text-primary">SEO &amp; Social Meta</h3>
+</div>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Meta Title</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" placeholder="Enter meta title for search engines" type="text"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Meta Description</label>
+<textarea class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" placeholder="Enter description (Max 160 characters)" rows="2"></textarea>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Social Share Image</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-lg flex flex-col items-center justify-center bg-surface-container-low group hover:bg-surface-container transition-all cursor-pointer">
+<span class="material-symbols-outlined text-headline-xl text-outline group-hover:scale-110 transition-transform mb-sm">share</span>
+<p class="font-label-lg text-label-lg text-outline">Click to upload social media preview image</p>
+<p class="font-label-sm text-label-sm text-outline-variant">Recommended size: 1200 x 630px</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Settings & Preview -->
+<div class="flex-1 space-y-gutter">
+<!-- Quick Actions & Publishing -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-md">Publishing Settings</h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Category</label>
+<select class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md appearance-none bg-no-repeat bg-[right_1rem_center] bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236B7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]">
+<option>Announcement</option>
+<option selected="">Update</option>
+<option>Awareness</option>
+<option>Press Release</option>
+</select>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Author</label>
+<select class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md appearance-none bg-no-repeat bg-[right_1rem_center] bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236B7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')]">
+<option>Dr. Ananya Sharma</option>
+<option selected="">Admin. Priya Mehta</option>
+<option>Media Relations Dept.</option>
+</select>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Publish Date</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" type="date" value="2024-11-20"/>
+</div>
+<div class="space-y-sm pt-sm border-t border-outline-variant/30">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Schedule Publish</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Featured News</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">Show On Homepage</span>
+</label>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 py-2 px-md border border-primary text-primary rounded-lg font-label-lg text-label-lg hover:bg-primary/5 transition-all">Save Draft</button>
+<button class="flex-[2] py-2 px-md bg-primary text-on-primary rounded-lg font-label-lg text-label-lg shadow-md hover:shadow-lg transition-all">Publish News</button>
+</div>
+<button class="w-full text-center text-error font-label-sm text-label-sm hover:underline py-2">Discard Changes</button>
+</div>
+</div>
+<!-- Media Assets -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-md">Media Assets</h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Cover Image (Thumbnail)</label>
+<div class="relative rounded-xl overflow-hidden group cursor-pointer h-32">
+<img class="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" data-alt="A professional medical photograph of a high-tech robotic surgery system in a clean, brightly lit operating room. The aesthetic is clinical and high-key, with cool blue tones and a crisp, modern hospital atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK-UY5RL_esFjlmHMlmhKUej_wm4egK869Mkuh8FJf44nOthcxV8oHm8ZYAoTJurktLLR75dXLmu8x606ZWU1MFgfgAygDJKhJ-lKI2dc34EN_Xzlqko7X1GepivR1HZKMgBmY7dYrlEdYcvMETuoLG9qFrsb7scrG_RSRTEJnkTe0oeEvgZVnirRsvJk7E_yeeVBUjvAOlzaiebv1rGeCxqVMoaZ7St1uVRWY-RFUH_csh9nxai98XIKBeCTJgfrRdUMlfD9V4GE"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-white">upload</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Banner Image</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-md flex flex-col items-center justify-center bg-surface-container-low group hover:bg-surface-container transition-all cursor-pointer h-24">
+<span class="material-symbols-outlined text-primary text-headline-md">add_photo_alternate</span>
+<p class="font-label-sm text-label-sm text-outline">Upload Banner (1920x600)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Tags & Info -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-md">Details</h3>
+<div class="space-y-md">
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Tags</label>
+<div class="flex flex-wrap gap-2 mb-2">
+<span class="px-2 py-1 bg-surface-container-high rounded text-label-sm text-primary flex items-center gap-1">Surgery <span class="material-symbols-outlined text-sm cursor-pointer">close</span></span>
+<span class="px-2 py-1 bg-surface-container-high rounded text-label-sm text-primary flex items-center gap-1">Technology <span class="material-symbols-outlined text-sm cursor-pointer">close</span></span>
+<span class="px-2 py-1 bg-surface-container-high rounded text-label-sm text-primary flex items-center gap-1">Innovation <span class="material-symbols-outlined text-sm cursor-pointer">close</span></span>
+</div>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-sm text-body-sm" placeholder="Add tag..." type="text"/>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-xs">Reading Time (min)</label>
+<input class="w-full px-md py-sm border border-outline-variant rounded-lg font-body-md text-body-md" type="number" value="4"/>
+</div>
+</div>
+</div>
+<!-- Live Preview -->
+<div class="sticky top-24">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider mb-md">Live Preview</h3>
+<div class="bg-white rounded-xl shadow-xl overflow-hidden border border-outline-variant/20 max-w-sm mx-auto">
+<div class="h-48 relative">
+<img class="w-full h-full object-cover" data-alt="A clean, cinematic shot of a robotic medical surgical arm working in a sterile operating theater. The lighting is bright and professionally captured, conveying trust and medical excellence." id="preview_img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPDqzkmx4PCmmL7EAOSppNq4-_ko3AYQ_LSSadEv8MDHim8bDGchIj3rZbaZeE_R-XqInAX5ewLTx7WQ989ubBFvwnK4rttel9Z4yH3dloGdj8O4dehyVLHwwbVCDjbmRoUg_rfYbkb0De7ZhEc9QniUvYhc-HEq75Der9NCoi3siUldtiqDlAgnkhwMMnbSTtk0Ksb7meAGndGHU_BC_XeeZK0RDFjnUolVOk_itaUWKs-EZhLWYVwmka-HlQxJ7keNMhlHJXo0U"/>
+<span class="absolute top-4 left-4 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Update</span>
+</div>
+<div class="p-md space-y-2">
+<div class="flex items-center gap-2 text-[10px] text-outline font-bold uppercase tracking-widest">
+<span>Nov 20, 2024</span>
+<span>•</span>
+<span>4 min read</span>
+</div>
+<h4 class="font-headline-md text-headline-md leading-tight text-primary" id="preview_title">Breakthrough in Robotic Cardiac Surgery</h4>
+<p class="text-body-sm text-on-surface-variant line-clamp-3" id="preview_summary">Bhaktivedanta Hospital successfully completes its 500th minimally invasive robotic heart procedure...</p>
+<div class="pt-sm flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container"></div>
+<span class="text-[11px] font-bold text-on-surface">Admin. Priya Mehta</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // Micro-interactions for live preview
+        const titleInput = document.getElementById('article_title');
+        const previewTitle = document.getElementById('preview_title');
+        const summaryInput = document.querySelector('textarea'); // first textarea is summary in the DOM
+        const previewSummary = document.getElementById('preview_summary');
+        
+        titleInput.addEventListener('input', (e) => {
+            previewTitle.textContent = e.target.value || 'Headline goes here';
+        });
+
+        // Simple sync for the first textarea which is Summary
+        const textareas = document.querySelectorAll('textarea');
+        textareas[0].addEventListener('input', (e) => {
+            previewSummary.textContent = e.target.value || 'Short summary preview...';
+        });
+
+        // Interactive Button Feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.98)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

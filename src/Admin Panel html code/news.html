@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>News Management | Bhaktivedanta Hospital Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#d9e3f6",
+                      "primary-fixed": "#dce1ff",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "surface-dim": "#d0dbed",
+                      "tertiary-fixed": "#d8e2ff",
+                      "secondary-fixed": "#ffddb8",
+                      "surface": "#f8f9ff",
+                      "on-primary-fixed-variant": "#264191",
+                      "on-error": "#ffffff",
+                      "outline": "#757682",
+                      "tertiary-container": "#003d88",
+                      "surface-container": "#e6eeff",
+                      "primary": "#1e3a8a",
+                      "on-tertiary-fixed-variant": "#004395",
+                      "on-primary": "#ffffff",
+                      "inverse-surface": "#27313f",
+                      "surface-bright": "#f8f9ff",
+                      "outline-variant": "#c5c5d3",
+                      "on-secondary-container": "#684000",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "surface-tint": "#4059aa",
+                      "on-secondary-fixed": "#2a1700",
+                      "on-tertiary-fixed": "#001a42",
+                      "surface-container-low": "#eff4ff",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "secondary-container": "#fea619",
+                      "background": "#f8f9ff",
+                      "on-primary-container": "#90a8ff",
+                      "on-surface": "#121c2a",
+                      "inverse-primary": "#b6c4ff",
+                      "surface-variant": "#d9e3f6",
+                      "tertiary": "#00285e",
+                      "tertiary-fixed-dim": "#adc6ff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "error-container": "#ffdad6",
+                      "on-background": "#121c2a",
+                      "secondary": "#d97706",
+                      "surface-container-high": "#dee9fc",
+                      "primary-container": "#1e3a8a",
+                      "on-tertiary-container": "#82abff",
+                      "on-primary-fixed": "#00164e",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface-variant": "#444651"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "margin-mobile": "16px",
+                      "xl": "64px",
+                      "sm": "12px",
+                      "md": "24px",
+                      "lg": "40px",
+                      "gutter": "24px",
+                      "margin-desktop": "32px",
+                      "base": "8px"
+              }
+            }
+          }
+        }
+    </script>
+
+<!-- Unified Theme & Layout manager -->
+<link rel="stylesheet" href="unified-admin.css">
+<script src="admin-common.js" defer></script>
+</head>
+<body class="bg-background text-on-background">
+<!-- Fixed SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
+    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
+        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+    </a>
+</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 px-margin-desktop h-20 flex justify-between items-center w-full">
+<div class="flex items-center gap-lg flex-1">
+
+<div class="relative max-w-md w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary/20 text-body-md" placeholder="Search news, authors or tags..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-all">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-all relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-base"></div>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-high p-base rounded-full transition-all">
+<img alt="Admin Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white" data-alt="Professional headshot of a senior hospital administrator in a clinical setting with soft natural lighting and a clean, high-end healthcare aesthetic. The subject is wearing a professional medical uniform and smiling confidently. The image is bright, high-contrast, and fits a premium light-mode corporate UI dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzvNy2X_YYXu1sQyF0scTQavfi4_dQP4_AoElWWdHgV5Ym-jBtB5C0kE8OxakSpmBDkGDAh1ocU5sdw4vh9CtQF2prsgq2-eUqVsLNNWaJvv1XPNOJdsDE2GddXlKhS2eLRo7Q1sS2NbEWhA_F5EQMmf6elz_ky5PFrHhVTCbZedOZK6J1ynmTHSMhG6js7GjfmJk_XeJZC2BwWW2dQrtTwI0Pv3F19YBMorHNz-bviTRtFC8k2jXefKSRSIJFOyvfQ_lUNvP9uh8"/>
+<div class="hidden lg:block">
+<p class="text-label-lg font-bold">Dr. Sharma</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Super Admin</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="px-8 pb-8 pt-6 max-w-[1440px] mx-auto space-y-md">
+<!-- Breadcrumb & Header Action -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<nav class="flex items-center gap-xs text-label-sm text-on-surface-variant mb-xs">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">News</span>
+</nav>
+<h1 class="text-headline-xl text-primary mb-xs">Hospital News Feed</h1>
+<p class="text-body-md text-on-surface-variant">Manage hospital news, announcements, and healthcare updates for public distribution.</p>
+</div>
+<button class="bg-primary text-white px-lg py-md rounded-xl font-bold flex items-center gap-base hover:shadow-xl hover:shadow-primary/20 transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                    Add News Article
+                </button>
+</div>
+<!-- Summary Cards Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<div class="glass-card p-md rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-white flex justify-between items-center group hover:-translate-y-1 transition-all">
+<div>
+<p class="text-label-sm text-on-surface-variant mb-base uppercase tracking-wider">Total Articles</p>
+<h3 class="text-headline-lg text-primary">248</h3>
+<p class="text-[11px] text-secondary mt-base font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +12% this month
+                        </p>
+</div>
+<div class="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">article</span>
+</div>
+</div>
+<div class="glass-card p-md rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-white flex justify-between items-center group hover:-translate-y-1 transition-all">
+<div>
+<p class="text-label-sm text-on-surface-variant mb-base uppercase tracking-wider">Published News</p>
+<h3 class="text-headline-lg text-primary">212</h3>
+<p class="text-[11px] text-green-600 mt-base font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Live on portal
+                        </p>
+</div>
+<div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">cloud_done</span>
+</div>
+</div>
+<div class="glass-card p-md rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-white flex justify-between items-center group hover:-translate-y-1 transition-all">
+<div>
+<p class="text-label-sm text-on-surface-variant mb-base uppercase tracking-wider">Draft Articles</p>
+<h3 class="text-headline-lg text-primary">32</h3>
+<p class="text-[11px] text-secondary-container mt-base font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">edit_note</span> Needs review
+                        </p>
+</div>
+<div class="w-12 h-12 bg-secondary-container/10 rounded-full flex items-center justify-center text-secondary-container group-hover:bg-secondary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</div>
+</div>
+<div class="glass-card p-md rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-white flex justify-between items-center group hover:-translate-y-1 transition-all">
+<div>
+<p class="text-label-sm text-on-surface-variant mb-base uppercase tracking-wider">Featured News</p>
+<h3 class="text-headline-lg text-primary">4</h3>
+<p class="text-[11px] text-primary mt-base font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">star</span> Home page slots
+                        </p>
+</div>
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<!-- Advanced Filters -->
+<div class="glass-card p-md rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.04)] border border-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-sm items-end">
+<div class="lg:col-span-1">
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block mb-xs">Search Title</label>
+<input class="w-full px-sm py-2 rounded-lg border border-outline-variant text-body-sm focus:ring-primary focus:border-primary" placeholder="Article title..." type="text"/>
+</div>
+<div>
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block mb-xs">Category</label>
+<select class="w-full px-sm py-2 rounded-lg border border-outline-variant text-body-sm focus:ring-primary focus:border-primary">
+<option>All Categories</option>
+<option>Medical Research</option>
+<option>Hospital Expansion</option>
+<option>Health Awareness</option>
+</select>
+</div>
+<div>
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block mb-xs">Author</label>
+<select class="w-full px-sm py-2 rounded-lg border border-outline-variant text-body-sm focus:ring-primary focus:border-primary">
+<option>All Authors</option>
+<option>Dr. Sharma</option>
+<option>Admin Team</option>
+<option>Marketing</option>
+</select>
+</div>
+<div>
+<label class="text-[11px] font-bold text-on-surface-variant uppercase block mb-xs">Status</label>
+<select class="w-full px-sm py-2 rounded-lg border border-outline-variant text-body-sm focus:ring-primary focus:border-primary">
+<option>All Status</option>
+<option>Published</option>
+<option>Draft</option>
+<option>Scheduled</option>
+<option>Inactive</option>
+</select>
+</div>
+<div class="flex items-center gap-base mb-2">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" id="featured" type="checkbox"/>
+<label class="text-body-sm font-semibold" for="featured">Featured Only</label>
+</div>
+<div class="flex gap-xs">
+<button class="flex-1 bg-surface-container-high text-on-surface py-2 rounded-lg font-bold text-body-sm hover:bg-surface-variant transition-colors">Reset</button>
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-body-sm hover:bg-primary-container transition-colors">Apply</button>
+</div>
+</div>
+<!-- Premium Data Table -->
+<div class="glass-card rounded-xl shadow-[0_4px_15px_rgba(30,58,138,0.06)] border border-white overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low text-on-surface-variant text-[11px] uppercase font-extrabold tracking-widest">
+<tr>
+<th class="px-md py-md">News Details</th>
+<th class="px-md py-md">Category</th>
+<th class="px-md py-md">Author</th>
+<th class="px-md py-md">Date</th>
+<th class="px-md py-md">Metrics</th>
+<th class="px-md py-md">Status</th>
+<th class="px-md py-md text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Row 1 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-outline-variant/30">
+<img alt="News Cover" class="w-full h-full object-cover" data-alt="Close-up of high-tech laboratory equipment with a clean, clinical aesthetic. Cool blue lighting highlights the precision instruments and glassware. The scene conveys medical innovation and advanced healthcare research, perfect for a professional hospital news dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ9t_ktDrBTxO5o_j1fmoN1MjkhmWuhnpQ7AMP_Xx-yGygfmJc3ObGxuoSb0tx_5KXPdWI0Cziw00U_2l3MJtaFAkmWPuHkaFyApxO1-1YZyMlxw_EVNbeIFMclLokgdmvQe66XlCJQCHCaE6jsBsdT8rNwJm4oPLlQGcam4jnALq1DD83CjVDhTy1rtdd34NET7Oa0U-yKhyu-n8CBxZgJy8JEZVmH3VmEcA_rYdX9-3daw_zdnM8IVqp4P6gIDFqi7oozKpZ8YQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+</div>
+<div>
+<div class="flex items-center gap-base mb-xs">
+<span class="text-body-sm font-bold text-primary group-hover:underline cursor-pointer">Bhaktivedanta Expansion: New 50-Bed Oncology Wing Opened</span>
+<span class="material-symbols-outlined text-[16px] text-secondary-container" style="font-variation-settings: 'FILL' 1;" title="Featured">star</span>
+</div>
+<div class="flex items-center gap-base text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[12px]">visibility</span> 1.2k views</span>
+<span>•</span>
+<span>ID: NW-2024-001</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-primary/10 text-primary px-base py-1 rounded-full text-[11px] font-bold">Expansion</span>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest text-primary flex items-center justify-center text-[10px] font-bold">AD</div>
+<span class="text-body-sm">Admin Team</span>
+</div>
+</td>
+<td class="px-md py-md text-body-sm text-on-surface-variant">24 Oct, 2024</td>
+<td class="px-md py-md">
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between w-24 text-[10px] font-bold text-on-surface-variant">
+<span>Engagement</span>
+<span>82%</span>
+</div>
+<div class="w-24 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[82%]"></div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<div class="inline-flex items-center gap-base px-sm py-1 bg-green-100 text-green-800 rounded-full text-[11px] font-bold">
+<span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></span>
+                                    Published
+                                </div>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-base opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-primary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-secondary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-error hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-outline-variant/30">
+<img alt="News Cover" class="w-full h-full object-cover" data-alt="Modern hospital exterior with glass architecture during sunset. The building is illuminated with warm internal lights reflecting on the glass surfaces. The atmosphere is professional, high-end, and secure. This image represents institutional pride and modern healthcare infrastructure for a premium hospital management dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV0JlM0a3U847YorO6L-wNiEfisXklSBv9Bv7bjG01jGXs-ancoCBnjq2b-3UoS5j08FAqx1LtZ69q7kXIrQiGwRukmSoP9_uwjbnS2Ql4r0FMrrKoUhob215Nc2Hb_eDNdWoyi4T-MrZVO1Jym1ud9JTsenBxjGRm2fTUMQHDJXCAG_0GSe7v8yQhjbKPhsswsvI8HDiUe7AmBcZpBobhSolMIhYVNciitfJYpqM24gR_xfDMh6fCsfSWlsp3OnuP9J_5xpmsV4Q"/>
+</div>
+<div>
+<div class="flex items-center gap-base mb-xs">
+<span class="text-body-sm font-bold text-primary group-hover:underline cursor-pointer">World Health Day: Awareness Seminar Series Scheduled</span>
+</div>
+<div class="flex items-center gap-base text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[12px]">schedule</span> Starts in 3 days</span>
+<span>•</span>
+<span>ID: NW-2024-008</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-base py-1 rounded-full text-[11px] font-bold">Awareness</span>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img alt="Author" class="w-6 h-6 rounded-full object-cover" data-alt="Professional portrait of a male doctor in a white coat with a stethoscope around his neck, set against a clean, modern medical facility background. High-key lighting, soft bokeh, and a trustworthy clinical aesthetic that fits a premium light-mode UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5z8DPMoQ1U94GNCw6BMVAUh1uhaue8RuXozszML0PBYnr4Yu-E2VOiCMu6TX0fHjk9NIBC9qLPS5MFnRJ8fyheiyFhMbv5kc07x2en6L8YKR4wG2YcgV8Ra21ctqX63G4n5IjoZx_rXP8EQOy97JGbbvqEmnZZiM6QVLxJaVEqEqoPkxjZgbcJfNk_A4UXeh08A2ZQpboQf26VjDniuFr26FGY9fyVj8xOdXo1Mn6nz1_VgKFLmSg0Dp4TwV8FJsxwZbATE0iVQQ"/>
+<span class="text-body-sm">Dr. Mehta</span>
+</div>
+</td>
+<td class="px-md py-md text-body-sm text-on-surface-variant">22 Oct, 2024</td>
+<td class="px-md py-md">
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between w-24 text-[10px] font-bold text-on-surface-variant">
+<span>Readiness</span>
+<span>100%</span>
+</div>
+<div class="w-24 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[100%]"></div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<div class="inline-flex items-center gap-base px-sm py-1 bg-tertiary-container text-on-tertiary-container rounded-full text-[11px] font-bold">
+                                    Scheduled
+                                </div>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-base opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-primary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-secondary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-error hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-outline-variant/30">
+<img alt="News Cover" class="w-full h-full object-cover" data-alt="Macro photography of a stethoscope resting on a digital medical tablet showing heart rate waveforms. The background is a clean white clinic desk with bright, natural lighting. The overall aesthetic is professional, minimalist, and technologically advanced, suitable for a premium healthcare news dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCORhOsm8hI3NdEVslcfaORAwhOvv8EZXvJEAPAocz6YwC2BZgrpzgstwItiE9yPF4oPw-AH_S_R8nYY5qu-R0XbzRLXwiFs-TMPCPKQULbWWYG21H23yAdaiIkNr4a70PkTO0o2GAtLP1uJVpjpfthfrjjUXCDyL972yMNGiYe7CFViS-9YMPWF2Uryju4ORJEqMWZrNXqgLNft896YjuKdjvesOVDkol6pG2DMVLwZwbHcmRRiW8ETV_J-kW5RrMZOsCLr_7p9fA"/>
+</div>
+<div>
+<div class="flex items-center gap-base mb-xs">
+<span class="text-body-sm font-bold text-primary group-hover:underline cursor-pointer">Breakthrough in Cardiac Care: New Robotic-Assisted Surgery</span>
+<span class="material-symbols-outlined text-[16px] text-secondary-container" style="font-variation-settings: 'FILL' 1;" title="Featured">star</span>
+</div>
+<div class="flex items-center gap-base text-[11px] text-on-surface-variant">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[12px]">visibility</span> 2.8k views</span>
+<span>•</span>
+<span>ID: NW-2024-012</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-secondary-container/20 text-secondary-container px-base py-1 rounded-full text-[11px] font-bold">Medical Research</span>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img alt="Author" class="w-6 h-6 rounded-full object-cover" data-alt="Professional headshot of a female doctor in a sterile hospital setting. She is wearing glasses and a lab coat, looking directly at the camera with a confident, empathetic expression. Soft clinical lighting and a bright, modern healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQl7T7MIJAADUwoRakzzPSDWxqCPiJxbxK6Q2rpnNQRybISFdsOxP9BWpJRIO_aTwBBxyDbQZw7aUci2Xy10lG6kQWW5zS8LyYf1nduXODd7RgxWmrbYK2ApbB98bO0LzRyfFwsMQ3bYJ9hs6U4WfkLx7L75TU3Pry9KJUNK3DrorwnKhF0YVb8BK3dmWatpZYRKiv8c_qWxZNua0Y1iFcrHBhbEuRrNODQURWGbBxpwmyVQfwTr9dcHGcStiJG9CC2W4Kx9KMD3k"/>
+<span class="text-body-sm">Dr. Sharma</span>
+</div>
+</td>
+<td class="px-md py-md text-body-sm text-on-surface-variant">20 Oct, 2024</td>
+<td class="px-md py-md">
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between w-24 text-[10px] font-bold text-on-surface-variant">
+<span>Viral Reach</span>
+<span>95%</span>
+</div>
+<div class="w-24 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-error w-[95%]"></div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<div class="inline-flex items-center gap-base px-sm py-1 bg-green-100 text-green-800 rounded-full text-[11px] font-bold">
+<span class="w-1.5 h-1.5 bg-green-600 rounded-full"></span>
+                                    Published
+                                </div>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-base opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-primary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-secondary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-error hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-md">
+<div class="relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-outline-variant/30 grayscale opacity-70">
+<img alt="News Cover" class="w-full h-full object-cover" data-alt="Blurred background of a hospital corridor with soft, ethereal lighting. A few figures move through the space, creating a sense of activity without being distracting. The cool tones and clean lines represent the calm efficiency of a high-end medical facility, perfect for draft or inactive states in a premium UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEksucwy9tA830z_PjTSs17rPNjW7hF1ZuqF9k_k017KpwTrSxCLQCQZREAroNF40xqWoLXG2suwmqY8iEq_YYcVvDjGSj1ooH1Y2H0Fy0S6sjEtjOB_9JbzCAGzPdslTTFD2HA22Mdqfi_W-_Yjm3i7pwHsG7toB4EfV3ra2PVdI9gZvJzayMtZnG_EEMhBBIqD0EFj7dmae6kgqeh9a18oTdXKkDG16pbNQvs3DuW5dCZJtDCrA2CeVsddfnXf8YPgV2-Q1ggkA"/>
+</div>
+<div>
+<div class="flex items-center gap-base mb-xs">
+<span class="text-body-sm font-bold text-on-surface-variant group-hover:underline cursor-pointer italic">Internal Memo: Staff Benefits Update 2025</span>
+</div>
+<div class="flex items-center gap-base text-[11px] text-outline">
+<span class="flex items-center gap-xs"><span class="material-symbols-outlined text-[12px]">lock</span> Private Draft</span>
+<span>•</span>
+<span>ID: NW-2024-015</span>
+</div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="bg-surface-container-high text-on-surface-variant px-base py-1 rounded-full text-[11px] font-bold">HR Update</span>
+</td>
+<td class="px-md py-md">
+<div class="flex items-center gap-sm text-outline">
+<div class="w-6 h-6 rounded-full bg-surface-container text-outline flex items-center justify-center text-[10px] font-bold">HR</div>
+<span class="text-body-sm">HR Dept</span>
+</div>
+</td>
+<td class="px-md py-md text-body-sm text-outline">18 Oct, 2024</td>
+<td class="px-md py-md">
+<div class="flex flex-col gap-xs">
+<div class="flex justify-between w-24 text-[10px] font-bold text-outline">
+<span>Draft Progress</span>
+<span>15%</span>
+</div>
+<div class="w-24 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-outline w-[15%]"></div>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<div class="inline-flex items-center gap-base px-sm py-1 bg-surface-container-high text-on-surface-variant rounded-full text-[11px] font-bold">
+                                    Draft
+                                </div>
+</td>
+<td class="px-md py-md text-right">
+<div class="flex justify-end gap-base opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-secondary-container hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-error hover:text-white flex items-center justify-center text-on-surface-variant transition-all border border-outline-variant/30">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-md py-md bg-surface-container-lowest border-t border-outline-variant/20 flex items-center justify-between">
+<p class="text-body-sm text-on-surface-variant font-medium">Showing <span class="font-bold text-primary">1 - 10</span> of <span class="font-bold text-primary">248</span> articles</p>
+<div class="flex items-center gap-xs">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-surface-container transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold text-body-sm">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-surface-container transition-colors text-body-sm">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-surface-container transition-colors text-body-sm">3</button>
+<span class="px-base">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-surface-container transition-colors text-body-sm">25</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Meta -->
+<div class="flex items-center justify-between pt-lg">
+<p class="text-[11px] text-on-surface-variant">Last updated: <span class="font-bold">2 mins ago</span> by <span class="text-primary">Admin_Sharma</span></p>
+<div class="flex items-center gap-md">
+<button class="text-label-lg text-primary font-bold hover:underline">Help Center</button>
+<span class="text-outline-variant">|</span>
+<button class="text-label-lg text-primary font-bold hover:underline">Support Ticket</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactions Script -->
+<script>
+        // Simple search animation
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+
+        // Hover row subtle parallax
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('mousemove', (e) => {
+                const img = row.querySelector('img');
+                if (img) {
+                    const rect = row.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) / rect.width;
+                    const y = (e.clientY - rect.top) / rect.height;
+                    img.style.transform = `scale(1.1) translate(${(x - 0.5) * 5}px, ${(y - 0.5) * 5}px)`;
+                }
+            });
+            row.addEventListener('mouseleave', () => {
+                const img = row.querySelector('img');
+                if (img) img.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>
