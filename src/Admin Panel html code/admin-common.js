@@ -18,8 +18,6 @@ const navLinks = [
     { name: 'Doctors', icon: 'group', href: 'doctors.html' },
     { name: 'Doctor Availability', icon: 'event_available', href: 'doctor-availability.html' },
     { name: 'Health Packages', icon: 'health_and_safety', href: 'health-packages.html' },
-    { name: 'Centres of Excellence', icon: 'apartment', href: 'centres-of-excellence.html' },
-    { name: 'Emergency Services', icon: 'emergency', href: 'emergency-services.html' },
     { divider: true },
     { name: 'Testimonials', icon: 'reviews', href: 'testimonials.html' },
     { name: 'News', icon: 'newspaper', href: 'news.html' },
@@ -34,7 +32,6 @@ const navLinks = [
 const parentPages = {
     'add-doctor.html': 'doctors.html',
     'add-service.html': 'services.html',
-    'add-speciality.html': 'specialities.html',
     'add-gallery-media.html': 'gallery.html',
     'add-centre-of-excellence.html': 'centres-of-excellence.html',
     'add-health-package.html': 'health-packages.html',
@@ -50,7 +47,6 @@ const parentPages = {
 const listPages = {
     'doctors.html': 'add-doctor.html',
     'services.html': 'add-service.html',
-    'specialities.html': 'add-speciality.html',
     'gallery.html': 'add-gallery-media.html',
     'centres-of-excellence.html': 'add-centre-of-excellence.html',
     'health-packages.html': 'add-health-package.html',
@@ -88,13 +84,12 @@ function initializeSidebar() {
     }
 
     // Build sidebar contents
-    let navHTML = `<div class="px-6 mb-6">
-        <a class="flex items-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer" href="dashboard.html">
-            <span class="material-symbols-outlined text-[#f59e0b] text-[32px]" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
-            <div>
-                <h1 class="font-sans text-[20px] font-bold tracking-tight text-white leading-tight">Bhaktivedanta</h1>
-                <p class="text-[10px] font-bold text-white/50 tracking-wider uppercase">Hospital Admin</p>
-            </div>
+    let navHTML = `<div class="px-md mb-lg border-b border-white/10 pb-sm pt-2">
+        <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src="/icon.png" alt="Icon" class="h-[54px] w-auto object-contain">
+            <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-[44px] w-auto object-contain" style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
         </a>
     </div>
     
@@ -105,7 +100,7 @@ function initializeSidebar() {
             navHTML += `<div class="h-px bg-white/10 my-3 mx-3"></div>`;
         } else {
             const isActive = item.href === activeHref;
-            const activeClass = isActive ? 'active-nav-link text-white' : 'text-white/80 hover:bg-white/10 hover:text-white';
+            const activeClass = isActive ? 'bg-white/20 text-white shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white';
             
             navHTML += `<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${activeClass}" href="${item.href}">
                 <span class="material-symbols-outlined text-[20px]">${item.icon}</span>
@@ -117,12 +112,8 @@ function initializeSidebar() {
     navHTML += `</nav>
     
     <div class="px-4 pt-4 border-t border-white/10">
-        <button id="emergency-alert-btn" class="w-full bg-[#ef4444] text-white py-2.5 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 active:scale-95 transition-all shadow-md font-semibold text-sm">
-            <span class="material-symbols-outlined text-[18px]">emergency_share</span>
-            <span>Emergency Alert</span>
-        </button>
         <div class="mt-4 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm ${currentPage === 'settings.html' ? 'active-nav-link text-white' : ''}" href="settings.html">
+            <a class="flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm ${currentPage === 'settings.html' ? 'bg-white/20 text-white shadow-sm' : ''}" href="settings.html">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 <span>Settings</span>
             </a>
