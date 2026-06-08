@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Doctors Management | Bhaktivedanta Hospital Admin</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -127,104 +125,17 @@
 
 <!-- Unified Theme & Layout manager -->
 <link rel="stylesheet" href="unified-admin.css">
-<script src="admin-common.js" defer></script>
+<script src="admin-common.js" defer=""></script>
 </head>
 <body class="bg-background text-on-surface">
-<!-- Side Navigation Shell -->
-<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;">
-<div class="px-md mb-lg border-b border-white/10 pb-sm">
-    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
-        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
-    </a>
-</div>
-<nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">medical_services</span>
-<span class="font-label-lg text-label-lg">Services</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">star</span>
-<span class="font-label-lg text-label-lg">Specialities</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);">
-<span class="material-symbols-outlined text-white">group</span>
-<span class="font-label-lg text-label-lg">Doctors</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">event_available</span>
-<span class="font-label-lg text-label-lg">Doctor Availability</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">health_and_safety</span>
-<span class="font-label-lg text-label-lg">Health Packages</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">apartment</span>
-<span class="font-label-lg text-label-lg">Centres of Excellence</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">emergency</span>
-<span class="font-label-lg text-label-lg">Emergency Services</span>
-</a>
-<div class="h-px my-sm mx-md bg-white/10"></div>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">reviews</span>
-<span class="font-label-lg text-label-lg">Testimonials</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">newspaper</span>
-<span class="font-label-lg text-label-lg">News</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">event</span>
-<span class="font-label-lg text-label-lg">Events</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">image</span>
-<span class="font-label-lg text-label-lg">Gallery</span>
-</a>
-<div class="h-px my-sm mx-md bg-white/10"></div>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">calendar_month</span>
-<span class="font-label-lg text-label-lg">Appointments</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">contact_support</span>
-<span class="font-label-lg text-label-lg">Contact Queries</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined text-white">manage_accounts</span>
-<span class="font-label-lg text-label-lg">Admin Users</span>
-</a></nav>
-<div class="px-md pt-md border-t border-white/10">
-<button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all">
-<span class="material-symbols-outlined">emergency_share</span>
-<span class="font-label-lg text-label-lg">Emergency Alert</span>
-</button>
-<div class="mt-md space-y-xs">
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#">
-<span class="material-symbols-outlined">help_outline</span>
-<span class="font-label-lg text-label-lg">Help Center</span>
-</a>
-<a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#">
-<span class="material-symbols-outlined">logout</span>
-<span class="font-label-lg text-label-lg">Logout</span>
-</a>
-</div>
-</div>
-</aside>
-<!-- Main Content Layout -->
-<div class="ml-[280px] min-h-screen flex flex-col">
-<!-- Top Navigation Bar -->
-<header class="h-xl sticky top-0 z-40 flex items-center justify-between px-margin-desktop bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm">
+    <!-- Sidebar Navigation -->
+    <aside></aside>
+
+    <header class="h-xl sticky top-0 z-40 flex items-center justify-between px-margin-desktop bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm">
 <div class="flex items-center gap-md w-1/2">
 <div class="relative w-full max-w-md">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="w-full bg-surface-container-low border-none rounded-lg pl-[44px] pr-md py-2 text-body-md focus:ring-2 focus:ring-primary outline-none transition-all" placeholder="Global search doctors, patients or reports..." type="text"/>
+<input class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg" placeholder="Global search doctors, patients or reports..." type="text">
 </div>
 </div>
 <div class="flex items-center gap-md">
@@ -242,19 +153,19 @@
 </div>
 </header>
 <!-- Main Content Area -->
-<main class="flex-1 px-8 pb-8 pt-[88px] space-y-md max-w-[1440px] w-full mx-auto">
+<main class="ml-[280px]  h-screen flex flex-col min-w-0 overflow-hidden flex-1 px-6 pb-6 pt-[88px] space-y-md max-w-[1440px] w-full mx-auto">
 <!-- Breadcrumbs and Action Bar -->
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
 <div>
 <nav class="flex items-center gap-xs text-on-surface-variant mb-2">
-<span class="font-label-sm text-label-sm">Dashboard</span>
-<span class="material-symbols-outlined text-sm">chevron_right</span>
-<span class="font-label-sm text-label-sm text-primary font-bold">Doctors</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Dashboard</span>
+<span class="material-symbols-outlined text-label-sm font-label-sm text-on-surface-variant">chevron_right</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Doctors</span>
 </nav>
-<h2 class="font-headline-xl text-headline-xl text-on-surface">Doctors Management</h2>
+<h2 class="text-2xl font-bold text-on-surface mb-1">Doctors Management</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Manage medical practitioners, their profiles, and hospital availability.</p>
 </div>
-<button class="bg-secondary-container text-on-secondary-container px-md py-sm rounded-lg font-label-lg flex items-center gap-xs hover:shadow-lg transition-all active:scale-95">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
 <span class="material-symbols-outlined">add</span>
                     Add New Doctor
                 </button>
@@ -269,7 +180,7 @@
 </div>
 </div>
 <div>
-<h3 class="font-headline-lg text-headline-lg text-on-surface">124</h3>
+<h3 class="font-bold text-base text-on-surface">124</h3>
 <p class="text-xs text-green-600 font-medium flex items-center gap-1 mt-1">
 <span class="material-symbols-outlined text-sm">trending_up</span> +4 new this month
                         </p>
@@ -283,7 +194,7 @@
 </div>
 </div>
 <div>
-<h3 class="font-headline-lg text-headline-lg text-on-surface">86</h3>
+<h3 class="font-bold text-base text-on-surface">86</h3>
 <p class="text-xs text-on-surface-variant font-medium mt-1">69% of total strength</p>
 </div>
 </div>
@@ -295,7 +206,7 @@
 </div>
 </div>
 <div>
-<h3 class="font-headline-lg text-headline-lg text-on-surface">12</h3>
+<h3 class="font-bold text-base text-on-surface">12</h3>
 <p class="text-xs text-on-surface-variant font-medium mt-1">Top rated specialists</p>
 </div>
 </div>
@@ -307,7 +218,7 @@
 </div>
 </div>
 <div>
-<h3 class="font-headline-lg text-headline-lg text-on-surface">08</h3>
+<h3 class="font-bold text-base text-on-surface">08</h3>
 <p class="text-xs text-error font-medium mt-1">Scheduled absences</p>
 </div>
 </div>
@@ -315,12 +226,12 @@
 <!-- Filter Row -->
 <div class="bg-surface-container p-md rounded-xl border border-outline-variant/30 flex flex-wrap gap-md items-center">
 <div class="flex-1 min-w-[200px]">
-<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Search by Name</label>
-<input class="w-full bg-white border-outline-variant rounded-lg px-sm py-2 text-body-md focus:ring-primary" placeholder="Dr. Name..." type="text"/>
+<label class="text-label-sm font-label-sm text-on-surface-variant px-1">Search by Name</label>
+<input class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg" placeholder="Dr. Name..." type="text">
 </div>
 <div class="w-[180px]">
-<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Department</label>
-<select class="w-full bg-white border-outline-variant rounded-lg px-sm py-2 text-body-md focus:ring-primary">
+<label class="text-label-sm font-label-sm text-on-surface-variant px-1">Department</label>
+<select class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg">
 <option>All Departments</option>
 <option>Cardiology</option>
 <option>Pediatrics</option>
@@ -328,8 +239,8 @@
 </select>
 </div>
 <div class="w-[180px]">
-<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Experience</label>
-<select class="w-full bg-white border-outline-variant rounded-lg px-sm py-2 text-body-md focus:ring-primary">
+<label class="text-label-sm font-label-sm text-on-surface-variant px-1">Experience</label>
+<select class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg">
 <option>Any Years</option>
 <option>5+ Years</option>
 <option>10+ Years</option>
@@ -337,8 +248,8 @@
 </select>
 </div>
 <div class="w-[150px]">
-<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Availability</label>
-<select class="w-full bg-white border-outline-variant rounded-lg px-sm py-2 text-body-md focus:ring-primary">
+<label class="text-label-sm font-label-sm text-on-surface-variant px-1">Availability</label>
+<select class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg">
 <option>All Status</option>
 <option>Available</option>
 <option>Busy</option>
@@ -346,7 +257,7 @@
 </select>
 </div>
 <div class="flex items-end h-full mt-5">
-<button class="flex items-center gap-xs px-md py-2.5 text-primary hover:bg-primary/5 rounded-lg transition-colors font-label-lg">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
 <span class="material-symbols-outlined">filter_list</span>
                         Clear Filters
                     </button>
@@ -354,26 +265,26 @@
 </div>
 <!-- Main Table Card -->
 <div class="bg-surface-container-lowest rounded-xl card-shadow border border-white overflow-hidden">
-<div class="overflow-x-auto">
+<div class="bg-white rounded-xl shadow-md border border-outline-variant overflow-hidden">
 <table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-container-low border-b border-outline-variant/30">
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Doctor Info</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Department</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Experience</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant text-center">Availability</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Featured</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Status</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant text-right">Actions</th>
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Doctor Info</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Department</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Experience</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Availability</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Featured</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Actions</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline-variant/20">
+<tbody class="divide-y divide-outline-variant">
 <!-- Dr. Anand Sharma -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors">
-<td class="px-md py-md">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <div class="flex items-center gap-md">
 <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm border border-outline-variant/30">
-<img alt="Dr. Anand Sharma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANPEj_KoNMPpIwdzuCD7lYGdAKEkyCWh6bTaQK8MJs_R4JVyJRsEBiMWrTQzDsV176cPtU3yccFuudW15cKMl437nzqw5tE9A3l9ZZfasQ9SJx96vYIX962IHbmK_xdfUiAohF8eavUhpXeVEW2mV78f5ATYHcgBnBWY8_UJEKzHq4bco6SZZlKcz-S4YZpKBmO1txtux3VF6wZXMQIop-vEphp1s5HxLkKU8I_EDCo-tkZYHkrT4Ut51mTZnyQ3xI9td7l-2oX0w"/>
+<img alt="Dr. Anand Sharma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANPEj_KoNMPpIwdzuCD7lYGdAKEkyCWh6bTaQK8MJs_R4JVyJRsEBiMWrTQzDsV176cPtU3yccFuudW15cKMl437nzqw5tE9A3l9ZZfasQ9SJx96vYIX962IHbmK_xdfUiAohF8eavUhpXeVEW2mV78f5ATYHcgBnBWY8_UJEKzHq4bco6SZZlKcz-S4YZpKBmO1txtux3VF6wZXMQIop-vEphp1s5HxLkKU8I_EDCo-tkZYHkrT4Ut51mTZnyQ3xI9td7l-2oX0w">
 </div>
 <div>
 <p class="font-label-lg text-label-lg text-on-surface">Dr. Anand Sharma</p>
@@ -381,49 +292,49 @@
 </div>
 </div>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex flex-col">
 <span class="font-label-lg text-label-lg text-on-surface">Cardiology</span>
 <span class="text-xs text-on-surface-variant">Interventional Cardiology</span>
 </div>
 </td>
-<td class="px-md py-md font-body-md text-body-md text-on-surface">15 Years</td>
-<td class="px-md py-md text-center">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+<td class="px-4 py-3">15 Years</td>
+<td class="px-4 py-3 text-center">
+<span class="bg-green-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         Available
                                     </span>
 </td>
-<td class="px-md py-md">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-secondary-fixed text-on-secondary-fixed">
+<td class="px-4 py-3">
+<span class="bg-secondary text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         Yes
                                     </span>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="w-2 h-2 rounded-full bg-green-500"></div>
 <span class="font-label-lg text-label-lg text-green-700">Active</span>
 </div>
 </td>
-<td class="px-md py-md text-right">
+<td class="px-4 py-3 text-right">
 <div class="flex justify-end gap-2">
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors" title="View Profile">
-<span class="material-symbols-outlined text-md">visibility</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg" title="View Profile">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors" title="Edit">
-<span class="material-symbols-outlined text-md">edit</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg" title="Edit">
+<span class="material-symbols-outlined text-[18px]">edit</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-error/5 text-error transition-colors" title="Delete">
-<span class="material-symbols-outlined text-md">delete</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg" title="Delete">
+<span class="material-symbols-outlined text-[18px]">delete</span>
 </button>
 </div>
 </td>
 </tr>
 <!-- Dr. Sunita Mehta -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors">
-<td class="px-md py-md">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <div class="flex items-center gap-md">
 <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm border border-outline-variant/30">
-<img alt="Dr. Sunita Mehta" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCctp6yfJXf7-1rFuObb0Ki2WL_4iCXFdr-eeffAgsiEZprEBPHOITEx4lJ0ZWTsXptmVimAX02smmRNrEPwmNtaF7dixkBM6uBPqP8VS4iQ1ABwARcVsAB3sC4yikrBK00EVlJ3DccFWO6eFC2IHJGB1YA9CQ6sVwNk8ddW7A75POQ8GrGXGUUMUnB0J3eAMfa1R1DjZW9haVx1D0xDPuDGFDW2QHuIrzO0i6ewLX5xojfAXkHV34sQ8BZn_GbfXZfFQJlz1oxUg"/>
+<img alt="Dr. Sunita Mehta" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCctp6yfJXf7-1rFuObb0Ki2WL_4iCXFdr-eeffAgsiEZprEBPHOITEx4lJ0ZWTsXptmVimAX02smmRNrEPwmNtaF7dixkBM6uBPqP8VS4iQ1ABwARcVsAB3sC4yikrBK00EVlJ3DccFWO6eFC2IHJGB1YA9CQ6sVwNk8ddW7A75POQ8GrGXGUUMUnB0J3eAMfa1R1DjZW9haVx1D0xDPuDGFDW2QHuIrzO0i6ewLX5xojfAXkHV34sQ8BZn_GbfXZfFQJlz1oxUg">
 </div>
 <div>
 <p class="font-label-lg text-label-lg text-on-surface">Dr. Sunita Mehta</p>
@@ -431,49 +342,49 @@
 </div>
 </div>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex flex-col">
 <span class="font-label-lg text-label-lg text-on-surface">Pediatrics</span>
 <span class="text-xs text-on-surface-variant">Neonatology</span>
 </div>
 </td>
-<td class="px-md py-md font-body-md text-body-md text-on-surface">12 Years</td>
-<td class="px-md py-md text-center">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+<td class="px-4 py-3">12 Years</td>
+<td class="px-4 py-3 text-center">
+<span class="bg-orange-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         Busy
                                     </span>
 </td>
-<td class="px-md py-md">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-surface-variant text-on-surface-variant">
+<td class="px-4 py-3">
+<span class="bg-surface text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         No
                                     </span>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="w-2 h-2 rounded-full bg-green-500"></div>
 <span class="font-label-lg text-label-lg text-green-700">Active</span>
 </div>
 </td>
-<td class="px-md py-md text-right">
+<td class="px-4 py-3 text-right">
 <div class="flex justify-end gap-2">
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-md">visibility</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors">
-<span class="material-symbols-outlined text-md">edit</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">edit</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-error/5 text-error transition-colors">
-<span class="material-symbols-outlined text-md">delete</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">delete</span>
 </button>
 </div>
 </td>
 </tr>
 <!-- Dr. Rajesh Kulkarni -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors">
-<td class="px-md py-md">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <div class="flex items-center gap-md">
 <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm border border-outline-variant/30">
-<img alt="Dr. Rajesh Kulkarni" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdmg0ndil9ygADvQlpCQmfNoIcNC45P9w5ROaS-TN6viovJ7ua3O24RzZYzLfTVj9t96-3KNF1OfDuw9ScwW29oKTg3cDqGJ4XgHANO7_tJ0x47COi4X5JOnr8kR-VGei69sIsz0FIQcDJ48vjI1UfIy73TDBjHz5rul75v0EVd33BlzU1VhW38IAadSKb-eDGGK5iV6PNrasvuzfmR1S5QdoIi6e1BhwOb_6H2DlyZ1uprGGWWu6nsM4ehW5RgyfYYdqFbVXbass"/>
+<img alt="Dr. Rajesh Kulkarni" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdmg0ndil9ygADvQlpCQmfNoIcNC45P9w5ROaS-TN6viovJ7ua3O24RzZYzLfTVj9t96-3KNF1OfDuw9ScwW29oKTg3cDqGJ4XgHANO7_tJ0x47COi4X5JOnr8kR-VGei69sIsz0FIQcDJ48vjI1UfIy73TDBjHz5rul75v0EVd33BlzU1VhW38IAadSKb-eDGGK5iV6PNrasvuzfmR1S5QdoIi6e1BhwOb_6H2DlyZ1uprGGWWu6nsM4ehW5RgyfYYdqFbVXbass">
 </div>
 <div>
 <p class="font-label-lg text-label-lg text-on-surface">Dr. Rajesh Kulkarni</p>
@@ -481,49 +392,49 @@
 </div>
 </div>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex flex-col">
 <span class="font-label-lg text-label-lg text-on-surface">Orthopedics</span>
 <span class="text-xs text-on-surface-variant">Spine Surgery</span>
 </div>
 </td>
-<td class="px-md py-md font-body-md text-body-md text-on-surface">20 Years</td>
-<td class="px-md py-md text-center">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+<td class="px-4 py-3">20 Years</td>
+<td class="px-4 py-3 text-center">
+<span class="bg-green-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         Available
                                     </span>
 </td>
-<td class="px-md py-md">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-secondary-fixed text-on-secondary-fixed">
+<td class="px-4 py-3">
+<span class="bg-secondary text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         Yes
                                     </span>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="w-2 h-2 rounded-full bg-green-500"></div>
 <span class="font-label-lg text-label-lg text-green-700">Active</span>
 </div>
 </td>
-<td class="px-md py-md text-right">
+<td class="px-4 py-3 text-right">
 <div class="flex justify-end gap-2">
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-md">visibility</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors">
-<span class="material-symbols-outlined text-md">edit</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">edit</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-error/5 text-error transition-colors">
-<span class="material-symbols-outlined text-md">delete</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">delete</span>
 </button>
 </div>
 </td>
 </tr>
 <!-- Dr. Priya Verma -->
-<tr class="hover:bg-surface-container-lowest/50 transition-colors">
-<td class="px-md py-md">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <div class="flex items-center gap-md">
 <div class="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container shadow-sm border border-outline-variant/30">
-<img alt="Dr. Priya Verma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_HdwQUWFnwru1ZmIwrY4NBuEZ0_fKr5D2deJZ2IpoYbAYg8C4xB2wArEBfoFdTL42_089Du30ABxXwFERzM71sgFeUmXijTwlFYzt07mbY49JGxol4KT8g8LwA8x7U9LoroDDUSoWvOEDUCJOUurArP91HcNw8PpdVaUbas3sOrq4P9ElWiH6GLam51S89hffsSD3FX55tCwiZ9Dmrtj7AdfVNDNi_Hl3-TXWzuPP3qVVCCeahAhDc7T16QVNGY30Ls65W5QROBE"/>
+<img alt="Dr. Priya Verma" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_HdwQUWFnwru1ZmIwrY4NBuEZ0_fKr5D2deJZ2IpoYbAYg8C4xB2wArEBfoFdTL42_089Du30ABxXwFERzM71sgFeUmXijTwlFYzt07mbY49JGxol4KT8g8LwA8x7U9LoroDDUSoWvOEDUCJOUurArP91HcNw8PpdVaUbas3sOrq4P9ElWiH6GLam51S89hffsSD3FX55tCwiZ9Dmrtj7AdfVNDNi_Hl3-TXWzuPP3qVVCCeahAhDc7T16QVNGY30Ls65W5QROBE">
 </div>
 <div>
 <p class="font-label-lg text-label-lg text-on-surface">Dr. Priya Verma</p>
@@ -531,39 +442,39 @@
 </div>
 </div>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex flex-col">
 <span class="font-label-lg text-label-lg text-on-surface">Oncology</span>
 <span class="text-xs text-on-surface-variant">Radiation Therapy</span>
 </div>
 </td>
-<td class="px-md py-md font-body-md text-body-md text-on-surface">8 Years</td>
-<td class="px-md py-md text-center">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+<td class="px-4 py-3">8 Years</td>
+<td class="px-4 py-3 text-center">
+<span class="bg-red-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         On Leave
                                     </span>
 </td>
-<td class="px-md py-md">
-<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-surface-variant text-on-surface-variant">
+<td class="px-4 py-3">
+<span class="bg-surface text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">
                                         No
                                     </span>
 </td>
-<td class="px-md py-md">
+<td class="px-4 py-3">
 <div class="flex items-center gap-2">
 <div class="w-2 h-2 rounded-full bg-outline-variant"></div>
 <span class="font-label-lg text-label-lg text-on-surface-variant">Inactive</span>
 </div>
 </td>
-<td class="px-md py-md text-right">
+<td class="px-4 py-3 text-right">
 <div class="flex justify-end gap-2">
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-surface-container text-on-surface-variant transition-colors">
-<span class="material-symbols-outlined text-md">visibility</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors">
-<span class="material-symbols-outlined text-md">edit</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">edit</span>
 </button>
-<button class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-error/5 text-error transition-colors">
-<span class="material-symbols-outlined text-md">delete</span>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]">delete</span>
 </button>
 </div>
 </td>
@@ -578,7 +489,7 @@
 <button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant hover:bg-white transition-colors disabled:opacity-50" disabled="">
 <span class="material-symbols-outlined text-md">chevron_left</span>
 </button>
-<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-on-primary font-label-sm">1</button>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">1</button>
 <button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white transition-colors font-label-sm">2</button>
 <button class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white transition-colors font-label-sm">3</button>
 <span class="px-1 text-on-surface-variant">...</span>
@@ -602,7 +513,7 @@
 <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-all" href="#">Contact Support</a>
 </div>
 </footer>
-</div>
+
 <script>
         // Simple micro-interaction for active states or hover effects
         document.querySelectorAll('button').forEach(button => {

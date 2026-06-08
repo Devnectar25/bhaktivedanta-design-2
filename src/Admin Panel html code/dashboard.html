@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Bhaktivedanta Hospital Admin Dashboard</title>
 <!-- Google Fonts: Inter -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
@@ -120,27 +118,18 @@
 
 <!-- Unified Theme & Layout manager -->
 <link rel="stylesheet" href="unified-admin.css">
-<script src="admin-common.js" defer></script>
+<script src="admin-common.js" defer=""></script>
 </head>
 <body class="bg-background text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container">
-<!-- Sidebar Navigation -->
-<aside class="fixed left-0 top-0 h-full w-[280px] bg-[#1e3a8a] shadow-[4px_0_15px_rgba(0,0,0,0.2)] flex flex-col py-lg z-50 overflow-hidden">
-<div class="px-md mb-lg border-b border-white/10 pb-sm">
-    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
-        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
-    </a>
-</div>
-<nav class="flex-1 overflow-y-auto px-sm custom-scrollbar space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white font-bold bg-white/10 transition-colors" href="#"><span class="material-symbols-outlined">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px bg-white/10 my-sm mx-md"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px bg-white/10 my-sm mx-md"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav>
-<div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-on-error py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all shadow-lg"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-white/10 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-white">settings</span><span class="font-label-lg text-label-lg">Settings</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg text-white/80 hover:bg-red-500/20 hover:text-red-300 transition-colors group" href="#"><span class="material-symbols-outlined group-hover:text-red-300">logout</span><span class="font-label-lg text-label-lg">Logout</span></a></div></div>
-</aside>
-<!-- Top AppBar -->
-<header class="fixed top-0 right-0 z-40 bg-surface/80 backdrop-blur-md flex justify-between items-center h-xl px-margin-desktop w-[calc(100%-280px)] ml-[280px] border-b border-outline-variant/30">
+    <!-- Sidebar Navigation -->
+    <aside></aside>
+
+    <header class="fixed top-0 right-0 z-40 bg-surface/80 backdrop-blur-md flex justify-between items-center h-xl px-margin-desktop w-[calc(100%-280px)] ml-[280px] border-b border-outline-variant/30">
 <div class="flex items-center gap-lg">
 
 <div class="relative w-80">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full pl-xl pr-md py-xs bg-surface-container border-none rounded-full focus:ring-2 focus:ring-primary/20 text-body-sm" placeholder="Search data, patients, records..." type="text"/>
+<input class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg" placeholder="Search data, patients, records..." type="text">
 </div>
 </div>
 <div class="flex items-center gap-md">
@@ -156,12 +145,12 @@
 <p class="font-label-lg text-label-lg text-on-surface leading-tight">Admin User</p>
 <p class="text-label-sm text-outline font-label-sm">Super Admin</p>
 </div>
-<img alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="A professional studio portrait of a healthcare administrator in business attire. The image is clean and bright, with a soft-focus background of a modern hospital corridor. The lighting is flattering and high-key, using the hospital's primary color palette of deep blues and sterile whites for a trustworthy and authoritative feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqK0tUfbuqSxbfBIUdGMeFLtChbPcohJwmAhWmeKsnzBL50kdu9WUBzGrHm-_mjxXCOvs6vGG_KAEUZ0Aq4JK5XBMZnc0T2VNlIUGjxep88pAjeDh1qOjk-EQbBKMFilmsY84OYXkeUX5vrgN9FYHK-54D_SoK75i0Ef3GfVYJfcmKlz5nP_7RxFWc5dcg0fmLTej9icKl3NdyPKslBkJiav17I9drerB0CgS_Fi_YVuX8y12TNGXtXGTP3Ye8z1rJHjQThSl7pQ"/>
+<img alt="Admin Avatar" class="w-10 h-10 rounded-full border-2 border-primary-container" data-alt="A professional studio portrait of a healthcare administrator in business attire. The image is clean and bright, with a soft-focus background of a modern hospital corridor. The lighting is flattering and high-key, using the hospital's primary color palette of deep blues and sterile whites for a trustworthy and authoritative feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqK0tUfbuqSxbfBIUdGMeFLtChbPcohJwmAhWmeKsnzBL50kdu9WUBzGrHm-_mjxXCOvs6vGG_KAEUZ0Aq4JK5XBMZnc0T2VNlIUGjxep88pAjeDh1qOjk-EQbBKMFilmsY84OYXkeUX5vrgN9FYHK-54D_SoK75i0Ef3GfVYJfcmKlz5nP_7RxFWc5dcg0fmLTej9icKl3NdyPKslBkJiav17I9drerB0CgS_Fi_YVuX8y12TNGXtXGTP3Ye8z1rJHjQThSl7pQ">
 </div>
 </div>
 </header>
 <!-- Main Content Area -->
-<main class="ml-[280px] px-8 pb-8 pt-24 bg-background min-h-screen">
+<main class="ml-[280px] px-6 pb-6 pt-24 bg-background min-h-screen">
 <!-- KPI Cards Grid -->
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-lg">
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
@@ -172,7 +161,7 @@
 <span class="text-on-secondary-container bg-secondary-container/20 px-xs rounded text-[10px] font-bold">+12%</span>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Total Doctors</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">142</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">142</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -182,7 +171,7 @@
 <span class="text-on-tertiary-fixed-variant bg-tertiary-fixed/30 px-xs rounded text-[10px] font-bold">Stable</span>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Total Services</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">86</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">86</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -192,7 +181,7 @@
 <span class="text-on-secondary-container bg-secondary-container/20 px-xs rounded text-[10px] font-bold">+4</span>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Specialities</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">24</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">24</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -202,7 +191,7 @@
 <span class="text-error bg-error-container/40 px-xs rounded text-[10px] font-bold">New</span>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Appointments</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">1,208</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">1,208</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -211,7 +200,7 @@
 </div>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Total News</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">52</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">52</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -220,7 +209,7 @@
 </div>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Total Events</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">18</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">18</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -229,7 +218,7 @@
 </div>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Testimonials</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">315</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">315</h3>
 </div>
 <div class="bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all">
 <div class="flex justify-between items-start mb-sm">
@@ -238,7 +227,7 @@
 </div>
 </div>
 <p class="text-outline font-label-sm text-label-sm uppercase tracking-wide">Gallery Images</p>
-<h3 class="font-headline-xl text-headline-xl text-primary mt-xs">2.4k</h3>
+<h3 class="mt-xs font-bold text-base text-on-surface">2.4k</h3>
 </div>
 </section>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-lg">
@@ -249,7 +238,7 @@
 <h4 class="font-headline-md text-headline-md text-primary">Monthly Appointment Trends</h4>
 <p class="text-body-sm text-outline">Visual representation of patient visits over the last 6 months</p>
 </div>
-<select class="bg-surface-container border-none rounded-lg text-label-sm font-label-lg focus:ring-2 focus:ring-primary/20">
+<select class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg">
 <option>Last 6 Months</option>
 <option>Last Year</option>
 </select>
@@ -323,7 +312,7 @@
 <div class="lg:col-span-1 bg-surface-container p-md rounded-xl border border-outline-variant/20">
 <h4 class="font-label-lg text-label-lg text-primary uppercase tracking-widest mb-md">Quick Actions</h4>
 <div class="grid grid-cols-1 gap-sm">
-<button class="flex items-center gap-sm p-sm bg-surface-container-lowest rounded-lg hover:shadow-md transition-all group">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
 <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">person_add</span>
 <span class="text-body-sm font-medium">Add New Doctor</span>
 </button>
@@ -331,7 +320,7 @@
 <span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform">add_task</span>
 <span class="text-body-sm font-medium">Create Health Service</span>
 </button>
-<button class="flex items-center gap-sm p-sm bg-surface-container-lowest rounded-lg hover:shadow-md transition-all group">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">
 <span class="material-symbols-outlined text-tertiary group-hover:scale-110 transition-transform">post_add</span>
 <span class="text-body-sm font-medium">Publish News</span>
 </button>
@@ -349,45 +338,45 @@
 <div class="lg:col-span-3 bg-surface-container-lowest p-md rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-outline-variant/10 overflow-hidden">
 <div class="flex justify-between items-center mb-md">
 <h4 class="font-headline-md text-headline-md text-primary">System Log</h4>
-<button class="text-primary font-label-lg text-label-lg hover:underline underline-offset-4">View All Logs</button>
+<button class="hover:underline underline-offset-4 px-4 py-1.5 rounded-lg font-label-lg">View All Logs</button>
 </div>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
-<thead>
-<tr class="border-b border-outline-variant/30 text-outline text-label-sm font-label-sm uppercase tracking-wider">
-<th class="pb-sm px-sm font-semibold">Date &amp; Time</th>
-<th class="pb-sm px-sm font-semibold">Action</th>
-<th class="pb-sm px-sm font-semibold">Admin User</th>
-<th class="pb-sm px-sm font-semibold">Status</th>
+<div class="bg-white rounded-xl shadow-md border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr class="text-outline text-label-sm font-label-sm uppercase tracking-wider bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Date &amp; Time</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Action</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Admin User</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Status</th>
 </tr>
 </thead>
-<tbody class="text-body-sm">
-<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-sm whitespace-nowrap">24 Jun, 10:24 AM</td>
-<td class="py-md px-sm">Updated Dr. Sharma's availability</td>
-<td class="py-md px-sm flex items-center gap-xs font-medium">
-<img alt="User 1" class="w-6 h-6 rounded-full" data-alt="A small circular profile picture of a professional young man in a collared shirt. He is smiling warmly, representing a friendly and approachable administrative staff member. The image is set against a clean, corporate background with soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTBA4LrDYeKBfibOaNGGYbilb9Fb8I5YV2R3DdMGndMP8xLcxSKgCxZ512fDAHESzr5YzJrYJ2KrBuZmpmNd17ZnadDIn0hIH65nIVEkqTRuGg4paTiGNfnTzXDLgYFWLMhaCgfjmMLixMqNEtlw00g17Mmgao7n4-oCjaaB5JqwCzpFW7e7jtbXVw4jwhKYbz3aumMZ9hzWS_2WyGnJ9sktoesMXutYAHqW99s58GZkkBme6YzP5i3KllRazvqEgLjjgmHdB0zeA"/>
+<tbody class="divide-y divide-outline-variant">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">24 Jun, 10:24 AM</td>
+<td class="px-4 py-3">Updated Dr. Sharma's availability</td>
+<td class="px-4 py-3">
+<img alt="User 1" class="w-6 h-6 rounded-full" data-alt="A small circular profile picture of a professional young man in a collared shirt. He is smiling warmly, representing a friendly and approachable administrative staff member. The image is set against a clean, corporate background with soft lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTBA4LrDYeKBfibOaNGGYbilb9Fb8I5YV2R3DdMGndMP8xLcxSKgCxZ512fDAHESzr5YzJrYJ2KrBuZmpmNd17ZnadDIn0hIH65nIVEkqTRuGg4paTiGNfnTzXDLgYFWLMhaCgfjmMLixMqNEtlw00g17Mmgao7n4-oCjaaB5JqwCzpFW7e7jtbXVw4jwhKYbz3aumMZ9hzWS_2WyGnJ9sktoesMXutYAHqW99s58GZkkBme6YzP5i3KllRazvqEgLjjgmHdB0zeA">
                                     Admin. Rajesh
                                 </td>
-<td class="py-md px-sm"><span class="px-sm py-xs bg-green-100 text-green-700 rounded-full text-[12px] font-bold">Success</span></td>
+<td class="px-4 py-3"><span class="bg-green-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Success</span></td>
 </tr>
-<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-sm whitespace-nowrap">24 Jun, 09:15 AM</td>
-<td class="py-md px-sm">Added "Cardiac Wellness" Package</td>
-<td class="py-md px-sm flex items-center gap-xs font-medium">
-<img alt="User 2" class="w-6 h-6 rounded-full" data-alt="A small circular avatar portrait of a female professional with glasses, looking knowledgeable and focused. She is wearing a dark navy blazer, standing in a brightly lit modern office environment that suggests efficiency and order." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqH_SwvrfMu907W25LQYSlf9K53vJpZDvk_tAY80FcAt4Sq5jjrVveVrTjRq--EA6WcZQCEjnHnqV9WpHB4rzyFNCG3JFyiTljqOUbXNar0alBZr8DladMa2lztVZExnQPi8j_3tR9OpRcYl3NFHNbNIC5hDSwOB-q6KCQfJLvjnZLjWLG-ct3zVM0VAJ6R649qc-NmV4EyXARU1HOwj4zuocRVivcZRsMZw4s3dR8VtC0dgbi3eQVgzZ9zxqIdes3uvm_-ORW87A"/>
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">24 Jun, 09:15 AM</td>
+<td class="px-4 py-3">Added "Cardiac Wellness" Package</td>
+<td class="px-4 py-3">
+<img alt="User 2" class="w-6 h-6 rounded-full" data-alt="A small circular avatar portrait of a female professional with glasses, looking knowledgeable and focused. She is wearing a dark navy blazer, standing in a brightly lit modern office environment that suggests efficiency and order." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqH_SwvrfMu907W25LQYSlf9K53vJpZDvk_tAY80FcAt4Sq5jjrVveVrTjRq--EA6WcZQCEjnHnqV9WpHB4rzyFNCG3JFyiTljqOUbXNar0alBZr8DladMa2lztVZExnQPi8j_3tR9OpRcYl3NFHNbNIC5hDSwOB-q6KCQfJLvjnZLjWLG-ct3zVM0VAJ6R649qc-NmV4EyXARU1HOwj4zuocRVivcZRsMZw4s3dR8VtC0dgbi3eQVgzZ9zxqIdes3uvm_-ORW87A">
                                     Admin. Sneha
                                 </td>
-<td class="py-md px-sm"><span class="px-sm py-xs bg-green-100 text-green-700 rounded-full text-[12px] font-bold">Success</span></td>
+<td class="px-4 py-3"><span class="bg-green-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Success</span></td>
 </tr>
-<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/50 transition-colors">
-<td class="py-md px-sm whitespace-nowrap">23 Jun, 05:45 PM</td>
-<td class="py-md px-sm">Gallery bulk upload (24 items)</td>
-<td class="py-md px-sm flex items-center gap-xs font-medium">
-<img alt="User 3" class="w-6 h-6 rounded-full" data-alt="A close-up circular avatar of a young man with a creative look, smiling naturally. The image style is clean and high-definition, fitting into a premium corporate dashboard design system with soft lighting and professional tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5lo0M9TBxsSuVJ8Or4QNwK3PCBKHT2PQ9EInNalIvAQrIngHwrz_FcXQe4hn_vZthqwZLVdWfuho5YBB0l-JOBNGKtV37gNmcRtXfw4SCunUCxxLRSne9k-YqSaBctZhpKtRClADeJla1cnsNvrdgxgmCVoGSnuTd2f-1Pt2qxhVV-4aAqjI32fhgUkJAJfnPts4x2Ns5Pr5H-QH3ZF2srEWIPl19fg1o9YKqGFn417t2fcpmF95JQg7onQJRy7T2uPQ0nLrXqaY"/>
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">23 Jun, 05:45 PM</td>
+<td class="px-4 py-3">Gallery bulk upload (24 items)</td>
+<td class="px-4 py-3">
+<img alt="User 3" class="w-6 h-6 rounded-full" data-alt="A close-up circular avatar of a young man with a creative look, smiling naturally. The image style is clean and high-definition, fitting into a premium corporate dashboard design system with soft lighting and professional tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5lo0M9TBxsSuVJ8Or4QNwK3PCBKHT2PQ9EInNalIvAQrIngHwrz_FcXQe4hn_vZthqwZLVdWfuho5YBB0l-JOBNGKtV37gNmcRtXfw4SCunUCxxLRSne9k-YqSaBctZhpKtRClADeJla1cnsNvrdgxgmCVoGSnuTd2f-1Pt2qxhVV-4aAqjI32fhgUkJAJfnPts4x2Ns5Pr5H-QH3ZF2srEWIPl19fg1o9YKqGFn417t2fcpmF95JQg7onQJRy7T2uPQ0nLrXqaY">
                                     Admin. Amit
                                 </td>
-<td class="py-md px-sm"><span class="px-sm py-xs bg-orange-100 text-orange-700 rounded-full text-[12px] font-bold">Processing</span></td>
+<td class="px-4 py-3"><span class="bg-orange-100 text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Processing</span></td>
 </tr>
 </tbody>
 </table>
@@ -404,65 +393,65 @@
 <div class="flex gap-sm">
 <div class="relative">
 <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline text-[18px]">filter_list</span>
-<select class="pl-lg pr-md py-xs bg-surface-container border-none rounded-lg text-label-sm font-label-lg focus:ring-2 focus:ring-primary/20 appearance-none">
+<select class="w-full p-3 border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all px-4 py-1.5 text-body-sm rounded-lg">
 <option>All Departments</option>
 <option>Cardiology</option>
 <option>Orthopedics</option>
 </select>
 </div>
-<button class="bg-primary text-on-primary px-md py-xs rounded-lg font-label-lg text-label-lg shadow-md hover:brightness-110 active:scale-95 transition-all">Download Report</button>
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg">Download Report</button>
 </div>
 </div>
-<div class="overflow-x-auto">
-<table class="w-full text-left">
-<thead>
-<tr class="border-b border-outline-variant/30 text-outline text-label-sm font-label-sm uppercase tracking-wider bg-surface-container-low/30">
-<th class="py-sm px-md font-semibold rounded-tl-lg">Patient Name</th>
-<th class="py-sm px-md font-semibold">Doctor Assigned</th>
-<th class="py-sm px-md font-semibold">Department</th>
-<th class="py-sm px-md font-semibold">Date &amp; Time</th>
-<th class="py-sm px-md font-semibold rounded-tr-lg">Status</th>
-<th class="py-sm px-md font-semibold"></th>
+<div class="bg-white rounded-xl shadow-md border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr class="text-outline text-label-sm font-label-sm uppercase tracking-wider bg-surface-container-low border-b border-outline-variant">
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Patient Name</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Doctor Assigned</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Department</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Date &amp; Time</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="px-4 py-3 font-label-lg text-label-lg text-on-surface-variant"></th>
 </tr>
 </thead>
-<tbody class="text-body-sm">
-<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/50 transition-colors group">
-<td class="py-md px-md whitespace-nowrap">
+<tbody class="divide-y divide-outline-variant">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <p class="font-medium text-on-surface">Mrs. Kavita Iyer</p>
 <p class="text-[11px] text-outline">ID: PID-9824</p>
 </td>
-<td class="py-md px-md">Dr. Sanjay Varma</td>
-<td class="py-md px-md"><span class="px-sm py-1 bg-primary-container/10 text-primary rounded-lg text-[12px] font-medium">Cardiology</span></td>
-<td class="py-md px-md whitespace-nowrap">24 Jun, 02:30 PM</td>
-<td class="py-md px-md"><span class="px-sm py-xs bg-secondary-container/20 text-on-secondary-container rounded-full text-[11px] font-bold">Confirmed</span></td>
-<td class="py-md px-md text-right">
-<button class="p-xs text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+<td class="px-4 py-3">Dr. Sanjay Varma</td>
+<td class="px-4 py-3"><span class="px-sm py-1 bg-primary-container/10 text-primary rounded-lg text-[12px] font-medium">Cardiology</span></td>
+<td class="px-4 py-3">24 Jun, 02:30 PM</td>
+<td class="px-4 py-3"><span class="bg-secondary text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Confirmed</span></td>
+<td class="px-4 py-3 text-right">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
 </td>
 </tr>
-<tr class="border-b border-outline-variant/10 hover:bg-surface-container-low/50 transition-colors group">
-<td class="py-md px-md whitespace-nowrap">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <p class="font-medium text-on-surface">Mr. David Wilson</p>
 <p class="text-[11px] text-outline">ID: PID-1024</p>
 </td>
-<td class="py-md px-md">Dr. Anita Joseph</td>
-<td class="py-md px-md"><span class="px-sm py-1 bg-tertiary-container/10 text-tertiary rounded-lg text-[12px] font-medium">Neurology</span></td>
-<td class="py-md px-md whitespace-nowrap">25 Jun, 11:00 AM</td>
-<td class="py-md px-md"><span class="px-sm py-xs bg-tertiary-fixed/40 text-on-tertiary-fixed-variant rounded-full text-[11px] font-bold">Pending</span></td>
-<td class="py-md px-md text-right">
-<button class="p-xs text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+<td class="px-4 py-3">Dr. Anita Joseph</td>
+<td class="px-4 py-3"><span class="px-sm py-1 bg-tertiary-container/10 text-tertiary rounded-lg text-[12px] font-medium">Neurology</span></td>
+<td class="px-4 py-3">25 Jun, 11:00 AM</td>
+<td class="px-4 py-3"><span class="bg-tertiary text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Pending</span></td>
+<td class="px-4 py-3 text-right">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
 </td>
 </tr>
-<tr class="hover:bg-surface-container-low/50 transition-colors group">
-<td class="py-md px-md whitespace-nowrap">
+<tr class="transition-colors group hover:bg-surface-container-lowest">
+<td class="px-4 py-3">
 <p class="font-medium text-on-surface">Aarav Mehta</p>
 <p class="text-[11px] text-outline">ID: PID-1182</p>
 </td>
-<td class="py-md px-md">Dr. Robert Chen</td>
-<td class="py-md px-md"><span class="px-sm py-1 bg-error-container/10 text-error rounded-lg text-[12px] font-medium">Orthopedics</span></td>
-<td class="py-md px-md whitespace-nowrap">25 Jun, 04:15 PM</td>
-<td class="py-md px-md"><span class="px-sm py-xs bg-error-container text-error rounded-full text-[11px] font-bold">Cancelled</span></td>
-<td class="py-md px-md text-right">
-<button class="p-xs text-outline hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+<td class="px-4 py-3">Dr. Robert Chen</td>
+<td class="px-4 py-3"><span class="px-sm py-1 bg-error-container/10 text-error rounded-lg text-[12px] font-medium">Orthopedics</span></td>
+<td class="px-4 py-3">25 Jun, 04:15 PM</td>
+<td class="px-4 py-3"><span class="bg-error text-label px-3 py-1 rounded-full text-label-sm font-label-sm inline-flex items-center gap-1">Cancelled</span></td>
+<td class="px-4 py-3 text-right">
+<button class="flex items-center gap-2 bg-secondary-container hover:shadow-lg active:scale-95 transition-all shadow-md px-5 py-2.5 rounded-lg font-label-lg text-label-lg"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
 </td>
 </tr>
 </tbody>

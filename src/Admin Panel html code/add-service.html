@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Add New Service | MediAdmin Portal</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<style>
+<html class="light" lang="en" >
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Add New Service | MediAdmin Portal</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
         body { font-family: 'Inter', sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -21,411 +20,645 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        /* Drag and Drop styling */
         .drop-zone--over {
             border-color: #4059aa !important;
             background-color: #eff4ff !important;
         }
     </style>
-<script id="tailwind-config">
+    <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
           theme: {
             extend: {
-              "colors": {
-                      "tertiary-container": "#003d88",
-                      "surface-container-low": "#eff4ff",
-                      "secondary-container": "#fea619",
-                      "surface-container-high": "#dee9fc",
-                      "surface-bright": "#f8f9ff",
-                      "tertiary-fixed-dim": "#adc6ff",
-                      "primary-fixed-dim": "#b6c4ff",
-                      "on-primary-fixed": "#00164e",
-                      "on-secondary-container": "#684000",
-                      "on-error-container": "#93000a",
-                      "outline": "#757682",
-                      "tertiary": "#00285e",
-                      "outline-variant": "#c5c5d3",
-                      "surface-tint": "#4059aa",
-                      "on-tertiary-fixed-variant": "#004395",
-                      "on-tertiary-fixed": "#001a42",
-                      "error-container": "#ffdad6",
-                      "primary-container": "#1e3a8a",
-                      "on-surface": "#121c2a",
-                      "tertiary-fixed": "#d8e2ff",
-                      "surface-container-lowest": "#ffffff",
-                      "secondary": "#d97706",
-                      "on-secondary-fixed-variant": "#653e00",
-                      "on-surface-variant": "#444651",
-                      "inverse-on-surface": "#eaf1ff",
-                      "on-primary": "#ffffff",
-                      "error": "#ba1a1a",
-                      "surface-container": "#e6eeff",
-                      "surface": "#f8f9ff",
-                      "secondary-fixed": "#ffddb8",
-                      "on-primary-fixed-variant": "#264191",
-                      "on-tertiary": "#ffffff",
-                      "surface-container-highest": "#d9e3f6",
-                      "primary-fixed": "#dce1ff",
-                      "primary": "#1e3a8a",
-                      "on-primary-container": "#90a8ff",
-                      "inverse-surface": "#27313f",
-                      "surface-variant": "#d9e3f6",
-                      "on-error": "#ffffff",
-                      "on-background": "#121c2a",
-                      "surface-dim": "#d0dbed",
-                      "on-secondary": "#ffffff",
-                      "on-tertiary-container": "#82abff",
-                      "secondary-fixed-dim": "#ffb95f",
-                      "inverse-primary": "#b6c4ff",
-                      "background": "#f8f9ff",
-                      "on-secondary-fixed": "#2a1700"
-              },
-              "borderRadius": {
-                      "DEFAULT": "0.25rem",
-                      "lg": "0.5rem",
-                      "xl": "0.75rem",
-                      "full": "9999px"
-              },
-              "spacing": {
-                      "margin-mobile": "16px",
-                      "base": "8px",
-                      "gutter": "24px",
-                      "lg": "40px",
-                      "md": "24px",
-                      "xl": "64px",
-                      "sm": "12px",
-                      "xs": "4px",
-                      "margin-desktop": "32px"
-              },
-              "fontFamily": {
-                      "label-lg": ["Inter"],
-                      "headline-md": ["Inter"],
-                      "headline-xl": ["Inter"],
-                      "headline-lg": ["Inter"],
-                      "body-md": ["Inter"],
-                      "body-lg": ["Inter"],
-                      "body-sm": ["Inter"],
-                      "label-sm": ["Inter"]
-              },
-              "fontSize": {
-                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
-                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                      "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
-                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+              colors: {
+                  primary: "#1e3a8a",
+                  outline: "#757682",
+                  "outline-variant": "#c5c5d3",
+                  background: "#f8f9ff",
+                  "on-background": "#121c2a",
+                  error: "#ba1a1a"
               }
-            },
-          },
+            }
+          }
         }
     </script>
-
-<!-- Unified Theme & Layout manager -->
-<link rel="stylesheet" href="unified-admin.css">
-<script src="admin-common.js" defer></script>
+    <link rel="stylesheet" href="unified-admin.css">
+    <script src="admin-common.js" defer></script>
 </head>
 <body class="bg-background text-on-background overflow-hidden">
-<!-- Sidebar Wrapper -->
-<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;"><div class="px-md mb-lg border-b border-white/10 pb-sm">
-    <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <img src="/icon.png" alt="Icon" class="h-10 w-auto object-contain">
-        <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
-    </a>
-</div><nav class="flex-1 px-sm space-y-xs mb-2"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="#" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">group</span><span class="font-label-lg text-label-lg">Doctors</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event_available</span><span class="font-label-lg text-label-lg">Doctor Availability</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">health_and_safety</span><span class="font-label-lg text-label-lg">Health Packages</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">apartment</span><span class="font-label-lg text-label-lg">Centres of Excellence</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">emergency</span><span class="font-label-lg text-label-lg">Emergency Services</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">reviews</span><span class="font-label-lg text-label-lg">Testimonials</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">newspaper</span><span class="font-label-lg text-label-lg">News</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">event</span><span class="font-label-lg text-label-lg">Events</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">image</span><span class="font-label-lg text-label-lg">Gallery</span></a><div class="h-px my-sm mx-md bg-white/10"></div><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">calendar_month</span><span class="font-label-lg text-label-lg">Appointments</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">contact_support</span><span class="font-label-lg text-label-lg">Contact Queries</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">manage_accounts</span><span class="font-label-lg text-label-lg">Admin Users</span></a></nav><div class="px-md pt-md border-t border-white/10"><button class="w-full bg-error text-white py-sm rounded-lg flex items-center justify-center gap-sm hover:brightness-110 active:scale-95 transition-all"><span class="material-symbols-outlined">emergency_share</span><span class="font-label-lg text-label-lg">Emergency Alert</span></button><div class="mt-md space-y-xs"><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-white/10" href="#"><span class="material-symbols-outlined text-white">help_outline</span><span class="font-label-lg text-label-lg text-white">Help Center</span></a><a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors group text-white/80 hover:bg-error/10 hover:text-error" href="#"><span class="material-symbols-outlined text-white group-hover:text-error">logout</span><span class="font-label-lg text-label-lg text-white group-hover:text-error">Logout</span></a></div></div></aside>
-<!-- Main Content Canvas -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-primary shadow-xl z-50 flex flex-col py-lg overflow-y-auto custom-scrollbar" style="background-color: #1E3A8A;">
+    <div class="px-md mb-lg border-b border-white/10 pb-sm">
+        <a href="dashboard.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src="/logo.png" alt="Bhaktivedanta Hospital" class="h-8 w-auto object-contain" style="filter: brightness(0) invert(1);">
+        </a>
+    </div>
+    <nav class="flex-1 px-sm space-y-xs mb-2">
+        <a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="dashboard.html"><span class="material-symbols-outlined text-white">dashboard</span><span class="font-label-lg text-label-lg">Dashboard</span></a>
+        <a class="flex items-center gap-sm px-md py-sm rounded-lg font-bold transition-colors text-white hover:bg-white/10" href="services.html" style="background-color: rgba(255, 255, 255, 0.12);"><span class="material-symbols-outlined text-white">medical_services</span><span class="font-label-lg text-label-lg">Services</span></a>
+        <a class="flex items-center gap-sm px-md py-sm rounded-lg transition-colors text-white/80 hover:bg-white/10" href="specialities.html"><span class="material-symbols-outlined text-white">star</span><span class="font-label-lg text-label-lg">Specialities</span></a>
+    </nav>
+</aside>
+
 <main class="ml-[280px] h-screen flex flex-col overflow-hidden">
-<!-- Top Navigation Bar -->
-<header class="sticky top-0 w-full z-40 bg-surface/80 backdrop-blur-md shadow-sm h-16 flex items-center justify-between px-margin-desktop">
-<div class="flex items-center gap-4">
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full w-80 text-body-sm focus:ring-2 focus:ring-primary/20" placeholder="Search services or departments..." type="text"/>
-</div>
-</div>
-<div class="flex items-center gap-6">
-<button class="relative text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined">notifications</span>
-<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
-</button>
-<button class="text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined">history</span>
-</button>
-<div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
-<div class="flex items-center gap-3">
-<div class="text-right">
-<p class="font-label-lg text-label-lg text-on-surface">Dr. Rahul Sharma</p>
-<p class="text-[10px] uppercase tracking-wider text-outline">System Admin</p>
-</div>
-<img alt="Admin" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10" data-alt="A professional headshot of a male doctor in his 40s wearing a clean white lab coat and a stethoscope around his neck. He has a warm, confident smile, set against a blurred high-end clinical office background with soft blue tones. The lighting is bright and professional, emphasizing a modern healthcare administrative environment with premium quality and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFnLa6O5l4HYOelNLYo6ERog8l3PbLfeL_2Lz3LPLxNd1DAUNL6LCtMZtMr8XbymXIgmBzjRThq-G8-CpK4pTtBN7DvWTksfRWaG8YO76LTCc0EOYFpVmbThPCfl_ppLeg-UMhaYFY4VunJAh0VonQs3SOl3_e_ozLYOZzx86J7IqGad4Bq09G9t-8Kmp4BcLwyMWoKxNBjoy0e_640DRH0pu1WJdbo9gEF8lGIF4SYyS4p51RNjtJfPd5a9-X6d4OUCQxwkbFzUM"/>
-</div>
-</div>
-</header>
-<!-- Page Content Scroll Area -->
-<section class="flex-1 overflow-y-auto px-8 pb-8 pt-[88px] bg-surface-bright custom-scrollbar">
-<!-- Breadcrumbs -->
-<nav class="flex items-center gap-2 mb-6 text-on-surface-variant font-label-sm text-label-sm">
-<a class="hover:text-primary" href="#">Dashboard</a>
-<span class="material-symbols-outlined text-[16px]">chevron_right</span>
-<a class="hover:text-primary" href="#">Services</a>
-<span class="material-symbols-outlined text-[16px]">chevron_right</span>
-<span class="text-primary font-semibold">Add Service</span>
-</nav>
-<div class="flex flex-col xl:flex-row gap-gutter">
-<!-- Main Form Section -->
-<div class="flex-1 space-y-gutter max-w-[900px]">
-<div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant/10">
-<div class="mb-8">
-<h2 class="font-headline-md text-headline-md text-on-surface mb-1">Add New Service</h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Create new hospital service for website display</p>
-</div>
-<form class="space-y-8" id="serviceForm">
-<!-- Basic Information -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Service Name</label>
-<input class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all" id="serviceName" placeholder="e.g. Cardiology &amp; Heart Surgery" required="" type="text"/>
-</div>
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Service Category</label>
-<select class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all" id="serviceCategory">
-<option>Clinical</option>
-<option>Emergency</option>
-<option>Diagnostics</option>
-<option>Surgical</option>
-<option>Rehabilitation</option>
-</select>
-</div>
-</div>
-<!-- Uploads -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Service Icon Upload</label>
-<div class="border-2 border-dashed border-outline-variant rounded-xl p-6 text-center hover:bg-surface-container transition-colors cursor-pointer group" id="iconDropZone">
-<span class="material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">clinical_notes</span>
-<p class="text-body-sm text-outline mt-2">Drag icon file here or <span class="text-primary font-semibold">Browse</span></p>
-<p class="text-[10px] text-outline-variant uppercase mt-1">SVG, PNG (Max 512kb)</p>
-</div>
-</div>
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Service Banner Image</label>
-<div class="border-2 border-dashed border-outline-variant rounded-xl p-6 text-center hover:bg-surface-container transition-colors cursor-pointer group" id="bannerDropZone">
-<span class="material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">add_photo_alternate</span>
-<p class="text-body-sm text-outline mt-2">Drag banner image here or <span class="text-primary font-semibold">Browse</span></p>
-<p class="text-[10px] text-outline-variant uppercase mt-1">JPG, WebP (1200x400px)</p>
-</div>
-</div>
-</div>
-<!-- Descriptions -->
-<div class="space-y-6">
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Short Description</label>
-<textarea class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20 transition-all" id="shortDesc" placeholder="Brief summary for service cards..." rows="2"></textarea>
-</div>
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Full Description (Rich Text)</label>
-<div class="border border-outline-variant rounded-lg overflow-hidden">
-<div class="bg-surface-container-high px-4 py-2 flex gap-4 border-b border-outline-variant/30">
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary" type="button">format_bold</button>
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary" type="button">format_italic</button>
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary" type="button">format_list_bulleted</button>
-<button class="material-symbols-outlined text-on-surface-variant hover:text-primary" type="button">link</button>
-</div>
-<textarea class="w-full p-4 border-none bg-surface focus:ring-0 text-body-md" id="fullDesc" placeholder="Enter detailed service details, procedures, and expertise..." rows="6"></textarea>
-</div>
-</div>
-</div>
-<!-- Operation Details -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Availability</label>
-<select class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20">
-<option>24x7</option>
-<option>Limited Hours</option>
-<option>On-Call</option>
-</select>
-</div>
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Contact Number</label>
-<input class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20" placeholder="+91 0000 000 000" type="tel"/>
-</div>
-<div class="space-y-2">
-<label class="font-label-lg text-label-lg text-on-surface">Display Order</label>
-<input class="w-full p-3 rounded-lg border-outline-variant bg-surface focus:ring-2 focus:ring-primary/20" type="number" value="1"/>
-</div>
-</div>
-<!-- Settings & Toggles -->
-<div class="flex flex-wrap gap-10 py-4 border-y border-outline-variant/20">
-<div class="flex items-center gap-3">
-<div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out">
-<input checked="" class="opacity-0 w-0 h-0 peer" id="statusToggle" type="checkbox"/>
-<label class="absolute top-0 left-0 right-0 bottom-0 bg-outline-variant rounded-full cursor-pointer peer-checked:bg-primary transition-all duration-300 before:content-[''] before:absolute before:h-4 before:w-4 before:left-1 before:bottom-1 before:bg-white before:rounded-full before:transition-all peer-checked:before:translate-x-6" for="statusToggle"></label>
-</div>
-<span class="font-label-lg text-label-lg text-on-surface">Status (Active)</span>
-</div>
-<div class="flex items-center gap-3">
-<input class="w-5 h-5 rounded text-secondary-container focus:ring-secondary-container border-outline-variant" id="featuredCheck" type="checkbox"/>
-<label class="font-label-lg text-label-lg text-on-surface" for="featuredCheck">Featured Service</label>
-</div>
-</div>
-<!-- SEO Section -->
-<div class="space-y-4">
-<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-widest">SEO Optimization</h3>
-<div class="grid grid-cols-1 gap-4">
-<div class="space-y-2">
-<label class="font-label-sm text-label-sm text-on-surface-variant">Meta Title</label>
-<input class="w-full p-3 rounded-lg border-outline-variant bg-surface-container-low focus:ring-2 focus:ring-primary/20" placeholder="Optimal title for search engines..." type="text"/>
-</div>
-<div class="space-y-2">
-<label class="font-label-sm text-label-sm text-on-surface-variant">Meta Description</label>
-<textarea class="w-full p-3 rounded-lg border-outline-variant bg-surface-container-low focus:ring-2 focus:ring-primary/20" placeholder="High-converting snippet for Google search results..." rows="2"></textarea>
-</div>
-</div>
-</div>
-<!-- Action Buttons -->
-<div class="flex items-center justify-between pt-8 border-t border-outline-variant/20">
-<button class="px-8 py-3 rounded-lg border border-outline text-outline hover:bg-surface-variant transition-colors font-label-lg text-label-lg" type="button">Cancel</button>
-<div class="flex gap-4">
-<button class="px-8 py-3 rounded-lg bg-surface-dim text-on-surface-variant hover:brightness-95 transition-all font-label-lg text-label-lg" type="button">Save Draft</button>
-<button class="px-8 py-3 rounded-lg bg-secondary-container text-on-secondary-container hover:brightness-110 shadow-lg shadow-secondary-container/20 transition-all font-label-lg text-label-lg font-bold" type="submit">Publish Service</button>
-</div>
-</div>
-</form>
-</div>
-</div>
-<!-- Live Preview Sidebar -->
-<div class="xl:w-[380px] space-y-gutter">
-<div class="sticky top-gutter">
-<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/30">
-<h3 class="font-label-lg text-label-lg text-on-surface-variant mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-[18px]">visibility</span>
-                                Public Site Preview
-                            </h3>
-<!-- Mockup Card -->
-<div class="bg-white rounded-2xl overflow-hidden shadow-xl shadow-primary-container/5 border border-outline-variant/10 group">
-<div class="relative h-48 overflow-hidden">
-<img alt="Service Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A modern hospital cardiology department hallway with state-of-the-art medical monitors and soft blue ambient lighting. The atmosphere is pristine, calm, and high-tech, showcasing the latest in surgical equipment and patient care. The visual style is professional with a shallow depth of field, focusing on the sophisticated clinical environment and high-quality healthcare standards." id="previewBanner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLAoeSlQtKhMD9LXkIACIsndoruO7VMm6UI1GOVnJOtV2WBQMJcojL5EI_QSGSPz0xjP81PDnINd7BJ0fhD_M_Me5aRNOofMvWO6tMaNQkyW_6pzg7AblhLO6Tu-Le7SPFkPlfSlJkvyEGOYSj8MywpVn1zIacr3BuP7MMFmThhgTyNVpwibgJb_SuJssZ7dNwjowXRJ5hSsdJ4MhKJANgHgvYhncoMel8saLAGR20jk7k-i8obRR12RFQRITLo90hxilOIr6yBX8"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-<div class="absolute bottom-4 left-4 flex items-center gap-3">
-<div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-<span class="material-symbols-outlined text-white text-[28px]" id="previewIcon">cardiology</span>
-</div>
-<div class="text-white">
-<span class="text-[10px] uppercase font-bold tracking-widest opacity-80" id="previewCat">CLINICAL</span>
-<h4 class="font-headline-md text-headline-md leading-tight" id="previewName">Heart Care</h4>
-</div>
-</div>
-</div>
-<div class="p-5 space-y-4">
-<p class="text-body-sm text-on-surface-variant line-clamp-2" id="previewShortDesc">Comprehensive cardiac diagnostic and surgical solutions for all age groups provided by world-class specialists.</p>
-<div class="flex items-center justify-between pt-2">
-<div class="flex items-center gap-2 text-primary">
-<span class="material-symbols-outlined text-[18px]">schedule</span>
-<span class="font-label-sm text-label-sm">24x7 Available</span>
-</div>
-<button class="bg-primary text-on-primary text-[12px] px-4 py-2 rounded-full font-bold uppercase tracking-wider">Book Now</button>
-</div>
-</div>
-</div>
-<div class="mt-8 space-y-4">
-<div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-outline-variant/10">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
-<span class="material-symbols-outlined text-primary">language</span>
-</div>
-<div>
-<p class="text-[10px] uppercase font-bold text-outline">URL Slug</p>
-<p class="text-body-sm text-on-surface truncate">/services/cardiology-heart-care</p>
-</div>
-</div>
-<div class="flex items-center gap-3 p-3 bg-white rounded-lg border border-outline-variant/10">
-<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
-<span class="material-symbols-outlined text-primary">analytics</span>
-</div>
-<div>
-<p class="text-[10px] uppercase font-bold text-outline">Expected Traffic</p>
-<p class="text-body-sm text-on-surface">~450 views / month</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
+    <header class="sticky top-0 w-full z-40 bg-white shadow-sm h-16 flex items-center justify-between px-8">
+        <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold text-[#1e3a8a]">Add New Service</h1>
+        </div>
+        <div class="flex items-center gap-6">
+            <!-- Ensure ONLY ONE toggle button exists, we place it in the builder below instead of header to match user request -->
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p class="font-bold text-sm text-[#121c2a]">Admin User</p>
+                    <p class="text-[10px] uppercase text-[#757682]">Super Administrator</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="flex-1 overflow-y-auto px-8 pb-8 pt-8 bg-[#F8F9FF] custom-scrollbar">
+        <nav class="flex items-center gap-2 mb-6 text-[#757682] text-sm">
+            <a class="hover:text-primary" href="dashboard.html">Dashboard</a>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <a class="hover:text-primary" href="services.html">Services</a>
+            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            <span class="text-primary font-semibold">Content Builder</span>
+        </nav>
+
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+            <div id="builderMain" class="flex-1 min-w-0 bg-white rounded-2xl shadow-sm border border-outline-variant/10 p-6 md:p-8 flex flex-col min-h-[600px] transition-all duration-300">
+                <div class="mb-8 flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-4 mb-2">
+                            <h2 class="text-[28px] font-bold text-[#121c2a] leading-tight">Service Content Builder</h2>
+                            <select id="mockDataSelector" class="bg-surface-container-high border-none text-primary font-medium text-sm rounded-lg focus:ring-0 cursor-pointer px-3 py-1.5 ml-4">
+                                <option value="holistic-wellness">Mock: Holistic Wellness</option>
+                                <option value="idhs">Mock: IDHS</option>
+                                <option value="empty">Mock: Empty New Service</option>
+                            </select>
+                        </div>
+                        <p class="text-[15px] text-[#444651]">Design the service landing page structure and content sections.</p>
+                    </div>
+                    <button id="togglePreviewBtn" class="flex items-center gap-2 bg-[#1e3a8a]/10 text-[#1e3a8a] px-4 py-2 rounded-lg font-medium text-sm hover:bg-[#1e3a8a]/20 transition-colors">
+                        <span class="material-symbols-outlined text-[18px]">visibility_off</span> <span id="togglePreviewText">Hide Preview</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="space-y-2">
+                        <label class="text-[14px] font-medium text-[#444651]">Service Title</label>
+                        <input type="text" id="serviceName" value="Holistic Wellness" class="w-full p-3 rounded-lg border border-outline-variant/50 bg-white text-primary font-medium focus:ring-2 focus:ring-primary/20 transition-all outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[14px] font-medium text-[#444651]">URL Slug</label>
+                        <input type="text" id="serviceSlug" value="/services/holistic-wellness" class="w-full p-3 rounded-lg border border-outline-variant/50 bg-[#F4F6F8] text-[#757682] focus:ring-0 transition-all outline-none" readonly>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between border-b border-outline-variant/20 mb-8 overflow-x-auto custom-scrollbar pb-1">
+                    <div class="flex items-center gap-8 min-w-max" id="builderTabs">
+                        <!-- Dynamic Tabs will be injected here -->
+                    </div>
+                    <button id="addSectionBtn" class="flex items-center gap-1 border border-primary/20 bg-primary/5 text-primary px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-primary/10 transition-colors whitespace-nowrap ml-4">
+                        <span class="material-symbols-outlined text-[18px]">add</span> Add Section
+                    </button>
+                </div>
+
+                <div id="editorArea" class="space-y-6 mb-12 flex-1"></div>
+
+                <div class="space-y-4 mb-12 flex-1 hidden">
+                    <label class="text-[15px] font-medium text-[#121c2a]">Hero Banner Image</label>
+                    <div class="border-2 border-dashed border-outline-variant/50 rounded-xl p-10 text-center hover:bg-[#F8F9FF] transition-colors cursor-pointer flex flex-col items-center justify-center">
+                        <span class="material-symbols-outlined text-[40px] text-[#A0ABCB] mb-2">add_photo_alternate</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-6 border-t border-outline-variant/20 mt-auto">
+                    <div class="flex items-center gap-3">
+                        <div class="relative inline-block w-[42px] h-[24px] transition duration-200 ease-in-out">
+                            <input checked class="opacity-0 w-0 h-0 peer" id="statusToggle" type="checkbox"/>
+                            <label class="absolute top-0 left-0 right-0 bottom-0 bg-outline-variant/30 rounded-full cursor-pointer peer-checked:bg-[#10B981] transition-all duration-300 before:content-[''] before:absolute before:h-[18px] before:w-[18px] before:left-[3px] before:bottom-[3px] before:bg-white before:rounded-full before:transition-all peer-checked:before:translate-x-[18px]" for="statusToggle"></label>
+                        </div>
+                        <span class="text-[14px] font-medium text-[#121c2a]">Published</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="px-5 py-2.5 rounded-lg border border-outline-variant text-[#444651] font-medium text-sm hover:bg-surface-variant transition-colors">Save Draft</button>
+                        <button class="px-5 py-2.5 rounded-lg bg-[#F59E0B] text-white font-medium text-sm hover:bg-[#D97706] transition-colors flex items-center gap-2 shadow-md shadow-[#F59E0B]/20">
+                            <span class="material-symbols-outlined text-[18px]">cloud_upload</span> Update Content
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="previewSidebar" class="w-full lg:w-[40%] shrink-0 bg-white rounded-2xl shadow-xl shadow-primary/5 border border-outline-variant/10 overflow-hidden flex flex-col h-[calc(100vh-180px)] sticky top-0 transition-all duration-300">
+                <div class="bg-[#F8F9FA] px-4 py-3 flex items-center gap-4 border-b border-outline-variant/20">
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                    </div>
+                    <div class="flex-1 bg-white border border-outline-variant/20 rounded-md py-1.5 px-3 text-[11px] text-center truncate text-[#757682] mx-4 shadow-sm">
+                        bhaktivedantahospital.com<span id="previewUrl" class="text-primary font-medium">/services/holistic-wellness</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-outline shrink-0">
+                        <span class="material-symbols-outlined text-[16px]">desktop_mac</span>
+                        <span class="material-symbols-outlined text-[16px] opacity-50">smartphone</span>
+                    </div>
+                </div>
+                
+                <div id="previewScrollArea" class="flex-1 bg-white relative overflow-y-auto custom-scrollbar scroll-smooth">
+                    <div class="relative h-[280px] w-full bg-[#1e3a8a] overflow-hidden">
+                        <div class="absolute inset-0 bg-[#0A235C]/80 mix-blend-multiply z-10"></div>
+                        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop" class="w-full h-full object-cover absolute inset-0 opacity-40 mix-blend-luminosity" alt="Hospital Hallway">
+                        
+                        <div class="relative z-20 h-full flex flex-col justify-center px-8 lg:px-12">
+                            <p class="text-[10px] font-bold tracking-[0.2em] text-[#90a8ff] uppercase mb-2">SPECIALIZED SERVICE</p>
+                            <div class="w-12 h-0.5 bg-[#90a8ff] mb-4"></div>
+                            <h1 id="previewHeroTitle" class="text-[32px] md:text-[40px] font-bold text-white mb-6 leading-tight drop-shadow-md">Holistic Wellness</h1>
+                            <button class="bg-[#F59E0B] text-white font-semibold text-sm px-6 py-2.5 rounded-full w-max hover:bg-[#D97706] transition-colors shadow-lg shadow-[#F59E0B]/20">Book Consultation</button>
+                        </div>
+                    </div>
+
+                    <div class="px-8 lg:px-12 pt-6 pb-12">
+                        <div id="previewTabs" class="flex items-center gap-6 border-b border-outline-variant/20 mb-8 overflow-x-auto custom-scrollbar">
+                            <!-- Dynamic Preview Tabs will be injected here -->
+                        </div>
+
+                        <!-- Ensure ONLY dynamic container exists here -->
+                        <div id="previewAllSectionsContainer" class="space-y-4"></div>
+                    </div>
+                
+                    <div class="bg-[#0A235C] text-white px-8 py-10 mt-12">
+                        <div class="grid grid-cols-2 gap-8 mb-8 opacity-80">
+                            <div>
+                                <h5 class="font-bold mb-4">Quick Links</h5>
+                                <div class="space-y-2 text-[12px]"><p>About Us</p><p>Doctors</p><p>Contact</p></div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold mb-4">Contact</h5>
+                                <div class="space-y-2 text-[12px]"><p>Emergency: 1066</p><p>info@bhaktivedanta.com</p></div>
+                            </div>
+                        </div>
+                        <div class="border-t border-white/20 pt-6 text-[10px] text-center opacity-60">
+                            &copy; 2026 Bhaktivedanta Hospital. All rights reserved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </main>
+
 <script>
-        // Micro-interactions for live preview
-        const nameInput = document.getElementById('serviceName');
-        const previewName = document.getElementById('previewName');
-        const catInput = document.getElementById('serviceCategory');
-        const previewCat = document.getElementById('previewCat');
-        const shortDescInput = document.getElementById('shortDesc');
-        const previewShortDesc = document.getElementById('previewShortDesc');
+    const mockDatabase = {
+        'holistic-wellness': {
+            title: 'Holistic Wellness',
+            slug: '/services/holistic-wellness',
+            banner: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop',
+            tabs: [
+                {
+                    id: 'hw-tab-1',
+                    title: 'Overview',
+                    blocks: [
+                        { id: 'b1', type: 'rich-text', content: 'Experience a comprehensive approach to health that integrates physical, mental, and spiritual well-being. Our specialized team creates personalized care plans tailored to your unique needs.' },
+                        { id: 'b2', type: 'quote', content: 'Healing is a matter of time, but it is sometimes also a matter of opportunity.', author: 'Hippocrates' }
+                    ]
+                },
+                {
+                    id: 'hw-tab-2',
+                    title: 'How It Works',
+                    blocks: [
+                        { id: 'b3', type: 'feature-list', items: ['Initial Consultation & Assessment', 'Personalized Therapy Plan', 'Integrated Treatment Sessions', 'Ongoing Progress Monitoring'] }
+                    ]
+                },
+                {
+                    id: 'hw-tab-3',
+                    title: 'Why Choose Holistic Wellness',
+                    blocks: [
+                        { id: 'b4', type: 'image-text', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1000', content: 'Our approach goes beyond treating symptoms. We focus on uncovering the root causes of imbalance.' }
+                    ]
+                },
+                {
+                    id: 'hw-tab-4',
+                    title: 'Explore Life Transforming Programs',
+                    blocks: [
+                        { id: 'b5', type: 'rich-text', content: 'Explore our specialized healing programs tailored for every aspect of your life.' },
+                        { id: 'b6', type: 'gallery', images: ['https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=400', 'https://images.unsplash.com/photo-1528319725582-ddc096101511?q=80&w=400'] }
+                    ]
+                }
+            ]
+        },
+        'idhs': {
+            title: 'ISKCON Devotees Healthcare Services',
+            slug: '/services/idhs',
+            banner: 'https://images.unsplash.com/photo-1538108149393-fbbd81895907?q=80&w=2000',
+            tabs: [
+                {
+                    id: 'idhs-tab-1',
+                    title: 'Overview',
+                    blocks: [
+                        { id: 'b7', type: 'rich-text', content: 'Dedicated healthcare services tailored to the specific spiritual and physical needs of the ISKCON devotee community globally.' }
+                    ]
+                },
+                {
+                    id: 'idhs-tab-2',
+                    title: 'Our Offerings',
+                    blocks: [
+                        { id: 'b8', type: 'feature-list', items: ['Priority Outpatient Services', 'Subsidized Inpatient Care', 'Spiritual Counseling during treatment', 'Prasadam arrangements'] }
+                    ]
+                },
+                {
+                    id: 'idhs-tab-3',
+                    title: 'Hospital Services',
+                    blocks: [
+                        { id: 'b9', type: 'stats', stats: [{label: 'Devotees Served', value: '15,000+'}, {label: 'Specialties', value: '25+'}] }
+                    ]
+                },
+                {
+                    id: 'idhs-tab-4',
+                    title: 'Gallery',
+                    blocks: [
+                        { id: 'b10', type: 'gallery', images: ['https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=400', 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=400', 'https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=400'] }
+                    ]
+                },
+                {
+                    id: 'idhs-tab-5',
+                    title: 'Health Talks & Testimonials',
+                    blocks: [
+                        { id: 'b11', type: 'quote', content: 'The care I received was not just medical, but deeply spiritual and uplifting.', author: 'A Grateful Patient' }
+                    ]
+                }
+            ]
+        },
+        'empty': {
+            title: '',
+            slug: '',
+            banner: '',
+            tabs: [
+                { id: 't-new', title: 'Overview', blocks: [] }
+            ]
+        }
+    };
 
-        nameInput.addEventListener('input', (e) => {
-            previewName.textContent = e.target.value || 'New Service';
-        });
+    let serviceData = JSON.parse(JSON.stringify(mockDatabase['holistic-wellness']));
+    let activeTabId = serviceData.tabs[0].id;
+    let previewVisible = true;
 
-        catInput.addEventListener('change', (e) => {
-            previewCat.textContent = e.target.value.toUpperCase();
-        });
-
-        shortDescInput.addEventListener('input', (e) => {
-            previewShortDesc.textContent = e.target.value || 'Service summary description will appear here...';
-        });
-
-        // Drop zone interaction
-        const dropZones = [document.getElementById('iconDropZone'), document.getElementById('bannerDropZone')];
-        
-        dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                zone.classList.add('drop-zone--over');
+    document.addEventListener('DOMContentLoaded', () => {
+        // Dropdown Event
+        const selector = document.getElementById('mockDataSelector');
+        if (selector) {
+            selector.addEventListener('change', (e) => {
+                serviceData = JSON.parse(JSON.stringify(mockDatabase[e.target.value]));
+                activeTabId = serviceData.tabs[0].id;
+                document.getElementById('serviceName').value = serviceData.title;
+                document.getElementById('serviceSlug').value = serviceData.slug;
+                const heroTitle = document.getElementById('previewHeroTitle');
+                if (heroTitle) heroTitle.textContent = serviceData.title || 'Service Title';
+                render();
             });
+        }
 
-            ['dragleave', 'dragend'].forEach(type => {
-                zone.addEventListener(type, () => {
-                    zone.classList.remove('drop-zone--over');
-                });
-            });
-
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                zone.classList.remove('drop-zone--over');
-                // Simulate file processing
-                if (e.dataTransfer.files.length > 0) {
-                    const icon = zone.querySelector('.material-symbols-outlined');
-                    icon.textContent = 'check_circle';
-                    icon.classList.add('text-primary');
-                    zone.querySelector('p').textContent = e.dataTransfer.files[0].name;
+        // Toggle Event
+        const toggleBtn = document.getElementById('togglePreviewBtn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const sidebar = document.getElementById('previewSidebar');
+                const textSpan = document.getElementById('togglePreviewText');
+                const iconSpan = toggleBtn.querySelector('.material-symbols-outlined');
+                previewVisible = !previewVisible;
+                if (previewVisible) {
+                    sidebar.style.display = 'flex';
+                    setTimeout(() => { sidebar.style.opacity = '1'; sidebar.style.width = ''; }, 10);
+                    textSpan.textContent = 'Hide Preview';
+                    iconSpan.textContent = 'visibility_off';
+                } else {
+                    sidebar.style.display = 'none';
+                    textSpan.textContent = 'Show Preview';
+                    iconSpan.textContent = 'visibility';
                 }
             });
-        });
+        }
+        
+        // Title Input Event
+        const serviceName = document.getElementById('serviceName');
+        if (serviceName) {
+            serviceName.addEventListener('input', (e) => {
+                serviceData.title = e.target.value;
+                const heroTitle = document.getElementById('previewHeroTitle');
+                if (heroTitle) heroTitle.textContent = serviceData.title || 'Service Title';
+                const slug = (e.target.value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                serviceData.slug = '/services/' + slug;
+                document.getElementById('serviceSlug').value = serviceData.slug;
+                const pUrl = document.getElementById('previewUrl');
+                if(pUrl) pUrl.textContent = serviceData.slug;
+            });
+        }
 
-        // Toggle state text change
-        const statusToggle = document.getElementById('statusToggle');
-        const statusLabel = statusToggle.parentElement.nextElementSibling;
-        statusToggle.addEventListener('change', () => {
-            statusLabel.textContent = statusToggle.checked ? 'Status (Active)' : 'Status (Inactive)';
-        });
+        // Add Tab Event
+        const addSectionBtn = document.getElementById('addSectionBtn');
+        if (addSectionBtn) {
+            addSectionBtn.addEventListener('click', () => {
+                const title = prompt("Enter Tab Name:");
+                if (!title) return;
+                const newId = 'tab-' + Date.now();
+                serviceData.tabs.push({ id: newId, title: title, blocks: [] });
+                activeTabId = newId;
+                render();
+                
+                const builderTabs = document.getElementById('builderTabs');
+                if (builderTabs) setTimeout(() => { builderTabs.scrollTo({ left: builderTabs.scrollWidth, behavior: 'smooth' }); }, 50);
+            });
+        }
 
-        // Form submission feedback
-        const form = document.getElementById('serviceForm');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Publishing...';
-            btn.disabled = true;
+        render();
+    });
+
+    window.setActiveTab = function(id) {
+        activeTabId = id;
+        render();
+    };
+
+    window.addBlock = function(type) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        if (!activeTab) return;
+        
+        let block = { id: 'b-' + Date.now(), type: type };
+        switch(type) {
+            case 'rich-text': block.content = ''; break;
+            case 'image': block.image = ''; break;
+            case 'image-text': block.image = ''; block.content = ''; break;
+            case 'quote': block.content = ''; block.author = ''; break;
+            case 'feature-list': block.items = ['']; break;
+            case 'stats': block.stats = [{label: '', value: ''}]; break;
+            case 'gallery': block.images = []; break;
+        }
+        activeTab.blocks.push(block);
+        render();
+    };
+
+    window.moveBlock = function(blockId, dir) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const idx = activeTab.blocks.findIndex(b => b.id === blockId);
+        if (idx < 0) return;
+        const newIdx = idx + dir;
+        if (newIdx >= 0 && newIdx < activeTab.blocks.length) {
+            const temp = activeTab.blocks[idx];
+            activeTab.blocks[idx] = activeTab.blocks[newIdx];
+            activeTab.blocks[newIdx] = temp;
+            render();
+        }
+    };
+
+    window.deleteBlock = function(blockId) {
+        if (!confirm("Delete this content block?")) return;
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        activeTab.blocks = activeTab.blocks.filter(b => b.id !== blockId);
+        render();
+    };
+
+    window.updateBlockText = function(blockId, field, val) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const block = activeTab.blocks.find(b => b.id === blockId);
+        if(block) { block[field] = val; renderPreviewSections(); }
+    };
+    
+    window.addFeatureItem = function(blockId) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const block = activeTab.blocks.find(b => b.id === blockId);
+        if(block) { block.items.push(''); render(); }
+    };
+
+    window.updateFeatureItem = function(blockId, idx, val) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const block = activeTab.blocks.find(b => b.id === blockId);
+        if(block) { block.items[idx] = val; renderPreviewSections(); }
+    };
+
+    window.deleteFeatureItem = function(blockId, idx) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const block = activeTab.blocks.find(b => b.id === blockId);
+        if(block) { block.items.splice(idx, 1); render(); }
+    };
+
+    function render() {
+        renderTabsOnly();
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        const editorArea = document.getElementById('editorArea');
+        
+        if (activeTab && editorArea) {
+            let html = '';
             
-            setTimeout(() => {
-                btn.innerHTML = '<span class="material-symbols-outlined">done_all</span> Service Published';
-                btn.classList.remove('bg-secondary-container');
-                btn.classList.add('bg-green-600', 'text-white');
-            }, 1500);
-        });
-    </script>
-</body></html>
+            // Tab settings
+            html += `
+                <div class="mb-8 pb-6 border-b border-outline-variant/20 flex items-start justify-between">
+                    <div class="flex flex-col gap-1 flex-1 mr-4">
+                        <label class="text-[12px] uppercase tracking-wider font-bold text-outline">Tab Settings</label>
+                        <input type="text" value="${activeTab.title}" onchange="window.updateTabTitle(this.value)" class="bg-transparent border-none p-0 text-[22px] font-bold text-primary focus:ring-0 w-full" placeholder="Tab Title">
+                    </div>
+                    <button onclick="window.deleteTab()" class="text-error hover:bg-error/10 px-3 py-1.5 rounded text-sm font-medium transition-colors whitespace-nowrap mt-4">Delete Tab</button>
+                </div>
+            `;
+
+            // Blocks loop
+            if(activeTab.blocks.length === 0) {
+                html += `<div class="text-center py-12 border-2 border-dashed border-outline-variant/50 rounded-xl bg-surface/50 text-outline"><p class="mb-2 text-[15px]">No content blocks in this tab.</p><p class="text-[13px]">Add a block below to start building.</p></div>`;
+            } else {
+                html += `<div class="space-y-6">`;
+                activeTab.blocks.forEach((b, idx) => {
+                    html += `
+                        <div class="border border-outline-variant/40 rounded-xl bg-white shadow-sm overflow-hidden transition-all hover:border-primary/30 group">
+                            <div class="bg-[#F8F9FA] px-4 py-2 border-b border-outline-variant/20 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[16px] text-outline cursor-move">drag_indicator</span>
+                                    <span class="text-[11px] uppercase tracking-wider font-bold text-outline">${b.type.replace('-', ' ')} BLOCK</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <button onclick="window.moveBlock('${b.id}', -1)" class="p-1 text-outline hover:text-primary rounded"><span class="material-symbols-outlined text-[16px]">keyboard_arrow_up</span></button>
+                                    <button onclick="window.moveBlock('${b.id}', 1)" class="p-1 text-outline hover:text-primary rounded"><span class="material-symbols-outlined text-[16px]">keyboard_arrow_down</span></button>
+                                    <button onclick="window.deleteBlock('${b.id}')" class="p-1 text-error hover:bg-error/10 rounded ml-2"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                    `;
+                    
+                    // Render specific block controls
+                    if (b.type === 'rich-text') {
+                        html += `<textarea rows="4" placeholder="Enter rich text content here..." oninput="window.updateBlockText('${b.id}', 'content', this.value)" class="w-full p-3 rounded border border-outline-variant/30 text-sm focus:ring-1 focus:ring-primary outline-none">${b.content || ''}</textarea>`;
+                    } else if (b.type === 'quote') {
+                        html += `
+                            <div class="space-y-3">
+                                <textarea rows="2" placeholder="Quote text" oninput="window.updateBlockText('${b.id}', 'content', this.value)" class="w-full p-3 rounded border border-outline-variant/30 text-sm focus:ring-1 focus:ring-primary outline-none font-serif italic">${b.content || ''}</textarea>
+                                <input type="text" placeholder="Author / Attribution" value="${b.author || ''}" oninput="window.updateBlockText('${b.id}', 'author', this.value)" class="w-full p-2 rounded border border-outline-variant/30 text-sm focus:ring-1 focus:ring-primary outline-none">
+                            </div>
+                        `;
+                    } else if (b.type === 'feature-list') {
+                        html += `<div class="space-y-2">`;
+                        b.items.forEach((item, i) => {
+                            html += `
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                                    <input type="text" value="${item}" oninput="window.updateFeatureItem('${b.id}', ${i}, this.value)" class="flex-1 p-2 rounded border border-outline-variant/30 text-sm focus:ring-1 focus:ring-primary outline-none">
+                                    <button onclick="window.deleteFeatureItem('${b.id}', ${i})" class="text-outline hover:text-error"><span class="material-symbols-outlined text-[16px]">close</span></button>
+                                </div>
+                            `;
+                        });
+                        html += `<button onclick="window.addFeatureItem('${b.id}')" class="text-sm text-primary font-medium mt-2 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">add</span> Add Item</button></div>`;
+                    } else if (b.type === 'image' || b.type === 'gallery') {
+                        html += `
+                            <div class="border-2 border-dashed border-outline-variant/50 rounded-lg p-6 text-center hover:bg-[#F8F9FF] cursor-pointer">
+                                <span class="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
+                                <p class="text-xs text-outline">Click to upload or drag images here</p>
+                            </div>
+                        `;
+                    } else if (b.type === 'image-text') {
+                        html += `
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="border-2 border-dashed border-outline-variant/50 rounded-lg p-6 text-center flex flex-col justify-center items-center cursor-pointer hover:bg-[#F8F9FF]">
+                                    <span class="material-symbols-outlined text-[24px] text-outline mb-1">add_photo_alternate</span>
+                                    <p class="text-[10px] text-outline">Select Image</p>
+                                </div>
+                                <textarea rows="4" placeholder="Accompanying text..." oninput="window.updateBlockText('${b.id}', 'content', this.value)" class="w-full p-3 rounded border border-outline-variant/30 text-sm focus:ring-1 focus:ring-primary outline-none">${b.content || ''}</textarea>
+                            </div>
+                        `;
+                    } else if (b.type === 'stats') {
+                        html += `<p class="text-sm text-outline italic">Stats block configuration...</p>`; // Placeholder
+                    }
+
+                    html += `</div></div>`;
+                });
+                html += `</div>`;
+            }
+
+            // Add Block toolbar
+            html += `
+                <div class="mt-8 pt-6 border-t border-outline-variant/20">
+                    <label class="text-[12px] uppercase tracking-wider font-bold text-outline mb-3 block">Add Content Block</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="window.addBlock('rich-text')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">notes</span> Rich Text</button>
+                        <button onclick="window.addBlock('image')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">image</span> Image</button>
+                        <button onclick="window.addBlock('image-text')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">view_carousel</span> Image + Text</button>
+                        <button onclick="window.addBlock('quote')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">format_quote</span> Quote</button>
+                        <button onclick="window.addBlock('feature-list')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">checklist</span> List</button>
+                        <button onclick="window.addBlock('stats')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">query_stats</span> Stats</button>
+                        <button onclick="window.addBlock('gallery')" class="flex items-center gap-1.5 px-3 py-1.5 rounded border border-outline-variant/50 bg-white hover:bg-primary/5 hover:border-primary/30 text-sm font-medium transition-colors"><span class="material-symbols-outlined text-[16px]">photo_library</span> Gallery</button>
+                    </div>
+                </div>
+            `;
+
+            editorArea.innerHTML = html;
+        }
+        
+        renderPreviewSections();
+    }
+
+    window.updateTabTitle = function(val) {
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        if(activeTab) {
+            activeTab.title = val;
+            renderTabsOnly();
+            renderPreviewSections();
+        }
+    };
+
+    window.deleteTab = function() {
+        if(serviceData.tabs.length <= 1) { alert("Cannot delete the last tab."); return; }
+        if(!confirm("Are you sure you want to delete this tab and all its content?")) return;
+        const idx = serviceData.tabs.findIndex(t => t.id === activeTabId);
+        serviceData.tabs.splice(idx, 1);
+        activeTabId = serviceData.tabs[0].id;
+        render();
+    };
+
+    function renderPreviewSections() {
+        const container = document.getElementById('previewAllSectionsContainer');
+        if (!container) return;
+        
+        const activeTab = serviceData.tabs.find(t => t.id === activeTabId);
+        if (activeTab) {
+            let html = `<div id="preview-${activeTab.id}" class="space-y-8 fade-in">`;
+            
+            // Render blocks for preview
+            activeTab.blocks.forEach(b => {
+                if (b.type === 'rich-text') {
+                    html += `<div class="prose prose-sm max-w-none text-[#444651] leading-relaxed whitespace-pre-wrap">${b.content || '<em class="text-outline">Empty text block</em>'}</div>`;
+                } else if (b.type === 'quote') {
+                    html += `
+                        <blockquote class="border-l-4 border-primary pl-4 py-1 italic text-[#1e3a8a] bg-primary/5 rounded-r-lg">
+                            <p class="text-[16px] font-serif mb-2">"${b.content || '...'}"</p>
+                            <footer class="text-[12px] font-bold uppercase tracking-wider">— ${b.author || 'Anonymous'}</footer>
+                        </blockquote>
+                    `;
+                } else if (b.type === 'feature-list') {
+                    html += `<ul class="space-y-3">`;
+                    b.items.forEach(item => {
+                        if(item.trim()) {
+                            html += `<li class="flex items-start gap-3"><span class="material-symbols-outlined text-[#10B981] text-[20px] shrink-0">check_circle</span><span class="text-[#444651] text-[15px]">${item}</span></li>`;
+                        }
+                    });
+                    html += `</ul>`;
+                } else if (b.type === 'image') {
+                    html += `<div class="rounded-xl overflow-hidden shadow-sm border border-outline-variant/20"><div class="aspect-video bg-surface-variant flex items-center justify-center text-outline"><span class="material-symbols-outlined text-[32px]">image</span></div></div>`;
+                } else if (b.type === 'image-text') {
+                    html += `
+                        <div class="flex flex-col gap-4">
+                            <img src="${b.image || ''}" class="w-full h-48 object-cover rounded-xl shadow-sm" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%\' height=\'100%\'><rect width=\'100%\' height=\'100%\' fill=\'#d9e3f6\'/></svg>'">
+                            <p class="text-[14px] text-[#444651] leading-relaxed">${b.content || ''}</p>
+                        </div>
+                    `;
+                } else if (b.type === 'gallery') {
+                    html += `<div class="grid grid-cols-2 gap-2">`;
+                    if(b.images && b.images.length) {
+                        b.images.forEach(img => { html += `<img src="${img}" class="w-full h-24 object-cover rounded shadow-sm">`; });
+                    } else {
+                        html += `<div class="aspect-square bg-surface-variant rounded"></div><div class="aspect-square bg-surface-variant rounded"></div>`;
+                    }
+                    html += `</div>`;
+                } else if (b.type === 'stats') {
+                    html += `<div class="grid grid-cols-2 gap-4">`;
+                    if(b.stats) b.stats.forEach(st => {
+                        html += `<div class="bg-surface p-4 rounded-xl text-center border border-primary/10 shadow-sm"><div class="text-[24px] font-black text-primary mb-1">${st.value || '0'}</div><div class="text-[11px] font-bold text-outline uppercase tracking-wider">${st.label || 'Label'}</div></div>`;
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            if (activeTab.blocks.length === 0) {
+                html += `<div class="text-center py-12 opacity-50"><span class="material-symbols-outlined text-[32px] text-outline mb-2">web</span><p class="text-sm text-outline">No content blocks added yet.</p></div>`;
+            }
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+    }
+
+    function renderTabsOnly() {
+        const builderTabs = document.getElementById('builderTabs');
+        const previewTabs = document.getElementById('previewTabs');
+        
+        if (builderTabs) {
+            let builderHtml = '';
+            serviceData.tabs.forEach(tab => {
+                const isActive = tab.id === activeTabId;
+                const activeClasses = isActive 
+                    ? 'text-[#1e3a8a] font-semibold pb-3 border-b-2 border-[#1e3a8a] relative top-[1px]' 
+                    : 'text-[#757682] font-medium pb-3 border-b-2 border-transparent hover:text-[#1e3a8a] transition-colors';
+                builderHtml += `<button onclick="window.setActiveTab('${tab.id}')" class="${activeClasses}">${tab.title}</button>`;
+            });
+            builderTabs.innerHTML = builderHtml;
+        }
+
+        if (previewTabs) {
+            let previewHtml = '';
+            serviceData.tabs.forEach(tab => {
+                const isActive = tab.id === activeTabId;
+                const activeClasses = isActive
+                    ? 'text-[13px] font-bold text-[#1e3a8a] pb-3 border-b-2 border-[#1e3a8a] relative top-[1px]'
+                    : 'text-[13px] font-medium text-[#757682] pb-3 border-b-2 border-transparent cursor-pointer hover:text-[#1e3a8a] transition-colors';
+                previewHtml += `<span onclick="window.setActiveTab('${tab.id}')" class="${activeClasses}">${tab.title}</span>`;
+            });
+            previewTabs.innerHTML = previewHtml;
+        }
+    }
+</script>
+</body>
+</html>
