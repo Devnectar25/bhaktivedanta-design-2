@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { ChevronUp } from 'lucide-react';
 
 // Main Site components
 import Navbar from './components/Navbar/Navbar';
@@ -50,6 +51,40 @@ import AddAdminUser from './pages/admin/AdminUsers/AddAdminUser';
 
 import './App.css';
 
+function ScrollToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <button
+      onClick={scrollToTop}
+      className={`scroll-to-top-btn ${isVisible ? 'visible' : ''}`}
+      aria-label="Scroll to top"
+    >
+      <ChevronUp size={24} />
+    </button>
+  );
+}
+
 function MainSite() {
   const [selectedSpeciality, setSelectedSpeciality] = useState(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
@@ -62,6 +97,7 @@ function MainSite() {
   return (
     <div className="app">
       <Navbar onSelectSpeciality={handleSelectSpeciality} />
+      <ScrollToTop />
       <main>
         <Hero />
         <InfoSlider />

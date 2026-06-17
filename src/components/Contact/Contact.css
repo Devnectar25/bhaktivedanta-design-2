@@ -9,13 +9,105 @@
   gap: 6rem;
 }
 
-.get-in-touch h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+.get-in-touch {
+  background: #f0f7ff; /* Soft light blue background card */
+  padding: 4rem;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px -10px rgba(30, 58, 138, 0.08);
+  border: 1px solid rgba(30, 58, 138, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.get-in-touch h2 span {
+.contact-heading {
+  font-size: 2.5rem;
   color: var(--primary);
+  margin-bottom: 2rem !important;
+  font-weight: 700;
+}
+
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.contact-info-line {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.contact-info-icon {
+  color: #374151; /* Dark gray outline icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-info-line a {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #374151; /* Dark gray number text */
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+  transition: color 0.3s ease;
+}
+
+.contact-info-line a:hover {
+  color: var(--primary);
+}
+
+.contact-social-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.contact-social-circle {
+  width: 44px;
+  height: 44px;
+  background-color: var(--primary); /* Deep blue circular background */
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.1);
+}
+
+.contact-social-circle:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+
+.contact-social-circle.instagram:hover {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  box-shadow: 0 10px 15px -3px rgba(225, 48, 108, 0.4);
+}
+
+.contact-social-circle.facebook:hover {
+  background-color: #1877f2;
+  box-shadow: 0 10px 15px -3px rgba(24, 119, 242, 0.4);
+}
+
+.contact-social-circle.linkedin:hover {
+  background-color: #0a66c2;
+  box-shadow: 0 10px 15px -3px rgba(10, 102, 194, 0.4);
+}
+
+.contact-social-circle.twitter:hover {
+  background-color: #1da1f2;
+  box-shadow: 0 10px 15px -3px rgba(29, 161, 242, 0.4);
+}
+
+.contact-social-circle.youtube:hover {
+  background-color: #ff0000;
+  box-shadow: 0 10px 15px -3px rgba(255, 0, 0, 0.4);
 }
 
 .contact-intro {

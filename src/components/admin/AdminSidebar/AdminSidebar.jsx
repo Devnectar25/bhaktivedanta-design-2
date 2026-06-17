@@ -3,12 +3,22 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 const navLinks = [
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
-  { name: 'Services', icon: 'medical_services', to: 'services' },
   { name: 'Specialities', icon: 'star', to: 'specialities' },
+  { name: 'Services', icon: 'medical_services', to: 'services' },
+  
+  // Placeholder options from main website (ordered exact as header)
+  { name: 'Patients Corner', icon: 'face', to: '#' },
+  { name: 'Spiritual care', icon: 'spa', to: '#' },
+  { name: 'Education & Medical Research', icon: 'school', to: '#' },
+  { name: 'Our Associate Centre', icon: 'domain', to: '#' },
+  { name: 'Careers', icon: 'work', to: '#' },
+  { divider: true },
+
   { name: 'Doctors', icon: 'group', to: 'doctors' },
   { name: 'Doctor Availability', icon: 'event_available', to: 'doctor-availability' },
   { name: 'Health Packages', icon: 'health_and_safety', to: 'health-packages' },
   { divider: true },
+
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
   { name: 'News', icon: 'newspaper', to: 'news' },
   { name: 'Events', icon: 'event', to: 'events' },
@@ -45,6 +55,19 @@ const AdminSidebar = () => {
         {navLinks.map((item, idx) => {
           if (item.divider) {
             return <div key={`div-${idx}`} className="h-px bg-white/10 my-3 mx-3"></div>;
+          }
+
+          if (item.to === '#') {
+            return (
+              <a
+                key={`static-${idx}`}
+                href="#"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+              >
+                <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                <span>{item.name}</span>
+              </a>
+            );
           }
           
           return (
