@@ -1,15 +1,8 @@
 {
-  "cleanUrls": true,
-  "redirects": [
+  "rewrites": [
     {
-      "source": "/admin/login",
-      "destination": "/admin/login.html",
-      "permanent": false
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin/login.html",
-      "permanent": false
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

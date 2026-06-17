@@ -9,7 +9,7 @@ const AddDoctor = () => {
 
   const [name, setName] = useState('');
   const [qualifications, setQualifications] = useState('');
-  const [department, setDepartment] = useState('Cardiology');
+  const [department, setDepartment] = useState('');
   const [subSpeciality, setSubSpeciality] = useState('');
   const [experience, setExperience] = useState('');
   const [availability, setAvailability] = useState('Available');
@@ -29,7 +29,7 @@ const AddDoctor = () => {
         if (match) {
           setName(match.name || '');
           setQualifications(match.qualifications || '');
-          setDepartment(match.department || 'Cardiology');
+          setDepartment(match.department || '');
           setSubSpeciality(match.subSpeciality || '');
           setExperience(match.experience || '');
           setAvailability(match.availability || 'Available');
@@ -40,6 +40,21 @@ const AddDoctor = () => {
       }
     });
   }, [editId]);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("Image file size should be less than 2MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -155,40 +170,50 @@ const AddDoctor = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="font-bold text-slate-500 uppercase">Department</label>
-                <select 
-                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium cursor-pointer"
+                <label className="font-bold text-slate-500 uppercase">Department *</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
+                  placeholder="e.g. Cardiology"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                >
-                  <option value="Cardiology">Cardiology</option>
-                  <option value="Pediatrics">Pediatrics</option>
-                  <option value="Orthopedics">Orthopedics</option>
-                  <option value="Oncology">Oncology</option>
-                  <option value="Neurology">Neurology</option>
-                </select>
-              </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-500 uppercase">Sub-Speciality / Focus</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
-                  placeholder="e.g. Spine Surgery"
-                  value={subSpeciality}
-                  onChange={(e) => setSubSpeciality(e.target.value)}
+                  required
                 />
               </div>
 
-              <div className="sm:col-span-2 space-y-1">
-                <label className="font-bold text-slate-500 uppercase">Profile Photo URL</label>
-                <input 
-                  type="text" 
-                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
-                  placeholder="https://example.com/image.png"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
-                />
+              <div className="sm:col-span-2 space-y-2">
+                <label className="font-bold text-slate-500 uppercase">Profile Photo</label>
+                <div className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50/50">
+                  {image ? (
+                    <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200 bg-white flex items-center justify-center group shadow-sm flex-shrink-0">
+                      <img src={image} alt="Profile Preview" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setImage('')}
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity duration-200 rounded-lg"
+                        title="Remove Photo"
+                      >
+                        <span className="material-symbols-outlined text-xl">delete</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-lg border border-dashed border-slate-300 bg-white flex items-center justify-center text-slate-400 shadow-inner flex-shrink-0">
+                      <span className="material-symbols-outlined text-3xl">image</span>
+                    </div>
+                  )}
+                  <div className="flex-1 space-y-1">
+                    <label className="inline-block bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold cursor-pointer transition-all text-center text-xs shadow-sm hover:shadow active:scale-[0.98]">
+                      <span>Upload Image</span>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        className="hidden" 
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                    <p className="text-[10px] text-slate-400">PNG, JPG or WEBP. Max 2MB.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
