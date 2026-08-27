@@ -130,6 +130,8 @@ const AddSpeciality = () => {
   const [icon, setIcon] = useState('star');
   const [shortDescription, setShortDescription] = useState('');
   const [status, setStatus] = useState(true);
+  const [adminId, setAdminId] = useState('ADM-001');
+  const [adminName, setAdminName] = useState('Super Administrator');
 
   // Tabs structure state
   const [tabs, setTabs] = useState([]);
@@ -160,6 +162,8 @@ const AddSpeciality = () => {
           setIcon(match.icon || 'star');
           setShortDescription(match.shortDescription || '');
           setStatus(match.status !== false);
+          setAdminId(match.adminId || 'ADM-001');
+          setAdminName(match.adminName || 'Super Administrator');
           const plainTabs = (match.tabs || []).map(t => ({
             ...t,
             content: htmlToText(t.content)
@@ -221,6 +225,7 @@ const AddSpeciality = () => {
       return;
     }
 
+    const now = new Date().toISOString();
     let updatedSpecs;
     if (editId) {
       const htmlTabs = tabs.map(t => ({
@@ -236,6 +241,9 @@ const AddSpeciality = () => {
             icon,
             shortDescription,
             status,
+            adminId: adminId.trim() || 'ADM-001',
+            adminName: adminName.trim() || 'Super Administrator',
+            updatedAt: now,
             tabs: htmlTabs.length > 0 ? htmlTabs : s.tabs
           };
           ensureStandardTabs(updated);
@@ -255,6 +263,10 @@ const AddSpeciality = () => {
         icon,
         shortDescription,
         status,
+        adminId: adminId.trim() || 'ADM-001',
+        adminName: adminName.trim() || 'Super Administrator',
+        createdAt: now,
+        updatedAt: now,
         tabs: htmlTabs
       };
       ensureStandardTabs(newSpec);
@@ -427,6 +439,38 @@ const AddSpeciality = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
+          <section className="bg-white rounded-xl border border-slate-200/80 p-5 space-y-4">
+            <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-base text-blue-600">badge</span>
+              <span>Admin Metadata</span>
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-500 uppercase">Admin ID *</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
+                  placeholder="e.g. ADM-001"
+                  value={adminId}
+                  onChange={(e) => setAdminId(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-500 uppercase">Admin Name</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
+                  placeholder="e.g. Super Administrator"
+                  value={adminName}
+                  onChange={(e) => setAdminName(e.target.value)}
+                />
+              </div>
+            </div>
+          </section>
+
           <section className="bg-white rounded-xl border border-slate-200/80 p-5 space-y-4">
             <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2">Visibility Settings</h3>
             

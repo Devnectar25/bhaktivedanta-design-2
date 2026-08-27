@@ -3,6 +3,20 @@ import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState } from '../../utils/api';
 
+// Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
+const splitIntoColumns = (items, numCols) => {
+  const result = Array.from({ length: numCols }, () => []);
+  if (!items || items.length === 0) return result;
+
+  const perCol = Math.ceil(items.length / numCols);
+  for (let i = 0; i < numCols; i++) {
+    const start = i * perCol;
+    const end = start + perCol;
+    result[i] = items.slice(start, end);
+  }
+  return result;
+};
+
 const menuStructure = [
   {
     name: 'Specialities',
@@ -89,6 +103,7 @@ const Navbar = ({ onSelectSpeciality }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
+  const [activeMegaCategory, setActiveMegaCategory] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -99,27 +114,42 @@ const Navbar = ({ onSelectSpeciality }) => {
   }, []);
 
   useEffect(() => {
+    // Invalidate stale cached state if it has fewer than 36 specialities
+    const cached = localStorage.getItem('bhaktivedanta_specialities_state');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (!parsed.specialities || parsed.specialities.length < 36) {
+          localStorage.removeItem('bhaktivedanta_specialities_state');
+        }
+      } catch (e) {
+        localStorage.removeItem('bhaktivedanta_specialities_state');
+      }
+    }
+
     const handleStorageChange = (e) => {
       if (e.key === 'bhaktivedanta_specialities_state' && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
-          if (parsed && parsed.specialities) {
-            parsed.specialities.forEach(ensureStandardTabs);
+          if (parsed && parsed.categories) {
+            if (parsed.specialities) parsed.specialities.forEach(ensureStandardTabs);
+            setSpecialitiesData(parsed);
           }
-          setSpecialitiesData(parsed);
         } catch (err) {
           console.error("Storage change parsing error:", err);
         }
       }
     };
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Sync with API on mount
     getSpecialitiesState(defaultSpecialitiesState).then(res => {
-      if (res && res.specialities) {
-        res.specialities.forEach(ensureStandardTabs);
+      if (res && res.categories) {
+        if (res.specialities) res.specialities.forEach(ensureStandardTabs);
+        setSpecialitiesData(res);
+      } else {
+        setSpecialitiesData(defaultSpecialitiesState);
       }
-      setSpecialitiesData(res);
     });
 
     return () => window.removeEventListener('storage', handleStorageChange);
@@ -172,8 +202,8 @@ const Navbar = ({ onSelectSpeciality }) => {
               <img src="/icon.png" alt="Emblem" className="logo-icon" />
               <img src="/logo.png" alt="Bhaktivedanta" className="logo-text" />
             </a>
-            
-            <button 
+
+            <button
               className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle navigation menu"
@@ -195,40 +225,79 @@ const Navbar = ({ onSelectSpeciality }) => {
               {/* Dynamic menu structure */}
               {menuStructure.map((menuItem) => {
                 if (menuItem.type === 'mega-menu') {
+                  const categoriesList = specialitiesData.categories?.filter(c => c.status) || [];
+                  const currentCat = categoriesList.find(c => c.id === activeMegaCategory);
+                  const catSpecs = currentCat
+                    ? (specialitiesData.specialities?.filter(s => s.categoryId === currentCat.id && s.status) || [])
+                    : [];
+                  const columns = splitIntoColumns(catSpecs, catSpecs.length > 8 ? 3 : 2);
+
                   return (
-                    <div key={menuItem.name} className="nav-item-dropdown-container">
+                    <div
+                      key={menuItem.name}
+                      className="nav-item-dropdown-container specialities-nav-item"
+                      onMouseLeave={() => setActiveMegaCategory(null)}
+                    >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
-                      <div className="mega-menu-dropdown">
-                        <div className="mega-menu-grid">
-                          {specialitiesData.categories
-                            ?.filter(c => c.status)
-                            .sort((a, b) => a.order - b.order)
-                            .map(cat => {
-                              const catSpecs = specialitiesData.specialities?.filter(s => s.categoryId === cat.id && s.status);
-                              if (!catSpecs || catSpecs.length === 0) return null;
-                              return (
-                                <div key={cat.id} className="mega-menu-column">
-                                  <h3 className="mega-menu-category-title">{cat.name}</h3>
-                                  <ul className="mega-menu-list">
-                                    {catSpecs.map(spec => (
-                                      <li key={spec.id}>
-                                        <button 
-                                          className="mega-menu-link-btn"
+                      
+                      <div className={`specialities-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
+                        {/* FIRST VIEW: Category menu list */}
+                        <div className="specialities-category-menu">
+                          {categoriesList.map(cat => {
+                            const isActive = activeMegaCategory === cat.id;
+                            return (
+                              <div
+                                key={cat.id}
+                                className={`specialities-category-item ${isActive ? 'active' : ''}`}
+                                onMouseEnter={() => setActiveMegaCategory(cat.id)}
+                                onClick={() => setActiveMegaCategory(cat.id)}
+                              >
+                                <span className="category-item-text">{cat.name}</span>
+                                <span className="material-symbols-outlined category-item-arrow">
+                                  chevron_right
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* FLYOUT VIEW: Sub-specialities shown after hovering/going to a category */}
+                        {currentCat && (
+                          <div className="specialities-subpanel animate-flyout-fade" key={currentCat.id}>
+                            <div className="specialities-subpanel-header">
+                              <h3 className="specialities-subpanel-title">{currentCat.name}</h3>
+                              <span className="specialities-subpanel-badge">{catSpecs.length} Specialities</span>
+                            </div>
+                            {catSpecs.length > 0 ? (
+                              <div className={`specialities-grid ${catSpecs.length > 8 ? 'grid-3-col' : 'grid-2-col'}`}>
+                                {columns.map((colItems, colIdx) => (
+                                  <ul key={colIdx} className="specialities-subpanel-list">
+                                    {colItems.map((s, itemIdx) => (
+                                      <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
+                                        <button
+                                          className="speciality-link-btn"
                                           onClick={() => {
-                                            onSelectSpeciality(spec, cat.name);
+                                            onSelectSpeciality(s, currentCat.name);
+                                            setActiveMegaCategory(null);
                                           }}
                                         >
-                                          {spec.name}
+                                          <span className="link-btn-bullet"></span>
+                                          <span className="link-btn-text">{s.name}</span>
                                         </button>
                                       </li>
                                     ))}
                                   </ul>
-                                </div>
-                              );
-                            })}
-                        </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
+                                <p style={{ margin: 0, fontWeight: 600 }}>{currentCat.description || 'Specialities coming soon under this category.'}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -284,7 +353,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                   const isOpen = activeMobileDropdown === menuItem.name;
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
-                      <button 
+                      <button
                         className={`mobile-accordion-trigger ${isOpen ? 'active' : ''}`}
                         onClick={() => toggleMobileDropdown(menuItem.name)}
                       >
@@ -293,7 +362,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                           {isOpen ? 'expand_less' : 'expand_more'}
                         </span>
                       </button>
-                      
+
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         {specialitiesData.categories
                           ?.filter(c => c.status)
@@ -305,7 +374,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
                                   {catSpecs.map(spec => (
-                                    <button 
+                                    <button
                                       key={spec.id}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
@@ -329,7 +398,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                   const isOpen = activeMobileDropdown === menuItem.name;
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
-                      <button 
+                      <button
                         className={`mobile-accordion-trigger ${isOpen ? 'active' : ''}`}
                         onClick={() => toggleMobileDropdown(menuItem.name)}
                       >
@@ -338,14 +407,14 @@ const Navbar = ({ onSelectSpeciality }) => {
                           {isOpen ? 'expand_less' : 'expand_more'}
                         </span>
                       </button>
-                      
+
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         <div className="mobile-sub-links">
                           {menuItem.links.map((link, lIdx) => (
-                            <a 
-                              key={lIdx} 
-                              href={link.href} 
-                              className="mobile-sub-link-a" 
+                            <a
+                              key={lIdx}
+                              href={link.href}
+                              className="mobile-sub-link-a"
                               onClick={handleMobileLinkClick}
                             >
                               {link.name}
@@ -358,10 +427,10 @@ const Navbar = ({ onSelectSpeciality }) => {
                 }
 
                 return (
-                  <a 
-                    key={menuItem.name} 
-                    href={menuItem.to} 
-                    className="mobile-nav-link-simple" 
+                  <a
+                    key={menuItem.name}
+                    href={menuItem.to}
+                    className="mobile-nav-link-simple"
                     onClick={handleMobileLinkClick}
                   >
                     {menuItem.name}

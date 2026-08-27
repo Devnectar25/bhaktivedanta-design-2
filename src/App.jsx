@@ -33,6 +33,14 @@ import AdminTestimonials from './pages/admin/Testimonials/Testimonials';
 import News from './pages/admin/News/News';
 import Gallery from './pages/admin/Gallery/Gallery';
 import Settings from './pages/admin/Settings/Settings';
+import HelpDesk from './pages/admin/HelpDesk/HelpDesk';
+import SubAdmin from './pages/admin/SubAdmin/SubAdmin';
+import ApplicationErrors from './pages/admin/ApplicationErrors/ApplicationErrors';
+import PatientsCorner from './pages/admin/PatientsCorner/PatientsCorner';
+import SpiritualCare from './pages/admin/SpiritualCare/SpiritualCare';
+import EducationResearch from './pages/admin/EducationResearch/EducationResearch';
+import AssociateCentres from './pages/admin/AssociateCentres/AssociateCentres';
+import Careers from './pages/admin/Careers/Careers';
 
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
@@ -150,6 +158,14 @@ function App() {
         <Route path="appointments" element={<Appointments />} />
         <Route path="contact-queries" element={<ContactQueries />} />
         <Route path="admin-users" element={<AdminUsers />} />
+        <Route path="sub-admins" element={<SubAdmin />} />
+        <Route path="help-desk" element={<HelpDesk />} />
+        <Route path="application-errors" element={<ApplicationErrors />} />
+        <Route path="patients-corner" element={<PatientsCorner />} />
+        <Route path="spiritual-care" element={<SpiritualCare />} />
+        <Route path="education-research" element={<EducationResearch />} />
+        <Route path="associate-centres" element={<AssociateCentres />} />
+        <Route path="careers" element={<Careers />} />
         <Route path="settings" element={<Settings />} />
 
         {/* Forms */}

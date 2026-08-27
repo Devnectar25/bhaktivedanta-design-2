@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, Navigate } from 'react-router-dom';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
 import AdminHeader from '../AdminHeader/AdminHeader';
 import '../unified-admin.css';
@@ -9,6 +9,14 @@ const titleMap = {
   '/admin/dashboard': 'Admin Dashboard',
   '/admin/services': 'Services Management',
   '/admin/specialities': 'Specialities Management',
+  '/admin/help-desk': 'Help Desk & Support',
+  '/admin/application-errors': 'Application Error Log',
+  '/admin/sub-admins': 'Sub-Admin Management',
+  '/admin/patients-corner': 'Patients Corner Guidelines',
+  '/admin/spiritual-care': 'Spiritual Care Management',
+  '/admin/education-research': 'Education & Medical Research',
+  '/admin/associate-centres': 'Our Associate Centres',
+  '/admin/careers': 'Careers & Job Openings',
   '/admin/doctors': 'Doctors Management',
   '/admin/doctor-availability': 'Doctor Availability',
   '/admin/health-packages': 'Health Packages',
@@ -36,6 +44,12 @@ const titleMap = {
 
 const AdminLayout = () => {
   const location = useLocation();
+  const isAuthenticated = localStorage.getItem('bhaktivedanta_admin_auth') === 'true' || localStorage.getItem('adminToken') === 'true';
+
+  if (!isAuthenticated) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
   const currentTitle = titleMap[location.pathname] || 'Bhaktivedanta Admin';
 
   useEffect(() => {

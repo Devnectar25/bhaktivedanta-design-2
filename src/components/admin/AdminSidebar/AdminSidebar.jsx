@@ -5,13 +5,15 @@ const navLinks = [
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
   { name: 'Specialities', icon: 'star', to: 'specialities' },
   { name: 'Services', icon: 'medical_services', to: 'services' },
-  
-  // Placeholder options from main website (ordered exact as header)
-  { name: 'Patients Corner', icon: 'face', to: '#' },
-  { name: 'Spiritual care', icon: 'spa', to: '#' },
-  { name: 'Education & Medical Research', icon: 'school', to: '#' },
-  { name: 'Our Associate Centre', icon: 'domain', to: '#' },
-  { name: 'Careers', icon: 'work', to: '#' },
+  { name: 'Help Desk & Support', icon: 'support_agent', to: 'help-desk' },
+  { name: 'Application Errors', icon: 'bug_report', to: 'application-errors' },
+  { divider: true },
+
+  { name: 'Patients Corner', icon: 'face', to: 'patients-corner' },
+  { name: 'Spiritual care', icon: 'spa', to: 'spiritual-care' },
+  { name: 'Education & Medical Research', icon: 'school', to: 'education-research' },
+  { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
+  { name: 'Careers', icon: 'work', to: 'careers' },
   { divider: true },
 
   { name: 'Doctors', icon: 'group', to: 'doctors' },
@@ -24,17 +26,22 @@ const navLinks = [
   { name: 'Events', icon: 'event', to: 'events' },
   { name: 'Gallery', icon: 'image', to: 'gallery' },
   { divider: true },
+
   { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
   { name: 'Contact Queries', icon: 'contact_support', to: 'contact-queries' },
-  { name: 'Admin Users', icon: 'manage_accounts', to: 'admin-users' }
+  { name: 'Admin Users', icon: 'manage_accounts', to: 'admin-users' },
+  { name: 'Sub-Admins', icon: 'admin_panel_settings', to: 'sub-admins' }
 ];
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Navigate using a full page reload so that all injected Tailwind CSS is completely unloaded
-    window.location.href = '/';
+    localStorage.removeItem('bhaktivedanta_admin_auth');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('admin_username');
+    sessionStorage.clear();
+    window.location.href = '/admin/login';
   };
 
   return (

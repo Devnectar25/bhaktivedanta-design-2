@@ -12,6 +12,8 @@ const AddCategory = () => {
   const [description, setDescription] = useState('');
   const [order, setOrder] = useState('1');
   const [status, setStatus] = useState(true);
+  const [adminId, setAdminId] = useState('ADM-001');
+  const [adminName, setAdminName] = useState('Super Administrator');
 
   const [state, setState] = useState(defaultSpecialitiesState);
 
@@ -29,6 +31,8 @@ const AddCategory = () => {
           setDescription(match.description || '');
           setOrder(match.order ? match.order.toString() : '1');
           setStatus(match.status !== false);
+          setAdminId(match.adminId || 'ADM-001');
+          setAdminName(match.adminName || 'Super Administrator');
         }
       }
     });
@@ -42,6 +46,7 @@ const AddCategory = () => {
       return;
     }
 
+    const now = new Date().toISOString();
     let updatedCats;
     if (editId) {
       updatedCats = state.categories.map(c => {
@@ -51,7 +56,10 @@ const AddCategory = () => {
             name,
             description,
             order: parseInt(order) || 1,
-            status
+            status,
+            adminId: adminId.trim() || 'ADM-001',
+            adminName: adminName.trim() || 'Super Administrator',
+            updatedAt: now
           };
         }
         return c;
@@ -62,7 +70,11 @@ const AddCategory = () => {
         name,
         description,
         order: parseInt(order) || 1,
-        status
+        status,
+        adminId: adminId.trim() || 'ADM-001',
+        adminName: adminName.trim() || 'Super Administrator',
+        createdAt: now,
+        updatedAt: now
       };
       updatedCats = [...state.categories, newCat];
     }
@@ -102,6 +114,29 @@ const AddCategory = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="font-bold text-slate-500 uppercase font-sans">Admin ID *</label>
+            <input 
+              type="text" 
+              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
+              placeholder="e.g. ADM-001"
+              value={adminId}
+              onChange={(e) => setAdminId(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="font-bold text-slate-500 uppercase font-sans">Admin Name</label>
+            <input 
+              type="text" 
+              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
+              placeholder="e.g. Super Administrator"
+              value={adminName}
+              onChange={(e) => setAdminName(e.target.value)}
             />
           </div>
 

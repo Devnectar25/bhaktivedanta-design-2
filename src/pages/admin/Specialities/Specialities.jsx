@@ -9,11 +9,26 @@ const Specialities = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getSpecialitiesState(defaultSpecialitiesState).then(res => {
-      if (res && res.specialities) {
-        res.specialities.forEach(ensureStandardTabs);
+    // Invalidate stale cached state if it has fewer than 36 specialities
+    const cached = localStorage.getItem('bhaktivedanta_specialities_state');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (!parsed.specialities || parsed.specialities.length < 36) {
+          localStorage.removeItem('bhaktivedanta_specialities_state');
+        }
+      } catch (e) {
+        localStorage.removeItem('bhaktivedanta_specialities_state');
       }
-      setState(res);
+    }
+
+    getSpecialitiesState(defaultSpecialitiesState).then(res => {
+      if (res && res.specialities && res.specialities.length >= 36) {
+        res.specialities.forEach(ensureStandardTabs);
+        setState(res);
+      } else {
+        setState(defaultSpecialitiesState);
+      }
     });
   }, []);
 
@@ -109,17 +124,25 @@ const Specialities = () => {
             <div className="divide-y divide-slate-100">
               {state.specialities.map(spec => {
                 const cat = state.categories.find(c => c.id === spec.categoryId);
+                const adminTag = spec.adminId ? `${spec.adminId}${spec.adminName ? ` (${spec.adminName})` : ''}` : 'ADM-001 (Super Administrator)';
                 return (
                   <div key={spec.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                      <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0">
                         <span className="material-symbols-outlined text-xl">{spec.icon || 'star'}</span>
                       </div>
                       <div>
                         <p className="font-bold text-slate-800 text-sm leading-snug">{spec.name}</p>
-                        <p className="text-[10px] text-slate-400 font-semibold">
-                          Category: {cat ? cat.name : 'Unassigned'}
-                        </p>
+                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                          <span className="text-[10px] text-slate-500 font-semibold">
+                            Category: {cat ? cat.name : 'Unassigned'}
+                          </span>
+                          <span className="text-slate-300">•</span>
+                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200" title={`Created/Updated by ${adminTag}`}>
+                            <span className="material-symbols-outlined text-[12px] text-blue-600">badge</span>
+                            <span>Admin ID: {spec.adminId || 'ADM-001'}</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -187,7 +210,13 @@ const Specialities = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-bold text-slate-800 text-sm leading-snug">{cat.name}</p>
-                        <p className="text-[10px] text-slate-400 font-semibold">Order: {cat.order} • {count} Specialities</p>
+                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                          <p className="text-[10px] text-slate-400 font-semibold">Order: {cat.order} • {count} Specialities</p>
+                          <span className="text-slate-300">•</span>
+                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded text-[9px] font-bold border border-slate-200" title={`Admin: ${cat.adminId || 'ADM-001'}`}>
+                            <span>Admin ID: {cat.adminId || 'ADM-001'}</span>
+                          </span>
+                        </div>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                         cat.status 
