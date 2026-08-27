@@ -37,8 +37,19 @@ const defaultNotifications = [
 
 const AdminHeader = ({ title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
+  const profileRef = useRef(null);
+  const username = localStorage.getItem('admin_username') || 'Admin User';
+
+  const handleLogout = () => {
+    localStorage.removeItem('bhaktivedanta_admin_auth');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('admin_username');
+    sessionStorage.clear();
+    window.location.href = '/admin/login';
+  };
 
   useEffect(() => {
     const data = localStorage.getItem('bhaktivedanta_notifications');
@@ -58,6 +69,9 @@ const AdminHeader = ({ title }) => {
     const handleOutsideClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
       }
     };
     document.addEventListener('click', handleOutsideClick);
@@ -214,16 +228,41 @@ const AdminHeader = ({ title }) => {
         <div className="h-8 w-[1px] bg-slate-200"></div>
 
         {/* Profile */}
-        <div className="flex items-center gap-3.5">
-          <div className="flex flex-col text-right hidden sm:block">
-            <span className="text-sm font-bold text-slate-800 leading-tight">Admin User</span>
-            <span className="text-xs font-semibold text-slate-400 leading-tight">Super Administrator</span>
-          </div>
-          <img 
-            alt="Admin Profile" 
-            className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqK0tUfbuqSxbfBIUdGMeFLtChbPcohJwmAhWmeKsnzBL50kdu9WUBzGrHm-_mjxXCOvs6vGG_KAEUZ0Aq4JK5XBMZnc0T2VNlIUGjxep88pAjeDh1qOjk-EQbBKMFilmsY84OYXkeUX5vrgN9FYHK-54D_SoK75i0Ef3GfVYJfcmKlz5nP_7RxFWc5dcg0fmLTej9icKl3NdyPKslBkJiav17I9drerB0CgS_Fi_YVuX8y12TNGXtXGTP3Ye8z1rJHjQThSl7pQ"
-          />
+        <div className="relative" ref={profileRef}>
+          <button 
+            onClick={() => setProfileOpen(!profileOpen)}
+            className="flex items-center gap-3.5 p-1 rounded-xl hover:bg-slate-100 transition-all text-left outline-none"
+          >
+            <div className="flex flex-col text-right hidden sm:block">
+              <span className="text-sm font-bold text-slate-800 leading-tight">{username}</span>
+              <span className="text-xs font-semibold text-slate-400 leading-tight">Super Administrator</span>
+            </div>
+            <img 
+              alt="Admin Profile" 
+              className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm" 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqK0tUfbuqSxbfBIUdGMeFLtChbPcohJwmAhWmeKsnzBL50kdu9WUBzGrHm-_mjxXCOvs6vGG_KAEUZ0Aq4JK5XBMZnc0T2VNlIUGjxep88pAjeDh1qOjk-EQbBKMFilmsY84OYXkeUX5vrgN9FYHK-54D_SoK75i0Ef3GfVYJfcmKlz5nP_7RxFWc5dcg0fmLTej9icKl3NdyPKslBkJiav17I9drerB0CgS_Fi_YVuX8y12TNGXtXGTP3Ye8z1rJHjQThSl7pQ"
+            />
+          </button>
+
+          {profileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-200/60 z-50 py-1 font-sans animate-dropdown">
+              <div className="px-4 py-2 border-b border-slate-100">
+                <p className="text-xs font-bold text-slate-800">{username}</p>
+                <p className="text-[11px] text-slate-400">admin@bhaktivedantahospital.com</p>
+              </div>
+              <a href="/admin/settings" className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">settings</span>
+                Settings
+              </a>
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left border-t border-slate-100"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

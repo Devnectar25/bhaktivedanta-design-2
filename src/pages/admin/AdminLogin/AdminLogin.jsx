@@ -10,6 +10,13 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Auto redirect to dashboard if already logged in
+    const isAuth = localStorage.getItem('bhaktivedanta_admin_auth') === 'true' || localStorage.getItem('adminToken') === 'true';
+    if (isAuth) {
+      navigate('/admin/dashboard', { replace: true });
+      return;
+    }
+
     // 1. Inject Tailwind CDN script for login page if not already present
     let tailwindScript = document.getElementById('admin-tailwind-script') || document.getElementById('tailwind-cdn-script');
     if (!tailwindScript) {
@@ -60,7 +67,7 @@ const AdminLogin = () => {
         });
       }
     };
-  }, []);
+  }, [navigate]);
 
   const triggerToast = (message, type = 'success') => {
     setToast({ message, type, visible: true });
@@ -82,8 +89,9 @@ const AdminLogin = () => {
       return;
     }
 
-    if ((cleanUser !== 'Admin' && cleanUser !== 'Admin@bhaktivedantahospital.com') || password !== 'Admin') {
-      triggerToast("Invalid credentials! Please use 'Admin' for both.", "error");
+    const lowerUser = cleanUser.toLowerCase();
+    if ((lowerUser !== 'admin' && lowerUser !== 'admin@bhaktivedantahospital.com' && lowerUser !== 'superadmin') || password !== 'Admin') {
+      triggerToast("Invalid credentials! Username: Admin, Password: Admin", "error");
       return;
     }
 
@@ -91,11 +99,14 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     setTimeout(() => {
+      localStorage.setItem('bhaktivedanta_admin_auth', 'true');
+      localStorage.setItem('adminToken', 'true');
+      localStorage.setItem('admin_username', cleanUser);
       triggerToast("Welcome Back! Redirecting to Dashboard...", "success");
       setTimeout(() => {
-        navigate('/admin/dashboard');
-      }, 1000);
-    }, 1200);
+        navigate('/admin/dashboard', { replace: true });
+      }, 800);
+    }, 600);
   };
 
   return (

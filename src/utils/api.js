@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 /**
  * Helper to check if backend is online.
@@ -20,11 +20,13 @@ async function checkServerHealth() {
  */
 export async function apiGet(path, localStorageKey, fallbackData) {
   try {
-    const res = await fetch(`${API_BASE_URL}${path}`, { signal: AbortSignal.timeout(1500) });
+    const res = await fetch(`${API_BASE_URL}${path}`, { signal: AbortSignal.timeout(3000) });
     if (res.ok) {
       const data = await res.json();
-      // Keep localStorage synchronized in background
-      localStorage.setItem(localStorageKey, JSON.stringify(data));
+      // Keep localStorage synchronized in background if dataset is valid
+      if (data) {
+        localStorage.setItem(localStorageKey, JSON.stringify(data));
+      }
       return data;
     }
   } catch (err) {
@@ -35,7 +37,12 @@ export async function apiGet(path, localStorageKey, fallbackData) {
   const local = localStorage.getItem(localStorageKey);
   if (local) {
     try {
-      return JSON.parse(local);
+      const parsed = JSON.parse(local);
+      if (localStorageKey === 'bhaktivedanta_specialities_state' && parsed && parsed.specialities && parsed.specialities.length < 36) {
+        localStorage.removeItem(localStorageKey);
+        return fallbackData;
+      }
+      return parsed;
     } catch (e) {}
   }
   return fallbackData;
@@ -49,7 +56,7 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
     const options = {
       method,
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(2000)
+      signal: AbortSignal.timeout(10000)
     };
     if (body) {
       options.body = JSON.stringify(body);
@@ -198,3 +205,26 @@ export const updateSubadmin = (username, sub, fallbackList) => apiMutation(`/sub
 export const deleteSubadmin = (username, fallbackList) => apiMutation(`/subadmins/${username}`, 'DELETE', null, 'bhaktivedanta_admin_subadmins', (list = []) => {
   return list.filter(item => item.username !== username);
 });
+
+// HelpDesk
+export const getHelpDesk = (fallback) => apiGet('/helpdesk', 'bhaktivedanta_admin_helpdesk', fallback);
+export const saveHelpDeskList = (list) => apiMutation('/helpdesk', 'PUT', list, 'bhaktivedanta_admin_helpdesk', (old, updated) => updated);
+export const addHelpDeskTicket = (ticket, fallbackList) => apiMutation('/helpdesk', 'POST', ticket, 'bhaktivedanta_admin_helpdesk', (list = [], newTicket) => {
+  return [newTicket, ...list];
+});
+export const updateHelpDeskTicket = (id, ticket, fallbackList) => apiMutation(`/helpdesk/${id}`, 'PUT', ticket, 'bhaktivedanta_admin_helpdesk', (list = [], updatedTicket) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedTicket } : item);
+});
+export const deleteHelpDeskTicket = (id, fallbackList) => apiMutation(`/helpdesk/${id}`, 'DELETE', null, 'bhaktivedanta_admin_helpdesk', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
+
+// Application Errors
+export const getAppErrors = (fallback) => apiGet('/app-errors', 'bhaktivedanta_admin_app_errors', fallback);
+export const addAppError = (errorItem) => apiMutation('/app-errors', 'POST', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], newError) => {
+  return [newError, ...list];
+});
+export const updateAppError = (id, errorItem) => apiMutation(`/app-errors/${id}`, 'PUT', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], updatedError) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedError } : item);
+});
+export const clearAppErrors = () => apiMutation('/app-errors', 'DELETE', null, 'bhaktivedanta_admin_app_errors', () => []);
