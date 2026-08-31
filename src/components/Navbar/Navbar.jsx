@@ -547,6 +547,16 @@ const Navbar = ({ onSelectSpeciality }) => {
               <a href="#contact" className="btn-book-appointment">
                 Book Appointment
               </a>
+              <div className="appointment-dropdown-menu">
+                <a href="#patients" className="appointment-dropdown-btn">
+                  <span className="material-symbols-outlined">assignment</span>
+                  <span>Patients Report</span>
+                </a>
+                <a href="#testimonials" className="appointment-dropdown-btn">
+                  <span className="material-symbols-outlined">support_agent</span>
+                  <span>Feedback</span>
+                </a>
+              </div>
             </div>
           </div>
 

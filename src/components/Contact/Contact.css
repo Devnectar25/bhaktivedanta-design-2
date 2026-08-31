@@ -1,17 +1,17 @@
 .contact-section {
-  padding: 8rem 0;
+  padding: 5rem 0;
   background-color: #f8fafc;
 }
 
 .contact-container {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
-  gap: 6rem;
+  gap: 3rem;
 }
 
 .get-in-touch {
   background: #f0f7ff; /* Soft light blue background card */
-  padding: 4rem;
+  padding: 2.5rem;
   border-radius: 30px;
   box-shadow: 0 10px 30px -10px rgba(30, 58, 138, 0.08);
   border: 1px solid rgba(30, 58, 138, 0.05);

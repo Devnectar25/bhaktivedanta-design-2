@@ -226,6 +226,20 @@ const Contact = () => {
               </svg>
             </a>
           </div>
+
+          {/* Embedded Google Map */}
+          <div className="contact-map-container" style={{ marginTop: '2rem' }}>
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.196962078696!2d72.86877967520935!3d19.262963081977793!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b065e1eb2bef%3A0xe54fb7a21390f0b4!2sBhaktivedanta%20Hospital%20%26%20Research%20Institute!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+              width="100%" 
+              height="200" 
+              style={{ border: 0, borderRadius: '15px', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)' }}
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Bhaktivedanta Hospital Google Map Location"
+            ></iframe>
+          </div>
         </div>
 
         {/* Right Card: Book an Appointment Form */}
