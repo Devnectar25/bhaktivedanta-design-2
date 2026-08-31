@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 6rem;
+  gap: 2.5rem;
 }
 
 .quick-access {
@@ -78,6 +78,11 @@
   transform: translateY(-2px);
 }
 
+.section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
 .section-label {
   color: var(--secondary);
   font-weight: 600;
@@ -87,12 +92,12 @@
   margin-bottom: 1rem;
 }
 
-.about-content h2 {
+.about-section .section-header h2 {
   font-size: 3rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
 }
 
-.about-content h2 span {
+.about-section .section-header h2 span {
   color: var(--primary);
 }
 

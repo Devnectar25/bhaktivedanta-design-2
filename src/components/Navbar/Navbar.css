@@ -234,6 +234,7 @@
   gap: clamp(0.75rem, 1.2vw, 1.4rem);
   flex: 1;
   margin-right: 0;
+  margin-left: 20px;
 }
 
 /* Dropdown Container */
@@ -343,7 +344,10 @@
 }
 
 .nav-appointment-action {
+  position: relative;
   flex-shrink: 0;
+  padding-bottom: 12px;
+  margin-bottom: -12px;
 }
 
 /* Book Appointment Action Button */
@@ -367,6 +371,64 @@
   background-color: #fb923c;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(234, 88, 12, 0.25);
+}
+
+/* Appointment Hover Dropdown Menu - Always Visible */
+.appointment-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 50%;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  opacity: 1;
+  visibility: visible;
+  transform: translate(50%, -10px);
+  z-index: 1000;
+  width: 220px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Hide the dropdown entirely when scrolled away from Hero section */
+.navbar-header.scrolled .appointment-dropdown-menu {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Dropdown Buttons */
+.appointment-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background-color: #2563eb; /* Vibrant dark blue */
+  color: #ffffff !important;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.65rem 0.9rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.appointment-dropdown-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
+}
+
+.appointment-dropdown-btn .material-symbols-outlined {
+  font-size: 18px;
+  color: #ffffff;
 }
 
 

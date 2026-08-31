@@ -6,6 +6,7 @@ import { ChevronUp } from 'lucide-react';
 import Navbar from './components/Navbar/Navbar';
 import Hero from './components/Hero/Hero';
 import InfoSlider from './components/InfoSlider/InfoSlider';
+import WhyChooseUs from './components/WhyChooseUs/WhyChooseUs';
 import About from './components/About/About';
 import Services from './components/Services/Services';
 import Doctors from './components/Doctors/Doctors';
@@ -109,6 +110,7 @@ function MainSite() {
       <main>
         <Hero />
         <InfoSlider />
+        <WhyChooseUs />
         <About />
         <Services />
         <Doctors />
