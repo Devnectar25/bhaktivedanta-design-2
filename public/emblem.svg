@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%" fill="none">
+  <!-- Lotus & Flame Emblem for Bhaktivedanta Hospital -->
+  <g stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Sacred Flame rising above Lotus -->
+    <path d="M 200,60 C 215,85 228,110 215,135 C 205,155 190,165 200,185 C 205,170 218,155 220,135 C 224,105 210,80 200,60 Z" fill="currentColor" fill-opacity="0.15" />
+    <path d="M 200,60 C 185,90 175,120 185,145 C 190,158 198,168 200,185" />
+    <path d="M 215,135 C 225,120 226,100 220,85" />
+
+    <!-- Center Pointed Petal -->
+    <path d="M 200,155 C 180,185 180,215 200,245 C 220,215 220,185 200,155 Z" />
+
+    <!-- Inner Left & Right Petals -->
+    <path d="M 200,155 C 160,180 150,220 185,245" />
+    <path d="M 200,155 C 240,180 250,220 215,245" />
+    <path d="M 152,175 C 140,205 155,235 185,245" />
+    <path d="M 248,175 C 260,205 245,235 215,245" />
+
+    <!-- Outer Flared Petals -->
+    <path d="M 152,175 C 120,200 115,230 155,255 C 175,258 190,250 200,245" />
+    <path d="M 248,175 C 280,200 285,230 245,255 C 225,258 210,250 200,245" />
+
+    <!-- Outermost Base Petals / Calyx curve -->
+    <path d="M 115,210 C 125,250 160,270 200,270 C 240,270 275,250 285,210 C 265,245 230,260 200,260 C 170,260 135,245 115,210 Z" />
+  </g>
+
+  <!-- Typographic Text -->
+  <text x="200" y="305" text-anchor="middle" font-family="'Cinzel', 'Trajan Pro', 'Georgia', 'Playfair Display', serif" font-size="25" font-weight="700" letter-spacing="3" fill="currentColor">BHAKTIVEDANTA</text>
+  <text x="200" y="338" text-anchor="middle" font-family="'Montserrat', 'Inter', 'Arial', sans-serif" font-size="21" font-weight="700" letter-spacing="6" fill="currentColor">HOSPITAL</text>
+  <text x="200" y="368" text-anchor="middle" font-family="'Montserrat', 'Inter', 'Arial', sans-serif" font-size="16" font-weight="600" letter-spacing="4.5" fill="currentColor">HARE KRISHNA</text>
+</svg>

@@ -2,35 +2,35 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const navLinks = [
+  // Section 1
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
-  { name: 'Specialities', icon: 'star', to: 'specialities' },
-  { name: 'Services', icon: 'medical_services', to: 'services' },
-  { name: 'Help Desk & Support', icon: 'support_agent', to: 'help-desk' },
-  { name: 'Application Errors', icon: 'bug_report', to: 'application-errors' },
+  { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
+  { name: 'Doctors', icon: 'group', to: 'doctors' },
+  { name: 'Patient Report', icon: 'analytics', to: 'patients-corner' }, // Reuse patients corner page for patient report
   { divider: true },
 
-  { name: 'Patients Corner', icon: 'face', to: 'patients-corner' },
+  // Section 2
+  { name: 'Specialities', icon: 'star', to: 'specialities' },
+  { name: 'Services', icon: 'medical_services', to: 'services' },
+  { name: 'Patient Corner', icon: 'face', to: 'patients-corner' },
   { name: 'Spiritual care', icon: 'spa', to: 'spiritual-care' },
   { name: 'Education & Medical Research', icon: 'school', to: 'education-research' },
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
-  { divider: true },
-
-  { name: 'Doctors', icon: 'group', to: 'doctors' },
-  { name: 'Doctor Availability', icon: 'event_available', to: 'doctor-availability' },
-  { name: 'Health Packages', icon: 'health_and_safety', to: 'health-packages' },
-  { divider: true },
-
+  { name: 'About us', icon: 'info', to: 'dashboard' }, // Link to dashboard or static
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
-  { name: 'News', icon: 'newspaper', to: 'news' },
   { name: 'Events', icon: 'event', to: 'events' },
-  { name: 'Gallery', icon: 'image', to: 'gallery' },
   { divider: true },
 
-  { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
+  // Section 3
+  { name: 'Feedback', icon: 'support_agent', to: 'help-desk' },
   { name: 'Contact Queries', icon: 'contact_support', to: 'contact-queries' },
-  { name: 'Admin Users', icon: 'manage_accounts', to: 'admin-users' },
-  { name: 'Sub-Admins', icon: 'admin_panel_settings', to: 'sub-admins' }
+  { divider: true },
+
+  // Section 4
+  { name: 'Application Errors', icon: 'bug_report', to: 'application-errors' },
+  { name: 'Sub-Admins', icon: 'admin_panel_settings', to: 'sub-admins' },
+  { name: 'Settings', icon: 'settings', to: 'settings' }
 ];
 
 const AdminSidebar = () => {
@@ -98,17 +98,6 @@ const AdminSidebar = () => {
 
       <div className="px-4 pt-4 border-t border-white/10">
         <div className="mt-4 space-y-1">
-          <NavLink 
-            to="settings" 
-            className={({ isActive }) => 
-              `flex items-center gap-3 px-4 py-2 rounded-lg transition-all text-sm ${
-                isActive ? 'bg-white/20 text-white shadow-sm' : 'text-white/80 hover:bg-white/10 hover:text-white'
-              }`
-            }
-          >
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span>Settings</span>
-          </NavLink>
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-white/80 hover:bg-red-500/20 hover:text-red-300 transition-all text-sm text-left"
