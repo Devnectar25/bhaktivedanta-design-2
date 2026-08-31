@@ -8,6 +8,7 @@ const SpecialityModal = ({ speciality, onClose, categoryName }) => {
   useEffect(() => {
     if (speciality) {
       setIsOpen(true);
+      document.body.style.overflow = 'hidden';
       // Reset active tab to first tab on change
       if (speciality.tabs && speciality.tabs.length > 0) {
         setActiveTabId(speciality.tabs[0].id);
@@ -16,17 +17,32 @@ const SpecialityModal = ({ speciality, onClose, categoryName }) => {
       }
     } else {
       setIsOpen(false);
+      document.body.style.overflow = '';
     }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [speciality]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    document.body.style.overflow = '';
+    setTimeout(onClose, 300); // Allow animation to complete
+  };
 
   if (!speciality) return null;
 
   const activeTab = speciality.tabs?.find((t) => t.id === activeTabId) || speciality.tabs?.[0];
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setTimeout(onClose, 300); // Allow animation to complete
-  };
 
   // Fallback banner image if not specified
   const bannerUrl = speciality.bannerImage || 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop';

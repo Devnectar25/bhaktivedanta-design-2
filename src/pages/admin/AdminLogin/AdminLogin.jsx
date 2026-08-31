@@ -26,15 +26,7 @@ const AdminLogin = () => {
       document.head.appendChild(tailwindScript);
     }
 
-    // 2. Inject Google Fonts if not already present
-    let fontsLink = document.getElementById('admin-fonts-link') || document.getElementById('login-fonts-link');
-    if (!fontsLink) {
-      fontsLink = document.createElement('link');
-      fontsLink.rel = 'stylesheet';
-      fontsLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
-      fontsLink.id = 'admin-fonts-link';
-      document.head.appendChild(fontsLink);
-    }
+
 
     // 3. Inject custom inline style overrides for admin font scaling if not already present
     let inlineStyle = document.getElementById('admin-inline-style-override');

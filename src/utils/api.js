@@ -128,6 +128,12 @@ export const saveSpecialitiesState = (state) => apiMutation('/specialities-state
   return newState;
 });
 
+// Services State (Unified object)
+export const getServicesState = (fallback) => apiGet('/services-state', 'bhaktivedanta_services_state', fallback);
+export const saveServicesState = (state) => apiMutation('/services-state', 'PUT', state, 'bhaktivedanta_services_state', (oldState, newState) => {
+  return newState;
+});
+
 // Events
 export const getEvents = (fallback) => apiGet('/events', 'bhaktivedanta_admin_events', fallback);
 export const saveEventsList = (list) => apiMutation('/events', 'PUT', list, 'bhaktivedanta_admin_events', (old, updated) => updated);

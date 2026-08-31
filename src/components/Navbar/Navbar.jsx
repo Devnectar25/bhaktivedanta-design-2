@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState } from '../../utils/api';
+import { defaultServicesState } from '../../data/defaultServices';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -25,27 +26,44 @@ const menuStructure = [
   },
   {
     name: 'Services',
-    type: 'dropdown',
-    to: '#services',
-    links: [
-      { name: '24/7 Emergency & Trauma', href: '#services' },
-      { name: 'Ambulance Services', href: '#services' },
-      { name: 'Diagnostics & Lab Services', href: '#services' },
-      { name: '24/7 Pharmacy', href: '#services' },
-      { name: 'ICU & Critical Care', href: '#services' },
-      { name: 'Health Packages', href: '#packages' }
-    ]
+    type: 'services-mega-menu',
+    to: '#services'
   },
   {
     name: 'Patients Corner',
-    type: 'dropdown',
+    type: 'patients-mega-menu',
     to: '#patients',
-    links: [
-      { name: 'Find a Doctor', href: '#doctors' },
-      { name: 'Book Appointment', href: '#contact' },
-      { name: 'Guide for Patients', href: '#' },
-      { name: 'Health Library & Education', href: '#' },
-      { name: 'Feedback & Testimonials', href: '#testimonials' }
+    columns: [
+      {
+        title: 'Patient Guide',
+        links: [
+          { name: 'Admission', href: '#patients' },
+          { name: 'Empanelled Corporate / TPA / Insurances', href: '#patients' },
+          { name: 'Patients Rights & Responsibilities', href: '#patients' },
+          { name: 'Visitors Policy', href: '#patients' },
+          { name: 'International Patient', href: '#patients' }
+        ]
+      },
+      {
+        title: 'Consultations',
+        links: [
+          { name: 'Find A Doctor', href: '#doctors' },
+          { name: 'Book Appointment', href: '#contact' },
+          { name: 'Online Consultation', href: '#patients' },
+          { name: 'Video Consultation', href: '#patients' },
+          { name: 'Patient Report', href: '#patients' }
+        ]
+      },
+      {
+        title: 'Quick Links',
+        links: [
+          { name: 'Feedback', href: '#testimonials' },
+          { name: 'Announcements', href: '#patients' },
+          { name: 'Blogs', href: '#patients' },
+          { name: 'OPD Schedule', href: '#patients' },
+          { name: 'Health Checkup', href: '#patients' }
+        ]
+      }
     ]
   },
   {
@@ -53,21 +71,37 @@ const menuStructure = [
     type: 'dropdown',
     to: '#spiritual',
     links: [
-      { name: 'Spiritual Counselling', href: '#' },
-      { name: 'Temple & Prayer Hall', href: '#' },
-      { name: 'Holistic Healing', href: '#' },
-      { name: 'Value Education', href: '#' }
+      { name: 'Spiritual care Services', href: '#spiritual' },
+      { name: 'Educational Programmes', href: '#spiritual' },
+      { name: 'Spiritual care Retreats', href: '#spiritual' },
+      { name: 'Publications & Paper Presentations', href: '#spiritual' }
     ]
   },
   {
     name: 'Education & Medical Research',
-    type: 'dropdown',
+    type: 'patients-mega-menu',
     to: '#education',
-    links: [
-      { name: 'Nursing College', href: '#' },
-      { name: 'DNB Fellowship Programs', href: '#' },
-      { name: 'Research Center', href: '#' },
-      { name: 'Publications & Studies', href: '#' }
+    columns: [
+      {
+        title: 'Education',
+        links: [
+          { name: 'DNB Program', href: '#education' },
+          { name: 'Nursing Program', href: '#education' },
+          { name: 'CME', href: '#education' },
+          { name: 'CNE', href: '#education' },
+          { name: 'Spiritual care Certificate Course', href: '#education' }
+        ]
+      },
+      {
+        title: 'Medical Research',
+        links: [
+          { name: 'Clinical Research Course', href: '#education' },
+          { name: 'Clinical Trials', href: '#education' },
+          { name: 'Institutional Ethics Committee', href: '#education' },
+          { name: 'Publications', href: '#education' },
+          { name: 'Government Accreditation', href: '#education' }
+        ]
+      }
     ]
   },
   {
@@ -75,28 +109,70 @@ const menuStructure = [
     type: 'dropdown',
     to: '#associate',
     links: [
-      { name: 'Bhaktivedanta Hospice', href: '#' },
-      { name: 'Rural Health Centers', href: '#' },
-      { name: 'Mobile Clinics', href: '#' }
+      { name: 'Swami Shraddhanand Hospital', href: '#associate' },
+      { name: 'Sheth P. V. Doshi Hospital', href: '#associate' },
+      { name: 'Primary Health Care Centre - Pophran', href: '#associate' },
+      { name: 'Hamrapur Healthcare Centre', href: '#associate' },
+      { name: 'Ambiste Healthcare Centre', href: '#associate' },
+      { name: 'Bhaktivedanta Polyclinic', href: '#associate' },
+      { name: 'Bhaktivedanta Hospital - Vrindavan', href: '#associate' },
+      { name: 'Bhaktivedanta Eye Hospital - Barsana', href: '#associate' },
+      { name: 'Saksham Community Health Centre - Dhuktan', href: '#associate' }
     ]
   },
   {
     name: 'Careers',
     type: 'link',
-    to: '#'
+    to: '#careers'
   },
   {
     name: 'About us',
     type: 'dropdown',
     to: '#about',
     links: [
-      { name: 'Overview & Mission', href: '#about' },
-      { name: 'Leadership & Advisory', href: '#' },
-      { name: 'Awards & Recognitions', href: '#' },
-      { name: 'Contact Us', href: '#contact' }
+      { name: 'About Hospital', href: '#about' },
+      { name: 'Vision, Mission, Quality Policy, Values', href: '#about' },
+      { name: 'Awards & Accreditation', href: '#about' },
+      { name: 'Events & Hospital In News', href: '#about' },
+      { name: 'Shri Chaitanya Health and Care Trust', href: '#about' },
+      { name: 'New Developments & Updates', href: '#about' },
+      { name: 'Our Management Team', href: '#about' },
+      { name: 'Our Spiritual Advisors', href: '#about' }
     ]
   }
 ];
+
+const EmblemLogo = () => (
+  <svg
+    viewBox="0 0 400 400"
+    className="nabh-logo"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-label="Bhaktivedanta Emblem"
+  >
+    <g stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none">
+      <path d="M 200,60 C 215,85 228,110 215,135 C 205,155 190,165 200,185 C 205,170 218,155 220,135 C 224,105 210,80 200,60 Z" fill="currentColor" fillOpacity="0.18" />
+      <path d="M 200,60 C 185,90 175,120 185,145 C 190,158 198,168 200,185" />
+      <path d="M 215,135 C 225,120 226,100 220,85" />
+
+      <path d="M 200,155 C 180,185 180,215 200,245 C 220,215 220,185 200,155 Z" />
+
+      <path d="M 200,155 C 160,180 150,220 185,245" />
+      <path d="M 200,155 C 240,180 250,220 215,245" />
+      <path d="M 152,175 C 140,205 155,235 185,245" />
+      <path d="M 248,175 C 260,205 245,235 215,245" />
+
+      <path d="M 152,175 C 120,200 115,230 155,255 C 175,258 190,250 200,245" />
+      <path d="M 248,175 C 280,200 285,230 245,255 C 225,258 210,250 200,245" />
+
+      <path d="M 115,210 C 125,250 160,270 200,270 C 240,270 275,250 285,210 C 265,245 230,260 200,260 C 170,260 135,245 115,210 Z" />
+    </g>
+
+    <text x="200" y="305" textAnchor="middle" fontFamily="'Cinzel', 'Trajan Pro', 'Georgia', serif" fontSize="25" fontWeight="700" letterSpacing="3" fill="currentColor">BHAKTIVEDANTA</text>
+    <text x="200" y="338" textAnchor="middle" fontFamily="'Montserrat', 'Inter', sans-serif" fontSize="21" fontWeight="700" letterSpacing="6" fill="currentColor">HOSPITAL</text>
+    <text x="200" y="368" textAnchor="middle" fontFamily="'Montserrat', 'Inter', sans-serif" fontSize="16" fontWeight="600" letterSpacing="4.5" fill="currentColor">HARE KRISHNA</text>
+  </svg>
+);
 
 const Navbar = ({ onSelectSpeciality }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -105,6 +181,9 @@ const Navbar = ({ onSelectSpeciality }) => {
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
   const [activeMegaCategory, setActiveMegaCategory] = useState(null);
 
+  const [servicesData, setServicesData] = useState(defaultServicesState);
+  const [activeServiceCategory, setActiveServiceCategory] = useState(null);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
@@ -112,6 +191,17 @@ const Navbar = ({ onSelectSpeciality }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     // Invalidate stale cached state if it has fewer than 36 specialities
@@ -152,7 +242,9 @@ const Navbar = ({ onSelectSpeciality }) => {
       }
     });
 
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const toggleMobileDropdown = (name) => {
@@ -170,7 +262,7 @@ const Navbar = ({ onSelectSpeciality }) => {
 
   return (
     <header className={`navbar-header ${scrolled ? 'scrolled' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-      {/* Top tier - Hidden on scroll for premium collapsed sticky view */}
+      {/* Top tier - Logo, Emergency and Actions bar */}
       <div className="navbar-top-tier">
         <div className="container top-tier-container">
           <a href="/" className="logo-section">
@@ -184,7 +276,7 @@ const Navbar = ({ onSelectSpeciality }) => {
           </div>
 
           <div className="top-right-section">
-            <img src="/emblem.png" alt="NABH Accredited" className="nabh-logo" />
+            <EmblemLogo />
             <button className="search-icon-btn" aria-label="Search">
               <span className="material-symbols-outlined">search</span>
             </button>
@@ -303,6 +395,124 @@ const Navbar = ({ onSelectSpeciality }) => {
                   );
                 }
 
+                if (menuItem.type === 'services-mega-menu') {
+                  const categoriesList = servicesData.categories?.filter(c => c.status) || [];
+                  const currentCat = categoriesList.find(c => c.id === activeServiceCategory);
+                  const catServices = currentCat
+                    ? (servicesData.services?.filter(s => s.categoryId === currentCat.id && s.status) || [])
+                    : [];
+                  const columns = splitIntoColumns(catServices, catServices.length > 8 ? 3 : 2);
+
+                  return (
+                    <div
+                      key={menuItem.name}
+                      className="nav-item-dropdown-container services-nav-item"
+                      onMouseLeave={() => setActiveServiceCategory(null)}
+                    >
+                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                        {menuItem.name}
+                      </a>
+                      
+                      <div className={`services-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
+                        {/* FIRST VIEW: Category menu list */}
+                        <div className="services-category-menu">
+                          {categoriesList.map(cat => {
+                            const isActive = activeServiceCategory === cat.id;
+                            return (
+                              <div
+                                key={cat.id}
+                                className={`services-category-item ${isActive ? 'active' : ''}`}
+                                onMouseEnter={() => setActiveServiceCategory(cat.id)}
+                                onClick={() => setActiveServiceCategory(cat.id)}
+                              >
+                                <span className="category-item-text">{cat.name}</span>
+                                <span className="material-symbols-outlined category-item-arrow">
+                                  chevron_right
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* FLYOUT VIEW: Sub-services shown after hovering/going to a category */}
+                        {currentCat && (
+                          <div className="services-subpanel animate-flyout-fade" key={currentCat.id}>
+                            <div className="services-subpanel-header">
+                              <h3 className="services-subpanel-title">{currentCat.name}</h3>
+                              <span className="services-subpanel-badge">{catServices.length} Services</span>
+                            </div>
+                            {catServices.length > 0 ? (
+                              <div className={`services-grid ${catServices.length > 8 ? 'grid-3-col' : 'grid-2-col'}`}>
+                                {columns.map((colItems, colIdx) => (
+                                  <ul key={colIdx} className="services-subpanel-list">
+                                    {colItems.map((s, itemIdx) => (
+                                      <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
+                                        <button
+                                          className="speciality-link-btn"
+                                          onClick={() => {
+                                            onSelectSpeciality(s, currentCat.name);
+                                            setActiveServiceCategory(null);
+                                          }}
+                                        >
+                                          <span className="link-btn-bullet"></span>
+                                          <span className="link-btn-text">{s.name}</span>
+                                        </button>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ))}
+                              </div>
+                            ) : (
+                              <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
+                                <p style={{ margin: 0, fontWeight: 600 }}>{currentCat.description || 'Services coming soon under this category.'}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (menuItem.type === 'patients-mega-menu') {
+                  return (
+                    <div key={menuItem.name} className="nav-item-dropdown-container patients-nav-item">
+                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                        {menuItem.name}
+                      </a>
+                      
+                      <div 
+                        className="patients-mega-menu-wrapper animate-flyout-fade"
+                        style={{ 
+                          width: menuItem.columns.length === 2 ? '580px' : '860px',
+                          left: menuItem.columns.length === 2 ? '-40px' : '-180px' 
+                        }}
+                      >
+                        <div 
+                          className="patients-mega-menu-grid"
+                          style={{ gridTemplateColumns: `repeat(${menuItem.columns.length}, 1fr)` }}
+                        >
+                          {menuItem.columns.map((col, colIdx) => (
+                            <div key={colIdx} className="patients-mega-menu-column">
+                              <h4 className="patients-column-title">{col.title}</h4>
+                              <ul className="patients-column-list">
+                                {col.links.map((link, lIdx) => (
+                                  <li key={lIdx} className="patients-column-item">
+                                    <a href={link.href} className="patients-column-link">
+                                      <span className="link-btn-bullet"></span>
+                                      <span className="link-text">{link.name}</span>
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 if (menuItem.type === 'dropdown') {
                   return (
                     <div key={menuItem.name} className="nav-item-dropdown-container">
@@ -314,7 +524,8 @@ const Navbar = ({ onSelectSpeciality }) => {
                           {menuItem.links.map((link, lIdx) => (
                             <li key={lIdx}>
                               <a href={link.href} className="dropdown-link-item">
-                                {link.name}
+                                <span className="dropdown-item-bullet"></span>
+                                <span className="dropdown-item-text">{link.name}</span>
                               </a>
                             </li>
                           ))}
@@ -389,6 +600,88 @@ const Navbar = ({ onSelectSpeciality }) => {
                               </div>
                             );
                           })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (menuItem.type === 'services-mega-menu') {
+                  const isOpen = activeMobileDropdown === menuItem.name;
+                  return (
+                    <div key={menuItem.name} className="mobile-accordion-item">
+                      <button
+                        className={`mobile-accordion-trigger ${isOpen ? 'active' : ''}`}
+                        onClick={() => toggleMobileDropdown(menuItem.name)}
+                      >
+                        {menuItem.name}
+                        <span className="material-symbols-outlined accordion-icon">
+                          {isOpen ? 'expand_less' : 'expand_more'}
+                        </span>
+                      </button>
+
+                      <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
+                        {servicesData.categories
+                          ?.filter(c => c.status)
+                          .map(cat => {
+                            const catServices = servicesData.services?.filter(s => s.categoryId === cat.id && s.status);
+                            if (!catServices || catServices.length === 0) return null;
+                            return (
+                              <div key={cat.id} className="mobile-sub-category">
+                                <span className="mobile-sub-category-title">{cat.name}</span>
+                                <div className="mobile-sub-links">
+                                  {catServices.map(srv => (
+                                    <button
+                                      key={srv.id}
+                                      className="mobile-sub-link-btn"
+                                      onClick={() => {
+                                        onSelectSpeciality(srv, cat.name);
+                                        handleMobileLinkClick();
+                                      }}
+                                    >
+                                      {srv.name}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (menuItem.type === 'patients-mega-menu') {
+                  const isOpen = activeMobileDropdown === menuItem.name;
+                  return (
+                    <div key={menuItem.name} className="mobile-accordion-item">
+                      <button
+                        className={`mobile-accordion-trigger ${isOpen ? 'active' : ''}`}
+                        onClick={() => toggleMobileDropdown(menuItem.name)}
+                      >
+                        {menuItem.name}
+                        <span className="material-symbols-outlined accordion-icon">
+                          {isOpen ? 'expand_less' : 'expand_more'}
+                        </span>
+                      </button>
+
+                      <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
+                        {menuItem.columns.map((col, colIdx) => (
+                          <div key={colIdx} className="mobile-sub-category">
+                            <span className="mobile-sub-category-title">{col.title}</span>
+                            <div className="mobile-sub-links">
+                              {col.links.map((link, lIdx) => (
+                                <a
+                                  key={lIdx}
+                                  href={link.href}
+                                  className="mobile-sub-link-a"
+                                  onClick={handleMobileLinkClick}
+                                >
+                                  {link.name}
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   );

@@ -14,6 +14,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  overscroll-behavior: contain;
 }
 
 .speciality-modal-overlay.open {
@@ -166,6 +167,7 @@
   overflow-y: auto;
   padding: 2.5rem 2rem;
   background-color: white;
+  overscroll-behavior: contain;
 }
 
 .speciality-modal-body::-webkit-scrollbar {

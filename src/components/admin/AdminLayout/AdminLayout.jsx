@@ -136,15 +136,7 @@ const AdminLayout = () => {
       document.head.appendChild(tailwindConfig);
     }
 
-    // 3. Inject Material Icons CSS if not already present
-    let iconsLink = document.getElementById('admin-icons-link');
-    if (!iconsLink) {
-      iconsLink = document.createElement('link');
-      iconsLink.rel = 'stylesheet';
-      iconsLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
-      iconsLink.id = 'admin-icons-link';
-      document.head.appendChild(iconsLink);
-    }
+
 
     // Inject custom inline style overrides for admin layout
     let inlineStyle = document.getElementById('admin-inline-style-override');
