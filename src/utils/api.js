@@ -1,4 +1,8 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
+  base = base.replace(/\/$/, '') + '/api';
+}
+const API_BASE_URL = base;
 
 /**
  * Helper to check if backend is online.
@@ -69,7 +73,7 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
       // Keep local storage synced too
       if (updateLocalFn && localStorageKey) {
         const local = localStorage.getItem(localStorageKey);
-        let localData = local ? JSON.parse(local) : null;
+        let localData = local ? JSON.parse(local) : undefined;
         const newLocalData = updateLocalFn(localData, serverResult);
         localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
       }
@@ -82,7 +86,7 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
   // Fallback storage update
   if (updateLocalFn && localStorageKey) {
     const local = localStorage.getItem(localStorageKey);
-    let localData = local ? JSON.parse(local) : null;
+    let localData = local ? JSON.parse(local) : undefined;
     const newLocalData = updateLocalFn(localData, body);
     localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
     // Dispatch storage event to alert other components

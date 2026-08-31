@@ -485,7 +485,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                         className="patients-mega-menu-wrapper animate-flyout-fade"
                         style={{ 
                           width: menuItem.columns.length === 2 ? '580px' : '860px',
-                          left: menuItem.columns.length === 2 ? '-40px' : '-180px' 
+                          left: 0 
                         }}
                       >
                         <div 
