@@ -268,12 +268,12 @@
   color: #ea580c; /* Orange hover when scrolled */
 }
 
-/* Simple Dropdown list menu styling - Centered under parent links */
+/* Simple Dropdown list menu styling - Aligned to left edge of parent links */
 .simple-dropdown-menu {
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
+  left: 0;
+  transform: translateY(8px);
   background: #ffffff;
   width: max-content;
   min-width: 290px;
@@ -291,7 +291,7 @@
 .nav-item-dropdown-container:hover .simple-dropdown-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 .dropdown-list {
@@ -564,7 +564,7 @@
 .patients-mega-menu-wrapper {
   position: absolute;
   top: 100%;
-  left: -180px;
+  left: 0;
   transform: translateY(8px);
   background: #ffffff;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
