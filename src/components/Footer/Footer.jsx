@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import { HeartPulse, Bone, BedDouble } from 'lucide-react';
+import { HeartPulse, Bone, BedDouble, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -93,29 +93,20 @@ const Footer = () => {
              <li>Phone: 079-69002222</li>
              <li>WhatsApp: 8400146262</li>
              <li>info@bhaktivedantahospital.com</li>
-             <li>
-               <a 
-                 href="https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 style={{ textDecoration: 'underline', color: 'inherit' }}
-               >
-                 Mira Road East, Thane, <br />Maharashtra 401107
-               </a>
+             <li className="footer-address">
+               Mira Road East, Thane, <br />Maharashtra 401107
              </li>
           </ul>
-          {/* Small compact Google Map */}
-          <div className="footer-map-container" style={{ marginTop: '0.85rem' }}>
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.196962078696!2d72.86877967520935!3d19.262963081977793!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b065e1eb2bef%3A0xe54fb7a21390f0b4!2sBhaktivedanta%20Hospital%20%26%20Research%20Institute!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
-              width="100%" 
-              height="100" 
-              style={{ border: 0, borderRadius: '8px' }}
-              allowFullScreen="" 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Footer Google Map Location"
-            ></iframe>
+          <div className="view-map-wrap">
+            <a 
+              href="https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn-view-map"
+            >
+              <MapPin size={18} className="map-pin-icon" />
+              <span>View on Map</span>
+            </a>
           </div>
         </div>
       </div>

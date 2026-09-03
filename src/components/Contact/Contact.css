@@ -4,14 +4,16 @@
 }
 
 .contact-container {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .get-in-touch {
+  width: 100%;
+  max-width: 850px;
   background: #f0f7ff; /* Soft light blue background card */
-  padding: 2.5rem;
+  padding: 3rem;
   border-radius: 30px;
   box-shadow: 0 10px 30px -10px rgba(30, 58, 138, 0.08);
   border: 1px solid rgba(30, 58, 138, 0.05);
