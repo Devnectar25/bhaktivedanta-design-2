@@ -7,15 +7,17 @@ import Navbar from './components/Navbar/Navbar';
 import Hero from './components/Hero/Hero';
 import InfoSlider from './components/InfoSlider/InfoSlider';
 import WhyChooseUs from './components/WhyChooseUs/WhyChooseUs';
-import About from './components/About/About';
+import CentresOfExcellence from './components/CentresOfExcellence/CentresOfExcellence';
 import Services from './components/Services/Services';
 import Doctors from './components/Doctors/Doctors';
 import Stats from './components/Stats/Stats';
+import NewDevelopments from './components/NewDevelopments/NewDevelopments';
 import Infrastructure from './components/Infrastructure/Infrastructure';
 import Testimonials from './components/Testimonials/Testimonials';
 import Contact from './components/Contact/Contact';
 import Footer from './components/Footer/Footer';
 import SpecialityModal from './components/SpecialityModal/SpecialityModal';
+import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -97,37 +99,51 @@ function ScrollToTop() {
 function MainSite() {
   const [selectedSpeciality, setSelectedSpeciality] = useState(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
 
   const handleSelectSpeciality = (speciality, categoryName) => {
     setSelectedSpeciality(speciality);
     setSelectedCategoryName(categoryName);
   };
 
+  const handleOpenAppointmentModal = () => {
+    setIsAppointmentModalOpen(true);
+  };
+
   return (
     <div className="app">
-      <Navbar onSelectSpeciality={handleSelectSpeciality} />
+      <Navbar
+        onSelectSpeciality={handleSelectSpeciality}
+        onOpenAppointment={handleOpenAppointmentModal}
+      />
       <ScrollToTop />
       <main>
         <Hero />
         <InfoSlider />
         <WhyChooseUs />
-        <About />
+        <CentresOfExcellence />
         <Services />
         <Doctors />
         <Stats />
+        <NewDevelopments />
         <Infrastructure />
         <Testimonials />
         <Contact />
       </main>
       <Footer />
-      
-      <SpecialityModal 
+
+      <SpecialityModal
         speciality={selectedSpeciality}
         categoryName={selectedCategoryName}
         onClose={() => {
           setSelectedSpeciality(null);
           setSelectedCategoryName('');
         }}
+      />
+
+      <AppointmentModal
+        isOpen={isAppointmentModalOpen}
+        onClose={() => setIsAppointmentModalOpen(false)}
       />
     </div>
   );
@@ -146,7 +162,7 @@ function App() {
       <Route path="/admin" element={<AdminLayout />}>
         {/* Redirect from /admin directly to /admin/dashboard */}
         <Route index element={<Navigate to="dashboard" replace />} />
-        
+
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="services" element={<AdminServices />} />
         <Route path="specialities" element={<Specialities />} />

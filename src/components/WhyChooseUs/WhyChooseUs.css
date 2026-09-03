@@ -1,5 +1,5 @@
 .why-testimonials-section {
-  padding: 5rem 0;
+  padding: 5rem 0 1.5rem;
   background-color: #ffffff;
   overflow: hidden;
 }
@@ -20,7 +20,8 @@
    ========================================== */
 .why-choose-us-panel {
   position: relative;
-  background-color: #fffaf4; /* Soft cream color matching user screenshot */
+  background-color: #fffaf4;
+  /* Soft cream color matching user screenshot */
   padding: 3rem 2.5rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(12, 26, 53, 0.02);
@@ -146,7 +147,7 @@
 .testimonials-panel {
   display: flex;
   flex-direction: column;
-  padding: 3rem 0 3rem 1.5rem;
+  padding: 0 0 3rem 1.5rem;
   height: 100%;
 }
 
@@ -196,13 +197,13 @@
 }
 
 .stack-card-avatar {
-  width: 70px;
-  height: 70px;
-  min-width: 70px;
-  min-height: 70px;
+  width: 90px;
+  height: 90px;
+  min-width: 90px;
+  min-height: 90px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid #ea580c;
+  border: none;
   flex-shrink: 0;
 }
 
@@ -225,9 +226,9 @@
 }
 
 .stack-card-name {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 800;
-  color: #b91c1c; /* Soft dark red from screenshot */
+  color: #ea580c;
   margin: 0 0 0.15rem 0;
 }
 
@@ -289,6 +290,7 @@
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+
   .testimonials-panel {
     padding: 0;
   }
@@ -298,6 +300,7 @@
   .why-features-grid {
     grid-template-columns: 1fr;
   }
+
   .stack-card {
     flex-direction: column;
     text-align: center;

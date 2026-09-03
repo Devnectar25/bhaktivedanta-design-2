@@ -3,6 +3,7 @@ import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState } from '../../utils/api';
 import { defaultServicesState } from '../../data/defaultServices';
+import About from '../About/About';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -106,18 +107,26 @@ const menuStructure = [
   },
   {
     name: 'Our Associate Centre',
-    type: 'dropdown',
+    type: 'patients-mega-menu',
     to: '#associate',
-    links: [
-      { name: 'Swami Shraddhanand Hospital', href: '#associate' },
-      { name: 'Sheth P. V. Doshi Hospital', href: '#associate' },
-      { name: 'Primary Health Care Centre - Pophran', href: '#associate' },
-      { name: 'Hamrapur Healthcare Centre', href: '#associate' },
-      { name: 'Ambiste Healthcare Centre', href: '#associate' },
-      { name: 'Bhaktivedanta Polyclinic', href: '#associate' },
-      { name: 'Bhaktivedanta Hospital - Vrindavan', href: '#associate' },
-      { name: 'Bhaktivedanta Eye Hospital - Barsana', href: '#associate' },
-      { name: 'Saksham Community Health Centre - Dhuktan', href: '#associate' }
+    columns: [
+      {
+        links: [
+          { name: 'Swami Shraddhanand Hospital', href: '#associate' },
+          { name: 'Sheth P. V. Doshi Hospital', href: '#associate' },
+          { name: 'Primary Health Care Centre - Pophran', href: '#associate' },
+          { name: 'Hamrapur Healthcare Centre', href: '#associate' },
+          { name: 'Ambiste Healthcare Centre', href: '#associate' }
+        ]
+      },
+      {
+        links: [
+          { name: 'Bhaktivedanta Polyclinic', href: '#associate' },
+          { name: 'Bhaktivedanta Hospital - Vrindavan', href: '#associate' },
+          { name: 'Bhaktivedanta Eye Hospital - Barsana', href: '#associate' },
+          { name: 'Saksham Community Health Centre - Dhuktan', href: '#associate' }
+        ]
+      }
     ]
   },
   {
@@ -133,9 +142,9 @@ const menuStructure = [
       { name: 'About Hospital', href: '#about' },
       { name: 'Vision, Mission, Quality Policy, Values', href: '#about' },
       { name: 'Awards & Accreditation', href: '#about' },
-      { name: 'Events & Hospital In News', href: '#about' },
+      { name: 'Events & Hospital In News', href: '#developments' },
       { name: 'Shri Chaitanya Health and Care Trust', href: '#about' },
-      { name: 'New Developments & Updates', href: '#about' },
+      { name: 'New Developments & Updates', href: '#developments' },
       { name: 'Our Management Team', href: '#about' },
       { name: 'Our Spiritual Advisors', href: '#about' }
     ]
@@ -174,7 +183,7 @@ const EmblemLogo = () => (
   </svg>
 );
 
-const Navbar = ({ onSelectSpeciality }) => {
+const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
@@ -183,6 +192,10 @@ const Navbar = ({ onSelectSpeciality }) => {
 
   const [servicesData, setServicesData] = useState(defaultServicesState);
   const [activeServiceCategory, setActiveServiceCategory] = useState(null);
+  const [openNavDropdown, setOpenNavDropdown] = useState(null);
+  const [hoveredAboutItem, setHoveredAboutItem] = useState(null);
+
+  const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -328,12 +341,16 @@ const Navbar = ({ onSelectSpeciality }) => {
                     <div
                       key={menuItem.name}
                       className="nav-item-dropdown-container specialities-nav-item"
-                      onMouseLeave={() => setActiveMegaCategory(null)}
+                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      onMouseLeave={() => {
+                        setOpenNavDropdown(null);
+                        setActiveMegaCategory(null);
+                      }}
                     >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
-                      
+
                       <div className={`specialities-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
                         {/* FIRST VIEW: Category menu list */}
                         <div className="specialities-category-menu">
@@ -373,6 +390,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                                           onClick={() => {
                                             onSelectSpeciality(s, currentCat.name);
                                             setActiveMegaCategory(null);
+                                            setOpenNavDropdown(null);
                                           }}
                                         >
                                           <span className="link-btn-bullet"></span>
@@ -407,12 +425,16 @@ const Navbar = ({ onSelectSpeciality }) => {
                     <div
                       key={menuItem.name}
                       className="nav-item-dropdown-container services-nav-item"
-                      onMouseLeave={() => setActiveServiceCategory(null)}
+                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      onMouseLeave={() => {
+                        setOpenNavDropdown(null);
+                        setActiveServiceCategory(null);
+                      }}
                     >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
-                      
+
                       <div className={`services-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
                         {/* FIRST VIEW: Category menu list */}
                         <div className="services-category-menu">
@@ -452,6 +474,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                                           onClick={() => {
                                             onSelectSpeciality(s, currentCat.name);
                                             setActiveServiceCategory(null);
+                                            setOpenNavDropdown(null);
                                           }}
                                         >
                                           <span className="link-btn-bullet"></span>
@@ -476,32 +499,52 @@ const Navbar = ({ onSelectSpeciality }) => {
 
                 if (menuItem.type === 'patients-mega-menu') {
                   return (
-                    <div key={menuItem.name} className="nav-item-dropdown-container patients-nav-item">
+                    <div
+                      key={menuItem.name}
+                      className="nav-item-dropdown-container patients-nav-item"
+                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      onMouseLeave={() => setOpenNavDropdown(null)}
+                    >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
-                      
-                      <div 
+
+                      <div
                         className="patients-mega-menu-wrapper animate-flyout-fade"
-                        style={{ 
+                        style={{
                           width: menuItem.columns.length === 2 ? '580px' : '860px',
-                          left: 0 
+                          left: 0
                         }}
                       >
-                        <div 
+                        <div
                           className="patients-mega-menu-grid"
                           style={{ gridTemplateColumns: `repeat(${menuItem.columns.length}, 1fr)` }}
                         >
                           {menuItem.columns.map((col, colIdx) => (
                             <div key={colIdx} className="patients-mega-menu-column">
-                              <h4 className="patients-column-title">{col.title}</h4>
+                              {col.title && <h4 className="patients-column-title">{col.title}</h4>}
                               <ul className="patients-column-list">
                                 {col.links.map((link, lIdx) => (
                                   <li key={lIdx} className="patients-column-item">
-                                    <a href={link.href} className="patients-column-link">
-                                      <span className="link-btn-bullet"></span>
-                                      <span className="link-text">{link.name}</span>
-                                    </a>
+                                    {link.name === 'Book Appointment' ? (
+                                      <button
+                                        type="button"
+                                        className="patients-column-link"
+                                        onClick={() => {
+                                          onOpenAppointment();
+                                          setOpenNavDropdown(null);
+                                        }}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', textStyle: 'inherit' }}
+                                      >
+                                        <span className="link-btn-bullet"></span>
+                                        <span className="link-text">{link.name}</span>
+                                      </button>
+                                    ) : (
+                                      <a href={link.href} className="patients-column-link">
+                                        <span className="link-btn-bullet"></span>
+                                        <span className="link-text">{link.name}</span>
+                                      </a>
+                                    )}
                                   </li>
                                 ))}
                               </ul>
@@ -514,21 +557,58 @@ const Navbar = ({ onSelectSpeciality }) => {
                 }
 
                 if (menuItem.type === 'dropdown') {
+                  const isAboutUs = menuItem.name.toLowerCase().includes('about');
                   return (
-                    <div key={menuItem.name} className="nav-item-dropdown-container">
+                    <div
+                      key={menuItem.name}
+                      className={`nav-item-dropdown-container ${isAboutUs ? 'about-us-nav-item' : ''}`}
+                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      onMouseLeave={() => {
+                        setOpenNavDropdown(null);
+                        setHoveredAboutItem(null);
+                      }}
+                    >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
-                      <div className="simple-dropdown-menu">
-                        <ul className="dropdown-list">
-                          {menuItem.links.map((link, lIdx) => (
-                            <li key={lIdx}>
-                              <a href={link.href} className="dropdown-link-item">
-                                <span className="dropdown-item-bullet"></span>
-                                <span className="dropdown-item-text">{link.name}</span>
-                              </a>
-                            </li>
-                          ))}
+                      <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
+                        <ul className="dropdown-list patients-column-list">
+                          {menuItem.links.map((link, lIdx) => {
+                            const isAboutHospital = isAboutUs && link.name === 'About Hospital';
+                            return (
+                              <li
+                                key={lIdx}
+                                className={`patients-column-item ${isAboutHospital ? 'about-hospital-item' : ''}`}
+                                onMouseEnter={() => {
+                                  if (isAboutHospital) setHoveredAboutItem('about-hospital');
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (isAboutHospital && !e.relatedTarget?.closest('.about-hospital-popup-container')) {
+                                    setHoveredAboutItem(null);
+                                  }
+                                }}
+                              >
+                                <a href={link.href} className="patients-column-link">
+                                  <span className="link-btn-bullet"></span>
+                                  <span className="link-text">{link.name}</span>
+                                </a>
+
+                                {isAboutHospital && (
+                                  <div
+                                    className={`about-hospital-popup-container ${hoveredAboutItem === 'about-hospital' ? 'show-popup' : ''}`}
+                                    onMouseEnter={() => setHoveredAboutItem('about-hospital')}
+                                    onMouseLeave={(e) => {
+                                      if (!e.relatedTarget?.closest('.about-hospital-item')) {
+                                        setHoveredAboutItem(null);
+                                      }
+                                    }}
+                                  >
+                                    <About onOpenAppointment={onOpenAppointment} />
+                                  </div>
+                                )}
+                              </li>
+                            );
+                          })}
                         </ul>
                       </div>
                     </div>
@@ -544,10 +624,10 @@ const Navbar = ({ onSelectSpeciality }) => {
             </div>
 
             <div className="nav-appointment-action">
-              <a href="#contact" className="btn-book-appointment">
+              <button type="button" onClick={onOpenAppointment} className="btn-book-appointment">
                 Book Appointment
-              </a>
-              <div className="appointment-dropdown-menu">
+              </button>
+              <div className={`appointment-dropdown-menu ${isDropdownOpen ? 'dropdown-active-hidden' : ''}`}>
                 <a href="#patients" className="appointment-dropdown-btn">
                   <span className="material-symbols-outlined">assignment</span>
                   <span>Patients Report</span>
@@ -677,7 +757,7 @@ const Navbar = ({ onSelectSpeciality }) => {
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         {menuItem.columns.map((col, colIdx) => (
                           <div key={colIdx} className="mobile-sub-category">
-                            <span className="mobile-sub-category-title">{col.title}</span>
+                            {col.title && <span className="mobile-sub-category-title">{col.title}</span>}
                             <div className="mobile-sub-links">
                               {col.links.map((link, lIdx) => (
                                 <a
@@ -742,9 +822,16 @@ const Navbar = ({ onSelectSpeciality }) => {
               })}
 
               <div className="mobile-drawer-footer">
-                <a href="#contact" className="btn-book-appointment-mobile" onClick={handleMobileLinkClick}>
+                <button
+                  type="button"
+                  className="btn-book-appointment-mobile"
+                  onClick={() => {
+                    onOpenAppointment();
+                    handleMobileLinkClick();
+                  }}
+                >
                   Book Appointment
-                </a>
+                </button>
                 <div className="mobile-drawer-emergency">
                   <span className="emergency-label">For Emergency & Appointments</span>
                   <span className="emergency-number">079 6900 2222</span>

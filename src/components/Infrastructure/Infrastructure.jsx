@@ -43,7 +43,6 @@ const Infrastructure = () => {
               <div className="infra-content">
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                <button className="btn-icon">Learn More →</button>
               </div>
             </div>
           ))}

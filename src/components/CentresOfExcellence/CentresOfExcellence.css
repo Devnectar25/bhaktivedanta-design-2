@@ -1,0 +1,203 @@
+/* ==========================================================================
+   Centres Of Excellence Section Styling
+   ========================================================================== */
+
+.coe-section {
+  background-color: #2465b0;
+  padding: 4.5rem 0;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.coe-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3.5rem;
+  max-width: 1380px;
+  margin: 0 auto;
+}
+
+/* Left Column: Heading and Description */
+.coe-header-col {
+  flex: 0 0 320px;
+  max-width: 380px;
+  color: #ffffff;
+}
+
+.coe-title {
+  font-family: 'Georgia', 'Merriweather', 'Times New Roman', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+.coe-description {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Right Column: Cards Grid */
+.coe-cards-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+/* Specialty Card */
+.coe-card {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 1.15rem 1rem 1.15rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  min-height: 195px;
+}
+
+.coe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* Icon Box inside card */
+.coe-icon-box {
+  width: 100%;
+  height: 105px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+  transition: background-color 0.25s ease;
+}
+
+.coe-icon-box.theme-orange {
+  background-color: #fff7ed;
+}
+
+.coe-icon-box.theme-blue {
+  background-color: #f0f7ff;
+}
+
+.coe-card:hover .coe-icon-box.theme-orange {
+  background-color: #ffedd5;
+}
+
+.coe-card:hover .coe-icon-box.theme-blue {
+  background-color: #e0f2fe;
+}
+
+/* Card Title */
+.coe-card-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1.35;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.6rem;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .coe-container {
+    gap: 2.5rem;
+  }
+  .coe-header-col {
+    flex: 0 0 280px;
+  }
+  .coe-title {
+    font-size: 2.5rem;
+  }
+  .coe-cards-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .coe-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 3rem;
+  }
+
+  .coe-header-col {
+    flex: none;
+    max-width: 600px;
+    text-align: center;
+  }
+
+  .coe-title {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .coe-cards-grid {
+    width: 100%;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 840px) {
+  .coe-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .coe-section {
+    padding: 3.5rem 0;
+  }
+
+  .coe-title {
+    font-size: 2.2rem;
+  }
+
+  .coe-description {
+    font-size: 0.95rem;
+  }
+
+  .coe-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+  }
+
+  .coe-card {
+    min-height: 175px;
+    padding: 0.85rem;
+  }
+
+  .coe-icon-box {
+    height: 90px;
+  }
+
+  .coe-card-title {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .coe-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}

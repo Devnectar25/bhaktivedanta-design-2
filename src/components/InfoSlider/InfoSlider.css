@@ -10,7 +10,7 @@
 .info-slider-track {
   display: flex;
   width: 100%;
-  min-height: 480px;
+  min-height: 555px;
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
