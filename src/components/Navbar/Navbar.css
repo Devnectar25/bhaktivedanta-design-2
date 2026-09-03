@@ -329,188 +329,7 @@
   white-space: nowrap;
 }
 
-.about-hospital-item {
-  position: relative;
-}
 
-/* Hover-based About Hospital Popup Styling */
-.about-hospital-popup-container {
-  position: absolute;
-  right: calc(100% - 2px);
-  top: -12px;
-  width: min(840px, 85vw);
-  max-height: calc(100vh - 140px);
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22), 0 4px 16px rgba(15, 23, 42, 0.08);
-  border-top: 4px solid #ea580c;
-  border-left: 1px solid rgba(226, 232, 240, 0.8);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  border-right: 1px solid rgba(226, 232, 240, 0.8);
-  padding: 1.5rem 1.75rem;
-  z-index: 1100;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateX(10px);
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
-}
-
-/* Seamless Hover Bridge extending to the right */
-.about-hospital-popup-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -25px;
-  width: 30px;
-  height: 100%;
-  background: transparent;
-  pointer-events: auto;
-}
-
-.about-hospital-popup-container.show-popup {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateX(0);
-}
-
-/* Highlight "About Hospital" dropdown link when popup is open */
-.about-hospital-item:has(.show-popup) > .patients-column-link {
-  background: #fff7ed;
-  color: #ea580c;
-  transform: translateX(4px);
-}
-
-.about-hospital-item:has(.show-popup) > .patients-column-link .link-btn-bullet {
-  background-color: #ea580c;
-  transform: scale(1.4);
-}
-
-/* Content overrides for About section inside the navbar popup */
-.about-hospital-popup-container .about-section {
-  padding: 0.5rem 0;
-  background-color: transparent;
-  overflow: visible;
-}
-
-.about-hospital-popup-container .container {
-  max-width: 100%;
-  padding: 0;
-}
-
-.about-hospital-popup-container .section-header {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.about-hospital-popup-container .section-header p.section-label {
-  margin-bottom: 0.25rem;
-  font-size: 0.75rem;
-}
-
-.about-hospital-popup-container .section-header h2 {
-  font-size: 1.85rem;
-}
-
-.about-hospital-popup-container .about-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: stretch;
-}
-
-.about-hospital-popup-container .quick-access {
-  padding: 1.75rem 1.25rem;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-shadow: 0 10px 30px rgba(30, 58, 138, 0.2);
-}
-
-.about-hospital-popup-container .quick-logo-wrap {
-  margin-bottom: 1rem;
-  gap: 0.5rem;
-}
-
-.about-hospital-popup-container .quick-icon,
-.about-hospital-popup-container .quick-logo {
-  height: 38px;
-}
-
-.about-hospital-popup-container .quick-access h3 {
-  font-size: 1.2rem;
-  margin-bottom: 0.35rem;
-}
-
-.about-hospital-popup-container .quick-access p {
-  font-size: 0.8rem;
-  margin-bottom: 1.25rem;
-  opacity: 0.85;
-}
-
-.about-hospital-popup-container .quick-grid {
-  gap: 0.65rem;
-}
-
-.about-hospital-popup-container .quick-btn {
-  padding: 0.65rem 0.5rem;
-  font-size: 0.78rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.about-hospital-popup-container .about-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.about-hospital-popup-container .about-text {
-  margin-bottom: 1.25rem;
-}
-
-.about-hospital-popup-container .about-text p {
-  font-size: 0.88rem;
-  line-height: 1.55;
-  color: #475569;
-  margin-bottom: 0.75rem;
-}
-
-.about-hospital-popup-container .about-features {
-  gap: 0.65rem 1rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.85rem;
-}
-
-.about-hospital-popup-container .learn-more {
-  font-size: 0.88rem;
-  cursor: pointer;
-}
-
-@media (max-width: 992px) {
-  .about-hospital-popup-container {
-    position: fixed;
-    top: 80px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%) translateY(10px);
-    width: 90vw;
-    max-height: 80vh;
-  }
-
-  .about-hospital-popup-container.show-popup {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .about-hospital-popup-container .about-container {
-    grid-template-columns: 1fr;
-  }
-}
 
 .nav-appointment-action {
   position: relative;
@@ -708,14 +527,15 @@
 .specialities-subpanel,
 .services-subpanel {
   width: max-content;
-  min-width: 820px;
-  max-width: 980px;
+  min-width: 620px;
+  max-width: 780px;
   background: #ffffff;
   border-left: 1px solid #f1f5f9;
   border-radius: 0 8px 8px 0;
-  padding: 1.5rem 2rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .specialities-subpanel.animate-flyout-fade,
@@ -769,17 +589,17 @@
 .specialities-grid,
 .services-grid {
   display: grid;
-  gap: 0.75rem 1.75rem;
+  gap: 0.75rem 1.5rem;
 }
 
 .specialities-grid.grid-3-col,
 .services-grid.grid-3-col {
-  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(190px, 1fr));
 }
 
 .specialities-grid.grid-2-col,
 .services-grid.grid-2-col {
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, minmax(250px, 1fr));
 }
 
 .specialities-subpanel-list,
@@ -915,10 +735,13 @@
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.55rem;
   line-height: 1.35;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 .link-btn-bullet,
@@ -929,11 +752,15 @@
   background-color: #cbd5e1;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  margin-top: 7px;
 }
 
 .link-btn-text,
 .dropdown-item-text {
-  white-space: nowrap;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .link-text {

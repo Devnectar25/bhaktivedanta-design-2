@@ -14,7 +14,6 @@ import Stats from './components/Stats/Stats';
 import NewDevelopments from './components/NewDevelopments/NewDevelopments';
 import Infrastructure from './components/Infrastructure/Infrastructure';
 import Testimonials from './components/Testimonials/Testimonials';
-import Contact from './components/Contact/Contact';
 import Footer from './components/Footer/Footer';
 import SpecialityModal from './components/SpecialityModal/SpecialityModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
@@ -121,14 +120,12 @@ function MainSite() {
         <Hero />
         <InfoSlider />
         <WhyChooseUs />
-        <CentresOfExcellence />
         <Services />
         <Doctors />
         <Stats />
         <NewDevelopments />
         <Infrastructure />
         <Testimonials />
-        <Contact />
       </main>
       <Footer />
 

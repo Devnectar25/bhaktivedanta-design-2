@@ -64,6 +64,19 @@ Hospital leadership, doctors, and volunteers visited inpatient units to distribu
       fullContent: `As part of Breast Cancer Awareness Month, our Department of Plastic Surgery and Surgical Oncology conducted a specialized seminar titled "Restoring Hope: Breast Reconstruction & Comprehensive Care".
 
 Surgeons provided in-depth guidance on advanced reconstructive techniques following mastectomy, emphasizing physical recovery, self-image restoration, and long-term wellness for cancer survivors.`
+    },
+    {
+      id: 'dev-6',
+      title: 'Advanced Robotic Knee Replacement Surgery Unit Launched',
+      category: 'Surgical Innovation',
+      date: 'December 2024',
+      image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=300&q=80',
+      excerpt: 'Bhaktivedanta Hospital inaugurated a state-of-the-art Robotic Joint Replacement Unit, offering sub-millimeter precision and faster recovery for knee surgery patients.',
+      fullContent: `Bhaktivedanta Hospital & Research Institute has officially inaugurated its next-generation Robotic Knee & Joint Replacement Surgery Unit.
+
+The robotic-arm assisted surgical system enables orthopaedic surgeons to plan and execute joint replacements with sub-millimeter precision tailored to each patient's unique anatomy.
+
+Benefits for patients include minimal soft-tissue trauma, reduced blood loss, shorter hospital stays, and significantly faster rehabilitation and mobility recovery.`
     }
   ]
 };

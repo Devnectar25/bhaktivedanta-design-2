@@ -80,7 +80,7 @@ const InfoSlider = () => {
     setTimeout(() => {
       setCurrent(index);
       setIsAnimating(false);
-    }, 400);
+    }, 300);
   }, [isAnimating]);
 
   const next = useCallback(() => {
