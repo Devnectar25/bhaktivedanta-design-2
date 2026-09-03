@@ -38,8 +38,14 @@
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(15, 23, 42, 0.05);
   transform: scale(0.94) translateY(12px);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.appointment-modal-container::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .appointment-modal-overlay.open .appointment-modal-container {

@@ -46,6 +46,11 @@ const AddCategory = () => {
       return;
     }
 
+    if (!editId && state.categories.length >= 6) {
+      alert("Maximum limit of 6 categories reached. You cannot add more categories.");
+      return;
+    }
+
     const now = new Date().toISOString();
     let updatedCats;
     if (editId) {
@@ -87,19 +92,10 @@ const AddCategory = () => {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-slate-400 text-xs mb-2 font-medium font-sans">
-        <span>Dashboard</span>
-        <span className="material-symbols-outlined text-xs">chevron_right</span>
-        <span>Specialities</span>
-        <span className="material-symbols-outlined text-xs">chevron_right</span>
-        <span className="text-slate-600 font-bold">{editId ? 'Edit Category' : 'Add Category'}</span>
-      </nav>
-
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-800">{editId ? 'Edit Category Details' : 'Add New Category'}</h2>
-        <p className="text-sm text-slate-500 font-medium">Configure speciality categories for navigation hierarchy.</p>
+        <h2 className="text-2xl font-bold text-slate-800 leading-tight">{editId ? 'Edit Category Details' : 'Add New Category'}</h2>
+        <p className="text-xs text-slate-500 font-medium mt-0.5">Configure speciality categories for navigation hierarchy.</p>
       </div>
 
       {/* Form */}
@@ -114,29 +110,6 @@ const AddCategory = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="font-bold text-slate-500 uppercase font-sans">Admin ID *</label>
-            <input 
-              type="text" 
-              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
-              placeholder="e.g. ADM-001"
-              value={adminId}
-              onChange={(e) => setAdminId(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="font-bold text-slate-500 uppercase font-sans">Admin Name</label>
-            <input 
-              type="text" 
-              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium" 
-              placeholder="e.g. Super Administrator"
-              value={adminName}
-              onChange={(e) => setAdminName(e.target.value)}
             />
           </div>
 

@@ -1,33 +1,92 @@
 /* ===== INFO SLIDER SECTION ===== */
 .info-slider-section {
   position: relative;
-  width: 100%;
+  width: calc(100% - 30px);
+  margin: 0 auto;
   overflow: hidden;
   background: #f0f4ff;
+  border-radius: 20px;
 }
 
 /* ===== SLIDE TRACK ===== */
 .info-slider-track {
   display: flex;
   width: 100%;
-  min-height: 555px;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  min-height: 495px;
+  opacity: 1;
 }
 
 /* ===== ANIMATIONS ===== */
-.slide-in {
+.info-slider-track .slider-img-wrap {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, filter 0.35s ease;
+}
+
+.info-slider-track .slider-portrait {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+.info-slider-track .slider-quote,
+.info-slider-track .slider-subtext,
+.info-slider-track .slider-attribution,
+.info-slider-track .slider-stats {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide In Active State */
+.slide-in .slider-img-wrap {
   opacity: 1;
-  transform: translateX(0);
+  transform: scale(1) translateX(0) rotate(0deg);
+  filter: blur(0px);
 }
 
-.slide-out-next {
-  opacity: 0;
-  transform: translateX(-40px);
+.slide-in .slider-portrait {
+  transform: scale(1);
 }
 
-.slide-out-prev {
-  opacity: 0;
-  transform: translateX(40px);
+.slide-in .slider-quote,
+.slide-in .slider-subtext,
+.slide-in .slider-attribution,
+.slide-in .slider-stats {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide Out Next State */
+.slide-out-next .slider-img-wrap {
+  opacity: 0.15;
+  transform: scale(0.74) translateX(-55px) rotate(-10deg);
+  filter: blur(2px);
+}
+
+.slide-out-next .slider-portrait {
+  transform: scale(1.18);
+}
+
+.slide-out-next .slider-quote,
+.slide-out-next .slider-subtext,
+.slide-out-next .slider-attribution,
+.slide-out-next .slider-stats {
+  opacity: 0.2;
+  transform: translateY(-8px);
+}
+
+/* Slide Out Prev State */
+.slide-out-prev .slider-img-wrap {
+  opacity: 0.15;
+  transform: scale(0.74) translateX(55px) rotate(10deg);
+  filter: blur(2px);
+}
+
+.slide-out-prev .slider-portrait {
+  transform: scale(1.18);
+}
+
+.slide-out-prev .slider-quote,
+.slide-out-prev .slider-subtext,
+.slide-out-prev .slider-attribution,
+.slide-out-prev .slider-stats {
+  opacity: 0.2;
+  transform: translateY(8px);
 }
 
 /* ===== LEFT PANEL ===== */
@@ -37,8 +96,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
-  gap: 1.5rem;
+  padding: 2.5rem 2rem;
+  gap: 1.25rem;
   transition: background 0.5s ease;
 }
 
@@ -126,7 +185,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4.5rem 4rem;
+  padding: 3rem 4rem;
   color: white;
   position: relative;
   overflow: hidden;

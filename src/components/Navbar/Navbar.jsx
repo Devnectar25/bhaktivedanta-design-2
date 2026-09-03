@@ -3,7 +3,6 @@ import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState } from '../../utils/api';
 import { defaultServicesState } from '../../data/defaultServices';
-import About from '../About/About';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -193,7 +192,6 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
   const [servicesData, setServicesData] = useState(defaultServicesState);
   const [activeServiceCategory, setActiveServiceCategory] = useState(null);
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
-  const [hoveredAboutItem, setHoveredAboutItem] = useState(null);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
 
@@ -563,52 +561,21 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
                       key={menuItem.name}
                       className={`nav-item-dropdown-container ${isAboutUs ? 'about-us-nav-item' : ''}`}
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
-                      onMouseLeave={() => {
-                        setOpenNavDropdown(null);
-                        setHoveredAboutItem(null);
-                      }}
+                      onMouseLeave={() => setOpenNavDropdown(null)}
                     >
                       <a href={menuItem.to} className="nav-dropdown-trigger">
                         {menuItem.name}
                       </a>
                       <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
                         <ul className="dropdown-list patients-column-list">
-                          {menuItem.links.map((link, lIdx) => {
-                            const isAboutHospital = isAboutUs && link.name === 'About Hospital';
-                            return (
-                              <li
-                                key={lIdx}
-                                className={`patients-column-item ${isAboutHospital ? 'about-hospital-item' : ''}`}
-                                onMouseEnter={() => {
-                                  if (isAboutHospital) setHoveredAboutItem('about-hospital');
-                                }}
-                                onMouseLeave={(e) => {
-                                  if (isAboutHospital && !e.relatedTarget?.closest('.about-hospital-popup-container')) {
-                                    setHoveredAboutItem(null);
-                                  }
-                                }}
-                              >
-                                <a href={link.href} className="patients-column-link">
-                                  <span className="link-btn-bullet"></span>
-                                  <span className="link-text">{link.name}</span>
-                                </a>
-
-                                {isAboutHospital && (
-                                  <div
-                                    className={`about-hospital-popup-container ${hoveredAboutItem === 'about-hospital' ? 'show-popup' : ''}`}
-                                    onMouseEnter={() => setHoveredAboutItem('about-hospital')}
-                                    onMouseLeave={(e) => {
-                                      if (!e.relatedTarget?.closest('.about-hospital-item')) {
-                                        setHoveredAboutItem(null);
-                                      }
-                                    }}
-                                  >
-                                    <About onOpenAppointment={onOpenAppointment} />
-                                  </div>
-                                )}
-                              </li>
-                            );
-                          })}
+                          {menuItem.links.map((link, lIdx) => (
+                            <li key={lIdx} className="patients-column-item">
+                              <a href={link.href} className="patients-column-link">
+                                <span className="link-btn-bullet"></span>
+                                <span className="link-text">{link.name}</span>
+                              </a>
+                            </li>
+                          ))}
                         </ul>
                       </div>
                     </div>
