@@ -3,6 +3,30 @@
   background: white;
 }
 
+.testimonials-section .section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.testimonials-section .section-label {
+  color: var(--secondary, #d97706);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.testimonials-section .section-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary, #1e3a8a);
+}
+
+.testimonials-section .section-header h2 span {
+  color: var(--secondary, #d97706);
+}
+
 .testimonials-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
