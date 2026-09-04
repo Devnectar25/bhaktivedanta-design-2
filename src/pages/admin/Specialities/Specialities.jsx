@@ -2,22 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../../data/defaultSpecialities';
 import { getSpecialitiesState, saveSpecialitiesState } from '../../../utils/api';
+import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
 
 const Specialities = () => {
   const [state, setState] = useState(defaultSpecialitiesState);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
+  // Custom Delete Confirmation Modal State
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    type: null, // 'speciality' | 'category'
+    targetId: null,
+    title: '',
+    itemName: '',
+    message: ''
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Invalidate stale cached state if it has fewer than 36 specialities
+    // Invalidate stale cached state if it has fewer than 36 specialities or outdated icons
     const cached = localStorage.getItem('bhaktivedanta_specialities_state');
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
         if (!parsed.specialities || parsed.specialities.length < 36) {
           localStorage.removeItem('bhaktivedanta_specialities_state');
+        } else {
+          // If cached nephrology still has the old 'kidney' icon, update it
+          let updated = false;
+          parsed.specialities.forEach(s => {
+            if (s.name === 'Nephrology' && s.icon === 'kidney') {
+              s.icon = 'nephrology';
+              updated = true;
+            }
+          });
+          if (updated) {
+            localStorage.setItem('bhaktivedanta_specialities_state', JSON.stringify(parsed));
+          }
         }
       } catch (e) {
         localStorage.removeItem('bhaktivedanta_specialities_state');
@@ -27,6 +50,11 @@ const Specialities = () => {
     getSpecialitiesState(defaultSpecialitiesState).then(res => {
       if (res && res.specialities && res.specialities.length >= 36) {
         res.specialities.forEach(ensureStandardTabs);
+        res.specialities.forEach(s => {
+          if (s.name === 'Nephrology' && s.icon === 'kidney') {
+            s.icon = 'nephrology';
+          }
+        });
         setState(res);
       } else {
         setState(defaultSpecialitiesState);
@@ -51,11 +79,48 @@ const Specialities = () => {
     saveSpecialitiesState(newState);
   };
 
-  const handleDeleteSpeciality = (id) => {
-    if (window.confirm("Are you sure you want to remove this speciality? It will be removed from all lists.")) {
-      const updatedSpecs = state.specialities.filter(s => s.id !== id);
+  const openDeleteSpecialityModal = (spec) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'speciality',
+      targetId: spec.id,
+      title: 'Delete Speciality?',
+      itemName: spec.name,
+      message: 'Are you sure you want to remove this speciality? It will be permanently removed from all clinical lists and patient directories.'
+    });
+  };
+
+  const openDeleteCategoryModal = (cat) => {
+    setDeleteModal({
+      isOpen: true,
+      type: 'category',
+      targetId: cat.id,
+      title: 'Delete Category?',
+      itemName: cat.name,
+      message: 'Are you sure you want to delete this category? All nested specialities will be unassigned.'
+    });
+  };
+
+  const handleConfirmDelete = () => {
+    const { type, targetId } = deleteModal;
+    if (type === 'speciality') {
+      const updatedSpecs = state.specialities.filter(s => s.id !== targetId);
       saveState({ ...state, specialities: updatedSpecs });
+    } else if (type === 'category') {
+      const updatedCats = state.categories.filter(c => c.id !== targetId);
+      const updatedSpecs = state.specialities.map(s => {
+        if (s.categoryId === targetId) {
+          return { ...s, categoryId: null };
+        }
+        return s;
+      });
+      saveState({ ...state, categories: updatedCats, specialities: updatedSpecs });
     }
+    setDeleteModal(prev => ({ ...prev, isOpen: false }));
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModal(prev => ({ ...prev, isOpen: false }));
   };
 
   const handleToggleSpecialityStatus = (id) => {
@@ -66,19 +131,6 @@ const Specialities = () => {
       return s;
     });
     saveState({ ...state, specialities: updatedSpecs });
-  };
-
-  const handleDeleteCategory = (id) => {
-    if (window.confirm("Are you sure you want to delete this category? All nested specialities will be unassigned.")) {
-      const updatedCats = state.categories.filter(c => c.id !== id);
-      const updatedSpecs = state.specialities.map(s => {
-        if (s.categoryId === id) {
-          return { ...s, categoryId: null };
-        }
-        return s;
-      });
-      saveState({ ...state, categories: updatedCats, specialities: updatedSpecs });
-    }
   };
 
   const handleToggleCategoryStatus = (id) => {
@@ -140,7 +192,7 @@ const Specialities = () => {
                   return (
                     <div key={spec.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0 overflow-hidden">
                           <span className="material-symbols-outlined text-xl">{spec.icon || 'star'}</span>
                         </div>
                         <div>
@@ -189,7 +241,7 @@ const Specialities = () => {
                             <span className="material-symbols-outlined text-[16px]">edit</span>
                           </button>
                           <button 
-                            onClick={() => handleDeleteSpeciality(spec.id)}
+                            onClick={() => openDeleteSpecialityModal(spec)}
                             className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
                             title="Delete"
                           >
@@ -305,7 +357,7 @@ const Specialities = () => {
                         <span className="material-symbols-outlined text-[16px]">edit</span>
                       </button>
                       <button 
-                        onClick={() => handleDeleteCategory(cat.id)}
+                        onClick={() => openDeleteCategoryModal(cat)}
                         className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
                         title="Delete Category"
                       >
@@ -320,6 +372,20 @@ const Specialities = () => {
         </div>
 
       </div>
+
+      {/* Custom Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        title={deleteModal.title}
+        itemName={deleteModal.itemName}
+        message={deleteModal.message}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+        icon="delete_forever"
+      />
     </div>
   );
 };

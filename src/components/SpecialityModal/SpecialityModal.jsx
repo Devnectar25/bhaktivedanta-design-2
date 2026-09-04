@@ -48,22 +48,41 @@ const SpecialityModal = ({ speciality, onClose, categoryName }) => {
   const bannerUrl = speciality.bannerImage || 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053&auto=format&fit=crop';
 
   return (
-    <div 
-      className={`speciality-modal-overlay ${isOpen ? 'open' : ''}`} 
+    <div
+      className={`speciality-modal-overlay ${isOpen ? 'open' : ''}`}
       onClick={handleClose}
     >
-      <div 
-        className="speciality-modal-container" 
+      <div
+        className="speciality-modal-container"
         onClick={(e) => e.stopPropagation()}
       >
         <button className="speciality-modal-close" onClick={handleClose} aria-label="Close modal">
           &times;
         </button>
 
-        <div 
-          className="speciality-modal-banner"
-          style={{ backgroundImage: `url(${bannerUrl})` }}
-        >
+        <div className="speciality-modal-banner">
+          {/* Ambient blurred backdrop for complementary filling of banner */}
+          <div className="speciality-modal-banner-bg-container" aria-hidden="true">
+            <img
+              src={bannerUrl}
+              alt=""
+              className="speciality-modal-banner-bg-img"
+            />
+          </div>
+
+          {/* Crisp foreground image preserving full aspect ratio */}
+          <div className="speciality-modal-banner-img-container">
+            <img
+              src={bannerUrl}
+              alt={speciality.name}
+              className="speciality-modal-banner-main-img"
+            />
+          </div>
+
+          {/* Readability overlay */}
+          <div className="speciality-modal-banner-overlay" />
+
+          {/* Banner text content */}
           <div className="speciality-modal-banner-content">
             <div className="speciality-modal-category">
               {categoryName || 'Bhaktivedanta Speciality'}
@@ -91,18 +110,18 @@ const SpecialityModal = ({ speciality, onClose, categoryName }) => {
         <div className="speciality-modal-body">
           {activeTab ? (
             <div className="fade-in">
-              <div 
+              <div
                 className="speciality-modal-html-content"
                 dangerouslySetInnerHTML={{ __html: activeTab.content || '<p class="italic text-slate-400">No content available for this section.</p>' }}
               />
-              
+
               {/* Render Tab Images if any */}
               {activeTab.images && activeTab.images.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   {activeTab.images.map((imgUrl, index) => (
-                    <img 
+                    <img
                       key={index}
-                      src={imgUrl} 
+                      src={imgUrl}
                       alt={`${speciality.name} ${activeTab.title} ${index + 1}`}
                       className="w-full h-48 object-cover rounded-xl border border-slate-200 shadow-sm"
                     />
