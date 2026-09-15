@@ -8,15 +8,15 @@ import Hero from './components/Hero/Hero';
 import InfoSlider from './components/InfoSlider/InfoSlider';
 import WhyChooseUs from './components/WhyChooseUs/WhyChooseUs';
 import CentresOfExcellence from './components/CentresOfExcellence/CentresOfExcellence';
-import Services from './components/Services/Services';
 import Doctors from './components/Doctors/Doctors';
 import Stats from './components/Stats/Stats';
 import NewDevelopments from './components/NewDevelopments/NewDevelopments';
 import Infrastructure from './components/Infrastructure/Infrastructure';
 import Testimonials from './components/Testimonials/Testimonials';
 import Footer from './components/Footer/Footer';
-import SpecialityModal from './components/SpecialityModal/SpecialityModal';
+import ServiceDetailModal from './components/ServiceDetailModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
+
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -58,6 +58,7 @@ import AddHealthPackage from './pages/admin/HealthPackages/AddHealthPackage';
 import AddQuery from './pages/admin/ContactQueries/AddQuery';
 import AddSubAdmin from './pages/admin/AdminUsers/AddSubAdmin';
 import AddAdminUser from './pages/admin/AdminUsers/AddAdminUser';
+import AddPatientGuide from './pages/admin/PatientsCorner/AddPatientGuide';
 
 import './App.css';
 
@@ -98,11 +99,19 @@ function ScrollToTop() {
 function MainSite() {
   const [selectedSpeciality, setSelectedSpeciality] = useState(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
+  const [selectedPatientGuide, setSelectedPatientGuide] = useState(null);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
 
   const handleSelectSpeciality = (speciality, categoryName) => {
     setSelectedSpeciality(speciality);
     setSelectedCategoryName(categoryName);
+    setSelectedPatientGuide(null);
+  };
+
+  const handleSelectPatientGuide = (guide, categoryName) => {
+    setSelectedPatientGuide(guide);
+    setSelectedSpeciality(guide);
+    setSelectedCategoryName(categoryName || guide.category || 'Patients Corner');
   };
 
   const handleOpenAppointmentModal = () => {
@@ -113,6 +122,7 @@ function MainSite() {
     <div className="app">
       <Navbar
         onSelectSpeciality={handleSelectSpeciality}
+        onSelectPatientGuide={handleSelectPatientGuide}
         onOpenAppointment={handleOpenAppointmentModal}
       />
       <ScrollToTop />
@@ -120,7 +130,6 @@ function MainSite() {
         <Hero />
         <InfoSlider />
         <WhyChooseUs />
-        <Services />
         <Doctors />
         <Stats />
         <NewDevelopments />
@@ -129,11 +138,12 @@ function MainSite() {
       </main>
       <Footer />
 
-      <SpecialityModal
-        speciality={selectedSpeciality}
+      <ServiceDetailModal
+        service={selectedPatientGuide || selectedSpeciality}
         categoryName={selectedCategoryName}
         onClose={() => {
           setSelectedSpeciality(null);
+          setSelectedPatientGuide(null);
           setSelectedCategoryName('');
         }}
       />
@@ -149,8 +159,9 @@ function MainSite() {
 function App() {
   return (
     <Routes>
-      {/* Main Public Website */}
+      {/* Main Public Website Home */}
       <Route path="/" element={<MainSite />} />
+
 
       {/* Admin Login */}
       <Route path="/admin/login" element={<AdminLogin />} />
@@ -176,7 +187,10 @@ function App() {
         <Route path="sub-admins" element={<SubAdmin />} />
         <Route path="help-desk" element={<HelpDesk />} />
         <Route path="application-errors" element={<ApplicationErrors />} />
+
+        {/* Patient Corner Admin Routes */}
         <Route path="patients-corner" element={<PatientsCorner />} />
+
         <Route path="spiritual-care" element={<SpiritualCare />} />
         <Route path="education-research" element={<EducationResearch />} />
         <Route path="associate-centres" element={<AssociateCentres />} />
@@ -188,8 +202,12 @@ function App() {
         <Route path="add-event" element={<AddEvent />} />
         <Route path="add-appointment" element={<AddAppointment />} />
         <Route path="add-category" element={<AddCategory />} />
-        <Route path="add-service" element={<AddService />} />
+        <Route path="add-service" element={<AddService mode="add" />} />
+        <Route path="edit-service/:id" element={<AddService mode="edit" />} />
+        <Route path="services/edit/:id" element={<AddService mode="edit" />} />
         <Route path="add-speciality" element={<AddSpeciality />} />
+        <Route path="edit-speciality/:id" element={<AddSpeciality />} />
+        <Route path="specialities/edit/:id" element={<AddSpeciality />} />
         <Route path="add-testimonial" element={<AddTestimonial />} />
         <Route path="add-gallery-media" element={<AddGalleryMedia />} />
         <Route path="add-news" element={<AddNews />} />
@@ -197,6 +215,10 @@ function App() {
         <Route path="add-query" element={<AddQuery />} />
         <Route path="add-sub-admin" element={<AddSubAdmin />} />
         <Route path="add-admin-user" element={<AddAdminUser />} />
+        <Route path="add-patient-guide" element={<AddPatientGuide mode="add" />} />
+        <Route path="edit-patient-guide/:id" element={<AddPatientGuide mode="edit" />} />
+        <Route path="patients-corner/add" element={<AddPatientGuide mode="add" />} />
+        <Route path="patients-corner/edit/:id" element={<AddPatientGuide mode="edit" />} />
       </Route>
 
       {/* Fallback Catch-All */}

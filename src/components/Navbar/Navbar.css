@@ -293,16 +293,23 @@
   border-top: 3px solid #ea580c;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
   z-index: 1000;
   padding: 0.75rem 0.5rem;
-  overflow: hidden;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #f1f5f9;
 }
 
+.nav-item-dropdown-container.is-open .simple-dropdown-menu,
 .nav-item-dropdown-container:hover .simple-dropdown-menu {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* About Us Dropdown Specific Styling - comfortably fits longest item on one single line */
@@ -311,7 +318,6 @@
   min-width: 420px;
   max-width: 420px;
   padding: 0.75rem 1.25rem 0.75rem 0.75rem;
-  overflow: visible !important;
 }
 
 .about-us-dropdown-menu .patients-column-link {
@@ -385,6 +391,8 @@
 /* Hide the dropdown entirely when scrolled away from Hero section or when any navigation dropdown is open */
 .navbar-header.scrolled .appointment-dropdown-menu,
 .appointment-dropdown-menu.dropdown-active-hidden,
+.desktop-nav-menu:has(.nav-item-dropdown-container.is-open) .appointment-dropdown-menu,
+.bottom-tier-container:has(.nav-item-dropdown-container.is-open) .appointment-dropdown-menu,
 .desktop-nav-menu:has(.nav-item-dropdown-container:hover) .appointment-dropdown-menu,
 .bottom-tier-container:has(.nav-item-dropdown-container:hover) .appointment-dropdown-menu {
   opacity: 0 !important;
@@ -443,17 +451,23 @@
   align-items: stretch;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transform: translateY(8px);
   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
   z-index: 1000;
   max-width: 95vw;
+  max-height: calc(100vh - 140px);
+  overflow: hidden;
 }
 
+.nav-item-dropdown-container.is-open .specialities-flyout-wrapper,
+.nav-item-dropdown-container.is-open .services-flyout-wrapper,
 .nav-item-dropdown-container:hover .specialities-flyout-wrapper,
 .nav-item-dropdown-container:hover .services-flyout-wrapper {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* Category column - Shown on first view */
@@ -467,6 +481,11 @@
   flex-direction: column;
   border-radius: 8px;
   flex-shrink: 0;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #f1f5f9;
 }
 
 .specialities-flyout-wrapper.has-subpanel .specialities-category-menu,
@@ -536,6 +555,11 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #f1f5f9;
 }
 
 .specialities-subpanel.animate-flyout-fade,
@@ -629,15 +653,63 @@
   padding: 1.75rem 2.25rem;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
   z-index: 1000;
   width: 860px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ea580c #f1f5f9;
 }
 
+.nav-item-dropdown-container.is-open .patients-mega-menu-wrapper,
 .nav-item-dropdown-container:hover .patients-mega-menu-wrapper {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Custom Sleek Scrollbars for Dropdowns and Mega Menus */
+.simple-dropdown-menu::-webkit-scrollbar,
+.specialities-category-menu::-webkit-scrollbar,
+.services-category-menu::-webkit-scrollbar,
+.specialities-subpanel::-webkit-scrollbar,
+.services-subpanel::-webkit-scrollbar,
+.patients-mega-menu-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.simple-dropdown-menu::-webkit-scrollbar-track,
+.specialities-category-menu::-webkit-scrollbar-track,
+.services-category-menu::-webkit-scrollbar-track,
+.specialities-subpanel::-webkit-scrollbar-track,
+.services-subpanel::-webkit-scrollbar-track,
+.patients-mega-menu-wrapper::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 4px;
+}
+
+.simple-dropdown-menu::-webkit-scrollbar-thumb,
+.specialities-category-menu::-webkit-scrollbar-thumb,
+.services-category-menu::-webkit-scrollbar-thumb,
+.specialities-subpanel::-webkit-scrollbar-thumb,
+.services-subpanel::-webkit-scrollbar-thumb,
+.patients-mega-menu-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.simple-dropdown-menu::-webkit-scrollbar-thumb:hover,
+.specialities-category-menu::-webkit-scrollbar-thumb:hover,
+.services-category-menu::-webkit-scrollbar-thumb:hover,
+.specialities-subpanel::-webkit-scrollbar-thumb:hover,
+.services-subpanel::-webkit-scrollbar-thumb:hover,
+.patients-mega-menu-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
 }
 
 .patients-mega-menu-grid {

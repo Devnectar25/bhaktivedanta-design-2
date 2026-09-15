@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../../data/defaultSpecialities';
 import { getSpecialitiesState, saveSpecialitiesState } from '../../../utils/api';
 import { initialDoctors } from '../../../data/adminState';
@@ -15,8 +15,9 @@ const getInitialCreateTabs = (specName) => [
 ];
 
 const AddSpeciality = () => {
+  const { id: paramId } = useParams();
   const [searchParams] = useSearchParams();
-  const editId = searchParams.get('edit');
+  const editId = paramId || searchParams.get('edit');
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -98,23 +99,7 @@ const AddSpeciality = () => {
   }, [editId]);
 
   const handleCategoryChange = (val) => {
-    if (!val) {
-      setCategoryId('');
-      return;
-    }
-    const count = state.specialities.filter(s => s.categoryId === val && s.id !== editId).length;
-    if (count >= 15) {
-      const catObj = state.categories.find(c => c.id === val);
-      const catName = catObj ? catObj.name : 'Selected Category';
-      showAlert({
-        title: 'Category Limit Reached',
-        itemName: `${catName} (${count}/15 specialities)`,
-        message: 'This category has reached the maximum limit of 15 specialities.',
-        type: 'warning'
-      });
-      return;
-    }
-    setCategoryId(val);
+    setCategoryId(val || '');
   };
 
   const handleImageUpload = async (e) => {
@@ -235,19 +220,6 @@ const AddSpeciality = () => {
       return;
     }
 
-    const existingCount = state.specialities.filter(s => s.categoryId === categoryId && s.id !== editId).length;
-    if (existingCount >= 15) {
-      const catObj = state.categories.find(c => c.id === categoryId);
-      const catName = catObj ? catObj.name : 'Selected Category';
-      showAlert({
-        title: 'Category Limit Reached',
-        itemName: `${catName} (${existingCount}/15 specialities)`,
-        message: 'This category has reached the maximum limit of 15 specialities.',
-        type: 'error'
-      });
-      return;
-    }
-
     const now = new Date().toISOString();
     let updatedSpecs;
     if (editId) {
@@ -302,19 +274,16 @@ const AddSpeciality = () => {
 
     const newState = { ...state, specialities: updatedSpecs };
     saveSpecialitiesState(newState).then(() => {
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
       navigate('/admin/specialities');
     });
   };
 
-  // Sort categories: active with available slots first, inactive or full (15/15) at bottom
+  // Sort categories: active categories first, then by order
   const sortedCategories = [...(state.categories || [])].sort((a, b) => {
-    const countA = state.specialities.filter(s => s.categoryId === a.id && s.id !== editId).length;
-    const isFullA = countA >= 15;
-    const isInactiveA = a.status === false || isFullA;
-
-    const countB = state.specialities.filter(s => s.categoryId === b.id && s.id !== editId).length;
-    const isFullB = countB >= 15;
-    const isInactiveB = b.status === false || isFullB;
+    const isInactiveA = a.status === false;
+    const isInactiveB = b.status === false;
 
     if (isInactiveA !== isInactiveB) {
       return isInactiveA ? 1 : -1;
@@ -361,19 +330,12 @@ const AddSpeciality = () => {
               >
                 <option value="" disabled>Select Parent Category</option>
                 {sortedCategories.map(c => {
-                  const count = state.specialities.filter(s => s.categoryId === c.id && s.id !== editId).length;
-                  const isFull = count >= 15;
+                  const count = (state.specialities || []).filter(s => s.categoryId === c.id && s.id !== editId).length;
                   const isInactive = c.status === false;
-                  const isDisabled = isFull || isInactive;
-                  let statusBadge = '';
-                  if (isFull) {
-                    statusBadge = ' - Limit Reached (15/15)';
-                  } else if (isInactive) {
-                    statusBadge = ' - Inactive';
-                  }
+                  let statusBadge = isInactive ? ' - Inactive' : '';
                   return (
-                    <option key={c.id} value={c.id} disabled={isDisabled}>
-                      {c.name} ({count}/15 specialities){statusBadge}
+                    <option key={c.id} value={c.id}>
+                      {c.name} ({count} {count === 1 ? 'speciality' : 'specialities'}){statusBadge}
                     </option>
                   );
                 })}
