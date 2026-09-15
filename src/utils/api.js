@@ -36,18 +36,14 @@ export async function apiGet(path, localStorageKey, fallbackData) {
   } catch (err) {
     console.warn(`[API] Failed to fetch ${path}. Falling back to localStorage.`, err);
   }
-  
+
   // Fallback to localStorage
   const local = localStorage.getItem(localStorageKey);
   if (local) {
     try {
       const parsed = JSON.parse(local);
-      if (localStorageKey === 'bhaktivedanta_specialities_state' && parsed && parsed.specialities && parsed.specialities.length < 36) {
-        localStorage.removeItem(localStorageKey);
-        return fallbackData;
-      }
       return parsed;
-    } catch (e) {}
+    } catch (e) { }
   }
   return fallbackData;
 }
@@ -65,11 +61,11 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
     if (body) {
       options.body = JSON.stringify(body);
     }
-    
+
     const res = await fetch(`${API_BASE_URL}${path}`, options);
     if (res.ok) {
       const serverResult = await res.json();
-      
+
       // Keep local storage synced too
       if (updateLocalFn && localStorageKey) {
         const local = localStorage.getItem(localStorageKey);
@@ -137,6 +133,22 @@ export const getServicesState = (fallback) => apiGet('/services-state', 'bhaktiv
 export const saveServicesState = (state) => apiMutation('/services-state', 'PUT', state, 'bhaktivedanta_services_state', (oldState, newState) => {
   return newState;
 });
+export const getServiceById = async (id, fallback) => {
+  try {
+    const directRes = await apiGet(`/services/${id}`, `bhaktivedanta_service_${id}`, null);
+    if (directRes && directRes.id) {
+      return directRes;
+    }
+  } catch (err) { }
+
+  // Fallback to checking within full services state
+  const state = await getServicesState(fallback);
+  if (state && state.services) {
+    const found = state.services.find(s => s.id === id || s.slug === `/${id}` || s.slug === id);
+    if (found) return found;
+  }
+  return null;
+};
 
 // Events
 export const getEvents = (fallback) => apiGet('/events', 'bhaktivedanta_admin_events', fallback);
@@ -238,3 +250,65 @@ export const updateAppError = (id, errorItem) => apiMutation(`/app-errors/${id}`
   return list.map(item => item.id === id ? { ...item, ...updatedError } : item);
 });
 export const clearAppErrors = () => apiMutation('/app-errors', 'DELETE', null, 'bhaktivedanta_admin_app_errors', () => []);
+
+// Patients Corner State (Unified object)
+export const getPatientCornerState = (fallback) => apiGet('/patient-corner', 'bhaktivedanta_patient_corner_state', fallback);
+export const savePatientCornerState = (state) => apiMutation('/patient-corner', 'PUT', state, 'bhaktivedanta_patient_corner_state', (oldState, newState) => {
+  return newState;
+});
+export const getPatientCornerGuideById = async (id, fallback) => {
+  try {
+    const directRes = await apiGet(`/patient-corner/guides/${id}`, `bhaktivedanta_patient_guide_${id}`, null);
+    if (directRes && directRes.id) {
+      return directRes;
+    }
+  } catch (err) { }
+
+  const state = await getPatientCornerState(fallback);
+  if (state && state.guides) {
+    const found = state.guides.find(g => g.id === id || g.slug === id || g.slug === `/${id}`);
+    if (found) return found;
+  }
+  return null;
+};
+
+// Guide helpers for Patients Corner
+export const createPatientCornerGuide = (guideData) =>
+  apiMutation('/patient-corner/guides', 'POST', guideData, 'bhaktivedanta_patient_corner_state');
+
+export const updatePatientCornerGuide = (id, guideData) =>
+  apiMutation(`/patient-corner/guides/${id}`, 'PUT', guideData, 'bhaktivedanta_patient_corner_state');
+
+export const deletePatientCornerGuide = (id) =>
+  apiMutation(`/patient-corner/guides/${id}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state');
+
+// Tab helpers for Patients Corner
+export const addPatientCornerTab = (guideId, tabData) =>
+  apiMutation(`/patient-corner/guides/${guideId}/tabs`, 'POST', tabData, 'bhaktivedanta_patient_corner_state');
+
+export const updatePatientCornerTab = (guideId, tabId, tabData) =>
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}`, 'PUT', tabData, 'bhaktivedanta_patient_corner_state');
+
+export const deletePatientCornerTab = (guideId, tabId) =>
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state');
+
+export const reorderPatientCornerTabs = (guideId, tabIds) =>
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/reorder`, 'PUT', { tabIds }, 'bhaktivedanta_patient_corner_state');
+
+// Section helpers for Patients Corner
+export const addPatientCornerSection = (guideId, tabId, sectionData) => 
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections`, 'POST', sectionData, 'bhaktivedanta_patient_corner_state');
+
+export const updatePatientCornerSection = (guideId, tabId, sectionId, sectionData) => 
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}`, 'PUT', sectionData, 'bhaktivedanta_patient_corner_state');
+
+export const deletePatientCornerSection = (guideId, tabId, sectionId) => 
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state');
+
+export const reorderPatientCornerSections = (guideId, tabId, sectionIds) => 
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/reorder`, 'PUT', { sectionIds }, 'bhaktivedanta_patient_corner_state');
+
+export const togglePatientCornerSection = (guideId, tabId, sectionId, enabled) => 
+  apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}/status`, 'PATCH', { enabled }, 'bhaktivedanta_patient_corner_state');
+
+

@@ -21,34 +21,9 @@ const Specialities = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Invalidate stale cached state if it has fewer than 36 specialities or outdated icons
-    const cached = localStorage.getItem('bhaktivedanta_specialities_state');
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (!parsed.specialities || parsed.specialities.length < 36) {
-          localStorage.removeItem('bhaktivedanta_specialities_state');
-        } else {
-          // If cached nephrology still has the old 'kidney' icon, update it
-          let updated = false;
-          parsed.specialities.forEach(s => {
-            if (s.name === 'Nephrology' && s.icon === 'kidney') {
-              s.icon = 'nephrology';
-              updated = true;
-            }
-          });
-          if (updated) {
-            localStorage.setItem('bhaktivedanta_specialities_state', JSON.stringify(parsed));
-          }
-        }
-      } catch (e) {
-        localStorage.removeItem('bhaktivedanta_specialities_state');
-      }
-    }
-
+  const fetchSpecialitiesData = () => {
     getSpecialitiesState(defaultSpecialitiesState).then(res => {
-      if (res && res.specialities && res.specialities.length >= 36) {
+      if (res && res.specialities) {
         res.specialities.forEach(ensureStandardTabs);
         res.specialities.forEach(s => {
           if (s.name === 'Nephrology' && s.icon === 'kidney') {
@@ -60,6 +35,22 @@ const Specialities = () => {
         setState(defaultSpecialitiesState);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchSpecialitiesData();
+
+    const handleSync = () => {
+      fetchSpecialitiesData();
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('admin_data_updated', handleSync);
+
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('admin_data_updated', handleSync);
+    };
   }, []);
 
   const totalPages = Math.ceil(state.specialities.length / itemsPerPage) || 1;

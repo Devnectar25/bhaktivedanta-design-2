@@ -1,110 +1,352 @@
-import React, { useState } from 'react';
-
-const defaultGuides = [
-  { id: 'pc-1', title: 'Patient Admission & Rights Policy', category: 'Inpatient Guide', updated: '2026-08-20', status: 'Published' },
-  { id: 'pc-2', title: 'Visiting Hours & ICU Guidelines', category: 'Visitor Rules', updated: '2026-08-15', status: 'Published' },
-  { id: 'pc-3', title: 'Insurance & Cashless Desk Procedure', category: 'Billing Help', updated: '2026-08-10', status: 'Published' }
-];
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { defaultPatientCornerState } from '../../../data/defaultPatientCorner';
+import { getPatientCornerState, deletePatientCornerGuide, updatePatientCornerGuide } from '../../../utils/api';
+import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
 
 const PatientsCorner = () => {
-  const [guides, setGuides] = useState(defaultGuides);
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Inpatient Guide');
+  const [state, setState] = useState(defaultPatientCornerState);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedStatus, setSelectedStatus] = useState('All Status');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (!title) return;
-    const newGuide = {
-      id: `pc-${Date.now()}`,
-      title,
-      category,
-      updated: new Date().toISOString().split('T')[0],
-      status: 'Published'
-    };
-    setGuides([newGuide, ...guides]);
-    setTitle('');
-    alert('Patient guide published successfully!');
+  // Custom Delete Confirmation Modal State
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    targetId: null,
+    title: '',
+    itemName: '',
+    message: ''
+  });
+
+  const navigate = useNavigate();
+
+  const fetchGuidesData = () => {
+    getPatientCornerState(defaultPatientCornerState).then(res => {
+      if (res && res.guides) {
+        setState(res);
+      } else {
+        setState(defaultPatientCornerState);
+      }
+    });
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Delete patient information guide?")) {
-      setGuides(guides.filter(g => g.id !== id));
+  useEffect(() => {
+    fetchGuidesData();
+
+    const handleSync = () => {
+      fetchGuidesData();
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('admin_data_updated', handleSync);
+
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('admin_data_updated', handleSync);
+    };
+  }, []);
+
+  const openDeleteModal = (guide) => {
+    setDeleteModal({
+      isOpen: true,
+      targetId: guide.id,
+      title: 'Delete Patient Guide?',
+      itemName: guide.title,
+      message: 'Are you sure you want to remove this patient guide? It will be permanently deleted along with all its tabs and sections.'
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.targetId) return;
+    try {
+      await deletePatientCornerGuide(deleteModal.targetId);
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+      fetchGuidesData();
+    } catch (err) {
+      console.error('Error deleting guide:', err);
+    } finally {
+      setDeleteModal({ isOpen: false, targetId: null, title: '', itemName: '', message: '' });
     }
   };
 
+  const handleToggleStatus = async (guide) => {
+    const nextStatus = guide.status === 'Published' ? 'Draft' : 'Published';
+    try {
+      await updatePatientCornerGuide(guide.id, { ...guide, status: nextStatus });
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+      fetchGuidesData();
+    } catch (err) {
+      console.error('Error toggling guide status:', err);
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('All Categories');
+    setSelectedStatus('All Status');
+    setCurrentPage(1);
+  };
+
+  const categories = state.categories || [];
+  const guides = state.guides || [];
+
+  const filtered = guides.filter(g => {
+    const matchesSearch = (g.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (g.shortDescription || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (g.category || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+    const isPublished = g.status === 'Published';
+    let matchesStatus = true;
+    if (selectedStatus === 'Published') matchesStatus = isPublished;
+    if (selectedStatus === 'Draft') matchesStatus = !isPublished;
+
+    const matchesCat = selectedCategory === 'All Categories' || g.categoryId === selectedCategory || g.category === selectedCategory;
+
+    return matchesSearch && matchesStatus && matchesCat;
+  });
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGuides = filtered.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [filtered.length, totalPages, currentPage]);
+
   return (
     <div className="space-y-6 font-sans">
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Patients Corner Management</h2>
-          <p className="text-sm text-slate-500">Manage patient guidelines, admission rules, and downloadable resources</p>
+          <nav className="flex items-center gap-2 text-slate-400 text-xs mb-1 font-medium">
+            <span>Dashboard</span>
+            <span className="material-symbols-outlined text-xs">chevron_right</span>
+            <span className="text-slate-600 font-bold">Patients Corner</span>
+          </nav>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-slate-800">Patients Corner Management</h2>
+            <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-100">
+              {filtered.length} {filtered.length === 1 ? 'Guide' : 'Guides'}
+            </span>
+          </div>
+          <p className="text-sm text-slate-500 font-medium mt-0.5">
+            Manage patient guidelines, admission rules, and dynamic section content shown to patients.
+          </p>
         </div>
+        <Link 
+          to="/admin/add-patient-guide" 
+          className="flex items-center gap-2 bg-[#fea619] hover:bg-amber-500 text-slate-900 px-5 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm active:scale-95"
+        >
+          <span className="material-symbols-outlined text-lg">add</span>
+          <span>Add Patient Guide</span>
+        </Link>
       </div>
 
-      <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
-        <h3 className="font-bold text-slate-800 text-sm">Add Patient Guide / Information Notice</h3>
-        <form onSubmit={handleAdd} className="flex gap-3 items-end text-xs">
-          <div className="flex-1 space-y-1">
-            <label className="font-bold text-slate-600">Guide Title</label>
+      {/* Filter Bar */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="flex-1 w-full flex flex-col sm:flex-row gap-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+              search
+            </span>
             <input 
               type="text" 
-              placeholder="e.g. Visitor Policy during Flu Season"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none"
+              placeholder="Search guides by title, category, keywords..." 
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500"
             />
           </div>
-          <div className="w-[200px] space-y-1">
-            <label className="font-bold text-slate-600">Category</label>
-            <select 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none cursor-pointer"
-            >
-              <option>Inpatient Guide</option>
-              <option>Visitor Rules</option>
-              <option>Billing Help</option>
-              <option>Discharge Process</option>
-            </select>
-          </div>
-          <button type="submit" className="bg-[#1e3a8a] text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-900">
-            Publish Notice
+
+          {/* Category Filter */}
+          <select 
+            value={selectedCategory} 
+            onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
+            className="border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 cursor-pointer"
+          >
+            <option value="All Categories">All Categories</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+
+          {/* Status Filter */}
+          <select 
+            value={selectedStatus} 
+            onChange={(e) => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
+            className="border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 cursor-pointer"
+          >
+            <option value="All Status">All Status</option>
+            <option value="Published">Published</option>
+            <option value="Draft">Draft</option>
+          </select>
+        </div>
+
+        {(searchTerm || selectedCategory !== 'All Categories' || selectedStatus !== 'All Status') && (
+          <button 
+            onClick={handleResetFilters}
+            className="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1 self-end md:self-center"
+          >
+            <span className="material-symbols-outlined text-sm">restart_alt</span>
+            <span>Reset Filters</span>
           </button>
-        </form>
+        )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden text-xs">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase">
-            <tr>
-              <th className="px-4 py-3">Title</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Last Updated</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {guides.map(g => (
-              <tr key={g.id} className="hover:bg-slate-50/50">
-                <td className="px-4 py-3 font-bold text-slate-800">{g.title}</td>
-                <td className="px-4 py-3 font-medium text-slate-600">{g.category}</td>
-                <td className="px-4 py-3 text-slate-400">{g.updated}</td>
-                <td className="px-4 py-3">
-                  <span className="bg-green-50 text-green-700 font-bold px-2 py-0.5 rounded-full border border-green-200">
-                    {g.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <button onClick={() => handleDelete(g.id)} className="text-red-500 hover:text-red-700 font-bold">
-                    Delete
-                  </button>
-                </td>
+      {/* Guides Table */}
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+                <th className="px-5 py-3.5">Guide Title</th>
+                <th className="px-4 py-3.5">Category</th>
+                <th className="px-4 py-3.5 text-center">Tabs & Sections</th>
+                <th className="px-4 py-3.5 text-center">Display Order</th>
+                <th className="px-4 py-3.5 text-center">Status</th>
+                <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {paginatedGuides.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-5 py-12 text-center text-slate-400">
+                    <span className="material-symbols-outlined text-4xl mb-2 text-slate-300 block">
+                      menu_book
+                    </span>
+                    <p className="font-semibold">No patient guides found matching criteria.</p>
+                  </td>
+                </tr>
+              ) : (
+                paginatedGuides.map(g => {
+                  const isPublished = g.status === 'Published';
+                  const tabCount = g.tabs?.length || 0;
+                  const totalSections = (g.tabs || []).reduce((acc, t) => acc + (t.sections?.length || 0), 0);
+
+                  return (
+                    <tr key={g.id} className="hover:bg-slate-50/70 transition-colors">
+                      {/* Title & Short Description */}
+                      <td className="px-5 py-3.5">
+                        <div className="font-bold text-slate-800 text-sm">{g.title}</div>
+                        {g.shortDescription && (
+                          <div className="text-slate-400 text-[11px] line-clamp-1 max-w-sm mt-0.5">
+                            {g.shortDescription}
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Category */}
+                      <td className="px-4 py-3.5">
+                        <span className="bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md border border-blue-100/80 inline-block text-[11px]">
+                          {g.category || 'Inpatient Guide'}
+                        </span>
+                      </td>
+
+                      {/* Tabs & Sections Count */}
+                      <td className="px-4 py-3.5 text-center">
+                        <div className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md font-bold text-[11px]">
+                          <span className="material-symbols-outlined text-xs text-amber-500">tab</span>
+                          <span>{tabCount} Tabs</span>
+                          <span className="text-slate-300">|</span>
+                          <span className="text-slate-500 font-normal">{totalSections} Secs</span>
+                        </div>
+                      </td>
+
+                      {/* Display Order */}
+                      <td className="px-4 py-3.5 text-center font-bold text-slate-700">
+                        #{g.displayOrder || 1}
+                      </td>
+
+                      {/* Status Toggle */}
+                      <td className="px-4 py-3.5 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(g)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer border ${
+                            isPublished
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                              : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
+                          }`}
+                          title="Click to toggle status"
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${isPublished ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                          <span>{isPublished ? 'Published' : 'Draft'}</span>
+                        </button>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            to={`/admin/edit-patient-guide/${g.id}`}
+                            className="p-1.5 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
+                            title="Edit Guide & Tabs"
+                          >
+                            <span className="material-symbols-outlined text-base">edit</span>
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => openDeleteModal(g)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                            title="Delete Guide"
+                          >
+                            <span className="material-symbols-outlined text-base">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        {filtered.length > itemsPerPage && (
+          <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+            <span>Showing {startIndex + 1} to {Math.min(endIndex, filtered.length)} of {filtered.length} guides</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40"
+              >
+                Previous
+              </button>
+              <span className="px-2 font-bold text-slate-700">{currentPage} / {totalPages}</span>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title={deleteModal.title}
+        itemName={deleteModal.itemName}
+        message={deleteModal.message}
+        onConfirm={confirmDelete}
+        onClose={() => setDeleteModal({ isOpen: false, targetId: null, title: '', itemName: '', message: '' })}
+      />
     </div>
   );
 };

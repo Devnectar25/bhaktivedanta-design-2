@@ -1,114 +1,128 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loadAdminData, saveAdminData } from '../../../data/adminState';
-
-const defaultServices = [
-  {
-    id: 'SRV-001',
-    name: 'Holistic Wellness',
-    description: 'Integrative healthcare combining modern medicine with traditional practices.',
-    slug: '/holistic-wellness',
-    sections: 5,
-    status: 'Active',
-    icon: 'self_improvement',
-    lastUpdated: 'Today, 10:45 AM'
-  },
-  {
-    id: 'SRV-002',
-    name: 'ISKCON Devotees Healthcare Services',
-    description: 'Specialized healthcare services tailored for the ISKCON devotee community.',
-    slug: '/iskcon-healthcare',
-    sections: 3,
-    status: 'Active',
-    icon: 'diversity_1',
-    lastUpdated: 'Yesterday, 02:30 PM'
-  },
-  {
-    id: 'SRV-003',
-    name: 'Palliative Care',
-    description: 'Compassionate end-of-life care and symptom management.',
-    slug: '/palliative-care',
-    sections: 4,
-    status: 'Draft',
-    icon: 'volunteer_activism',
-    lastUpdated: 'Oct 28, 2023'
-  },
-  {
-    id: 'SRV-004',
-    name: 'Community Services',
-    description: 'Outreach programs and medical camps for rural and underserved areas.',
-    slug: '/community-services',
-    sections: 6,
-    status: 'Active',
-    icon: 'groups',
-    lastUpdated: 'Oct 15, 2023'
-  },
-  {
-    id: 'SRV-005',
-    name: 'Garbha Samskar',
-    description: 'Ayurvedic prenatal education and holistic pregnancy care.',
-    slug: '/garbha-samskar',
-    sections: 2,
-    status: 'Active',
-    icon: 'pregnant_woman',
-    lastUpdated: 'Oct 05, 2023'
-  },
-  {
-    id: 'SRV-006',
-    name: 'Speech & Audiology',
-    description: 'Comprehensive hearing assessments and speech therapy.',
-    slug: '/speech-audiology',
-    sections: 3,
-    status: 'Active',
-    icon: 'hearing',
-    lastUpdated: 'Sep 28, 2023'
-  }
-];
+import { defaultServicesState, ensureStandardServiceTabs } from '../../../data/defaultServices';
+import { getServicesState, saveServicesState } from '../../../utils/api';
+import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
 
 const Services = () => {
-  const [services, setServices] = useState([]);
+  const [state, setState] = useState(defaultServicesState);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedStatus, setSelectedStatus] = useState('All Status');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
+
+  // Custom Delete Confirmation Modal State
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    targetId: null,
+    title: '',
+    itemName: '',
+    message: ''
+  });
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setServices(loadAdminData('bhaktivedanta_admin_services', defaultServices));
-  }, []);
-
-  const saveAndSetServices = (newServices) => {
-    setServices(newServices);
-    saveAdminData('bhaktivedanta_admin_services', newServices);
+  const fetchServicesData = () => {
+    getServicesState(defaultServicesState).then(res => {
+      if (res && res.services) {
+        res.services.forEach(ensureStandardServiceTabs);
+        setState(res);
+      } else {
+        setState(defaultServicesState);
+      }
+    });
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this service?")) {
-      const updated = services.filter(srv => srv.id !== id);
-      saveAndSetServices(updated);
-    }
+  useEffect(() => {
+    fetchServicesData();
+
+    const handleSync = () => {
+      fetchServicesData();
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('admin_data_updated', handleSync);
+
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('admin_data_updated', handleSync);
+    };
+  }, []);
+
+  const saveState = (newState) => {
+    setState(newState);
+    saveServicesState(newState).then(() => {
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+    });
+  };
+
+  const openDeleteModal = (srv) => {
+    setDeleteModal({
+      isOpen: true,
+      targetId: srv.id,
+      title: 'Delete Healthcare Service?',
+      itemName: srv.name,
+      message: 'Are you sure you want to remove this service? It will be permanently deleted from patient navigation, mega menu, and department directories.'
+    });
+  };
+
+  const confirmDelete = () => {
+    if (!deleteModal.targetId) return;
+    const updatedServices = state.services.filter(s => s.id !== deleteModal.targetId);
+    const newState = { ...state, services: updatedServices };
+    saveState(newState);
+    setDeleteModal({ isOpen: false, targetId: null, title: '', itemName: '', message: '' });
   };
 
   const handleToggleStatus = (id) => {
-    const updated = services.map(srv => {
+    const updatedServices = state.services.map(srv => {
       if (srv.id === id) {
-        return { ...srv, status: srv.status === 'Active' ? 'Draft' : 'Active' };
+        const nextStatus = srv.status === 'Active' || srv.status === true ? false : true;
+        return { ...srv, status: nextStatus };
       }
       return srv;
     });
-    saveAndSetServices(updated);
+    const newState = { ...state, services: updatedServices };
+    saveState(newState);
   };
 
   const handleResetFilters = () => {
     setSearchTerm('');
+    setSelectedCategory('All Categories');
     setSelectedStatus('All Status');
+    setCurrentPage(1);
   };
 
-  const filtered = services.filter(srv => {
+  const categories = state.categories || [];
+  const categoriesMap = {};
+  categories.forEach(c => { categoriesMap[c.id] = c.name; });
+
+  const filtered = (state.services || []).filter(srv => {
     const matchesSearch = srv.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          srv.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = selectedStatus === 'All Status' || srv.status === selectedStatus;
-    return matchesSearch && matchesStatus;
+                          (srv.description || srv.shortDescription || '').toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const isAct = srv.status === 'Active' || srv.status === true;
+    let matchesStatus = true;
+    if (selectedStatus === 'Active') matchesStatus = isAct;
+    if (selectedStatus === 'Draft') matchesStatus = !isAct;
+
+    const matchesCat = selectedCategory === 'All Categories' || srv.categoryId === selectedCategory;
+
+    return matchesSearch && matchesStatus && matchesCat;
   });
+
+  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedServices = filtered.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [filtered.length, totalPages, currentPage]);
 
   return (
     <div className="space-y-6">
@@ -120,8 +134,13 @@ const Services = () => {
             <span className="material-symbols-outlined text-xs">chevron_right</span>
             <span className="text-slate-600 font-bold">Services</span>
           </nav>
-          <h2 className="text-2xl font-bold text-slate-800">Healthcare Services</h2>
-          <p className="text-sm text-slate-500 font-medium">Manage clinical and support service descriptions shown to patients.</p>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-slate-800">Healthcare Services</h2>
+            <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-100">
+              {filtered.length} {filtered.length === 1 ? 'Service' : 'Services'}
+            </span>
+          </div>
+          <p className="text-sm text-slate-500 font-medium mt-0.5">Manage live clinical offerings and support services shown to patients.</p>
         </div>
         <Link 
           to="/admin/add-service" 
@@ -141,24 +160,46 @@ const Services = () => {
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none"
             placeholder="Search service name or keyword..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
           />
         </div>
         <div className="w-[180px] space-y-1">
+          <label className="text-[10px] font-bold text-slate-500 uppercase px-1">Category</label>
+          <select 
+            className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
+            value={selectedCategory}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="All Categories">All Categories</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="w-[150px] space-y-1">
           <label className="text-[10px] font-bold text-slate-500 uppercase px-1">Status</label>
           <select 
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setCurrentPage(1);
+            }}
           >
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Draft</option>
+            <option value="All Status">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Draft">Draft</option>
           </select>
         </div>
         <button 
           onClick={handleResetFilters}
-          className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold transition-all"
+          className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer"
         >
           Reset Filters
         </button>
@@ -171,81 +212,136 @@ const Services = () => {
             <tr className="text-slate-500 font-bold uppercase">
               <th className="px-4 py-3 w-16">Icon</th>
               <th className="px-4 py-3">Service Name</th>
+              <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3 text-center">Total Sections</th>
+              <th className="px-4 py-3 text-center">Total Tabs</th>
               <th className="px-4 py-3 text-center">Status</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
-            {filtered.length === 0 ? (
+            {paginatedServices.length === 0 ? (
               <tr>
-                <td colSpan="6" className="px-4 py-8 text-center text-slate-400 font-medium">No matching services found.</td>
+                <td colSpan="7" className="px-4 py-8 text-center text-slate-400 font-medium">No matching services found.</td>
               </tr>
             ) : (
-              filtered.map((srv) => (
-                <tr key={srv.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="w-10 h-8 rounded bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center">
-                      <span className="material-symbols-outlined text-lg">{srv.icon || 'medical_services'}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col">
-                      <span className="font-bold text-slate-800 text-sm leading-snug">{srv.name}</span>
-                      <span className="text-[10px] text-slate-400 font-semibold line-clamp-1 max-w-sm mt-0.5">{srv.description}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 font-medium text-slate-500">{srv.slug}</td>
-                  <td className="px-4 py-3 text-center font-bold text-blue-600">{srv.sections}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      srv.status === 'Active'
-                        ? 'bg-green-50 text-green-600 border border-green-100'
-                        : 'bg-slate-100 text-slate-400 border border-slate-200'
-                    }`}>
-                      {srv.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-1.5">
-                      <button 
-                        onClick={() => handleToggleStatus(srv.id)}
-                        className={`w-7 h-7 rounded flex items-center justify-center border transition-all ${
-                          srv.status === 'Active'
-                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'
-                            : 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200'
-                        }`}
-                        title={srv.status === 'Active' ? 'Set as Draft' : 'Publish'}
-                      >
-                        <span className="material-symbols-outlined text-[16px]">
-                          {srv.status === 'Active' ? 'visibility_off' : 'visibility'}
+              paginatedServices.map((srv) => {
+                const isActive = srv.status === 'Active' || srv.status === true;
+                const tabCount = Array.isArray(srv.tabs) ? srv.tabs.length : 5;
+                const catName = categoriesMap[srv.categoryId] || 'Healthcare Services';
+
+                return (
+                  <tr key={srv.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="w-10 h-8 rounded bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-lg">{srv.icon || 'medical_services'}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-800 text-sm leading-snug">{srv.name}</span>
+                        <span className="text-[10px] text-slate-400 font-semibold line-clamp-1 max-w-sm mt-0.5">
+                          {srv.description || srv.shortDescription || 'No description provided.'}
                         </span>
-                      </button>
-                      <button 
-                        onClick={() => navigate(`/admin/add-service?edit=${srv.id}`)}
-                        className="w-7 h-7 rounded bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center transition-all"
-                        title="Edit Details"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">edit</span>
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(srv.id)}
-                        className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
-                        title="Delete"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="inline-block px-2.5 py-1 bg-slate-100 border border-slate-200/80 rounded-md text-[11px] font-semibold text-slate-700">
+                        {catName}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-medium text-slate-500">{srv.slug || `/${srv.id}`}</td>
+                    <td className="px-4 py-3 text-center font-bold text-blue-600">{tabCount}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        isActive
+                          ? 'bg-green-50 text-green-600 border border-green-100'
+                          : 'bg-slate-100 text-slate-400 border border-slate-200'
+                      }`}>
+                        {isActive ? 'Active' : 'Draft'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-1.5">
+                        <button 
+                          onClick={() => handleToggleStatus(srv.id)}
+                          className={`w-7 h-7 rounded flex items-center justify-center border transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'
+                              : 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200'
+                          }`}
+                          title={isActive ? 'Set as Draft' : 'Publish'}
+                        >
+                          <span className="material-symbols-outlined text-[16px]">
+                            {isActive ? 'visibility_off' : 'visibility'}
+                          </span>
+                        </button>
+                        <button 
+                          onClick={() => navigate(`/admin/edit-service/${srv.id}`)}
+                          className="w-7 h-7 rounded bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center transition-all cursor-pointer"
+                          title="Edit Details"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">edit</span>
+                        </button>
+                        <button 
+                          onClick={() => openDeleteModal(srv)}
+                          className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all cursor-pointer"
+                          title="Delete"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
+
+        {/* Pagination Footer */}
+        {filtered.length > itemsPerPage && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100 bg-slate-50/50 text-xs">
+            <span className="text-slate-500 font-medium">
+              Showing {startIndex + 1} to {Math.min(endIndex, filtered.length)} of {filtered.length} services
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-all"
+              >
+                Previous
+              </button>
+              <span className="px-3 py-1 font-bold text-slate-700">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Custom Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmDelete}
+        title={deleteModal.title}
+        itemName={deleteModal.itemName}
+        message={deleteModal.message}
+        confirmText="Delete Service"
+        isDestructive={true}
+      />
     </div>
   );
 };
 
 export default Services;
+

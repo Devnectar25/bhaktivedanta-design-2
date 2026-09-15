@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
-import { getSpecialitiesState } from '../../utils/api';
-import { defaultServicesState } from '../../data/defaultServices';
+import { getSpecialitiesState, getServicesState, getPatientCornerState } from '../../utils/api';
+import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
+import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -182,7 +183,7 @@ const EmblemLogo = () => (
   </svg>
 );
 
-const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
+const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
@@ -191,6 +192,7 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
 
   const [servicesData, setServicesData] = useState(defaultServicesState);
   const [activeServiceCategory, setActiveServiceCategory] = useState(null);
+  const [patientCornerData, setPatientCornerData] = useState(defaultPatientCornerState);
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
@@ -228,35 +230,120 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
       }
     }
 
-    const handleStorageChange = (e) => {
-      if (e.key === 'bhaktivedanta_specialities_state' && e.newValue) {
-        try {
-          const parsed = JSON.parse(e.newValue);
-          if (parsed && parsed.categories) {
-            if (parsed.specialities) parsed.specialities.forEach(ensureStandardTabs);
-            setSpecialitiesData(parsed);
-          }
-        } catch (err) {
-          console.error("Storage change parsing error:", err);
+    const fetchSpecialities = () => {
+      getSpecialitiesState(defaultSpecialitiesState).then(res => {
+        if (res && res.categories) {
+          if (res.specialities) res.specialities.forEach(ensureStandardTabs);
+          setSpecialitiesData(res);
+        } else {
+          setSpecialitiesData(defaultSpecialitiesState);
         }
+      }).catch(err => {
+        console.warn('Navbar could not load live specialities:', err);
+      });
+    };
+
+    const fetchServices = () => {
+      getServicesState(defaultServicesState).then(res => {
+        if (res && res.categories) {
+          if (res.services) res.services.forEach(ensureStandardServiceTabs);
+          setServicesData(res);
+        } else {
+          setServicesData(defaultServicesState);
+        }
+      }).catch(err => {
+        console.warn('Navbar could not load live services:', err);
+      });
+    };
+
+    const fetchPatientCorner = () => {
+      getPatientCornerState(defaultPatientCornerState).then(res => {
+        if (res && res.categories) {
+          if (res.guides) res.guides.forEach(ensureStandardPatientCornerTabs);
+          setPatientCornerData(res);
+        } else {
+          setPatientCornerData(defaultPatientCornerState);
+        }
+      }).catch(err => {
+        console.warn('Navbar could not load live patient corner:', err);
+      });
+    };
+
+    // Initial fetch on mount
+    fetchSpecialities();
+    fetchServices();
+    fetchPatientCorner();
+
+    const handleSync = (e) => {
+      if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
+        fetchSpecialities();
+      }
+      if (!e || !e.key || e.key === 'bhaktivedanta_services_state') {
+        fetchServices();
+      }
+      if (!e || !e.key || e.key === 'bhaktivedanta_patient_corner_state') {
+        fetchPatientCorner();
       }
     };
-    window.addEventListener('storage', handleStorageChange);
 
-    // Sync with API on mount
-    getSpecialitiesState(defaultSpecialitiesState).then(res => {
-      if (res && res.categories) {
-        if (res.specialities) res.specialities.forEach(ensureStandardTabs);
-        setSpecialitiesData(res);
-      } else {
-        setSpecialitiesData(defaultSpecialitiesState);
-      }
-    });
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('focus', handleSync);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('focus', handleSync);
     };
   }, []);
+
+  const handlePatientGuideClick = (linkName) => {
+    const normalizedName = (linkName || '').toLowerCase().trim();
+    const guides = patientCornerData.guides || defaultPatientCornerState.guides || [];
+
+    const foundGuide = guides.find(g => {
+      const gTitle = (g.title || g.name || '').toLowerCase().trim();
+      const gSlug = (g.slug || '').toLowerCase().trim();
+      return (
+        gTitle === normalizedName ||
+        gSlug === normalizedName ||
+        gTitle.includes(normalizedName) ||
+        normalizedName.includes(gTitle) ||
+        (normalizedName === 'admission' && (gSlug === 'admission' || gTitle.includes('admission'))) ||
+        (normalizedName.includes('empanelled') && (gSlug.includes('insurance') || gSlug.includes('empanelled') || gTitle.includes('insurance') || gTitle.includes('tpa'))) ||
+        (normalizedName.includes('visitor') && (gSlug.includes('visitor') || gTitle.includes('visitor') || gTitle.includes('icu'))) ||
+        (normalizedName.includes('right') && (gSlug.includes('right') || gTitle.includes('right'))) ||
+        (normalizedName.includes('international') && (gSlug.includes('intl') || gSlug.includes('international') || gTitle.includes('international'))) ||
+        (normalizedName.includes('consultation') && (gSlug.includes('consultation') || gTitle.includes('consultation'))) ||
+        (normalizedName.includes('report') && (gSlug.includes('report') || gTitle.includes('report'))) ||
+        (normalizedName.includes('schedule') && (gSlug.includes('schedule') || gTitle.includes('schedule') || gTitle.includes('opd'))) ||
+        (normalizedName.includes('checkup') && (gSlug.includes('checkup') || gTitle.includes('checkup') || gTitle.includes('package')))
+      );
+    });
+
+    const targetGuide = foundGuide || {
+      id: `guide-${normalizedName.replace(/[^a-z0-9]+/g, '-')}`,
+      title: linkName,
+      name: linkName,
+      category: 'Patients Corner',
+      categoryName: 'Patients Corner',
+      tabs: [
+        {
+          id: 't1',
+          title: 'Overview',
+          type: 'rich_text',
+          enabled: true,
+          content: `<p>Welcome to Bhaktivedanta Hospital & Research Institute — ${linkName}. Please contact our helpdesk or admission counter for further details.</p>`
+        }
+      ]
+    };
+
+    if (onSelectPatientGuide) {
+      onSelectPatientGuide(targetGuide, targetGuide.category || 'Patients Corner');
+    } else if (onSelectSpeciality) {
+      onSelectSpeciality(targetGuide, targetGuide.category || 'Patients Corner');
+    }
+  };
 
   const toggleMobileDropdown = (name) => {
     if (activeMobileDropdown === name) {
@@ -522,29 +609,48 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
                             <div key={colIdx} className="patients-mega-menu-column">
                               {col.title && <h4 className="patients-column-title">{col.title}</h4>}
                               <ul className="patients-column-list">
-                                {col.links.map((link, lIdx) => (
-                                  <li key={lIdx} className="patients-column-item">
-                                    {link.name === 'Book Appointment' ? (
-                                      <button
-                                        type="button"
-                                        className="patients-column-link"
-                                        onClick={() => {
-                                          onOpenAppointment();
-                                          setOpenNavDropdown(null);
-                                        }}
-                                        style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', textStyle: 'inherit' }}
-                                      >
-                                        <span className="link-btn-bullet"></span>
-                                        <span className="link-text">{link.name}</span>
-                                      </button>
-                                    ) : (
-                                      <a href={link.href} className="patients-column-link">
-                                        <span className="link-btn-bullet"></span>
-                                        <span className="link-text">{link.name}</span>
-                                      </a>
-                                    )}
-                                  </li>
-                                ))}
+                                {col.links.map((link, lIdx) => {
+                                  const isAppointment = link.name === 'Book Appointment';
+                                  const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
+                                  const isPatientGuide = menuItem.name === 'Patients Corner' && !isAppointment && !isHashLink;
+
+                                  return (
+                                    <li key={lIdx} className="patients-column-item">
+                                      {isAppointment ? (
+                                        <button
+                                          type="button"
+                                          className="patients-column-link"
+                                          onClick={() => {
+                                            onOpenAppointment();
+                                            setOpenNavDropdown(null);
+                                          }}
+                                          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                        >
+                                          <span className="link-btn-bullet"></span>
+                                          <span className="link-text">{link.name}</span>
+                                        </button>
+                                      ) : isPatientGuide ? (
+                                        <button
+                                          type="button"
+                                          className="patients-column-link"
+                                          onClick={() => {
+                                            handlePatientGuideClick(link.name);
+                                            setOpenNavDropdown(null);
+                                          }}
+                                          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                        >
+                                          <span className="link-btn-bullet"></span>
+                                          <span className="link-text">{link.name}</span>
+                                        </button>
+                                      ) : (
+                                        <a href={link.href} className="patients-column-link">
+                                          <span className="link-btn-bullet"></span>
+                                          <span className="link-text">{link.name}</span>
+                                        </a>
+                                      )}
+                                    </li>
+                                  );
+                                })}
                               </ul>
                             </div>
                           ))}
@@ -726,16 +832,52 @@ const Navbar = ({ onSelectSpeciality, onOpenAppointment }) => {
                           <div key={colIdx} className="mobile-sub-category">
                             {col.title && <span className="mobile-sub-category-title">{col.title}</span>}
                             <div className="mobile-sub-links">
-                              {col.links.map((link, lIdx) => (
-                                <a
-                                  key={lIdx}
-                                  href={link.href}
-                                  className="mobile-sub-link-a"
-                                  onClick={handleMobileLinkClick}
-                                >
-                                  {link.name}
-                                </a>
-                              ))}
+                              {col.links.map((link, lIdx) => {
+                                const isAppointment = link.name === 'Book Appointment';
+                                const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
+                                const isPatientGuide = menuItem.name === 'Patients Corner' && !isAppointment && !isHashLink;
+
+                                if (isAppointment) {
+                                  return (
+                                    <button
+                                      key={lIdx}
+                                      className="mobile-sub-link-btn"
+                                      onClick={() => {
+                                        onOpenAppointment();
+                                        handleMobileLinkClick();
+                                      }}
+                                    >
+                                      {link.name}
+                                    </button>
+                                  );
+                                }
+
+                                if (isPatientGuide) {
+                                  return (
+                                    <button
+                                      key={lIdx}
+                                      className="mobile-sub-link-btn"
+                                      onClick={() => {
+                                        handlePatientGuideClick(link.name);
+                                        handleMobileLinkClick();
+                                      }}
+                                    >
+                                      {link.name}
+                                    </button>
+                                  );
+                                }
+
+                                return (
+                                  <a
+                                    key={lIdx}
+                                    href={link.href}
+                                    className="mobile-sub-link-a"
+                                    onClick={handleMobileLinkClick}
+                                  >
+                                    {link.name}
+                                  </a>
+                                );
+                              })}
                             </div>
                           </div>
                         ))}
