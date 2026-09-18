@@ -86,8 +86,17 @@ function HomeContent() {
 function App() {
   return (
     <Routes>
-      {/* Main Public Website Home */}
-      <Route path="/" element={<MainSite />} />
+      {/* Main Public Website Home & Pages wrapped in PublicLayout */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<HomeContent />} />
+        <Route path="/services/:id" element={<HomeContent />} />
+        <Route path="/spiritual-care" element={<SpiritualCareServices />} />
+        <Route path="/spiritual-care/educational-programmes" element={<EducationalProgrammes />} />
+        <Route path="/spiritual-care/educational-programmes/:id" element={<ProgramDetailPage />} />
+        <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
+        <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
+        <Route path="/careers" element={<CareersPage />} />
+      </Route>
 
       {/* Admin Login */}
       <Route path="/admin/login" element={<AdminLogin />} />
