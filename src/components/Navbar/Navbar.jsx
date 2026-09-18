@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState, getServicesState, getPatientCornerState } from '../../utils/api';
@@ -132,7 +133,7 @@ const menuStructure = [
   {
     name: 'Careers',
     type: 'link',
-    to: '#careers'
+    to: '/careers'
   },
   {
     name: 'About us',
@@ -183,8 +184,11 @@ const EmblemLogo = () => (
   </svg>
 );
 
-const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment }) => {
+const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, solid = false }) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const [scrolled, setScrolled] = useState(false);
+  const isSolid = solid || !isHomePage || scrolled;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
@@ -359,14 +363,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
   };
 
   return (
-    <header className={`navbar-header ${scrolled ? 'scrolled' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+    <header className={`navbar-header ${isSolid ? 'scrolled' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
       {/* Top tier - Logo, Emergency and Actions bar */}
       <div className="navbar-top-tier">
         <div className="container top-tier-container">
-          <a href="/" className="logo-section">
+          <Link to="/" className="logo-section">
             <img src="/icon.png" alt="Emblem" className="logo-icon" />
             <img src="/logo.png" alt="Bhaktivedanta Hospital" className="logo-text" />
-          </a>
+          </Link>
 
           <div className="emergency-badge">
             <span className="emergency-label">For Emergency & Appointments</span>
@@ -388,10 +392,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
         <div className="container bottom-tier-container">
           {/* Mobile Header Bar */}
           <div className="mobile-header-bar">
-            <a href="/" className="mobile-logo-section">
+            <Link to="/" className="mobile-logo-section">
               <img src="/icon.png" alt="Emblem" className="logo-icon" />
               <img src="/logo.png" alt="Bhaktivedanta" className="logo-text" />
-            </a>
+            </Link>
 
             <button
               className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
@@ -407,10 +411,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
           {/* Desktop Navigation Links */}
           <div className="desktop-nav-menu">
             <div className="nav-menu-links">
-              {/* Home Text Link (replaces the icon as requested) */}
-              <a href="#home" className="nav-link-item-simple">
-                Home
-              </a>
+              {/* Home Text Link */}
+              {isHomePage ? (
+                <a href="#home" className="nav-link-item-simple">
+                  Home
+                </a>
+              ) : (
+                <Link to="/" className="nav-link-item-simple">
+                  Home
+                </Link>
+              )}
 
               {/* Dynamic menu structure */}
               {menuStructure.map((menuItem) => {
@@ -688,6 +698,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
                   );
                 }
 
+                if (menuItem.to && menuItem.to.startsWith('/')) {
+                  return (
+                    <Link key={menuItem.name} to={menuItem.to} className="nav-link-item-simple">
+                      {menuItem.name}
+                    </Link>
+                  );
+                }
+
                 return (
                   <a key={menuItem.name} href={menuItem.to} className="nav-link-item-simple">
                     {menuItem.name}
@@ -700,7 +718,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
               <button type="button" onClick={onOpenAppointment} className="btn-book-appointment">
                 Book Appointment
               </button>
-              <div className={`appointment-dropdown-menu ${isDropdownOpen ? 'dropdown-active-hidden' : ''}`}>
+              <div className={`appointment-dropdown-menu ${isDropdownOpen || !isHomePage || isSolid ? 'dropdown-active-hidden' : ''}`}>
                 <a href="#patients" className="appointment-dropdown-btn">
                   <span className="material-symbols-outlined">assignment</span>
                   <span>Patients Report</span>
@@ -717,9 +735,15 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
           <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'active' : ''}`}>
             <div className="mobile-drawer-content">
               {/* Home Link */}
-              <a href="#home" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
-                <span className="material-symbols-outlined inline-icon">home</span> Home
-              </a>
+              {isHomePage ? (
+                <a href="#home" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
+                  <span className="material-symbols-outlined inline-icon">home</span> Home
+                </a>
+              ) : (
+                <Link to="/" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
+                  <span className="material-symbols-outlined inline-icon">home</span> Home
+                </Link>
+              )}
 
               {/* Dynamic Accordions */}
               {menuStructure.map((menuItem) => {
@@ -915,6 +939,19 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
                         </div>
                       </div>
                     </div>
+                  );
+                }
+
+                if (menuItem.to && menuItem.to.startsWith('/')) {
+                  return (
+                    <Link
+                      key={menuItem.name}
+                      to={menuItem.to}
+                      className="mobile-nav-link-simple"
+                      onClick={handleMobileLinkClick}
+                    >
+                      {menuItem.name}
+                    </Link>
                   );
                 }
 

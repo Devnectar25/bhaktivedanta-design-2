@@ -101,12 +101,16 @@ const HelpDesk = () => {
       id: `HD-${Date.now()}`,
       ticketNo: `TCK-${Math.floor(1000 + Math.random() * 9000)}`,
       requesterName: newTicket.requesterName,
+      submittedBy: newTicket.requesterName,
       requesterEmail: newTicket.requesterEmail || 'support@bhaktivedanta.com',
+      submittedEmail: newTicket.requesterEmail || 'support@bhaktivedanta.com',
       category: newTicket.category,
       priority: newTicket.priority,
       status: 'Pending',
       subject: newTicket.subject,
+      ticketSubject: newTicket.subject,
       description: newTicket.description,
+      ticketDescription: newTicket.description,
       created: new Date().toLocaleString(),
       response: ''
     };
@@ -127,18 +131,21 @@ const HelpDesk = () => {
   };
 
   const filteredTickets = tickets.filter(t => {
-    const matchesSearch = t.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          t.requesterName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          t.ticketNo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || t.status === statusFilter;
-    const matchesPriority = priorityFilter === 'All' || t.priority === priorityFilter;
+    const subject = t.subject || t.ticketSubject || '';
+    const requesterName = t.requesterName || t.submittedBy || '';
+    const ticketNo = t.ticketNo || t.id || '';
+    const matchesSearch = subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          requesterName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          ticketNo.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'All' || (t.status || '') === statusFilter;
+    const matchesPriority = priorityFilter === 'All' || (t.priority || '') === priorityFilter;
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
   const totalCount = tickets.length;
-  const pendingCount = tickets.filter(t => t.status === 'Pending').length;
-  const inProgressCount = tickets.filter(t => t.status === 'In Progress').length;
-  const resolvedCount = tickets.filter(t => t.status === 'Resolved').length;
+  const pendingCount = tickets.filter(t => (t.status || '') === 'Pending').length;
+  const inProgressCount = tickets.filter(t => (t.status || '') === 'In Progress').length;
+  const resolvedCount = tickets.filter(t => (t.status || '') === 'Resolved').length;
 
   return (
     <div className="space-y-6 font-sans">
@@ -247,15 +254,15 @@ const HelpDesk = () => {
             ) : (
               filteredTickets.map((t) => (
                 <tr key={t.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3 font-bold text-[#1e3a8a]">{t.ticketNo || t.id}</td>
+                  <td className="px-4 py-3 font-bold text-[#1e3a8a]">{t.ticketNo || t.id || 'N/A'}</td>
                   <td className="px-4 py-3">
-                    <div className="font-bold text-slate-800">{t.requesterName}</div>
-                    <div className="text-[11px] text-slate-400">{t.requesterEmail}</div>
+                    <div className="font-bold text-slate-800">{t.requesterName || t.submittedBy || 'Anonymous'}</div>
+                    <div className="text-[11px] text-slate-400">{t.requesterEmail || t.submittedEmail || 'No Email'}</div>
                   </td>
                   <td className="px-4 py-3 max-w-xs">
-                    <div className="font-bold text-slate-800 truncate">{t.subject}</div>
+                    <div className="font-bold text-slate-800 truncate">{t.subject || t.ticketSubject || 'No Subject'}</div>
                     <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                      {t.category}
+                      {t.category || 'General Support'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -264,7 +271,7 @@ const HelpDesk = () => {
                       t.priority === 'High' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
                       'bg-blue-50 text-blue-700 border border-blue-100'
                     }`}>
-                      {t.priority}
+                      {t.priority || 'Medium'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
@@ -273,10 +280,10 @@ const HelpDesk = () => {
                       t.status === 'In Progress' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' :
                       'bg-amber-50 text-amber-700 border border-amber-200'
                     }`}>
-                      {t.status}
+                      {t.status || 'Pending'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-400 font-medium">{t.created}</td>
+                  <td className="px-4 py-3 text-slate-400 font-medium">{t.created || (t.created_at ? new Date(t.created_at).toLocaleDateString() : 'N/A')}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-1.5">
                       <button 
@@ -311,7 +318,7 @@ const HelpDesk = () => {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <h3 className="text-lg font-bold text-slate-800">Support Response - {selectedTicket.ticketNo}</h3>
+              <h3 className="text-lg font-bold text-slate-800">Support Response - {selectedTicket.ticketNo || selectedTicket.id}</h3>
               <button onClick={() => setSelectedTicket(null)} className="text-slate-400 hover:text-slate-600">
                 <span className="material-symbols-outlined">close</span>
               </button>
@@ -319,9 +326,9 @@ const HelpDesk = () => {
 
             <div className="space-y-3 text-xs">
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <p className="font-bold text-slate-800">{selectedTicket.subject}</p>
-                <p className="text-slate-600 mt-1">{selectedTicket.description}</p>
-                <div className="mt-2 text-[11px] text-slate-400">By: {selectedTicket.requesterName} ({selectedTicket.requesterEmail})</div>
+                <p className="font-bold text-slate-800">{selectedTicket.subject || selectedTicket.ticketSubject || 'No Subject'}</p>
+                <p className="text-slate-600 mt-1">{selectedTicket.description || selectedTicket.ticketDescription || 'No description provided.'}</p>
+                <div className="mt-2 text-[11px] text-slate-400">By: {selectedTicket.requesterName || selectedTicket.submittedBy || 'Anonymous'} ({selectedTicket.requesterEmail || selectedTicket.submittedEmail || 'No Email'})</div>
               </div>
 
               <form onSubmit={handleUpdateTicket} className="space-y-3">
