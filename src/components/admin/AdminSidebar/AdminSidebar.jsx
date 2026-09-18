@@ -4,9 +4,23 @@ import { NavLink, useNavigate } from 'react-router-dom';
 const navLinks = [
   // Section 1
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
-  { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
+  /*
+  { 
+    name: 'Appointments', 
+    icon: 'calendar_month', 
+    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    isExternal: true 
+  },
+  */
   { name: 'Doctors', icon: 'group', to: 'doctors' },
-  { name: 'Patient Report', icon: 'analytics', to: 'patients-corner' }, // Reuse patients corner page for patient report
+  /*
+  { 
+    name: 'Patient Report', 
+    icon: 'analytics', 
+    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    isExternal: true 
+  },
+  */
   { divider: true },
 
   // Section 2
@@ -17,7 +31,7 @@ const navLinks = [
   { name: 'Education & Medical Research', icon: 'school', to: 'education-research' },
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
-  { name: 'About us', icon: 'info', to: 'dashboard' }, // Link to dashboard or static
+  { name: 'About us', icon: 'info', to: 'dashboard' },
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
   { name: 'Events', icon: 'event', to: 'events' },
   { divider: true },
@@ -62,6 +76,25 @@ const AdminSidebar = () => {
         {navLinks.map((item, idx) => {
           if (item.divider) {
             return <div key={`div-${idx}`} className="h-px bg-white/10 my-3 mx-3"></div>;
+          }
+
+          if (item.isExternal) {
+            return (
+              <a
+                key={`ext-${idx}`}
+                href={item.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+                title={`Redirect to external portal: ${item.name}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                  <span>{item.name}</span>
+                </div>
+                <span className="material-symbols-outlined text-[16px] text-white/50">open_in_new</span>
+              </a>
+            );
           }
 
           if (item.to === '#') {

@@ -164,13 +164,29 @@ const AddSpeciality = () => {
     if (!doc) return;
 
     const des = expertDesignation.trim() || doc.qualifications || 'Specialist';
-    const currentContent = tabs[tabIdx].content || '';
+    const targetTab = tabs[tabIdx];
+    const currentContent = targetTab?.content;
 
     // Append clean HTML for expert
     const expertHtml = `<p><strong>${doc.name}</strong> - ${des}</p>`;
-    const updatedContent = currentContent
-      ? `${currentContent}${expertHtml}`
-      : expertHtml;
+    let updatedContent;
+    if (typeof currentContent === 'string') {
+      updatedContent = currentContent ? `${currentContent}${expertHtml}` : expertHtml;
+    } else if (typeof currentContent === 'object' && currentContent !== null) {
+      const newParagraphNode = {
+        type: 'paragraph',
+        content: [
+          { type: 'text', marks: [{ type: 'bold' }], text: doc.name },
+          { type: 'text', text: ` - ${des}` }
+        ]
+      };
+      updatedContent = {
+        ...currentContent,
+        content: [...(currentContent.content || []), newParagraphNode]
+      };
+    } else {
+      updatedContent = expertHtml;
+    }
 
     handleUpdateTabContent(tabIdx, updatedContent);
 
@@ -181,12 +197,22 @@ const AddSpeciality = () => {
   const handleNameChange = (newName) => {
     setName(newName);
     if (!editId) {
-      setTabs(prev => prev.map(t => {
-        if (t.id === 't1' && (t.content.startsWith('<p>Welcome to the') || t.content.startsWith('Welcome to the') || t.content === '')) {
-          return {
-            ...t,
-            content: `<p>Welcome to the ${newName || 'new'} department. We provide comprehensive care and support tailored to each patient's needs.</p>`
-          };
+      setTabs(prev => (prev || []).map(t => {
+        if (t.id === 't1') {
+          const content = t.content;
+          const isStr = typeof content === 'string';
+          const isDefaultText = !content || (isStr && (
+            content.startsWith('<p>Welcome to the') ||
+            content.startsWith('Welcome to the') ||
+            content === ''
+          ));
+
+          if (isDefaultText) {
+            return {
+              ...t,
+              content: `<p>Welcome to the ${newName || 'new'} department. We provide comprehensive care and support tailored to each patient's needs.</p>`
+            };
+          }
         }
         return t;
       }));
@@ -269,10 +295,10 @@ const AddSpeciality = () => {
         tabs: htmlTabs
       };
       ensureStandardTabs(newSpec);
-      updatedSpecs = [...state.specialities, newSpec];
+      updatedSpecs = [...(state?.specialities || []), newSpec];
     }
 
-    const newState = { ...state, specialities: updatedSpecs };
+    const newState = { ...(state || defaultSpecialitiesState), specialities: updatedSpecs };
     saveSpecialitiesState(newState).then(() => {
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
@@ -281,7 +307,7 @@ const AddSpeciality = () => {
   };
 
   // Sort categories: active categories first, then by order
-  const sortedCategories = [...(state.categories || [])].sort((a, b) => {
+  const sortedCategories = [...(state?.categories || [])].sort((a, b) => {
     const isInactiveA = a.status === false;
     const isInactiveB = b.status === false;
 
@@ -330,7 +356,7 @@ const AddSpeciality = () => {
               >
                 <option value="" disabled>Select Parent Category</option>
                 {sortedCategories.map(c => {
-                  const count = (state.specialities || []).filter(s => s.categoryId === c.id && s.id !== editId).length;
+                  const count = (state?.specialities || []).filter(s => s.categoryId === c.id && s.id !== editId).length;
                   const isInactive = c.status === false;
                   let statusBadge = isInactive ? ' - Inactive' : '';
                   return (
@@ -455,20 +481,22 @@ const AddSpeciality = () => {
 
             <div className="space-y-4 pt-2">
               {tabs.map((tab, idx) => {
+                const tabTitle = tab.title || 'Tab';
+                const lowerTitle = tabTitle.toLowerCase();
                 const getTabIcon = () => {
-                  if (tab.id === 't1' || tab.title === 'Overview') return 'article';
-                  if (tab.id === 't2' || tab.title.toLowerCase().includes('why choose')) return 'verified';
-                  if (tab.id === 't3' || tab.title.toLowerCase().includes('technology') || tab.title.toLowerCase().includes('infrastructure')) return 'biotech';
-                  if (tab.id === 't4' || tab.title.toLowerCase().includes('services')) return 'medical_services';
+                  if (tab.id === 't1' || lowerTitle === 'overview') return 'article';
+                  if (tab.id === 't2' || lowerTitle.includes('why choose')) return 'verified';
+                  if (tab.id === 't3' || lowerTitle.includes('technology') || lowerTitle.includes('infrastructure')) return 'biotech';
+                  if (tab.id === 't4' || lowerTitle.includes('services')) return 'medical_services';
                   return 'groups';
                 };
 
                 return (
-                  <div key={tab.id} className="space-y-3 border-b border-slate-100 pb-5 last:border-b-0 last:pb-0">
+                  <div key={tab.id || idx} className="space-y-3 border-b border-slate-100 pb-5 last:border-b-0 last:pb-0">
                     <div className="flex items-center justify-between">
                       <label className="font-bold text-[#1e3a8a] uppercase flex items-center gap-1.5 text-xs">
                         <span className="material-symbols-outlined text-sm text-blue-600">{getTabIcon()}</span>
-                        <span>{tab.title} Description &amp; Details</span>
+                        <span>{tabTitle} Description &amp; Details</span>
                         <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">
                           Live Rich-Text Editor
                         </span>
@@ -478,7 +506,7 @@ const AddSpeciality = () => {
                     <RichTextEditor
                       value={tab.content}
                       onChange={(newHtml) => handleUpdateTabContent(idx, newHtml)}
-                      placeholder={`Write ${tab.title.toLowerCase()} content here... Use Bold (Ctrl+B) and New Paragraph buttons to format text live.`}
+                      placeholder={`Write ${lowerTitle} content here... Use Bold (Ctrl+B) and New Paragraph buttons to format text live.`}
                       minHeight={tab.id === 't1' ? '220px' : '180px'}
                     />
 
