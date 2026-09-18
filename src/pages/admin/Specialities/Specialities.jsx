@@ -65,9 +65,11 @@ const Specialities = () => {
     }
   }, [state.specialities.length, totalPages, currentPage]);
 
-  const saveState = (newState) => {
+  const saveState = async (newState) => {
     setState(newState);
-    saveSpecialitiesState(newState);
+    await saveSpecialitiesState(newState);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('storage'));
   };
 
   const openDeleteSpecialityModal = (spec) => {

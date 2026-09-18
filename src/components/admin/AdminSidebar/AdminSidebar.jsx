@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const navLinks = [
   // Section 1
@@ -49,6 +49,7 @@ const navLinks = [
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('bhaktivedanta_admin_auth');
@@ -116,7 +117,7 @@ const AdminSidebar = () => {
               to={item.to}
               className={({ isActive }) => 
                 `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
-                  isActive 
+                  isActive || location.pathname.includes(item.to)
                     ? 'active-nav-link bg-white/20 text-white shadow-sm font-semibold' 
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`
