@@ -1,12 +1,12 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const navLinks = [
   // Section 1
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
   { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
   { name: 'Doctors', icon: 'group', to: 'doctors' },
-  { name: 'Patient Report', icon: 'analytics', to: 'patients-corner' }, // Reuse patients corner page for patient report
+  { name: 'Patient Report', icon: 'analytics', to: 'patients-corner' },
   { divider: true },
 
   // Section 2
@@ -17,7 +17,7 @@ const navLinks = [
   { name: 'Education & Medical Research', icon: 'school', to: 'education-research' },
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
-  { name: 'About us', icon: 'info', to: 'dashboard' }, // Link to dashboard or static
+  { name: 'About us', icon: 'info', to: 'dashboard' },
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
   { name: 'Events', icon: 'event', to: 'events' },
   { divider: true },
@@ -35,6 +35,7 @@ const navLinks = [
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem('bhaktivedanta_admin_auth');
@@ -83,7 +84,7 @@ const AdminSidebar = () => {
               to={item.to}
               className={({ isActive }) => 
                 `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
-                  isActive 
+                  isActive || location.pathname.includes(item.to)
                     ? 'active-nav-link bg-white/20 text-white shadow-sm font-semibold' 
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
                 }`

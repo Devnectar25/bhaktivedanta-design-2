@@ -124,14 +124,14 @@ const AdminHeader = ({ title }) => {
   return (
     <header className="fixed top-0 right-0 z-40 bg-white/80 backdrop-blur-md flex justify-between items-center h-20 px-8 border-b border-slate-200/50 shadow-sm w-[calc(100%-280px)] ml-[280px]">
       <div className="flex items-center gap-6 flex-1 mr-8">
-        <h2 className="text-xl font-extrabold text-slate-800 font-sans whitespace-nowrap">{title || 'Admin Dashboard'}</h2>
+        <h2 className="text-xl font-extrabold text-slate-800 font-sans whitespace-nowrap">Admin Panel</h2>
         <div className="relative flex-1 max-w-2xl group hidden md:block">
           <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] group-focus-within:text-slate-600 transition-colors">
             search
           </span>
-          <input 
-            className="w-full bg-slate-100/80 border border-slate-200 focus:border-slate-300 focus:bg-white rounded-full py-2 pl-11 pr-4 focus:ring-2 focus:ring-slate-200 outline-none transition-all text-sm text-slate-700 font-sans" 
-            placeholder="Type here to search list contents..." 
+          <input
+            className="w-full bg-slate-100/80 border border-slate-200 focus:border-slate-300 focus:bg-white rounded-full py-2 pl-11 pr-4 focus:ring-2 focus:ring-slate-200 outline-none transition-all text-sm text-slate-700 font-sans"
+            placeholder="Type here to search list contents..."
             type="text"
             onChange={handleSearch}
           />
@@ -141,7 +141,7 @@ const AdminHeader = ({ title }) => {
       <div className="flex items-center gap-8">
         {/* Notification Bell */}
         <div className="relative" ref={dropdownRef}>
-          <button 
+          <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 relative transition-all active:scale-95"
           >
@@ -186,8 +186,8 @@ const AdminHeader = ({ title }) => {
                     }
 
                     return (
-                      <div 
-                        key={notif.id} 
+                      <div
+                        key={notif.id}
                         onClick={() => handleMarkSingleRead(notif.id)}
                         className={`flex gap-3 p-4 hover:bg-slate-50 transition-colors relative group/item cursor-pointer ${notif.read ? 'opacity-70' : ''}`}
                       >
@@ -204,7 +204,7 @@ const AdminHeader = ({ title }) => {
                           <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">{notif.message}</p>
                         </div>
                         {!notif.read && <span className="absolute top-4 right-4 w-2 h-2 bg-blue-500 rounded-full"></span>}
-                        <button 
+                        <button
                           onClick={(e) => handleDeleteSingle(e, notif.id)}
                           className="absolute bottom-4 right-4 text-slate-400 hover:text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity p-0.5 rounded hover:bg-slate-100"
                         >
@@ -229,7 +229,7 @@ const AdminHeader = ({ title }) => {
 
         {/* Profile */}
         <div className="relative" ref={profileRef}>
-          <button 
+          <button
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-3.5 p-1 rounded-xl hover:bg-slate-100 transition-all text-left outline-none"
           >
@@ -237,9 +237,9 @@ const AdminHeader = ({ title }) => {
               <span className="text-sm font-bold text-slate-800 leading-tight">{username}</span>
               <span className="text-xs font-semibold text-slate-400 leading-tight">Super Administrator</span>
             </div>
-            <img 
-              alt="Admin Profile" 
-              className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm" 
+            <img
+              alt="Admin Profile"
+              className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqK0tUfbuqSxbfBIUdGMeFLtChbPcohJwmAhWmeKsnzBL50kdu9WUBzGrHm-_mjxXCOvs6vGG_KAEUZ0Aq4JK5XBMZnc0T2VNlIUGjxep88pAjeDh1qOjk-EQbBKMFilmsY84OYXkeUX5vrgN9FYHK-54D_SoK75i0Ef3GfVYJfcmKlz5nP_7RxFWc5dcg0fmLTej9icKl3NdyPKslBkJiav17I9drerB0CgS_Fi_YVuX8y12TNGXtXGTP3Ye8z1rJHjQThSl7pQ"
             />
           </button>
@@ -254,7 +254,7 @@ const AdminHeader = ({ title }) => {
                 <span className="material-symbols-outlined text-[18px]">settings</span>
                 Settings
               </a>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left border-t border-slate-100"
               >

@@ -61,109 +61,45 @@ import AddSubAdmin from './pages/admin/AdminUsers/AddSubAdmin';
 import AddAdminUser from './pages/admin/AdminUsers/AddAdminUser';
 import AddPatientGuide from './pages/admin/PatientsCorner/AddPatientGuide';
 
+// Public Layout & Spiritual Care Pages
+import PublicLayout from './components/PublicLayout/PublicLayout';
+import SpiritualCareServices from './pages/SpiritualCare/SpiritualCareServices';
+import EducationalProgrammes from './pages/SpiritualCare/EducationalProgrammes';
+import ProgramDetailPage from './pages/SpiritualCare/ProgramDetailPage';
+import SpiritualRetreats from './pages/SpiritualCare/SpiritualRetreats';
+import PublicationsPapers from './pages/SpiritualCare/PublicationsPapers';
+
 import './App.css';
 
-function ScrollToTop() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
+function HomeContent() {
   return (
-    <button
-      onClick={scrollToTop}
-      className={`scroll-to-top-btn ${isVisible ? 'visible' : ''}`}
-      aria-label="Scroll to top"
-    >
-      <ChevronUp size={24} />
-    </button>
-  );
-}
-
-function MainSite() {
-  const [selectedSpeciality, setSelectedSpeciality] = useState(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
-  const [selectedPatientGuide, setSelectedPatientGuide] = useState(null);
-  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
-
-  const handleSelectSpeciality = (speciality, categoryName) => {
-    setSelectedSpeciality(speciality);
-    setSelectedCategoryName(categoryName);
-    setSelectedPatientGuide(null);
-  };
-
-  const handleSelectPatientGuide = (guide, categoryName) => {
-    setSelectedPatientGuide(guide);
-    setSelectedSpeciality(guide);
-    setSelectedCategoryName(categoryName || guide.category || 'Patients Corner');
-  };
-
-  const handleOpenAppointmentModal = () => {
-    setIsAppointmentModalOpen(true);
-  };
-
-  return (
-    <div className="app">
-      <Navbar
-        onSelectSpeciality={handleSelectSpeciality}
-        onSelectPatientGuide={handleSelectPatientGuide}
-        onOpenAppointment={handleOpenAppointmentModal}
-      />
-      <ScrollToTop />
-      <main>
-        <Hero />
-        <InfoSlider />
-        <WhyChooseUs />
-        <Doctors />
-        <Stats />
-        <NewDevelopments />
-        <Infrastructure />
-        <Testimonials />
-      </main>
-      <Footer />
-
-      <ServiceDetailModal
-        service={selectedPatientGuide || selectedSpeciality}
-        categoryName={selectedCategoryName}
-        onClose={() => {
-          setSelectedSpeciality(null);
-          setSelectedPatientGuide(null);
-          setSelectedCategoryName('');
-        }}
-      />
-
-      <AppointmentModal
-        isOpen={isAppointmentModalOpen}
-        onClose={() => setIsAppointmentModalOpen(false)}
-      />
-    </div>
+    <>
+      <Hero />
+      <InfoSlider />
+      <WhyChooseUs />
+      <Doctors />
+      <Stats />
+      <NewDevelopments />
+      <Infrastructure />
+      <Testimonials />
+    </>
   );
 }
 
 function App() {
   return (
     <Routes>
-      {/* Main Public Website Home */}
-      <Route path="/" element={<MainSite />} />
+      {/* Main Public Website & Spiritual Care Routes */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<HomeContent />} />
+        <Route path="/services/:id" element={<HomeContent />} />
+        <Route path="/spiritual-care/spiritual-care-services" element={<SpiritualCareServices />} />
+        <Route path="/spiritual-care/educational-programmes" element={<EducationalProgrammes />} />
+        <Route path="/spiritual-care/educational-programmes/:slug" element={<ProgramDetailPage />} />
+        <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
+        <Route path="/spiritual-care/publications-and-paper-presentations" element={<PublicationsPapers />} />
+      </Route>
       <Route path="/careers" element={<CareersPage />} />
-
 
       {/* Admin Login */}
       <Route path="/admin/login" element={<AdminLogin />} />
@@ -194,6 +130,7 @@ function App() {
         <Route path="patients-corner" element={<PatientsCorner />} />
 
         <Route path="spiritual-care" element={<SpiritualCare />} />
+        <Route path="spiritual-care/:section" element={<SpiritualCare />} />
         <Route path="education-research" element={<EducationResearch />} />
         <Route path="associate-centres" element={<AssociateCentres />} />
         <Route path="careers" element={<Careers />} />

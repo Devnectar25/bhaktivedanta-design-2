@@ -5,6 +5,8 @@ import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/default
 import { getSpecialitiesState, getServicesState, getPatientCornerState } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
+import { getSpiritualCareState } from '../../utils/api';
+import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -71,12 +73,12 @@ const menuStructure = [
   {
     name: 'Spiritual care',
     type: 'dropdown',
-    to: '#spiritual',
+    to: '#spiritual-care',
     links: [
-      { name: 'Spiritual care Services', href: '#spiritual' },
-      { name: 'Educational Programmes', href: '#spiritual' },
-      { name: 'Spiritual care Retreats', href: '#spiritual' },
-      { name: 'Publications & Paper Presentations', href: '#spiritual' }
+      { name: 'Spiritual care Services', href: '#spiritual-care-services' },
+      { name: 'Educational Programmes', href: '#educational-programmes' },
+      { name: 'Spiritual care Retreats', href: '#spiritual-retreats' },
+      { name: 'Publications & Paper Presentations', href: '#publications' }
     ]
   },
   {
@@ -186,7 +188,7 @@ const EmblemLogo = () => (
 
 const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, solid = false }) => {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isHomePage = location.pathname === '/' || location.pathname === '';
   const [scrolled, setScrolled] = useState(false);
   const isSolid = solid || !isHomePage || scrolled;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -197,6 +199,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   const [servicesData, setServicesData] = useState(defaultServicesState);
   const [activeServiceCategory, setActiveServiceCategory] = useState(null);
   const [patientCornerData, setPatientCornerData] = useState(defaultPatientCornerState);
+  const [spiritualCareData, setSpiritualCareData] = useState(() => ensureStandardSpiritualSections(defaultSpiritualCareState));
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
@@ -273,10 +276,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       });
     };
 
+    const fetchSpiritualCare = () => {
+      getSpiritualCareState(defaultSpiritualCareState).then(res => {
+        const validated = ensureStandardSpiritualSections(res || defaultSpiritualCareState);
+        setSpiritualCareData(validated);
+      }).catch(err => {
+        console.warn('Navbar could not load live spiritual care:', err);
+      });
+    };
+
     // Initial fetch on mount
     fetchSpecialities();
     fetchServices();
     fetchPatientCorner();
+    fetchSpiritualCare();
 
     const handleSync = (e) => {
       if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
@@ -287,6 +300,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       }
       if (!e || !e.key || e.key === 'bhaktivedanta_patient_corner_state') {
         fetchPatientCorner();
+      }
+      if (!e || !e.key || e.key === 'bhaktivedanta_spiritual_care_state') {
+        fetchSpiritualCare();
       }
     };
 
@@ -346,6 +362,52 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       onSelectPatientGuide(targetGuide, targetGuide.category || 'Patients Corner');
     } else if (onSelectSpeciality) {
       onSelectSpeciality(targetGuide, targetGuide.category || 'Patients Corner');
+    }
+  };
+
+  const handleSpiritualCareClick = (sectionOrName) => {
+    let targetSection = null;
+
+    if (typeof sectionOrName === 'object' && sectionOrName !== null) {
+      targetSection = sectionOrName;
+    } else {
+      const normalized = (sectionOrName || '').toLowerCase().trim();
+      const allSections = spiritualCareData.sections || defaultSpiritualSections;
+      targetSection = allSections.find(s => 
+        s.id === normalized || 
+        (s.title && s.title.toLowerCase() === normalized) || 
+        (s.title && s.title.toLowerCase().includes(normalized)) ||
+        (s.title && normalized.includes(s.title.toLowerCase()))
+      );
+    }
+
+    if (!targetSection) {
+      const title = typeof sectionOrName === 'string' ? sectionOrName : 'Spiritual Care';
+      targetSection = {
+        id: `spiritual-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        title,
+        name: title,
+        category: 'Spiritual Care',
+        categoryName: 'Spiritual Care',
+        isSpiritualCare: true,
+        layout: 'flexible',
+        blocks: []
+      };
+    }
+
+    const payload = {
+      ...targetSection,
+      name: targetSection.title || targetSection.name || 'Spiritual Care',
+      title: targetSection.title || targetSection.name || 'Spiritual Care',
+      category: 'Spiritual Care',
+      categoryName: 'Spiritual Care',
+      isSpiritualCare: true
+    };
+
+    if (onSelectSpeciality) {
+      onSelectSpeciality(payload, 'Spiritual Care');
+    } else if (onSelectPatientGuide) {
+      onSelectPatientGuide(payload, 'Spiritual Care');
     }
   };
 
@@ -672,6 +734,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'dropdown') {
                   const isAboutUs = menuItem.name.toLowerCase().includes('about');
+                  const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
+                  const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
+                    .filter(s => s.enabled !== false)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const effectiveLinks = isSpiritualCare
+                    ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
+                    : menuItem.links;
+
                   return (
                     <div
                       key={menuItem.name}
@@ -679,17 +749,43 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
-                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                      <a
+                        href={menuItem.to}
+                        className="nav-dropdown-trigger"
+                        onClick={(e) => {
+                          if (isSpiritualCare) {
+                            e.preventDefault();
+                            const firstSec = spiritualSections[0];
+                            handleSpiritualCareClick(firstSec || 'Spiritual care Services');
+                            setOpenNavDropdown(null);
+                          }
+                        }}
+                      >
                         {menuItem.name}
                       </a>
                       <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
                         <ul className="dropdown-list patients-column-list">
-                          {menuItem.links.map((link, lIdx) => (
+                          {effectiveLinks.map((link, lIdx) => (
                             <li key={lIdx} className="patients-column-item">
-                              <a href={link.href} className="patients-column-link">
-                                <span className="link-btn-bullet"></span>
-                                <span className="link-text">{link.name}</span>
-                              </a>
+                              {isSpiritualCare ? (
+                                <button
+                                  type="button"
+                                  className="patients-column-link"
+                                  onClick={() => {
+                                    handleSpiritualCareClick(link.section || link.name);
+                                    setOpenNavDropdown(null);
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                >
+                                  <span className="link-btn-bullet"></span>
+                                  <span className="link-text">{link.name}</span>
+                                </button>
+                              ) : (
+                                <a href={link.href} className="patients-column-link">
+                                  <span className="link-btn-bullet"></span>
+                                  <span className="link-text">{link.name}</span>
+                                </a>
+                              )}
                             </li>
                           ))}
                         </ul>
@@ -816,16 +912,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                               <div key={cat.id} className="mobile-sub-category">
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
-                                  {catServices.map(srv => (
+                                  {catServices.map(service => (
                                     <button
-                                      key={srv.id}
+                                      key={service.id}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
-                                        onSelectSpeciality(srv, cat.name);
+                                        onSelectSpeciality(service, cat.name);
                                         handleMobileLinkClick();
                                       }}
                                     >
-                                      {srv.name}
+                                      {service.name}
                                     </button>
                                   ))}
                                 </div>
@@ -912,6 +1008,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'dropdown') {
                   const isOpen = activeMobileDropdown === menuItem.name;
+                  const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
+                  const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
+                    .filter(s => s.enabled !== false)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const effectiveLinks = isSpiritualCare
+                    ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
+                    : menuItem.links;
+
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
                       <button
@@ -926,15 +1030,28 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         <div className="mobile-sub-links">
-                          {menuItem.links.map((link, lIdx) => (
-                            <a
-                              key={lIdx}
-                              href={link.href}
-                              className="mobile-sub-link-a"
-                              onClick={handleMobileLinkClick}
-                            >
-                              {link.name}
-                            </a>
+                          {effectiveLinks.map((link, lIdx) => (
+                            isSpiritualCare ? (
+                              <button
+                                key={lIdx}
+                                className="mobile-sub-link-btn"
+                                onClick={() => {
+                                  handleSpiritualCareClick(link.section || link.name);
+                                  handleMobileLinkClick();
+                                }}
+                              >
+                                {link.name}
+                              </button>
+                            ) : (
+                              <a
+                                key={lIdx}
+                                href={link.href}
+                                className="mobile-sub-link-a"
+                                onClick={handleMobileLinkClick}
+                              >
+                                {link.name}
+                              </a>
+                            )
                           ))}
                         </div>
                       </div>
