@@ -311,4 +311,46 @@ export const reorderPatientCornerSections = (guideId, tabId, sectionIds) =>
 export const togglePatientCornerSection = (guideId, tabId, sectionId, enabled) => 
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}/status`, 'PATCH', { enabled }, 'bhaktivedanta_patient_corner_state');
 
+// ==========================================
+// Careers & Recruitment API
+// ==========================================
+
+// Job Openings
+export const getCareerJobs = (fallback) => 
+  apiGet('/careers/jobs', 'bhaktivedanta_career_jobs', fallback);
+
+export const addCareerJob = (job, fallbackList) => 
+  apiMutation('/careers/jobs', 'POST', job, 'bhaktivedanta_career_jobs', (list = [], newJob) => {
+    return [newJob, ...list];
+  });
+
+export const updateCareerJob = (id, job, fallbackList) => 
+  apiMutation(`/careers/jobs/${id}`, 'PUT', job, 'bhaktivedanta_career_jobs', (list = [], updated) => {
+    return list.map(item => item.id === id ? { ...item, ...updated } : item);
+  });
+
+export const deleteCareerJob = (id, fallbackList) => 
+  apiMutation(`/careers/jobs/${id}`, 'DELETE', null, 'bhaktivedanta_career_jobs', (list = []) => {
+    return list.filter(item => item.id !== id);
+  });
+
+// Candidate Applications
+export const getCareerApplications = (fallback) => 
+  apiGet('/careers/applications', 'bhaktivedanta_career_applications', fallback);
+
+export const submitCareerApplication = (appData, fallbackList) => 
+  apiMutation('/careers/applications', 'POST', appData, 'bhaktivedanta_career_applications', (list = [], newApp) => {
+    return [newApp, ...list];
+  });
+
+export const updateCareerApplication = (id, appData, fallbackList) => 
+  apiMutation(`/careers/applications/${id}`, 'PUT', appData, 'bhaktivedanta_career_applications', (list = [], updated) => {
+    return list.map(item => item.id === id ? { ...item, ...updated } : item);
+  });
+
+export const deleteCareerApplication = (id, fallbackList) => 
+  apiMutation(`/careers/applications/${id}`, 'DELETE', null, 'bhaktivedanta_career_applications', (list = []) => {
+    return list.filter(item => item.id !== id);
+  });
+
 

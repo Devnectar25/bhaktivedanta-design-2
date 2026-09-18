@@ -16,6 +16,7 @@ import Testimonials from './components/Testimonials/Testimonials';
 import Footer from './components/Footer/Footer';
 import ServiceDetailModal from './components/ServiceDetailModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
+import CareersPage from './pages/Careers/CareersPage';
 
 
 // Admin Layout & Pages
@@ -161,6 +162,7 @@ function App() {
     <Routes>
       {/* Main Public Website Home */}
       <Route path="/" element={<MainSite />} />
+      <Route path="/careers" element={<CareersPage />} />
 
 
       {/* Admin Login */}
