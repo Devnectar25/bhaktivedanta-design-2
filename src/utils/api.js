@@ -9,7 +9,7 @@ const API_BASE_URL = base;
  */
 let isServerOnline = null;
 
-async function checkServerHealth() {
+export async function checkServerHealth() {
   try {
     const res = await fetch(`${API_BASE_URL}/health`, { signal: AbortSignal.timeout(1000) });
     isServerOnline = res.ok;
@@ -20,14 +20,20 @@ async function checkServerHealth() {
 }
 
 /**
- * General wrapper to handle fetching with LocalStorage fallback.
+ * General wrapper to handle fetching with LocalStorage fallback and no-cache guarantees.
  */
 export async function apiGet(path, localStorageKey, fallbackData) {
   try {
-    const res = await fetch(`${API_BASE_URL}${path}`, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      signal: AbortSignal.timeout(4000),
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
     if (res.ok) {
       const data = await res.json();
-      // Keep localStorage synchronized in background if dataset is valid
       if (data) {
         localStorage.setItem(localStorageKey, JSON.stringify(data));
       }
@@ -37,7 +43,6 @@ export async function apiGet(path, localStorageKey, fallbackData) {
     console.warn(`[API] Failed to fetch ${path}. Falling back to localStorage.`, err);
   }
 
-  // Fallback to localStorage
   const local = localStorage.getItem(localStorageKey);
   if (local) {
     try {
@@ -66,7 +71,6 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
     if (res.ok) {
       const serverResult = await res.json();
 
-      // Keep local storage synced too
       if (updateLocalFn && localStorageKey) {
         const local = localStorage.getItem(localStorageKey);
         let localData = local ? JSON.parse(local) : undefined;
@@ -79,13 +83,11 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
     console.warn(`[API] Mutation ${method} ${path} failed. Applying changes to localStorage fallback.`, err);
   }
 
-  // Fallback storage update
   if (updateLocalFn && localStorageKey) {
     const local = localStorage.getItem(localStorageKey);
     let localData = local ? JSON.parse(local) : undefined;
     const newLocalData = updateLocalFn(localData, body);
     localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
-    // Dispatch storage event to alert other components
     window.dispatchEvent(new Event('storage'));
     return body;
   }
@@ -127,11 +129,25 @@ export const getSpecialitiesState = (fallback) => apiGet('/specialities-state', 
 export const saveSpecialitiesState = (state) => apiMutation('/specialities-state', 'PUT', state, 'bhaktivedanta_specialities_state', (oldState, newState) => {
   return newState;
 });
+export const deleteSpecialityById = (id) => apiMutation(`/specialities/${id}`, 'DELETE', null, 'bhaktivedanta_specialities_state', (oldState) => {
+  if (!oldState) return oldState;
+  return {
+    ...oldState,
+    specialities: (oldState.specialities || []).filter(s => s.id !== id)
+  };
+});
 
 // Services State (Unified object)
 export const getServicesState = (fallback) => apiGet('/services-state', 'bhaktivedanta_services_state', fallback);
 export const saveServicesState = (state) => apiMutation('/services-state', 'PUT', state, 'bhaktivedanta_services_state', (oldState, newState) => {
   return newState;
+});
+export const deleteServiceById = (id) => apiMutation(`/services/${id}`, 'DELETE', null, 'bhaktivedanta_services_state', (oldState) => {
+  if (!oldState) return oldState;
+  return {
+    ...oldState,
+    services: (oldState.services || []).filter(s => s.id !== id)
+  };
 });
 export const getServiceById = async (id, fallback) => {
   try {
@@ -141,7 +157,6 @@ export const getServiceById = async (id, fallback) => {
     }
   } catch (err) { }
 
-  // Fallback to checking within full services state
   const state = await getServicesState(fallback);
   if (state && state.services) {
     const found = state.services.find(s => s.id === id || s.slug === `/${id}` || s.slug === id);
@@ -353,4 +368,10 @@ export const deleteCareerApplication = (id, fallbackList) =>
     return list.filter(item => item.id !== id);
   });
 
+// Spiritual Care State
+export const getSpiritualCareState = (fallback) => 
+  apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
+
+export const saveSpiritualCareState = (state) => 
+  apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
 
