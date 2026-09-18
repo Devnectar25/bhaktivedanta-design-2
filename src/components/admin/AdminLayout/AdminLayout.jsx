@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Outlet, useLocation, Navigate } from 'react-router-dom';
 import AdminSidebar from '../AdminSidebar/AdminSidebar';
 import AdminHeader from '../AdminHeader/AdminHeader';
+import ErrorBoundary from '../../ErrorBoundary';
 import '../unified-admin.css';
 
 const AdminLayout = () => {
@@ -147,7 +148,9 @@ const AdminLayout = () => {
         <AdminHeader title="Admin Panel" />
         <main className="ml-[280px] flex-1 px-6 pb-6 pt-24 min-w-0 bg-background overflow-x-hidden">
           <div className="max-w-[1110px] w-full">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
       </div>

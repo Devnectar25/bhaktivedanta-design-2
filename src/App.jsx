@@ -18,13 +18,11 @@ import ServiceDetailModal from './components/ServiceDetailModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 import CareersPage from './pages/Careers/CareersPage';
 
-
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin/AdminLogin';
 import Dashboard from './pages/admin/Dashboard/Dashboard';
 import AdminDoctors from './pages/admin/Doctors/Doctors';
-import Appointments from './pages/admin/Appointments/Appointments';
 import Events from './pages/admin/Events/Events';
 import DoctorAvailability from './pages/admin/Doctors/DoctorAvailability';
 import ContactQueries from './pages/admin/ContactQueries/ContactQueries';
@@ -48,7 +46,6 @@ import Careers from './pages/admin/Careers/Careers';
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
 import AddEvent from './pages/admin/Events/AddEvent';
-import AddAppointment from './pages/admin/Appointments/AddAppointment';
 import AddCategory from './pages/admin/Specialities/AddCategory';
 import AddService from './pages/admin/Services/AddService';
 import AddSpeciality from './pages/admin/Specialities/AddSpeciality';
@@ -89,17 +86,8 @@ function HomeContent() {
 function App() {
   return (
     <Routes>
-      {/* Main Public Website & Spiritual Care Routes */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<HomeContent />} />
-        <Route path="/services/:id" element={<HomeContent />} />
-        <Route path="/spiritual-care/spiritual-care-services" element={<SpiritualCareServices />} />
-        <Route path="/spiritual-care/educational-programmes" element={<EducationalProgrammes />} />
-        <Route path="/spiritual-care/educational-programmes/:slug" element={<ProgramDetailPage />} />
-        <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
-        <Route path="/spiritual-care/publications-and-paper-presentations" element={<PublicationsPapers />} />
-      </Route>
-      <Route path="/careers" element={<CareersPage />} />
+      {/* Main Public Website Home */}
+      <Route path="/" element={<MainSite />} />
 
       {/* Admin Login */}
       <Route path="/admin/login" element={<AdminLogin />} />
@@ -119,7 +107,11 @@ function App() {
         <Route path="news" element={<News />} />
         <Route path="events" element={<Events />} />
         <Route path="gallery" element={<Gallery />} />
-        <Route path="appointments" element={<Appointments />} />
+        
+        {/* Appointments and Add Appointment internal admin functionality removed; redirected to dashboard */}
+        <Route path="appointments" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="add-appointment" element={<Navigate to="/admin/dashboard" replace />} />
+
         <Route path="contact-queries" element={<ContactQueries />} />
         <Route path="admin-users" element={<AdminUsers />} />
         <Route path="sub-admins" element={<SubAdmin />} />
@@ -139,7 +131,6 @@ function App() {
         {/* Forms */}
         <Route path="add-doctor" element={<AddDoctor />} />
         <Route path="add-event" element={<AddEvent />} />
-        <Route path="add-appointment" element={<AddAppointment />} />
         <Route path="add-category" element={<AddCategory />} />
         <Route path="add-service" element={<AddService mode="add" />} />
         <Route path="edit-service/:id" element={<AddService mode="edit" />} />

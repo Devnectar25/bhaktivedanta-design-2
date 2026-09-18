@@ -4,9 +4,23 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 const navLinks = [
   // Section 1
   { name: 'Dashboard', icon: 'dashboard', to: 'dashboard' },
-  { name: 'Appointments', icon: 'calendar_month', to: 'appointments' },
+  /*
+  { 
+    name: 'Appointments', 
+    icon: 'calendar_month', 
+    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    isExternal: true 
+  },
+  */
   { name: 'Doctors', icon: 'group', to: 'doctors' },
-  { name: 'Patient Report', icon: 'analytics', to: 'patients-corner' },
+  /*
+  { 
+    name: 'Patient Report', 
+    icon: 'analytics', 
+    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    isExternal: true 
+  },
+  */
   { divider: true },
 
   // Section 2
@@ -63,6 +77,25 @@ const AdminSidebar = () => {
         {navLinks.map((item, idx) => {
           if (item.divider) {
             return <div key={`div-${idx}`} className="h-px bg-white/10 my-3 mx-3"></div>;
+          }
+
+          if (item.isExternal) {
+            return (
+              <a
+                key={`ext-${idx}`}
+                href={item.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+                title={`Redirect to external portal: ${item.name}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
+                  <span>{item.name}</span>
+                </div>
+                <span className="material-symbols-outlined text-[16px] text-white/50">open_in_new</span>
+              </a>
+            );
           }
 
           if (item.to === '#') {
