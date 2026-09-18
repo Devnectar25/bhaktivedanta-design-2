@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState, getServicesState, getPatientCornerState } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
+import { getSpiritualCareState } from '../../utils/api';
+import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -70,12 +73,12 @@ const menuStructure = [
   {
     name: 'Spiritual care',
     type: 'dropdown',
-    to: '#spiritual',
+    to: '#spiritual-care',
     links: [
-      { name: 'Spiritual care Services', href: '#spiritual' },
-      { name: 'Educational Programmes', href: '#spiritual' },
-      { name: 'Spiritual care Retreats', href: '#spiritual' },
-      { name: 'Publications & Paper Presentations', href: '#spiritual' }
+      { name: 'Spiritual care Services', href: '#spiritual-care-services' },
+      { name: 'Educational Programmes', href: '#educational-programmes' },
+      { name: 'Spiritual care Retreats', href: '#spiritual-retreats' },
+      { name: 'Publications & Paper Presentations', href: '#publications' }
     ]
   },
   {
@@ -132,7 +135,7 @@ const menuStructure = [
   {
     name: 'Careers',
     type: 'link',
-    to: '#careers'
+    to: '/careers'
   },
   {
     name: 'About us',
@@ -183,8 +186,11 @@ const EmblemLogo = () => (
   </svg>
 );
 
-const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment }) => {
+const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, solid = false }) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/' || location.pathname === '';
   const [scrolled, setScrolled] = useState(false);
+  const isSolid = solid || !isHomePage || scrolled;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
@@ -193,6 +199,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
   const [servicesData, setServicesData] = useState(defaultServicesState);
   const [activeServiceCategory, setActiveServiceCategory] = useState(null);
   const [patientCornerData, setPatientCornerData] = useState(defaultPatientCornerState);
+  const [spiritualCareData, setSpiritualCareData] = useState(() => ensureStandardSpiritualSections(defaultSpiritualCareState));
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
@@ -269,10 +276,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
       });
     };
 
+    const fetchSpiritualCare = () => {
+      getSpiritualCareState(defaultSpiritualCareState).then(res => {
+        const validated = ensureStandardSpiritualSections(res || defaultSpiritualCareState);
+        setSpiritualCareData(validated);
+      }).catch(err => {
+        console.warn('Navbar could not load live spiritual care:', err);
+      });
+    };
+
     // Initial fetch on mount
     fetchSpecialities();
     fetchServices();
     fetchPatientCorner();
+    fetchSpiritualCare();
 
     const handleSync = (e) => {
       if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
@@ -283,6 +300,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
       }
       if (!e || !e.key || e.key === 'bhaktivedanta_patient_corner_state') {
         fetchPatientCorner();
+      }
+      if (!e || !e.key || e.key === 'bhaktivedanta_spiritual_care_state') {
+        fetchSpiritualCare();
       }
     };
 
@@ -345,6 +365,52 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
     }
   };
 
+  const handleSpiritualCareClick = (sectionOrName) => {
+    let targetSection = null;
+
+    if (typeof sectionOrName === 'object' && sectionOrName !== null) {
+      targetSection = sectionOrName;
+    } else {
+      const normalized = (sectionOrName || '').toLowerCase().trim();
+      const allSections = spiritualCareData.sections || defaultSpiritualSections;
+      targetSection = allSections.find(s => 
+        s.id === normalized || 
+        (s.title && s.title.toLowerCase() === normalized) || 
+        (s.title && s.title.toLowerCase().includes(normalized)) ||
+        (s.title && normalized.includes(s.title.toLowerCase()))
+      );
+    }
+
+    if (!targetSection) {
+      const title = typeof sectionOrName === 'string' ? sectionOrName : 'Spiritual Care';
+      targetSection = {
+        id: `spiritual-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        title,
+        name: title,
+        category: 'Spiritual Care',
+        categoryName: 'Spiritual Care',
+        isSpiritualCare: true,
+        layout: 'flexible',
+        blocks: []
+      };
+    }
+
+    const payload = {
+      ...targetSection,
+      name: targetSection.title || targetSection.name || 'Spiritual Care',
+      title: targetSection.title || targetSection.name || 'Spiritual Care',
+      category: 'Spiritual Care',
+      categoryName: 'Spiritual Care',
+      isSpiritualCare: true
+    };
+
+    if (onSelectSpeciality) {
+      onSelectSpeciality(payload, 'Spiritual Care');
+    } else if (onSelectPatientGuide) {
+      onSelectPatientGuide(payload, 'Spiritual Care');
+    }
+  };
+
   const toggleMobileDropdown = (name) => {
     if (activeMobileDropdown === name) {
       setActiveMobileDropdown(null);
@@ -359,14 +425,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
   };
 
   return (
-    <header className={`navbar-header ${scrolled ? 'scrolled' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+    <header className={`navbar-header ${isSolid ? 'scrolled' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
       {/* Top tier - Logo, Emergency and Actions bar */}
       <div className="navbar-top-tier">
         <div className="container top-tier-container">
-          <a href="/" className="logo-section">
+          <Link to="/" className="logo-section">
             <img src="/icon.png" alt="Emblem" className="logo-icon" />
             <img src="/logo.png" alt="Bhaktivedanta Hospital" className="logo-text" />
-          </a>
+          </Link>
 
           <div className="emergency-badge">
             <span className="emergency-label">For Emergency & Appointments</span>
@@ -388,10 +454,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
         <div className="container bottom-tier-container">
           {/* Mobile Header Bar */}
           <div className="mobile-header-bar">
-            <a href="/" className="mobile-logo-section">
+            <Link to="/" className="mobile-logo-section">
               <img src="/icon.png" alt="Emblem" className="logo-icon" />
               <img src="/logo.png" alt="Bhaktivedanta" className="logo-text" />
-            </a>
+            </Link>
 
             <button
               className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
@@ -407,10 +473,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
           {/* Desktop Navigation Links */}
           <div className="desktop-nav-menu">
             <div className="nav-menu-links">
-              {/* Home Text Link (replaces the icon as requested) */}
-              <a href="#home" className="nav-link-item-simple">
-                Home
-              </a>
+              {/* Home Text Link */}
+              {isHomePage ? (
+                <a href="#home" className="nav-link-item-simple">
+                  Home
+                </a>
+              ) : (
+                <Link to="/" className="nav-link-item-simple">
+                  Home
+                </Link>
+              )}
 
               {/* Dynamic menu structure */}
               {menuStructure.map((menuItem) => {
@@ -662,6 +734,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
 
                 if (menuItem.type === 'dropdown') {
                   const isAboutUs = menuItem.name.toLowerCase().includes('about');
+                  const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
+                  const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
+                    .filter(s => s.enabled !== false)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const effectiveLinks = isSpiritualCare
+                    ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
+                    : menuItem.links;
+
                   return (
                     <div
                       key={menuItem.name}
@@ -669,22 +749,56 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
-                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                      <a
+                        href={menuItem.to}
+                        className="nav-dropdown-trigger"
+                        onClick={(e) => {
+                          if (isSpiritualCare) {
+                            e.preventDefault();
+                            const firstSec = spiritualSections[0];
+                            handleSpiritualCareClick(firstSec || 'Spiritual care Services');
+                            setOpenNavDropdown(null);
+                          }
+                        }}
+                      >
                         {menuItem.name}
                       </a>
                       <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
                         <ul className="dropdown-list patients-column-list">
-                          {menuItem.links.map((link, lIdx) => (
+                          {effectiveLinks.map((link, lIdx) => (
                             <li key={lIdx} className="patients-column-item">
-                              <a href={link.href} className="patients-column-link">
-                                <span className="link-btn-bullet"></span>
-                                <span className="link-text">{link.name}</span>
-                              </a>
+                              {isSpiritualCare ? (
+                                <button
+                                  type="button"
+                                  className="patients-column-link"
+                                  onClick={() => {
+                                    handleSpiritualCareClick(link.section || link.name);
+                                    setOpenNavDropdown(null);
+                                  }}
+                                  style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                >
+                                  <span className="link-btn-bullet"></span>
+                                  <span className="link-text">{link.name}</span>
+                                </button>
+                              ) : (
+                                <a href={link.href} className="patients-column-link">
+                                  <span className="link-btn-bullet"></span>
+                                  <span className="link-text">{link.name}</span>
+                                </a>
+                              )}
                             </li>
                           ))}
                         </ul>
                       </div>
                     </div>
+                  );
+                }
+
+                if (menuItem.to && menuItem.to.startsWith('/')) {
+                  return (
+                    <Link key={menuItem.name} to={menuItem.to} className="nav-link-item-simple">
+                      {menuItem.name}
+                    </Link>
                   );
                 }
 
@@ -700,7 +814,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
               <button type="button" onClick={onOpenAppointment} className="btn-book-appointment">
                 Book Appointment
               </button>
-              <div className={`appointment-dropdown-menu ${isDropdownOpen ? 'dropdown-active-hidden' : ''}`}>
+              <div className={`appointment-dropdown-menu ${isDropdownOpen || !isHomePage || isSolid ? 'dropdown-active-hidden' : ''}`}>
                 <a href="#patients" className="appointment-dropdown-btn">
                   <span className="material-symbols-outlined">assignment</span>
                   <span>Patients Report</span>
@@ -717,9 +831,15 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
           <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'active' : ''}`}>
             <div className="mobile-drawer-content">
               {/* Home Link */}
-              <a href="#home" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
-                <span className="material-symbols-outlined inline-icon">home</span> Home
-              </a>
+              {isHomePage ? (
+                <a href="#home" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
+                  <span className="material-symbols-outlined inline-icon">home</span> Home
+                </a>
+              ) : (
+                <Link to="/" className="mobile-nav-link-simple first-link" onClick={handleMobileLinkClick}>
+                  <span className="material-symbols-outlined inline-icon">home</span> Home
+                </Link>
+              )}
 
               {/* Dynamic Accordions */}
               {menuStructure.map((menuItem) => {
@@ -792,16 +912,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
                               <div key={cat.id} className="mobile-sub-category">
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
-                                  {catServices.map(srv => (
+                                  {catServices.map(service => (
                                     <button
-                                      key={srv.id}
+                                      key={service.id}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
-                                        onSelectSpeciality(srv, cat.name);
+                                        onSelectSpeciality(service, cat.name);
                                         handleMobileLinkClick();
                                       }}
                                     >
-                                      {srv.name}
+                                      {service.name}
                                     </button>
                                   ))}
                                 </div>
@@ -888,6 +1008,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
 
                 if (menuItem.type === 'dropdown') {
                   const isOpen = activeMobileDropdown === menuItem.name;
+                  const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
+                  const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
+                    .filter(s => s.enabled !== false)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const effectiveLinks = isSpiritualCare
+                    ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
+                    : menuItem.links;
+
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
                       <button
@@ -902,19 +1030,45 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment })
 
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         <div className="mobile-sub-links">
-                          {menuItem.links.map((link, lIdx) => (
-                            <a
-                              key={lIdx}
-                              href={link.href}
-                              className="mobile-sub-link-a"
-                              onClick={handleMobileLinkClick}
-                            >
-                              {link.name}
-                            </a>
+                          {effectiveLinks.map((link, lIdx) => (
+                            isSpiritualCare ? (
+                              <button
+                                key={lIdx}
+                                className="mobile-sub-link-btn"
+                                onClick={() => {
+                                  handleSpiritualCareClick(link.section || link.name);
+                                  handleMobileLinkClick();
+                                }}
+                              >
+                                {link.name}
+                              </button>
+                            ) : (
+                              <a
+                                key={lIdx}
+                                href={link.href}
+                                className="mobile-sub-link-a"
+                                onClick={handleMobileLinkClick}
+                              >
+                                {link.name}
+                              </a>
+                            )
                           ))}
                         </div>
                       </div>
                     </div>
+                  );
+                }
+
+                if (menuItem.to && menuItem.to.startsWith('/')) {
+                  return (
+                    <Link
+                      key={menuItem.name}
+                      to={menuItem.to}
+                      className="mobile-nav-link-simple"
+                      onClick={handleMobileLinkClick}
+                    >
+                      {menuItem.name}
+                    </Link>
                   );
                 }
 

@@ -12,7 +12,8 @@ export const TAB_TYPES = {
   CARDS: 'cards',
   GALLERY: 'gallery',
   FAQ: 'faq',
-  TESTIMONIALS: 'testimonials'
+  TESTIMONIALS: 'testimonials',
+  LOGO_GRID: 'logo_grid'
 };
 
 export const SECTION_TYPES = {
@@ -24,7 +25,8 @@ export const SECTION_TYPES = {
   CHECKLIST: 'checklist',
   GALLERY: 'gallery',
   FAQ: 'faq',
-  TABLE: 'table'
+  TABLE: 'table',
+  LOGO_GRID: 'logo_grid'
 };
 
 export const defaultPatientCornerCategories = [
@@ -723,37 +725,85 @@ export const defaultPatientCornerGuides = [
     id: 'pc-3',
     categoryId: 'cat-billing',
     category: 'Billing Help',
-    title: 'Insurance & Cashless Desk Procedure',
-    slug: 'insurance-cashless-desk-procedure',
-    shortDescription: 'Instructions for cashless hospitalization, TPA approvals, and reimbursement claims.',
+    title: 'Empanelled Corporate / TPA / Insurances',
+    slug: 'empanelled-corporate-tpa-insurances',
+    shortDescription: 'Comprehensive directory of empanelled corporate organizations, health insurance providers, and Third Party Administrators (TPAs) offering cashless hospitalization services.',
     bannerImage: '',
     status: 'Published',
     displayOrder: 3,
     adminId: 'ADM-001',
     adminName: 'Super Administrator',
     createdAt: '2026-08-01T10:00:00.000Z',
-    updatedAt: '2026-08-10T10:00:00.000Z',
+    updatedAt: '2026-09-15T10:00:00.000Z',
     tabs: [
       {
         id: 'tab-pc3-1',
-        title: 'Cashless Desk Overview',
-        type: 'rich_text',
+        title: "List of Corporates / TPA's / Insurance Companies",
+        type: 'accordion',
         order: 1,
         enabled: true,
-        content: '<p>The TPA and Insurance Helpdesk facilitates pre-authorization and cashless claim processing for empanelled insurance providers.</p>',
+        content: '<p>Bhaktivedanta Hospital & Research Institute is empanelled with leading corporate entities, national and private health insurance companies, and Third Party Administrators (TPAs) to facilitate hassle-free cashless hospitalization and credit services for patients and their beneficiaries.</p>',
         steps: [],
         items: [],
         cards: [],
         galleryImages: [],
         faqs: [],
+        logos: [],
         sections: [
           {
-            id: 'sec-cashless-overview',
-            title: 'TPA Desk Assistance',
-            type: 'rich_text',
+            id: 'sec-empanelled-accordion',
+            title: 'Empanelled Corporate / TPA / Insurance Companies',
+            type: 'accordion',
             order: 1,
             enabled: true,
-            content: '<p>The TPA and Insurance Helpdesk facilitates pre-authorization and cashless claim processing for empanelled insurance providers.</p>',
+            content: '',
+            accordionItems: [
+              {
+                id: 'acc-item-corp',
+                title: 'Corporates',
+                contentType: 'logo_grid',
+                enabled: true,
+                logos: [
+                  { id: 'logo-c1', name: 'Tata Consultancy Services (TCS)', imageUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=300&auto=format&fit=crop&q=80', order: 1, enabled: true },
+                  { id: 'logo-c2', name: 'Larsen & Toubro (L&T)', imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80', order: 2, enabled: true },
+                  { id: 'logo-c3', name: 'Reliance Industries Limited', imageUrl: 'https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=300&auto=format&fit=crop&q=80', order: 3, enabled: true },
+                  { id: 'logo-c4', name: 'Mahindra & Mahindra', imageUrl: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=300&auto=format&fit=crop&q=80', order: 4, enabled: true },
+                  { id: 'logo-c5', name: 'Godrej Group', imageUrl: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=300&auto=format&fit=crop&q=80', order: 5, enabled: true },
+                  { id: 'logo-c6', name: 'Infosys Limited', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&auto=format&fit=crop&q=80', order: 6, enabled: true }
+                ]
+              },
+              {
+                id: 'acc-item-ins',
+                title: 'Insurance Company',
+                contentType: 'logo_grid',
+                enabled: true,
+                logos: [
+                  { id: 'logo-i1', name: 'Star Health and Allied Insurance', imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&auto=format&fit=crop&q=80', order: 1, enabled: true },
+                  { id: 'logo-i2', name: 'HDFC ERGO General Insurance', imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=300&auto=format&fit=crop&q=80', order: 2, enabled: true },
+                  { id: 'logo-i3', name: 'ICICI Lombard General Insurance', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&auto=format&fit=crop&q=80', order: 3, enabled: true },
+                  { id: 'logo-i4', name: 'Bajaj Allianz General Insurance', imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=300&auto=format&fit=crop&q=80', order: 4, enabled: true },
+                  { id: 'logo-i5', name: 'Niva Bupa Health Insurance', imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&auto=format&fit=crop&q=80', order: 5, enabled: true },
+                  { id: 'logo-i6', name: 'National Insurance Company', imageUrl: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=300&auto=format&fit=crop&q=80', order: 6, enabled: true },
+                  { id: 'logo-i7', name: 'The New India Assurance Co. Ltd.', imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300&auto=format&fit=crop&q=80', order: 7, enabled: true },
+                  { id: 'logo-i8', name: 'Oriental Insurance Company', imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=300&auto=format&fit=crop&q=80', order: 8, enabled: true },
+                  { id: 'logo-i9', name: 'United India Insurance Co.', imageUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=300&auto=format&fit=crop&q=80', order: 9, enabled: true }
+                ]
+              },
+              {
+                id: 'acc-item-tpa',
+                title: "TPA's (Third Party Administrator)",
+                contentType: 'logo_grid',
+                enabled: true,
+                logos: [
+                  { id: 'logo-t1', name: 'Medi Assist Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=300&auto=format&fit=crop&q=80', order: 1, enabled: true },
+                  { id: 'logo-t2', name: 'Paramount Health Services & Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&auto=format&fit=crop&q=80', order: 2, enabled: true },
+                  { id: 'logo-t3', name: 'MDIndia Health Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=300&auto=format&fit=crop&q=80', order: 3, enabled: true },
+                  { id: 'logo-t4', name: 'Vidal Health Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=300&auto=format&fit=crop&q=80', order: 4, enabled: true },
+                  { id: 'logo-t5', name: 'Heritage Health Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&auto=format&fit=crop&q=80', order: 5, enabled: true },
+                  { id: 'logo-t6', name: 'Raksha Health Insurance TPA', imageUrl: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=300&auto=format&fit=crop&q=80', order: 6, enabled: true }
+                ]
+              }
+            ],
             items: [],
             steps: [],
             cards: [],
@@ -802,35 +852,27 @@ export const defaultPatientCornerGuides = [
       },
       {
         id: 'tab-pc3-3',
-        title: 'Empanelled Insurances & TPAs',
-        type: 'cards',
+        title: 'TPA & Helpdesk Assistance',
+        type: 'rich_text',
         order: 3,
         enabled: true,
-        content: '',
+        content: '<p>The dedicated TPA and Cashless Insurance Helpdesk at Bhaktivedanta Hospital is operational 24/7 on Ground Floor. Our team assists patients with query resolution, pre-authorization, query documentation, and final settlement with insurance providers.</p>',
         steps: [],
         items: [],
-        cards: [
-          { title: 'Leading Private Insurers', description: 'Empanelled with major private health insurance providers across India.', icon: 'verified_user' },
-          { title: 'Public Sector Insurers', description: 'Cashless assistance for National Insurance, New India Assurance, Oriental, United India.', icon: 'account_balance' },
-          { title: 'Corporate TPAs', description: 'Tie-ups with Medi Assist, Paramount TPA, Vidal Health, MDIndia, and more.', icon: 'business' }
-        ],
+        cards: [],
         galleryImages: [],
         faqs: [],
         sections: [
           {
-            id: 'sec-empanelled-cards',
-            title: 'Partner Network',
-            type: 'cards',
+            id: 'sec-cashless-overview',
+            title: 'TPA Desk Assistance',
+            type: 'rich_text',
             order: 1,
             enabled: true,
-            content: '',
+            content: '<p>The dedicated TPA and Cashless Insurance Helpdesk at Bhaktivedanta Hospital is operational 24/7 on Ground Floor. Our team assists patients with query resolution, pre-authorization, query documentation, and final settlement with insurance providers.</p>',
             items: [],
             steps: [],
-            cards: [
-              { title: 'Leading Private Insurers', description: 'Empanelled with major private health insurance providers across India.', icon: 'verified_user' },
-              { title: 'Public Sector Insurers', description: 'Cashless assistance for National Insurance, New India Assurance, Oriental, United India.', icon: 'account_balance' },
-              { title: 'Corporate TPAs', description: 'Tie-ups with Medi Assist, Paramount TPA, Vidal Health, MDIndia, and more.', icon: 'business' }
-            ],
+            cards: [],
             galleryImages: [],
             faqs: [],
             settings: {}

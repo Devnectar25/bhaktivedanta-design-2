@@ -15,6 +15,7 @@ export const SECTION_TYPES = [
   { type: 'rich_text', label: 'Rich Text / Article', icon: 'article', color: 'blue' },
   { type: 'feature_list', label: 'Feature List (Label: Value)', icon: 'fact_check', color: 'amber' },
   { type: 'accordion', label: 'Expandable Accordion', icon: 'view_agenda', color: 'indigo' },
+  { type: 'logo_grid', label: 'Logo Grid / Partners', icon: 'grid_view', color: 'blue' },
   { type: 'steps', label: 'Workflow Steps', icon: 'account_tree', color: 'emerald' },
   { type: 'cards', label: 'Cards / Specialists', icon: 'view_module', color: 'purple' },
   { type: 'checklist', label: 'Checklist / Rules', icon: 'checklist', color: 'teal' },
@@ -67,11 +68,58 @@ export const createDefaultSection = (type = 'rich_text', customTitle = '') => {
     case 'accordion':
       return {
         ...base,
-        title: customTitle || 'General Policies & Details',
-        content: '<p>Expand to review in-depth guidelines and clinical details.</p>',
-        items: [
-          { label: 'Visiting Pass Policy', value: 'Attendants must wear passes at all times in wards.', enabled: true }
+        title: customTitle || 'Expandable Accordion',
+        content: '',
+        accordionItems: [
+          {
+            id: `acc_${Date.now()}_1`,
+            title: 'Corporates',
+            contentType: 'logo_grid',
+            logos: [
+              { id: `logo_${Date.now()}_1`, name: 'Corporate Partner 1', imageUrl: '', order: 1, enabled: true }
+            ],
+            content: '',
+            enabled: true
+          },
+          {
+            id: `acc_${Date.now()}_2`,
+            title: 'Insurance Company',
+            contentType: 'logo_grid',
+            logos: [
+              { id: `logo_${Date.now()}_2`, name: 'Insurance Provider 1', imageUrl: '', order: 1, enabled: true }
+            ],
+            content: '',
+            enabled: true
+          },
+          {
+            id: `acc_${Date.now()}_3`,
+            title: "TPA's (Third Party Administrator)",
+            contentType: 'logo_grid',
+            logos: [
+              { id: `logo_${Date.now()}_3`, name: 'TPA Partner 1', imageUrl: '', order: 1, enabled: true }
+            ],
+            content: '',
+            enabled: true
+          }
         ],
+        items: [],
+        steps: [],
+        cards: [],
+        galleryImages: [],
+        faqs: [],
+        logos: []
+      };
+
+    case 'logo_grid':
+      return {
+        ...base,
+        title: customTitle || 'Company / Partner Logos',
+        content: '',
+        logos: [
+          { id: `logo_${Date.now()}_1`, name: 'Partner Company 1', imageUrl: '', order: 1, enabled: true },
+          { id: `logo_${Date.now()}_2`, name: 'Partner Company 2', imageUrl: '', order: 2, enabled: true }
+        ],
+        items: [],
         steps: [],
         cards: [],
         galleryImages: [],
@@ -247,17 +295,17 @@ const AddPatientGuide = ({ mode = 'add' }) => {
             displayOrder: found.displayOrder || 1,
             tabs: Array.isArray(found.tabs) && found.tabs.length > 0
               ? found.tabs.map((t, tIdx) => ({
-                  ...t,
-                  order: t.order || (tIdx + 1),
-                  enabled: t.enabled !== false,
-                  sections: Array.isArray(t.sections) && t.sections.length > 0
-                    ? t.sections.map((s, sIdx) => ({
-                        ...s,
-                        order: s.order || (sIdx + 1),
-                        enabled: s.enabled !== false
-                      }))
-                    : [createDefaultSection('rich_text', `${t.title || 'Tab'} Content`)]
-                }))
+                ...t,
+                order: t.order || (tIdx + 1),
+                enabled: t.enabled !== false,
+                sections: Array.isArray(t.sections) && t.sections.length > 0
+                  ? t.sections.map((s, sIdx) => ({
+                    ...s,
+                    order: s.order || (sIdx + 1),
+                    enabled: s.enabled !== false
+                  }))
+                  : [createDefaultSection('rich_text', `${t.title || 'Tab'} Content`)]
+              }))
               : [createDefaultTab('Overview')]
           });
         } else {
@@ -667,16 +715,14 @@ const AddPatientGuide = ({ mode = 'add' }) => {
               <div
                 key={tab.id || tIdx}
                 onClick={() => setActiveTabIdx(tIdx)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all border whitespace-nowrap ${
-                  isActive
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all border whitespace-nowrap ${isActive
                     ? 'bg-[#1e3a8a] text-white border-[#1e3a8a] shadow-sm'
                     : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-                }`}
+                  }`}
               >
                 <span>{tab.title || `Tab ${tIdx + 1}`}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  isActive ? 'bg-blue-800 text-blue-100' : 'bg-slate-200 text-slate-600'
-                }`}>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isActive ? 'bg-blue-800 text-blue-100' : 'bg-slate-200 text-slate-600'
+                  }`}>
                   {tab.sections?.length || 0}
                 </span>
               </div>
@@ -968,19 +1014,202 @@ function SectionTypeEditor({ section, onUpdate }) {
     );
   }
 
-  // 3. Accordion Section Editor
+  // 3. Accordion Section Editor (Supports Nested Accordion Items & Logo Grids)
   if (type === 'accordion') {
+    const accordionItems = Array.isArray(section.accordionItems)
+      ? section.accordionItems
+      : [];
+
+    const handleAddAccordionItem = () => {
+      const newItem = {
+        id: `acc_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        title: `Accordion Item ${accordionItems.length + 1}`,
+        contentType: 'logo_grid',
+        logos: [],
+        content: '',
+        enabled: true
+      };
+      onUpdate({ accordionItems: [...accordionItems, newItem] });
+    };
+
+    const handleUpdateItem = (idx, updates) => {
+      const updated = [...accordionItems];
+      updated[idx] = { ...updated[idx], ...updates };
+      onUpdate({ accordionItems: updated });
+    };
+
+    const handleDeleteItem = (idx) => {
+      onUpdate({ accordionItems: accordionItems.filter((_, i) => i !== idx) });
+    };
+
+    const handleMoveItem = (idx, dir) => {
+      const targetIdx = idx + dir;
+      if (targetIdx < 0 || targetIdx >= accordionItems.length) return;
+      const updated = [...accordionItems];
+      const temp = updated[idx];
+      updated[idx] = updated[targetIdx];
+      updated[targetIdx] = temp;
+      onUpdate({ accordionItems: updated });
+    };
+
     return (
       <div className="space-y-4">
-        <div className="space-y-1">
-          <label className="font-bold text-slate-700 text-xs">Accordion Body Content</label>
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
-            <RichTextEditor
-              content={section.content || ''}
-              onChange={(val) => onUpdate({ content: val })}
-            />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+          <div>
+            <span className="font-bold text-slate-800 text-xs uppercase tracking-wide flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-sm text-indigo-600">view_agenda</span>
+              <span>Accordion Items ({accordionItems.length})</span>
+            </span>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Each item expands to display its content or nested Logo Grid when clicked on the public site.
+            </p>
           </div>
+          <button
+            type="button"
+            onClick={handleAddAccordionItem}
+            className="text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors w-fit"
+          >
+            <span className="material-symbols-outlined text-sm">add_circle</span>
+            <span>Add Accordion Item</span>
+          </button>
         </div>
+
+        {accordionItems.length === 0 ? (
+          <div className="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-5 text-center space-y-3">
+            <p className="text-xs text-slate-500">
+              No accordion items defined. Add items like "Corporates", "Insurance Company", or "TPA's".
+            </p>
+            <div className="flex justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onUpdate({
+                    accordionItems: [
+                      { id: `acc_${Date.now()}_1`, title: 'Corporates', contentType: 'logo_grid', logos: [], enabled: true },
+                      { id: `acc_${Date.now()}_2`, title: 'Insurance Company', contentType: 'logo_grid', logos: [], enabled: true },
+                      { id: `acc_${Date.now()}_3`, title: "TPA's (Third Party Administrator)", contentType: 'logo_grid', logos: [], enabled: true }
+                    ]
+                  });
+                }}
+                className="text-xs font-bold bg-[#1e3a8a] text-white px-3 py-1.5 rounded-lg hover:bg-blue-900"
+              >
+                + Initialize Corporate / Insurance / TPA Items
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {accordionItems.map((item, idx) => {
+              const contentType = item.contentType || (item.logos?.length > 0 ? 'logo_grid' : 'rich_text');
+
+              return (
+                <div
+                  key={item.id || idx}
+                  className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden text-xs"
+                >
+                  {/* Item Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-100 border-b border-slate-200">
+                    <div className="flex items-center gap-2 flex-1">
+                      <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[11px] font-bold flex items-center justify-center flex-shrink-0">
+                        {idx + 1}
+                      </span>
+                      <input
+                        type="text"
+                        value={item.title || ''}
+                        onChange={(e) => handleUpdateItem(idx, { title: e.target.value })}
+                        placeholder="Accordion Item Title (e.g. Corporates, Insurance Company)..."
+                        className="font-bold text-slate-800 text-xs border border-slate-300 rounded px-2 py-1 flex-1 bg-white outline-none focus:border-indigo-500"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={contentType}
+                        onChange={(e) => handleUpdateItem(idx, { contentType: e.target.value })}
+                        className="text-[11px] font-bold bg-white border border-slate-300 text-slate-700 rounded px-2 py-1 outline-none"
+                      >
+                        <option value="logo_grid">Logo Grid</option>
+                        <option value="rich_text">Rich Text</option>
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={() => handleMoveItem(idx, -1)}
+                        disabled={idx === 0}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30"
+                        title="Move Up"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_upward</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveItem(idx, 1)}
+                        disabled={idx === accordionItems.length - 1}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30"
+                        title="Move Down"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_downward</span>
+                      </button>
+
+                      <label className="flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={item.enabled !== false}
+                          onChange={(e) => handleUpdateItem(idx, { enabled: e.target.checked })}
+                          className="accent-amber-500"
+                        />
+                        <span>Active</span>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteItem(idx)}
+                        className="text-red-500 hover:text-red-700 p-1"
+                        title="Delete Accordion Item"
+                      >
+                        <span className="material-symbols-outlined text-base">delete</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Item Body Editor */}
+                  <div className="p-3 bg-white space-y-3">
+                    {contentType === 'logo_grid' ? (
+                      <LogoGridEditor
+                        logos={item.logos || []}
+                        onChange={(updatedLogos) => handleUpdateItem(idx, { logos: updatedLogos })}
+                        label={`Logos inside "${item.title || `Item ${idx + 1}`}"`}
+                      />
+                    ) : (
+                      <div className="space-y-1">
+                        <label className="font-bold text-slate-700 text-xs">Body Content / Description</label>
+                        <div className="border border-slate-200 rounded-lg overflow-hidden">
+                          <RichTextEditor
+                            content={item.content || ''}
+                            onChange={(val) => handleUpdateItem(idx, { content: val })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // 3b. Logo Grid Section Editor (Standalone Section)
+  if (type === 'logo_grid') {
+    return (
+      <div className="space-y-3">
+        <LogoGridEditor
+          logos={section.logos || []}
+          onChange={(updatedLogos) => onUpdate({ logos: updatedLogos })}
+          label={section.title || 'Partner Logos'}
+        />
       </div>
     );
   }
@@ -1471,6 +1700,163 @@ function SectionTypeEditor({ section, onUpdate }) {
   }
 
   return null;
+}
+
+// ------------------------------------------------------------------
+// Reusable Logo Grid Editor (Admin Component)
+// ------------------------------------------------------------------
+export function LogoGridEditor({ logos = [], onChange, label = 'Partner / Company Logos' }) {
+  const handleAddLogo = () => {
+    const nextOrder = logos.length + 1;
+    const newLogo = {
+      id: `logo_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      name: `Company ${nextOrder}`,
+      imageUrl: '',
+      order: nextOrder,
+      enabled: true
+    };
+    onChange([...logos, newLogo]);
+  };
+
+  const handleUpdateLogo = (idx, updates) => {
+    const updated = [...logos];
+    updated[idx] = { ...updated[idx], ...updates };
+    onChange(updated);
+  };
+
+  const handleDeleteLogo = (idx) => {
+    onChange(logos.filter((_, i) => i !== idx));
+  };
+
+  const handleMoveLogo = (idx, dir) => {
+    const targetIdx = idx + dir;
+    if (targetIdx < 0 || targetIdx >= logos.length) return;
+    const updated = [...logos];
+    const temp = updated[idx];
+    updated[idx] = updated[targetIdx];
+    updated[targetIdx] = temp;
+    const reordered = updated.map((l, i) => ({ ...l, order: i + 1 }));
+    onChange(reordered);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <label className="font-bold text-slate-700 text-xs">{label} ({logos.length})</label>
+        </div>
+        <button
+          type="button"
+          onClick={handleAddLogo}
+          className="text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-md flex items-center gap-1 transition-colors"
+        >
+          <span className="material-symbols-outlined text-sm">add_circle</span>
+          <span>Add Logo</span>
+        </button>
+      </div>
+
+      {logos.length === 0 ? (
+        <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-4 text-center text-xs text-slate-500">
+          No logos added yet. Click "+ Add Logo" to add company or partner logos.
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {logos.map((logo, idx) => (
+            <div
+              key={logo.id || idx}
+              className={`p-3 rounded-lg border text-xs transition-all ${logo.enabled !== false
+                  ? 'bg-white border-slate-200 shadow-sm'
+                  : 'bg-slate-50 border-slate-200 opacity-60'
+                }`}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+                {/* Logo Image Preview / Fallback */}
+                <div className="md:col-span-2 flex items-center gap-2">
+                  <div className="w-12 h-10 rounded border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {logo.imageUrl ? (
+                      <img
+                        src={logo.imageUrl}
+                        alt={logo.name || 'Preview'}
+                        className="max-w-full max-h-full object-contain p-0.5"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <span className="material-symbols-outlined text-slate-400 text-base">
+                        business
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-400">#{logo.order || idx + 1}</span>
+                </div>
+
+                {/* Company Name */}
+                <div className="md:col-span-4">
+                  <input
+                    type="text"
+                    placeholder="Company / Partner Name *"
+                    value={logo.name || ''}
+                    onChange={(e) => handleUpdateLogo(idx, { name: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1.5 font-bold text-slate-800 outline-none focus:border-amber-500 bg-white"
+                  />
+                </div>
+
+                {/* Logo Image URL */}
+                <div className="md:col-span-4">
+                  <input
+                    type="text"
+                    placeholder="Logo Image URL (https://... or /path.png)"
+                    value={logo.imageUrl || ''}
+                    onChange={(e) => handleUpdateLogo(idx, { imageUrl: e.target.value })}
+                    className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-slate-700 outline-none focus:border-amber-500 bg-white font-mono text-[11px]"
+                  />
+                </div>
+
+                {/* Actions: Reorder, Enabled, Delete */}
+                <div className="md:col-span-2 flex items-center justify-end gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleMoveLogo(idx, -1)}
+                    disabled={idx === 0}
+                    className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30"
+                    title="Move Up"
+                  >
+                    <span className="material-symbols-outlined text-xs">arrow_upward</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleMoveLogo(idx, 1)}
+                    disabled={idx === logos.length - 1}
+                    className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30"
+                    title="Move Down"
+                  >
+                    <span className="material-symbols-outlined text-xs">arrow_downward</span>
+                  </button>
+                  <label className="flex items-center gap-1 text-[11px] font-semibold text-slate-600 px-1 cursor-pointer" title="Enable/Disable Logo">
+                    <input
+                      type="checkbox"
+                      checked={logo.enabled !== false}
+                      onChange={(e) => handleUpdateLogo(idx, { enabled: e.target.checked })}
+                      className="accent-amber-500"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteLogo(idx)}
+                    className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
+                    title="Delete Logo"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default AddPatientGuide;

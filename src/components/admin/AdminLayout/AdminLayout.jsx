@@ -5,44 +5,6 @@ import AdminHeader from '../AdminHeader/AdminHeader';
 import ErrorBoundary from '../../ErrorBoundary';
 import '../unified-admin.css';
 
-// Map pathnames to header titles
-const titleMap = {
-  '/admin/dashboard': 'Admin Dashboard',
-  '/admin/services': 'Services Management',
-  '/admin/specialities': 'Specialities Management',
-  '/admin/help-desk': 'Help Desk & Support',
-  '/admin/application-errors': 'Application Error Log',
-  '/admin/sub-admins': 'Sub-Admin Management',
-  '/admin/patients-corner': 'Patients Corner Guidelines',
-  '/admin/spiritual-care': 'Spiritual Care Management',
-  '/admin/education-research': 'Education & Medical Research',
-  '/admin/associate-centres': 'Our Associate Centres',
-  '/admin/careers': 'Careers & Job Openings',
-  '/admin/doctors': 'Doctors Management',
-  '/admin/doctor-availability': 'Doctor Availability',
-  '/admin/health-packages': 'Health Packages',
-  '/admin/testimonials': 'Testimonials Management',
-  '/admin/news': 'News Management',
-  '/admin/events': 'Events Management',
-  '/admin/gallery': 'Gallery Management',
-  '/admin/appointments': 'Appointments Management',
-  '/admin/contact-queries': 'Contact Queries',
-  '/admin/admin-users': 'Admin Users',
-  '/admin/add-doctor': 'Add New Doctor',
-  '/admin/add-event': 'Add New Event',
-  '/admin/add-appointment': 'Add New Appointment',
-  '/admin/add-category': 'Add New Category',
-  '/admin/add-service': 'Add New Service',
-  '/admin/add-speciality': 'Add New Speciality',
-  '/admin/add-testimonial': 'Add New Testimonial',
-  '/admin/add-gallery-media': 'Add Gallery Media',
-  '/admin/add-news': 'Add News',
-  '/admin/add-health-package': 'Add Health Package',
-  '/admin/add-query': 'Add Manual Query',
-  '/admin/add-sub-admin': 'Add New Sub Admin',
-  '/admin/settings': 'Settings'
-};
-
 const AdminLayout = () => {
   const location = useLocation();
   const isAuthenticated = localStorage.getItem('bhaktivedanta_admin_auth') === 'true' || localStorage.getItem('adminToken') === 'true';
@@ -50,8 +12,6 @@ const AdminLayout = () => {
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
   }
-
-  const currentTitle = titleMap[location.pathname] || 'Bhaktivedanta Admin';
 
   useEffect(() => {
     // 1. Inject Tailwind CDN script if not already present
@@ -185,7 +145,7 @@ const AdminLayout = () => {
     <div className="admin-layout-wrapper text-on-surface font-sans antialiased min-h-screen bg-background" style={{ zoom: 0.94 }}>
       <AdminSidebar />
       <div className="flex flex-col min-h-screen">
-        <AdminHeader title={currentTitle} />
+        <AdminHeader title="Admin Panel" />
         <main className="ml-[280px] flex-1 px-6 pb-6 pt-24 min-w-0 bg-background overflow-x-hidden">
           <div className="max-w-[1110px] w-full">
             <ErrorBoundary>

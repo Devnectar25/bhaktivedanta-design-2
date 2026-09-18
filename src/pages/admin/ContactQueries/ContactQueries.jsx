@@ -46,15 +46,20 @@ const ContactQueries = () => {
 
   // Filter logic
   const filtered = queries.filter(q => {
-    const matchesSearch = q.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          q.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          q.subject.toLowerCase().includes(searchTerm.toLowerCase());
+    const qName = q.name || '';
+    const qEmail = q.email || '';
+    const qSubject = q.subject || '';
+    const qMessage = q.message || '';
+
+    const matchesSearch = qName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          qEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          qSubject.toLowerCase().includes(searchTerm.toLowerCase());
     
     // heuristics for query type
     let qType = 'General Inquiry';
-    if (q.subject.toLowerCase().includes('appointment') || q.message.toLowerCase().includes('appointment')) {
+    if (qSubject.toLowerCase().includes('appointment') || qMessage.toLowerCase().includes('appointment')) {
       qType = 'Appointment';
-    } else if (q.subject.toLowerCase().includes('billing') || q.subject.toLowerCase().includes('package')) {
+    } else if (qSubject.toLowerCase().includes('billing') || qSubject.toLowerCase().includes('package')) {
       qType = 'Billing';
     }
 

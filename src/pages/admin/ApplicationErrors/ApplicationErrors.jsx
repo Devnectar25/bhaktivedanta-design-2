@@ -82,9 +82,12 @@ const ApplicationErrors = () => {
   };
 
   const filteredErrors = errors.filter(e => {
-    const matchesSearch = e.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          e.source.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (e.endpoint && e.endpoint.toLowerCase().includes(searchTerm.toLowerCase()));
+    const msg = e.message || '';
+    const src = e.source || '';
+    const ep = e.endpoint || '';
+    const matchesSearch = msg.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          src.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          ep.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLevel = levelFilter === 'All' || e.level === levelFilter;
     const matchesStatus = statusFilter === 'All' || e.status === statusStatusFilter(e.status, statusFilter);
     return matchesSearch && matchesLevel && matchesStatus;

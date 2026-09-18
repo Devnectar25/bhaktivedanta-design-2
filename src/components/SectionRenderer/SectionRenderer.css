@@ -352,3 +352,136 @@
   background: #E7EAF0;
   margin: 12px 0;
 }
+
+/* Accordion Group (nested items within an accordion section) */
+.section-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-accordion-intro {
+  margin-bottom: 6px;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14.5px;
+  color: #4B5563;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ */
+/* Logo Grid Section (Empanelled Corporate / TPA / Insurance)         */
+/* ------------------------------------------------------------------ */
+.section-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 4px 0;
+}
+
+@media (max-width: 640px) {
+  .section-logo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+}
+
+.section-logo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  border: 1px solid #E7EAF0;
+  border-radius: 12px;
+  padding: 16px 14px 14px;
+  text-align: center;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(19, 42, 76, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.section-logo-card:hover {
+  transform: translateY(-2px);
+  border-color: #CBD5E1;
+  box-shadow: 0 6px 18px rgba(19, 42, 76, 0.08);
+  background: #FAFCFF;
+}
+
+.section-logo-img-wrapper {
+  width: 100%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding: 4px;
+}
+
+.section-logo-img {
+  max-width: 100%;
+  max-height: 56px;
+  object-fit: contain;
+  filter: contrast(102%);
+  transition: transform 0.2s ease;
+}
+
+.section-logo-card:hover .section-logo-img {
+  transform: scale(1.04);
+}
+
+.section-logo-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  background: #F1F5F9;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.section-logo-fallback-icon {
+  font-size: 24px;
+  color: #3B5A82;
+}
+
+.section-logo-fallback-text {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748B;
+  text-align: center;
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-logo-name {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #132A4C;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-empty-msg {
+  font-family: 'Work Sans', sans-serif;
+  font-size: 14px;
+  color: #94A3B8;
+  font-style: italic;
+  padding: 12px 0;
+}
