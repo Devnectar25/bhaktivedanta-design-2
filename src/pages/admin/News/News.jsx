@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { initialNews, saveNews } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const News = () => {
   const [news, setNews] = useState([]);
@@ -18,8 +19,9 @@ const News = () => {
     saveNews(newNews);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this news post?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete News", "Are you sure you want to delete this news post?", "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = news.filter(n => n.id !== id);
       saveAndSetNews(updated);
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getHelpDesk, addHelpDeskTicket, updateHelpDeskTicket, deleteHelpDeskTicket } from '../../../utils/api';
+import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
 const defaultTickets = [
   {
@@ -78,14 +79,16 @@ const HelpDesk = () => {
     updateHelpDeskTicket(selectedTicket.id, updated, tickets).then(res => {
       setTickets(prev => prev.map(t => t.id === selectedTicket.id ? { ...t, ...updated } : t));
       setSelectedTicket(null);
-      alert('Ticket status updated successfully!');
+      showSuccessAlert('Status Updated!', 'Ticket status updated successfully.');
     });
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this help desk ticket?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog('Delete Ticket?', 'Are you sure you want to delete this help desk ticket?');
+    if (res.isConfirmed) {
       deleteHelpDeskTicket(id, tickets).then(() => {
         setTickets(prev => prev.filter(t => t.id !== id));
+        showSuccessAlert('Deleted!', 'Ticket deleted successfully.');
       });
     }
   };
@@ -93,7 +96,7 @@ const HelpDesk = () => {
   const handleCreateTicket = (e) => {
     e.preventDefault();
     if (!newTicket.requesterName || !newTicket.subject) {
-      alert("Please fill in required fields (Name and Subject).");
+      showErrorAlert('Required Fields Missing', 'Please fill in required fields (Name and Subject).');
       return;
     }
 
@@ -126,7 +129,7 @@ const HelpDesk = () => {
         subject: '',
         description: ''
       });
-      alert('New Help Desk ticket logged successfully!');
+      showSuccessAlert('Ticket Created!', 'New Help Desk ticket logged successfully.');
     });
   };
 

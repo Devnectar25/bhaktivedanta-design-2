@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialEvents, saveEvents } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -19,8 +20,9 @@ const Events = () => {
     saveEvents(newEvents);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete Event", "Are you sure you want to delete this event?", "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = events.filter(evt => evt.id !== id);
       saveAndSetEvents(updated);
     }

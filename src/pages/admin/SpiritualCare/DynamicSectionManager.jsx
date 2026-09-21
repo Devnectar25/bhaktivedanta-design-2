@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { showErrorAlert } from '../../../utils/swal';
 import { 
   Plus, 
   Trash2, 
@@ -75,7 +76,7 @@ export default function DynamicSectionManager({ section, onUpdateSection, onDele
 
   const handleDeleteTab = (tabId) => {
     if ((secData.tabs || []).length <= 1) {
-      alert('A tabs layout section must have at least one tab.');
+      showErrorAlert('Action Not Allowed', 'A tabs layout section must have at least one tab.');
       return;
     }
     const updatedTabs = secData.tabs.filter(t => t.id !== tabId);

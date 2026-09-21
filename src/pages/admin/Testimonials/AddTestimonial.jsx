@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialTestimonials, saveTestimonials } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddTestimonial = () => {
   const [searchParams] = useSearchParams();
@@ -36,7 +37,7 @@ const AddTestimonial = () => {
     e.preventDefault();
 
     if (!patientName || !disease || !content) {
-      alert("Please fill in the required fields (Patient Name, Treatment, and Review Content).");
+      showErrorAlert("Required Fields Missing", "Please fill in the required fields (Patient Name, Treatment, and Review Content).");
       return;
     }
 

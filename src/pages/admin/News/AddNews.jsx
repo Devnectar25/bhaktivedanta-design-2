@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialNews, saveNews } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddNews = () => {
   const [searchParams] = useSearchParams();
@@ -34,7 +35,7 @@ const AddNews = () => {
     e.preventDefault();
 
     if (!title || !content) {
-      alert("Please fill in the required fields (Title and News Content).");
+      showErrorAlert("Required Fields Missing", "Please fill in the required fields (Title and News Content).");
       return;
     }
 

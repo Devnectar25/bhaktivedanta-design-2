@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { loadAdminData, saveAdminData } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddHealthPackage = () => {
   const [searchParams] = useSearchParams();
@@ -35,7 +36,7 @@ const AddHealthPackage = () => {
     e.preventDefault();
 
     if (!name || !price) {
-      alert("Please fill in the required fields (Name and Price).");
+      showErrorAlert("Required Fields Missing", "Please fill in the required fields (Package Name and Price).");
       return;
     }
 

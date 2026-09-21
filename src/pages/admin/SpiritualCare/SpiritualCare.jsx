@@ -8,6 +8,7 @@ import PublicationsManager from './PublicationsManager';
 import DynamicSectionManager from './DynamicSectionManager';
 import { getSpiritualCareState, saveSpiritualCareState } from '../../../utils/api';
 import { defaultSpiritualCareState, ensureStandardSpiritualSections } from '../../../data/defaultSpiritualCare';
+import { showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
 const AVAILABLE_ICONS = [
   'spa', 'school', 'nature_people', 'library_books', 'volunteer_activism',
@@ -74,7 +75,7 @@ export default function SpiritualCare() {
   const handleCreateSection = async (e) => {
     e.preventDefault();
     if (!newSectionForm.title.trim()) {
-      alert('Please enter a section title.');
+      showErrorAlert('Title Required', 'Please enter a section title.');
       return;
     }
 
@@ -183,8 +184,8 @@ export default function SpiritualCare() {
 
   // Delete Dynamic Section
   const handleDeleteDynamicSection = async (sectionId) => {
-    const confirmed = window.confirm('Are you sure you want to remove this section? It will be removed from the navbar and modal.');
-    if (!confirmed) return;
+    const res = await showConfirmDialog('Remove Section', 'Are you sure you want to remove this section? It will be removed from the navbar and modal.', 'Yes, Remove');
+    if (!res.isConfirmed) return;
 
     const updatedSections = sections.filter(s => s.id !== sectionId);
     const updatedState = { ...state, sections: updatedSections };

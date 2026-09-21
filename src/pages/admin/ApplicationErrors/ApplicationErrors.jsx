@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAppErrors, addAppError, updateAppError, clearAppErrors } from '../../../utils/api';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const defaultErrors = [
   {
@@ -42,11 +43,18 @@ const ApplicationErrors = () => {
   const [selectedError, setSelectedError] = useState(null);
 
   useEffect(() => {
-    getAppErrors(defaultErrors).then(data => setErrors(data || defaultErrors));
+    const fetchErrors = () => {
+      getAppErrors(defaultErrors).then(data => setErrors(data || defaultErrors));
+    };
+
+    fetchErrors();
+    window.addEventListener('admin_data_updated', fetchErrors);
+    return () => window.removeEventListener('admin_data_updated', fetchErrors);
   }, []);
 
-  const handleClearAll = () => {
-    if (window.confirm("Are you sure you want to clear all error log history?")) {
+  const handleClearAll = async () => {
+    const res = await showConfirmDialog("Clear Error Logs", "Are you sure you want to clear all error log history?", "Yes, Clear All");
+    if (res.isConfirmed) {
       clearAppErrors().then(() => setErrors([]));
     }
   };

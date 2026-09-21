@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { initialQueries, saveQueries } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddQuery = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const AddQuery = () => {
     e.preventDefault();
 
     if (!name || !email || !subject || !message) {
-      alert("Please fill in all fields (Patient Name, Email, Subject, and Inquiry Message).");
+      showErrorAlert("Missing Information", "Please fill in all fields (Patient Name, Email, Subject, and Inquiry Message).");
       return;
     }
 

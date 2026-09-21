@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Hero.css';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section id="home" className="hero-section">
       <div className="hero-bg">
@@ -17,8 +20,11 @@ const Hero = () => {
             We are dedicated to your wellness and the highest standards of care.
           </p>
           <div className="hero-actions">
-            <button className="btn-primary">Explore Services</button>
-            <button className="btn-outline">Contact Us</button>
+            <button className="btn-primary" onClick={() => {
+              const el = document.getElementById('services');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}>Explore Services</button>
+            <button className="btn-outline" onClick={() => navigate('/contact')}>Contact Us</button>
           </div>
         </div>
       </div>

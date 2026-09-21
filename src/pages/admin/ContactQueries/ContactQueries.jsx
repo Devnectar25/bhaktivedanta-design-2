@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getQueries, deleteQuery, updateQuery } from '../../../utils/api';
-import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
+import Swal, { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 import { initialQueries } from '../../../data/adminState';
 
 const ContactQueries = () => {
@@ -46,6 +46,33 @@ const ContactQueries = () => {
     updateQuery(id, updated, queries).then(() => {
       setQueries(prev => prev.map(q => q.id === id ? { ...q, status: 'Resolved' } : q));
       showSuccessAlert('Resolved!', 'Query marked as resolved.');
+    });
+  };
+
+  const handleViewDetails = (q) => {
+    Swal.fire({
+      title: `<div style="text-align: left; font-size: 1.1rem; font-weight: 700; color: #0f172a;">${q.subject || 'Patient Query Details'}</div>`,
+      html: `
+        <div style="text-align: left; font-family: Inter, sans-serif; font-size: 0.875rem; color: #334155; line-height: 1.6;">
+          <div style="margin-bottom: 12px; padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: 700; color: #1e3a8a; font-size: 0.9rem;">${q.name}</div>
+            <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">
+              Email: <a href="mailto:${q.email}" style="color: #2563eb; font-weight: 600;">${q.email}</a> ${q.phone ? `| Phone: <span style="font-weight: 600;">${q.phone}</span>` : ''}
+            </div>
+            <div style="color: #64748b; font-size: 0.8rem; margin-top: 4px;">
+              Received: <strong>${q.date || 'N/A'}</strong> | Status: <span style="font-weight: 700; color: ${q.status === 'Resolved' ? '#16a34a' : '#d97706'};">${q.status}</span>
+            </div>
+          </div>
+          <div style="font-weight: 700; font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Query Message</div>
+          <div style="background: #ffffff; padding: 12px 14px; border-radius: 10px; border: 1px solid #cbd5e1; white-space: pre-wrap; font-size: 0.875rem; color: #0f172a; max-height: 220px; overflow-y: auto;">${q.message || 'No message content provided.'}</div>
+        </div>
+      `,
+      confirmButtonText: 'Close',
+      confirmButtonColor: '#1e3a8a',
+      customClass: {
+        popup: 'rounded-2xl font-sans',
+        confirmButton: 'px-6 py-2.5 rounded-lg font-bold text-sm'
+      }
     });
   };
 
@@ -296,7 +323,7 @@ const ContactQueries = () => {
                           </button>
                         )}
                         <button 
-                          onClick={() => alert(`Subject: ${q.subject}\nFrom: ${q.name} (${q.email})\nMessage: ${q.message}`)}
+                          onClick={() => handleViewDetails(q)}
                           className="w-7 h-7 rounded bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center transition-all"
                           title="View Message"
                         >

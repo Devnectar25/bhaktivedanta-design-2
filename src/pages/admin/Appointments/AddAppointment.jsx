@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialAppointments, saveAppointments } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddAppointment = () => {
   const [searchParams] = useSearchParams();
@@ -40,7 +41,7 @@ const AddAppointment = () => {
     e.preventDefault();
 
     if (!patientName || !patientPhone || !dateTime) {
-      alert("Please fill in the required fields (Patient Name, Phone, Date & Time).");
+      showErrorAlert("Missing Information", "Please fill in the required fields (Patient Name, Phone, Date & Time).");
       return;
     }
 

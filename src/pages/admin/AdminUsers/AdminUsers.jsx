@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialSubAdmins, saveSubAdmins } from '../../../data/adminState';
+import { showSuccessAlert, showConfirmDialog } from '../../../utils/swal';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -19,8 +20,9 @@ const AdminUsers = () => {
     saveSubAdmins(newUsers);
   };
 
-  const handleDelete = (username) => {
-    if (window.confirm(`Are you sure you want to delete admin user "${username}"?`)) {
+  const handleDelete = async (username) => {
+    const res = await showConfirmDialog("Delete Admin User", `Are you sure you want to delete admin user "${username}"?`, "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = users.filter(u => u.username !== username);
       saveAndSetUsers(updated);
     }
@@ -38,7 +40,7 @@ const AdminUsers = () => {
   };
 
   const handleResetPassword = (username) => {
-    alert(`Password reset link generated for ${username}. A recovery email has been sent.`);
+    showSuccessAlert('Password Reset Link Sent', `Password reset link generated for ${username}. A recovery email has been sent.`);
   };
 
   const handleResetFilters = () => {

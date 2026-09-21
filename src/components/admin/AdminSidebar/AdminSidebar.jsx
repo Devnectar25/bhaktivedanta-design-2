@@ -34,7 +34,7 @@ const navLinks = [
   { name: 'About us', icon: 'info', to: 'dashboard' },
   { name: 'Blogs', icon: 'article', to: 'blogs' },
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
-  { name: 'Events', icon: 'event', to: 'events' },
+  { name: 'Statutory Compliances & Site Map', icon: 'gavel', to: 'statutory-compliances' },
   { divider: true },
 
   // Section 3
@@ -51,7 +51,7 @@ const navLinks = [
 const rolePermissions = {
   'Super Admin': null,
   'Administrator': null,
-  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events'],
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances'],
   'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs'],
   'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs']
 };

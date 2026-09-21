@@ -1,0 +1,40 @@
+.contact-page-wrapper {
+  background-color: #f8fafc;
+  padding-top: 127px; /* Matches fixed header height */
+  padding-bottom: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 991px) {
+  .contact-page-wrapper {
+    padding-top: 70px;
+  }
+}
+
+/* Breadcrumb Navigation */
+.contact-breadcrumb-bar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.85rem 0;
+  font-size: 0.84rem;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+}
+
+.contact-breadcrumb-bar a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-breadcrumb-bar a:hover {
+  color: #1e3a8a;
+}
+
+.contact-breadcrumb-bar span.active {
+  color: #1e3a8a;
+  font-weight: 600;
+}

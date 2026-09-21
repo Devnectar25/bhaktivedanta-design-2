@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
 import { addDoctor, updateDoctor } from '../../../utils/api';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddDoctor = () => {
   const [searchParams] = useSearchParams();
@@ -42,7 +43,7 @@ const AddDoctor = () => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        alert("Image file size should be less than 5MB.");
+        showErrorAlert("File Too Large", "Image file size should be less than 5MB.");
         return;
       }
       const reader = new FileReader();
@@ -80,7 +81,7 @@ const AddDoctor = () => {
     e.preventDefault();
 
     if (!name || !qualifications) {
-      alert("Please fill in the required fields (Name, Qualifications).");
+      showErrorAlert("Required Fields Missing", "Please fill in the required fields (Name, Qualifications).");
       return;
     }
 
