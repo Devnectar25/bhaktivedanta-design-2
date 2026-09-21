@@ -7,7 +7,6 @@ const Doctors = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDept, setSelectedDept] = useState('All Departments');
   const [selectedExp, setSelectedExp] = useState('Any Years');
-  const [selectedAvail, setSelectedAvail] = useState('All Status');
 
   const navigate = useNavigate();
 
@@ -38,7 +37,6 @@ const Doctors = () => {
     setSearchTerm('');
     setSelectedDept('All Departments');
     setSelectedExp('Any Years');
-    setSelectedAvail('All Status');
   };
 
   // Helper filters
@@ -59,16 +57,14 @@ const Doctors = () => {
       expMatch = yrs >= 15;
     }
 
-    const availMatch = selectedAvail === 'All Status' || doc.availability === selectedAvail;
-
-    return nameMatch && deptMatch && expMatch && availMatch;
+    return nameMatch && deptMatch && expMatch;
   });
 
   // Calculate statistics dynamically
   const totalCount = doctors.length;
-  const availableToday = doctors.filter(d => d.availability === 'Available').length;
+  const departmentsCount = new Set(doctors.map(d => d.department).filter(Boolean)).size;
   const featuredCount = doctors.filter(d => d.featured === 'Yes').length;
-  const onLeaveCount = doctors.filter(d => d.availability === 'On Leave').length;
+  const seniorSpecialistsCount = doctors.filter(d => parseInt(d.experience) >= 10).length;
 
   return (
     <div className="space-y-6">
@@ -111,14 +107,14 @@ const Doctors = () => {
 
         <div className="bg-white p-5 rounded-xl border border-slate-200/50 shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Available Today</span>
-            <div className="w-9 h-9 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">check_circle</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Departments</span>
+            <div className="w-9 h-9 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
+              <span className="material-symbols-outlined text-xl">domain</span>
             </div>
           </div>
           <div>
-            <h3 className="font-bold text-2xl text-slate-800">{availableToday}</h3>
-            <p className="text-[10px] text-slate-500 font-bold mt-1">Active staff on duty</p>
+            <h3 className="font-bold text-2xl text-slate-800">{departmentsCount}</h3>
+            <p className="text-[10px] text-slate-500 font-bold mt-1">Clinical Specialities</p>
           </div>
         </div>
 
@@ -137,14 +133,14 @@ const Doctors = () => {
 
         <div className="bg-white p-5 rounded-xl border border-slate-200/50 shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">On Leave</span>
-            <div className="w-9 h-9 bg-red-50 text-red-500 rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">event_busy</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Senior Specialists</span>
+            <div className="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center">
+              <span className="material-symbols-outlined text-xl">workspace_premium</span>
             </div>
           </div>
           <div>
-            <h3 className="font-bold text-2xl text-slate-800">{onLeaveCount}</h3>
-            <p className="text-[10px] text-red-500 font-bold mt-1">Temporary absences</p>
+            <h3 className="font-bold text-2xl text-slate-800">{seniorSpecialistsCount}</h3>
+            <p className="text-[10px] text-emerald-600 font-bold mt-1">10+ Years Experience</p>
           </div>
         </div>
       </div>
@@ -154,7 +150,7 @@ const Doctors = () => {
         <div className="flex-1 min-w-[200px] space-y-1">
           <label className="text-[10px] font-bold text-slate-500 uppercase px-1">Search by Name</label>
           <input 
-            type="text"
+            type="text" 
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none"
             placeholder="Search Dr. Name..."
             value={searchTerm}
@@ -188,19 +184,6 @@ const Doctors = () => {
             <option>15+ Years</option>
           </select>
         </div>
-        <div className="w-[150px] space-y-1">
-          <label className="text-[10px] font-bold text-slate-500 uppercase px-1">Availability</label>
-          <select 
-            className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
-            value={selectedAvail}
-            onChange={(e) => setSelectedAvail(e.target.value)}
-          >
-            <option>All Status</option>
-            <option>Available</option>
-            <option>Busy</option>
-            <option>On Leave</option>
-          </select>
-        </div>
         <button 
           onClick={handleClearFilters}
           className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold transition-all"
@@ -217,16 +200,14 @@ const Doctors = () => {
               <th className="px-4 py-3">Doctor Info</th>
               <th className="px-4 py-3">Department</th>
               <th className="px-4 py-3">Experience</th>
-              <th className="px-4 py-3">Availability</th>
               <th className="px-4 py-3">Featured</th>
-              <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
             {filteredDoctors.length === 0 ? (
               <tr>
-                <td colSpan="7" className="px-4 py-8 text-center text-slate-400 font-medium">No matching doctors found.</td>
+                <td colSpan="5" className="px-4 py-8 text-center text-slate-400 font-medium">No matching doctors found.</td>
               </tr>
             ) : (
               filteredDoctors.map((doc) => (
@@ -254,17 +235,6 @@ const Doctors = () => {
                   </td>
                   <td className="px-4 py-3 font-medium text-slate-600">{doc.experience}</td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      doc.availability === 'Available' 
-                        ? 'bg-green-50 text-green-600 border border-green-100' 
-                        : doc.availability === 'Busy'
-                        ? 'bg-amber-50 text-amber-600 border border-amber-100'
-                        : 'bg-red-50 text-red-600 border border-red-100'
-                    }`}>
-                      {doc.availability}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
                     <button 
                       onClick={() => handleToggleFeatured(doc.id)}
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
@@ -275,12 +245,6 @@ const Doctors = () => {
                     >
                       {doc.featured}
                     </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full ${doc.status === 'Active' ? 'bg-green-500' : 'bg-slate-400'}`}></span>
-                      <span className="font-semibold text-slate-600">{doc.status}</span>
-                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-1.5">

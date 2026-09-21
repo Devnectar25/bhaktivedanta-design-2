@@ -122,3 +122,17 @@ button {
   background-color: white;
   color: var(--primary);
 }
+
+/* Global scrollbar hiding utilities */
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.hide-scrollbar,
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}

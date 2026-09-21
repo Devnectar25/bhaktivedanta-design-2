@@ -3,6 +3,7 @@ import {
   getCareerJobs, addCareerJob, updateCareerJob, deleteCareerJob,
   getCareerApplications, updateCareerApplication, deleteCareerApplication 
 } from '../../../utils/api';
+import Swal from 'sweetalert2';
 
 const defaultJobs = [
   {
@@ -177,6 +178,61 @@ const Careers = () => {
   const [appStatusFilter, setAppStatusFilter] = useState('All');
   const [appJobFilter, setAppJobFilter] = useState('All');
 
+  // Category Management State
+  const defaultCategories = [
+    'Consultant Vacancy',
+    'Nursing Vacancy',
+    'Paramedical Vacancy',
+    'Admin & Support Vacancy'
+  ];
+
+  const [customCategories, setCustomCategories] = useState(() => {
+    try {
+      const saved = localStorage.getItem('bhaktivedanta_career_categories');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
+  const [newCategoryInput, setNewCategoryInput] = useState('');
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [categoryModalInput, setCategoryModalInput] = useState('');
+  const [categoryModalError, setCategoryModalError] = useState('');
+
+  // Dynamically merged categories list (guaranteed unique, preserving order)
+  const allCategories = Array.from(new Set([
+    ...defaultCategories,
+    ...customCategories,
+    ...jobs.map(j => j.category).filter(Boolean)
+  ]));
+
+  const saveCustomCategory = (name) => {
+    const trimmed = (name || '').trim();
+    if (!trimmed) return null;
+    if (!allCategories.includes(trimmed)) {
+      const updated = [...customCategories, trimmed];
+      setCustomCategories(updated);
+      try {
+        localStorage.setItem('bhaktivedanta_career_categories', JSON.stringify(updated));
+      } catch (err) {
+        console.warn('Could not save category:', err);
+      }
+    }
+    return trimmed;
+  };
+
+  const removeCustomCategory = (catToRemove) => {
+    const updated = customCategories.filter(c => c !== catToRemove);
+    setCustomCategories(updated);
+    try {
+      localStorage.setItem('bhaktivedanta_career_categories', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Could not update categories:', err);
+    }
+  };
+
   // Modals
   const [showJobModal, setShowJobModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
@@ -195,6 +251,23 @@ const Careers = () => {
   const [selectedApp, setSelectedApp] = useState(null);
   const [appReviewStatus, setAppReviewStatus] = useState('');
   const [appReviewNotes, setAppReviewNotes] = useState('');
+
+  // Prevent background scrolling when any modal is open
+  useEffect(() => {
+    if (showJobModal || selectedApp || showCategoryModal) {
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
+    }
+  }, [showJobModal, selectedApp, showCategoryModal]);
 
   // Initial Data Fetching
   useEffect(() => {
@@ -251,7 +324,12 @@ const Careers = () => {
   const handleSaveJob = (e) => {
     e.preventDefault();
     if (!jobForm.title.trim()) {
-      alert('Please provide a job title / position name.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Job Title Required',
+        text: 'Please provide a job title / position name.',
+        confirmButtonColor: '#1e3a8a'
+      });
       return;
     }
 
@@ -262,7 +340,24 @@ const Careers = () => {
         setJobs(prev => prev.map(j => j.id === editingJob.id ? (res || updated) : j));
         setShowJobModal(false);
         setEditingJob(null);
-        alert('Job opening updated successfully!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Job Opening Updated!',
+          html: `
+            <div style="text-align: center; padding: 0.35rem 0;">
+              <p style="color: #475569; font-size: 0.95rem; margin-bottom: 0.6rem;">
+                <strong>${updated.title}</strong> has been updated successfully.
+              </p>
+              <span style="background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; padding: 4px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700;">
+                ${updated.category}
+              </span>
+            </div>
+          `,
+          confirmButtonText: 'Done',
+          confirmButtonColor: '#1e3a8a',
+          timer: 2500,
+          timerProgressBar: true
+        });
       });
     } else {
       // Create
@@ -274,15 +369,51 @@ const Careers = () => {
       addCareerJob(newJobObj, jobs).then(res => {
         setJobs(prev => [res || newJobObj, ...prev]);
         setShowJobModal(false);
-        alert('New job vacancy posted successfully!');
+        Swal.fire({
+          icon: 'success',
+          title: 'Job Vacancy Published!',
+          html: `
+            <div style="text-align: center; padding: 0.35rem 0;">
+              <p style="color: #475569; font-size: 0.95rem; margin-bottom: 0.6rem;">
+                <strong>${newJobObj.title}</strong> is now live on the hospital careers portal.
+              </p>
+              <span style="background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; padding: 4px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 700;">
+                ${newJobObj.category}
+              </span>
+            </div>
+          `,
+          confirmButtonText: 'Great!',
+          confirmButtonColor: '#1e3a8a',
+          timer: 3000,
+          timerProgressBar: true
+        });
       });
     }
   };
 
-  const handleDeleteJob = (id) => {
-    if (window.confirm('Are you sure you want to delete this job opening?')) {
+  const handleDeleteJob = async (id) => {
+    const targetJob = jobs.find(j => j.id === id);
+    const confirmResult = await Swal.fire({
+      title: 'Delete this job opening?',
+      text: targetJob ? `Are you sure you want to remove "${targetJob.title}"? This cannot be undone.` : 'Are you sure you want to delete this vacancy?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (confirmResult.isConfirmed) {
       deleteCareerJob(id, jobs).then(() => {
         setJobs(prev => prev.filter(j => j.id !== id));
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Job vacancy removed successfully.',
+          timer: 2000,
+          showConfirmButton: false
+        });
       });
     }
   };
@@ -317,14 +448,38 @@ const Careers = () => {
     updateCareerApplication(selectedApp.id, updated, applications).then(res => {
       setApplications(prev => prev.map(a => a.id === selectedApp.id ? (res || updated) : a));
       setSelectedApp(null);
-      alert('Candidate application updated successfully!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Evaluation Saved!',
+        text: `Candidate status updated to "${appReviewStatus}".`,
+        confirmButtonColor: '#1e3a8a',
+        timer: 2000,
+        showConfirmButton: false
+      });
     });
   };
 
-  const handleDeleteApp = (id) => {
-    if (window.confirm('Are you sure you want to remove this applicant record?')) {
+  const handleDeleteApp = async (id) => {
+    const confirmResult = await Swal.fire({
+      title: 'Remove Applicant Record?',
+      text: 'Are you sure you want to remove this applicant profile? This action cannot be undone.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Yes, Delete',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (confirmResult.isConfirmed) {
       deleteCareerApplication(id, applications).then(() => {
         setApplications(prev => prev.filter(a => a.id !== id));
+        Swal.fire({
+          icon: 'success',
+          title: 'Record Removed',
+          timer: 1800,
+          showConfirmButton: false
+        });
       });
     }
   };
@@ -384,13 +539,28 @@ const Careers = () => {
           </a>
 
           {activeTab === 'jobs' && (
-            <button 
-              onClick={handleOpenAddJob}
-              className="flex items-center gap-2 bg-[#1e3a8a] hover:bg-blue-900 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95"
-            >
-              <span className="material-symbols-outlined text-base">add_box</span>
-              <span>Post New Job Vacancy</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  setShowCategoryModal(true);
+                  setCategoryModalInput('');
+                  setCategoryModalError('');
+                }}
+                className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-lg text-xs font-bold transition-all border border-slate-200 shadow-sm"
+                title="Manage and create job vacancy categories"
+              >
+                <span className="material-symbols-outlined text-base text-slate-600">category</span>
+                <span>Add Category</span>
+              </button>
+
+              <button 
+                onClick={handleOpenAddJob}
+                className="flex items-center gap-2 bg-[#1e3a8a] hover:bg-blue-900 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95"
+              >
+                <span className="material-symbols-outlined text-base">add_box</span>
+                <span>Post New Job Vacancy</span>
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -463,18 +633,17 @@ const Careers = () => {
               />
             </div>
 
-            <div className="w-[180px] space-y-1">
+            <div className="w-[190px] space-y-1">
               <label className="text-[10px] font-bold text-slate-500 uppercase px-1">Category</label>
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="w-full bg-white border border-slate-200 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
               >
-                <option value="All">All Categories</option>
-                <option value="Consultant Vacancy">Consultant Vacancy</option>
-                <option value="Nursing Vacancy">Nursing Vacancy</option>
-                <option value="Paramedical Vacancy">Paramedical Vacancy</option>
-                <option value="Admin & Support Vacancy">Admin &amp; Support Vacancy</option>
+                <option value="All">All Categories ({allCategories.length})</option>
+                {allCategories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
               </select>
             </div>
 
@@ -698,13 +867,30 @@ const Careers = () => {
 
       {/* MODAL: POST / EDIT JOB */}
       {showJobModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100">
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overscroll-contain"
+          onClick={() => {
+            setShowJobModal(false);
+            setIsAddingNewCategory(false);
+            setNewCategoryInput('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto overscroll-contain hide-scrollbar"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 className="text-lg font-bold text-slate-800">
                 {editingJob ? 'Edit Job Opening' : 'Post New Job Vacancy'}
               </h3>
-              <button onClick={() => setShowJobModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button 
+                onClick={() => {
+                  setShowJobModal(false);
+                  setIsAddingNewCategory(false);
+                  setNewCategoryInput('');
+                }} 
+                className="text-slate-400 hover:text-slate-600"
+              >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -722,19 +908,83 @@ const Careers = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 items-start">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
-                  <select 
-                    value={jobForm.category}
-                    onChange={(e) => setJobForm({ ...jobForm, category: e.target.value })}
-                    className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none cursor-pointer"
-                  >
-                    <option value="Consultant Vacancy">Consultant Vacancy</option>
-                    <option value="Nursing Vacancy">Nursing Vacancy</option>
-                    <option value="Paramedical Vacancy">Paramedical Vacancy</option>
-                    <option value="Admin & Support Vacancy">Admin &amp; Support Vacancy</option>
-                  </select>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-xs font-bold text-slate-700">Category *</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNewCategory(!isAddingNewCategory);
+                        setNewCategoryInput('');
+                      }}
+                      className="text-[10px] font-bold text-[#1e3a8a] hover:text-blue-700 flex items-center gap-0.5"
+                    >
+                      <span className="material-symbols-outlined text-[12px]">
+                        {isAddingNewCategory ? 'list' : 'add_circle'}
+                      </span>
+                      <span>{isAddingNewCategory ? 'Choose Existing' : '+ Add New Category'}</span>
+                    </button>
+                  </div>
+
+                  {isAddingNewCategory ? (
+                    <div className="flex gap-1.5">
+                      <input 
+                        type="text" 
+                        placeholder="e.g. Dental Vacancy"
+                        value={newCategoryInput}
+                        onChange={(e) => setNewCategoryInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (newCategoryInput.trim()) {
+                              const saved = saveCustomCategory(newCategoryInput);
+                              setJobForm({ ...jobForm, category: saved });
+                              setIsAddingNewCategory(false);
+                              setNewCategoryInput('');
+                            }
+                          }
+                        }}
+                        className="flex-1 border border-blue-400 bg-blue-50/40 rounded-lg px-2.5 py-1.5 outline-none text-xs font-medium focus:border-blue-600"
+                        autoFocus
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          if (newCategoryInput.trim()) {
+                            const saved = saveCustomCategory(newCategoryInput);
+                            setJobForm({ ...jobForm, category: saved });
+                            setIsAddingNewCategory(false);
+                            setNewCategoryInput('');
+                          }
+                        }}
+                        disabled={!newCategoryInput.trim()}
+                        className="px-2.5 py-1.5 bg-[#1e3a8a] hover:bg-blue-900 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-sm"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  ) : (
+                    <select 
+                      value={jobForm.category}
+                      onChange={(e) => {
+                        if (e.target.value === '__ADD_NEW__') {
+                          setIsAddingNewCategory(true);
+                          setNewCategoryInput('');
+                        } else {
+                          setJobForm({ ...jobForm, category: e.target.value });
+                        }
+                      }}
+                      className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none cursor-pointer text-xs focus:border-blue-600"
+                    >
+                      {allCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                      <option value="__ADD_NEW__" className="text-blue-600 font-bold bg-blue-50">
+                        + Add New Category...
+                      </option>
+                    </select>
+                  )}
                 </div>
 
                 <div>
@@ -829,8 +1079,14 @@ const Careers = () => {
 
       {/* MODAL: REVIEW CANDIDATE APPLICATION */}
       {selectedApp && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overscroll-contain"
+          onClick={() => setSelectedApp(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto overscroll-contain hide-scrollbar"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <div>
                 <h3 className="text-lg font-bold text-slate-800">Candidate Profile: {selectedApp.fullName}</h3>
@@ -861,7 +1117,7 @@ const Careers = () => {
                   <p className="font-semibold text-slate-700 mt-0.5">{selectedApp.phone}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Qualification</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Highest Qualification</span>
                   <p className="font-semibold text-slate-700 mt-0.5">{selectedApp.qualification}</p>
                 </div>
                 <div>
@@ -870,34 +1126,26 @@ const Careers = () => {
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase font-bold">Current CTC</span>
-                  <p className="font-semibold text-slate-700 mt-0.5">{selectedApp.currentCtc || 'Not specified'}</p>
+                  <p className="font-bold text-slate-800 mt-0.5">{selectedApp.currentCtc || 'Not Disclosed'}</p>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase font-bold">Expected CTC</span>
-                  <p className="font-bold text-amber-600 mt-0.5">{selectedApp.expectedCtc || 'Not specified'}</p>
+                  <p className="font-bold text-[#1e3a8a] mt-0.5">{selectedApp.expectedCtc || 'Not Disclosed'}</p>
                 </div>
                 <div>
                   <span className="text-[10px] text-slate-400 uppercase font-bold">Notice Period</span>
-                  <p className="font-semibold text-slate-700 mt-0.5">{selectedApp.noticePeriod || 'Immediate'}</p>
+                  <p className="font-semibold text-slate-700 mt-0.5">{selectedApp.noticePeriod || '30 Days'}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">CV / Resume Document</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">CV / Document</span>
                   <p className="mt-0.5">
-                    {selectedApp.resumeUrl ? (
-                      <a 
-                        href={selectedApp.resumeUrl} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        className="text-blue-600 font-bold underline inline-flex items-center gap-1"
-                      >
-                        <span className="material-symbols-outlined text-xs">download</span>
-                        <span>{selectedApp.resumeName || 'Download CV'}</span>
-                      </a>
-                    ) : (
-                      <span className="text-slate-600 font-medium inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">description</span>
-                        <span>{selectedApp.resumeName || 'Attached in system'}</span>
+                    {selectedApp.resumeName ? (
+                      <span className="inline-flex items-center gap-1 text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                        <span className="material-symbols-outlined text-xs">attach_file</span>
+                        <span>{selectedApp.resumeName}</span>
                       </span>
+                    ) : (
+                      <span className="text-slate-400 italic">No document attached</span>
                     )}
                   </p>
                 </div>
@@ -905,20 +1153,22 @@ const Careers = () => {
 
               {/* Cover Note */}
               {selectedApp.coverNote && (
-                <div className="bg-amber-50/60 p-3 rounded-lg border border-amber-100">
-                  <span className="text-[10px] text-amber-900 uppercase font-bold">Candidate Statement / Cover Note</span>
-                  <p className="text-slate-700 mt-1">{selectedApp.coverNote}</p>
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block mb-1">Candidate Cover Note / Intro</span>
+                  <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-slate-700 leading-relaxed italic">
+                    "{selectedApp.coverNote}"
+                  </div>
                 </div>
               )}
 
-              {/* HR Status & Notes Form */}
-              <form onSubmit={handleSaveAppReview} className="space-y-3 pt-2 border-t border-slate-100">
+              {/* Status Update Form */}
+              <form onSubmit={handleUpdateAppStatus} className="space-y-3 pt-2 border-t border-slate-100">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Update Hiring Pipeline Status</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Application Pipeline Stage</label>
                   <select 
                     value={appReviewStatus}
                     onChange={(e) => setAppReviewStatus(e.target.value)}
-                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 outline-none"
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer focus:border-blue-600 bg-slate-50"
                   >
                     <option value="New">New Application</option>
                     <option value="Under Review">Under Review</option>
@@ -956,6 +1206,131 @@ const Careers = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: MANAGE & ADD CATEGORIES */}
+      {showCategoryModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 overscroll-contain"
+          onClick={() => {
+            setShowCategoryModal(false);
+            setCategoryModalError('');
+          }}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-100 overscroll-contain hide-scrollbar"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#1e3a8a]">category</span>
+                  <span>Manage Job Categories</span>
+                </h3>
+                <p className="text-xs text-slate-400">Add or manage job categories used across public and admin pages</p>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setCategoryModalError('');
+                }} 
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {/* Quick Add Form */}
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const trimmed = categoryModalInput.trim();
+              if (!trimmed) {
+                setCategoryModalError('Please enter a category name.');
+                return;
+              }
+              if (allCategories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+                setCategoryModalError('This category already exists.');
+                return;
+              }
+              saveCustomCategory(trimmed);
+              setCategoryModalInput('');
+              setCategoryModalError('');
+            }} className="space-y-2">
+              <label className="block text-xs font-bold text-slate-700">Create New Category</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text"
+                  placeholder="e.g. Surgical Vacancy, Dental Vacancy..."
+                  value={categoryModalInput}
+                  onChange={(e) => {
+                    setCategoryModalInput(e.target.value);
+                    if (categoryModalError) setCategoryModalError('');
+                  }}
+                  className="flex-1 border border-slate-300 focus:border-[#1e3a8a] rounded-lg px-3 py-2 outline-none text-xs"
+                  autoFocus
+                />
+                <button 
+                  type="submit"
+                  className="px-4 py-2 bg-[#1e3a8a] hover:bg-blue-900 text-white rounded-lg text-xs font-bold shadow-sm transition-all whitespace-nowrap"
+                >
+                  + Add
+                </button>
+              </div>
+              {categoryModalError && (
+                <p className="text-xs text-red-500 font-medium">{categoryModalError}</p>
+              )}
+            </form>
+
+            {/* Existing Categories List */}
+            <div className="pt-2">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                Active Categories ({allCategories.length})
+              </label>
+              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-xl hide-scrollbar">
+                {allCategories.map(cat => {
+                  const jobCount = jobs.filter(j => j.category === cat).length;
+                  const isCustom = customCategories.includes(cat);
+                  return (
+                    <div key={cat} className="flex justify-between items-center px-3.5 py-2.5 hover:bg-slate-50 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <span className="font-semibold text-slate-700">{cat}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          {jobCount} {jobCount === 1 ? 'Job' : 'Jobs'}
+                        </span>
+                        {isCustom && jobCount === 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeCustomCategory(cat)}
+                            className="text-slate-400 hover:text-red-600 p-0.5 rounded"
+                            title="Remove unused custom category"
+                          >
+                            <span className="material-symbols-outlined text-sm">delete</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button 
+                type="button" 
+                onClick={() => {
+                  setShowCategoryModal(false);
+                  setCategoryModalError('');
+                }}
+                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold"
+              >
+                Done
+              </button>
             </div>
           </div>
         </div>

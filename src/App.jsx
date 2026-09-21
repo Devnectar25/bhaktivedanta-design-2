@@ -17,6 +17,8 @@ import Footer from './components/Footer/Footer';
 import ServiceDetailModal from './components/ServiceDetailModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 import CareersPage from './pages/Careers/CareersPage';
+import DnbProgramPage from './pages/Education/DnbProgramPage';
+import EducationSectionPage from './pages/Education/EducationSectionPage';
 
 
 // Admin Layout & Pages
@@ -163,6 +165,19 @@ function App() {
       {/* Main Public Website Home */}
       <Route path="/" element={<MainSite />} />
       <Route path="/careers" element={<CareersPage />} />
+      <Route path="/education/dnb-program" element={<DnbProgramPage />} />
+      <Route path="/education-careers/dnb-program" element={<DnbProgramPage />} />
+      <Route path="/education/nursing-program" element={<EducationSectionPage />} />
+      <Route path="/education/cme" element={<EducationSectionPage />} />
+      <Route path="/education/cne" element={<EducationSectionPage />} />
+      <Route path="/education/spiritual-care-course" element={<EducationSectionPage />} />
+      <Route path="/education/clinical-research-course" element={<EducationSectionPage />} />
+      <Route path="/education/clinical-trials" element={<EducationSectionPage />} />
+      <Route path="/education/ethics-committee" element={<EducationSectionPage />} />
+      <Route path="/education/publications" element={<EducationSectionPage />} />
+      <Route path="/education/government-accreditation" element={<EducationSectionPage />} />
+      <Route path="/education/:sectionSlug" element={<EducationSectionPage />} />
+      <Route path="/education" element={<Navigate to="/education/dnb-program" replace />} />
 
 
       {/* Admin Login */}

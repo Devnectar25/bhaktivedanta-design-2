@@ -742,6 +742,54 @@
   letter-spacing: 0.5px;
 }
 
+/* Education & Medical Research Specific Mega Menu (Matching Screenshot 1) */
+.education-mega-menu-wrapper {
+  width: 580px !important;
+  padding: 1.5rem 1.85rem !important;
+  border-top: 3px solid #f58634 !important;
+}
+
+.education-mega-menu-wrapper .patients-mega-menu-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.education-mega-menu-wrapper .patients-column-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: none;
+  letter-spacing: normal;
+  border-bottom: none;
+  margin: 0 0 0.5rem 0;
+  padding: 4px 10px;
+}
+
+.education-mega-menu-wrapper .patients-column-title .dropdown-arrow-sub {
+  color: #64748b;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.education-mega-menu-wrapper .patients-column-link {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #334155;
+  padding: 6px 10px;
+  line-height: 1.4;
+  border-radius: 6px;
+  transition: color 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+}
+
+.education-mega-menu-wrapper .patients-column-link:hover {
+  color: #f58634;
+  background-color: #fff7ed;
+  transform: translateX(3px);
+}
+
+
 .patients-column-list,
 .dropdown-list {
   list-style: none;

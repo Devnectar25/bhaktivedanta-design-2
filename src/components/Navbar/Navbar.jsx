@@ -82,26 +82,26 @@ const menuStructure = [
   {
     name: 'Education & Medical Research',
     type: 'patients-mega-menu',
-    to: '#education',
+    to: '/education/dnb-program',
     columns: [
       {
-        title: 'Education',
         links: [
-          { name: 'DNB Program', href: '#education' },
-          { name: 'Nursing Program', href: '#education' },
-          { name: 'CME', href: '#education' },
-          { name: 'CNE', href: '#education' },
-          { name: 'Spiritual care Certificate Course', href: '#education' }
+          { name: 'DNB Program', to: '/education/dnb-program' },
+          { name: 'Nursing Program', to: '/education/nursing-program' },
+          { name: 'CME', to: '/education/cme' },
+          { name: 'CNE', to: '/education/cne' },
+          { name: 'Spiritual care Certificate Course', to: '/education/spiritual-care-course' }
         ]
       },
       {
         title: 'Medical Research',
+        hasArrow: true,
         links: [
-          { name: 'Clinical Research Course', href: '#education' },
-          { name: 'Clinical Trials', href: '#education' },
-          { name: 'Institutional Ethics Committee', href: '#education' },
-          { name: 'Publications', href: '#education' },
-          { name: 'Government Accreditation', href: '#education' }
+          { name: 'Clinical Research Course', to: '/education/clinical-research-course' },
+          { name: 'Clinical Trials', to: '/education/clinical-trials' },
+          { name: 'Institutional Ethics Committee', to: '/education/ethics-committee' },
+          { name: 'Publications', to: '/education/publications' },
+          { name: 'Government Accreditation', to: '/education/government-accreditation' }
         ]
       }
     ]
@@ -600,14 +600,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
-                      <a href={menuItem.to} className="nav-dropdown-trigger">
-                        {menuItem.name}
-                      </a>
+                      {menuItem.to && menuItem.to.startsWith('/') ? (
+                        <Link to={menuItem.to} className="nav-dropdown-trigger">
+                          {menuItem.name}
+                        </Link>
+                      ) : (
+                        <a href={menuItem.to} className="nav-dropdown-trigger">
+                          {menuItem.name}
+                        </a>
+                      )}
 
                       <div
-                        className="patients-mega-menu-wrapper animate-flyout-fade"
+                        className={`patients-mega-menu-wrapper animate-flyout-fade ${menuItem.name === 'Education & Medical Research' ? 'education-mega-menu-wrapper' : ''}`}
                         style={{
-                          width: menuItem.columns.length === 2 ? '580px' : '860px',
+                          width: menuItem.name === 'Education & Medical Research' ? '540px' : menuItem.columns.length === 2 ? '580px' : '860px',
                           left: 0
                         }}
                       >
@@ -617,7 +623,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                         >
                           {menuItem.columns.map((col, colIdx) => (
                             <div key={colIdx} className="patients-mega-menu-column">
-                              {col.title && <h4 className="patients-column-title">{col.title}</h4>}
+                              {col.title && (
+                                <h4 className={`patients-column-title ${col.hasArrow ? 'has-arrow-title' : ''}`}>
+                                  <span>{col.title}</span>
+                                  {col.hasArrow && (
+                                    <span className="material-symbols-outlined dropdown-arrow-sub" style={{ fontSize: '1.25rem', verticalAlign: 'middle', marginLeft: '4px' }}>
+                                      expand_more
+                                    </span>
+                                  )}
+                                </h4>
+                              )}
                               <ul className="patients-column-list">
                                 {col.links.map((link, lIdx) => {
                                   const isAppointment = link.name === 'Book Appointment';
@@ -626,7 +641,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                                   return (
                                     <li key={lIdx} className="patients-column-item">
-                                      {isAppointment ? (
+                                      {link.to ? (
+                                        <Link
+                                          to={link.to}
+                                          className="patients-column-link"
+                                          onClick={() => setOpenNavDropdown(null)}
+                                        >
+                                          {menuItem.name !== 'Education & Medical Research' && <span className="link-btn-bullet"></span>}
+                                          <span className="link-text">{link.name}</span>
+                                        </Link>
+                                      ) : isAppointment ? (
                                         <button
                                           type="button"
                                           className="patients-column-link"
@@ -854,12 +878,34 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
                         {menuItem.columns.map((col, colIdx) => (
                           <div key={colIdx} className="mobile-sub-category">
-                            {col.title && <span className="mobile-sub-category-title">{col.title}</span>}
+                            {col.title && (
+                              <span className="mobile-sub-category-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span>{col.title}</span>
+                                {col.hasArrow && (
+                                  <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
+                                    expand_more
+                                  </span>
+                                )}
+                              </span>
+                            )}
                             <div className="mobile-sub-links">
                               {col.links.map((link, lIdx) => {
                                 const isAppointment = link.name === 'Book Appointment';
                                 const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
                                 const isPatientGuide = menuItem.name === 'Patients Corner' && !isAppointment && !isHashLink;
+
+                                if (link.to) {
+                                  return (
+                                    <Link
+                                      key={lIdx}
+                                      to={link.to}
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
+                                    >
+                                      {link.name}
+                                    </Link>
+                                  );
+                                }
 
                                 if (isAppointment) {
                                   return (
