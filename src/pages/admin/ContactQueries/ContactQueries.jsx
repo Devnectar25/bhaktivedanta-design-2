@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { initialQueries, saveQueries } from '../../../data/adminState';
+import { getQueries, deleteQuery, updateQuery } from '../../../utils/api';
+import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
+import { initialQueries } from '../../../data/adminState';
 
 const ContactQueries = () => {
   const [queries, setQueries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('All Types');
   const [selectedStatus, setSelectedStatus] = useState('All Statuses');
@@ -11,30 +14,39 @@ const ContactQueries = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    initialQueries().then(data => setQueries(data));
-  }, []);
-
-  const saveAndSetQueries = (newQueries) => {
-    setQueries(newQueries);
-    saveQueries(newQueries);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this query?")) {
-      const updated = queries.filter(q => q.id !== id);
-      saveAndSetQueries(updated);
+  const loadQueries = async () => {
+    setLoading(true);
+    try {
+      const defaultData = await initialQueries();
+      const data = await getQueries(defaultData);
+      setQueries(Array.isArray(data) ? data : defaultData);
+    } catch (err) {
+      console.error("Failed to load contact queries:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleResolve = (id) => {
-    const updated = queries.map(q => {
-      if (q.id === id) {
-        return { ...q, status: 'Resolved' };
-      }
-      return q;
+  useEffect(() => {
+    loadQueries();
+  }, []);
+
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog('Delete Query?', 'Are you sure you want to delete this contact query?');
+    if (res.isConfirmed) {
+      deleteQuery(id, queries).then(() => {
+        setQueries(prev => prev.filter(q => q.id !== id));
+        showSuccessAlert('Deleted!', 'Contact query deleted successfully.');
+      });
+    }
+  };
+
+  const handleResolve = async (id) => {
+    const updated = { status: 'Resolved' };
+    updateQuery(id, updated, queries).then(() => {
+      setQueries(prev => prev.map(q => q.id === id ? { ...q, status: 'Resolved' } : q));
+      showSuccessAlert('Resolved!', 'Query marked as resolved.');
     });
-    saveAndSetQueries(updated);
   };
 
   const handleResetFilters = () => {

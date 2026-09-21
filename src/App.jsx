@@ -19,6 +19,7 @@ import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 import CareersPage from './pages/Careers/CareersPage';
 import DnbProgramPage from './pages/Education/DnbProgramPage';
 import EducationSectionPage from './pages/Education/EducationSectionPage';
+import ContactPage from './pages/Contact/ContactPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -34,6 +35,7 @@ import Specialities from './pages/admin/Specialities/Specialities';
 import HealthPackages from './pages/admin/HealthPackages/HealthPackages';
 import AdminTestimonials from './pages/admin/Testimonials/Testimonials';
 import News from './pages/admin/News/News';
+import Blogs from './pages/admin/Blogs/Blogs';
 import Gallery from './pages/admin/Gallery/Gallery';
 import Settings from './pages/admin/Settings/Settings';
 import HelpDesk from './pages/admin/HelpDesk/HelpDesk';
@@ -59,6 +61,7 @@ import AddQuery from './pages/admin/ContactQueries/AddQuery';
 import AddSubAdmin from './pages/admin/AdminUsers/AddSubAdmin';
 import AddAdminUser from './pages/admin/AdminUsers/AddAdminUser';
 import AddPatientGuide from './pages/admin/PatientsCorner/AddPatientGuide';
+import AddBlog from './pages/admin/Blogs/AddBlog';
 
 // Public Layout & Spiritual Care Pages
 import PublicLayout from './components/PublicLayout/PublicLayout';
@@ -98,6 +101,7 @@ function App() {
         <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
         <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
         <Route path="/careers" element={<CareersPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Route>
 
       {/* Education & Medical Research Dedicated Routes */}
@@ -132,6 +136,7 @@ function App() {
         <Route path="health-packages" element={<HealthPackages />} />
         <Route path="testimonials" element={<AdminTestimonials />} />
         <Route path="news" element={<News />} />
+        <Route path="blogs" element={<Blogs />} />
         <Route path="events" element={<Events />} />
         <Route path="gallery" element={<Gallery />} />
         
@@ -176,6 +181,10 @@ function App() {
         <Route path="edit-patient-guide/:id" element={<AddPatientGuide mode="edit" />} />
         <Route path="patients-corner/add" element={<AddPatientGuide mode="add" />} />
         <Route path="patients-corner/edit/:id" element={<AddPatientGuide mode="edit" />} />
+        <Route path="add-blog" element={<AddBlog mode="add" />} />
+        <Route path="edit-blog/:id" element={<AddBlog mode="edit" />} />
+        <Route path="blogs/add" element={<AddBlog mode="add" />} />
+        <Route path="blogs/edit/:id" element={<AddBlog mode="edit" />} />
       </Route>
 
       {/* Fallback Catch-All */}

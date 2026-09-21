@@ -57,7 +57,10 @@ const WhyChooseUs = () => {
           </div>
           
           <div className="why-action-wrap">
-            <a href="#about" className="btn-why-readmore">Read More</a>
+            <a href="#about" className="btn-why-readmore">
+              <span>Read More</span>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
           </div>
         </div>
 

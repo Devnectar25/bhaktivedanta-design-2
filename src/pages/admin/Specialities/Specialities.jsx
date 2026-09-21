@@ -194,11 +194,6 @@ const Specialities = () => {
                             <span className="text-[10px] text-slate-500 font-semibold">
                               Category: {cat ? cat.name : 'Unassigned'}
                             </span>
-                            <span className="text-slate-300">•</span>
-                            <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200" title={`Created/Updated by ${adminTag}`}>
-                              <span className="material-symbols-outlined text-[12px] text-blue-600">badge</span>
-                              <span>Admin ID: {spec.adminId || 'ADM-001'}</span>
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -313,10 +308,6 @@ const Specialities = () => {
                         <p className="font-bold text-slate-800 text-sm leading-snug">{cat.name}</p>
                         <div className="flex flex-wrap items-center gap-2 mt-0.5">
                           <p className="text-[10px] text-slate-400 font-semibold">Order: {cat.order} • {count} Specialities</p>
-                          <span className="text-slate-300">•</span>
-                          <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded text-[9px] font-bold border border-slate-200" title={`Admin: ${cat.adminId || 'ADM-001'}`}>
-                            <span>Admin ID: {cat.adminId || 'ADM-001'}</span>
-                          </span>
                         </div>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${

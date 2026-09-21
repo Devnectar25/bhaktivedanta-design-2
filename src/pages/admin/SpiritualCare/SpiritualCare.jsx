@@ -203,7 +203,7 @@ export default function SpiritualCare() {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Header Card */}
-      <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg border border-slate-800">
+      <div className="bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#1e3a8a] text-white p-6 rounded-2xl shadow-xl border border-blue-400/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 border border-orange-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
@@ -211,7 +211,7 @@ export default function SpiritualCare() {
               <span>Spiritual Care Administration</span>
             </div>
             <h1 className="text-2xl font-bold font-serif">Dynamic Spiritual Care Manager</h1>
-            <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+            <p className="text-xs text-blue-100/80 mt-1 max-w-2xl">
               Manage public-facing Spiritual Care sections dynamically. Add new sub-tabs, courses, retreat activities, or research publications without touching code.
             </p>
           </div>
@@ -239,7 +239,7 @@ export default function SpiritualCare() {
         </div>
 
         {/* Dynamic Section Tabs Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 mt-6 pt-6 border-t border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 mt-6 pt-6 border-t border-white/10">
           {sections.map((sec) => {
             const isActive = activeTabId === sec.id;
             return (
@@ -250,17 +250,17 @@ export default function SpiritualCare() {
                 className={`p-3.5 rounded-xl text-left transition-all border flex items-start gap-3 relative group ${
                   isActive
                     ? 'bg-orange-500 text-white border-orange-400 shadow-md shadow-orange-500/20'
-                    : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 border-slate-700/60 hover:border-slate-600'
+                    : 'bg-white/10 hover:bg-white/20 text-blue-100 border-white/15 hover:border-white/30'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-slate-700 text-orange-400'
+                  isActive ? 'bg-white/20 text-white' : 'bg-white/10 text-amber-400'
                 }`}>
                   <span className="material-symbols-outlined text-lg">{sec.icon || 'spa'}</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <span className="font-bold text-xs block truncate">{sec.title}</span>
-                  <span className={`text-[10px] block truncate mt-0.5 ${isActive ? 'text-white/80' : 'text-slate-400'}`}>
+                  <span className={`text-[10px] block truncate mt-0.5 ${isActive ? 'text-white/80' : 'text-blue-200/70'}`}>
                     {sec.layout ? `Layout: ${sec.layout}` : (sec.description || '')}
                   </span>
                 </div>
@@ -272,14 +272,14 @@ export default function SpiritualCare() {
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="p-3.5 rounded-xl text-left transition-all border border-dashed border-slate-700 bg-slate-800/40 hover:bg-slate-800/80 text-slate-400 hover:text-white flex items-center gap-3 cursor-pointer"
+            className="p-3.5 rounded-xl text-left transition-all border border-dashed border-white/20 bg-white/5 hover:bg-white/15 text-blue-200 hover:text-white flex items-center gap-3 cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 text-slate-400 group-hover:text-white">
+            <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 text-blue-200 group-hover:text-white">
               <Plus size={16} />
             </div>
             <div className="min-w-0">
               <span className="font-bold text-xs block">+ Add Sub-Tab</span>
-              <span className="text-[10px] block text-slate-500">Create new section</span>
+              <span className="text-[10px] block text-blue-200/60">Create new section</span>
             </div>
           </button>
         </div>
@@ -310,7 +310,7 @@ export default function SpiritualCare() {
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#1e3a8a] to-[#2563eb] text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-orange-400">add_circle</span>
                 <h3 className="font-serif font-bold text-lg">Add New Spiritual Care Section</h3>

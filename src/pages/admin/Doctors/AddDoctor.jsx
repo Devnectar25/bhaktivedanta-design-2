@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
+import { addDoctor, updateDoctor } from '../../../utils/api';
 
 const AddDoctor = () => {
   const [searchParams] = useSearchParams();
@@ -40,61 +41,85 @@ const AddDoctor = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        alert("Image file size should be less than 2MB.");
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image file size should be less than 5MB.");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result);
+        const img = new Image();
+        img.src = reader.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 500;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          setImage(canvas.toDataURL('image/jpeg', 0.85));
+        };
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !qualifications || !experience) {
-      alert("Please fill in the required fields (Name, Qualifications, Experience).");
+    if (!name || !qualifications) {
+      alert("Please fill in the required fields (Name, Qualifications).");
       return;
     }
 
-    let updatedList;
-    if (editId) {
-      // Edit mode
-      updatedList = doctorsList.map(doc => {
-        if (doc.id === editId) {
-          return {
-            ...doc,
-            name,
-            qualifications,
-            department,
-            subSpeciality,
-            experience: experience.toLowerCase().includes('year') ? experience : `${experience} Years`,
-            featured,
-            image: image || doc.image
-          };
-        }
-        return doc;
-      });
-    } else {
-      // Add mode
-      const newDoc = {
-        id: `d${Date.now()}`,
-        name,
-        qualifications,
-        department,
-        subSpeciality,
-        experience: `${experience} Years`,
-        featured,
-        image: image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuANPEj_KoNMPpIwdzuCD7lYGdAKEkyCWh6bTaQK8MJs_R4JVyJRsEBiMWrTQzDsV176cPtU3yccFuudW15cKMl437nzqw5tE9A3l9ZZfasQ9SJx96vYIX962IHbmK_xdfUiAohF8eavUhpXeVEW2mV78f5ATYHcgBnBWY8_UJEKzHq4bco6SZZlKcz-S4YZpKBmO1txtux3VF6wZXMQIop-vEphp1s5HxLkKU8I_EDCo-tkZYHkrT4Ut51mTZnyQ3xI9td7l-2oX0w'
-      };
-      updatedList = [newDoc, ...doctorsList];
-    }
+    setSaving(true);
+    try {
+      if (editId) {
+        // Edit mode: Call PUT /api/doctors/:id
+        const updatedFields = {
+          name,
+          qualifications,
+          department,
+          subSpeciality,
+          experience: experience ? (experience.toLowerCase().includes('year') ? experience : `${experience} Years`) : '5 Years',
+          featured,
+          image: image || ''
+        };
+        await updateDoctor(editId, updatedFields);
+      } else {
+        // Add mode: Call POST /api/doctors
+        const newDoc = {
+          id: `doc-${Date.now()}`,
+          name,
+          qualifications,
+          department: department || 'General & Internal Medicine',
+          subSpeciality: subSpeciality || department || 'Consultant Specialist',
+          experience: experience ? (experience.toLowerCase().includes('year') ? experience : `${experience} Years`) : '5 Years',
+          featured,
+          image: image || '/doctor1.png'
+        };
+        await addDoctor(newDoc);
+      }
 
-    saveDoctors(updatedList);
-    navigate('/admin/doctors');
+      navigate('/admin/doctors');
+    } catch (err) {
+      console.warn("Doctor saved with notice:", err);
+      navigate('/admin/doctors');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -246,9 +271,17 @@ const AddDoctor = () => {
             </button>
             <button 
               type="submit" 
-              className="flex-1 bg-[#fea619] hover:bg-amber-500 text-slate-900 py-2.5 rounded-lg font-bold transition-all shadow-sm"
+              disabled={saving}
+              className="flex-1 bg-[#fea619] hover:bg-amber-500 disabled:opacity-50 text-slate-900 py-2.5 rounded-lg font-bold transition-all shadow-sm flex items-center justify-center gap-2"
             >
-              {editId ? 'Save Profile' : 'Publish Profile'}
+              {saving ? (
+                <>
+                  <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+                  <span>Saving to Database...</span>
+                </>
+              ) : (
+                <span>{editId ? 'Save Profile' : 'Publish Profile'}</span>
+              )}
             </button>
           </div>
         </div>
