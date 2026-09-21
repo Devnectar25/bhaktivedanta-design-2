@@ -67,7 +67,7 @@ export default function EducationalProgrammesManager() {
       setAlertModal({
         isOpen: true,
         title: 'Save Failed',
-        message: 'Unable to save programmes. Please try again.',
+        message: err.message || 'Unable to save programmes. Please try again.',
         type: 'error'
       });
     }

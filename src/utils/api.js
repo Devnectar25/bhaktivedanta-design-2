@@ -57,6 +57,7 @@ export async function apiGet(path, localStorageKey, fallbackData) {
  * General wrapper to handle mutation operations (POST/PUT/DELETE) with LocalStorage fallback.
  */
 export async function apiMutation(path, method, body, localStorageKey, updateLocalFn) {
+  let isNetworkError = false;
   try {
     const options = {
       method,
@@ -83,19 +84,32 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
         }
       }
       return serverResult;
+    } else {
+      const errorJson = await res.json().catch(() => null);
+      const errorMessage = errorJson?.error || errorJson?.message || `Request failed with status ${res.status}`;
+      const err = new Error(errorMessage);
+      err.status = res.status;
+      err.data = errorJson;
+      throw err;
     }
   } catch (err) {
-    console.warn(`[API] Mutation ${method} ${path} failed. Applying changes to localStorage fallback.`, err);
+    if (err.status) {
+      // Re-throw explicit server error so UI can display backend validation message
+      throw err;
+    }
+
+    console.warn(`[API] Mutation ${method} ${path} network failure. Applying changes to localStorage fallback.`, err);
+    isNetworkError = true;
   }
 
   if (updateLocalFn && localStorageKey) {
     try {
       const local = localStorage.getItem(localStorageKey);
-      let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : [];
-      if (!Array.isArray(localData)) localData = [];
+      let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : undefined;
       const newLocalData = updateLocalFn(localData, body);
       localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
       window.dispatchEvent(new Event('storage'));
+      return newLocalData || body;
     } catch (lErr) {
       console.warn("[API] LocalStorage fallback sync error:", lErr);
     }

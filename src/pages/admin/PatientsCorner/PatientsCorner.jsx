@@ -10,7 +10,7 @@ const PatientsCorner = () => {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedStatus, setSelectedStatus] = useState('All Status');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const ITEMS_PER_PAGE = 10;
 
   // Custom Delete Confirmation Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -110,9 +110,9 @@ const PatientsCorner = () => {
     return matchesSearch && matchesStatus && matchesCat;
   });
 
-  const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedGuides = filtered.slice(startIndex, endIndex);
 
   useEffect(() => {
@@ -173,10 +173,15 @@ const PatientsCorner = () => {
             onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
             className="border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 cursor-pointer"
           >
-            <option value="All Categories">All Categories</option>
-            {categories.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
+            <option value="All Categories">All Categories ({guides.length})</option>
+            {categories.map(c => {
+              const count = guides.filter(g => g.categoryId === c.id || g.category_id === c.id).length;
+              return (
+                <option key={c.id} value={c.id}>
+                  {c.name} ({count})
+                </option>
+              );
+            })}
           </select>
 
           {/* Status Filter */}
@@ -186,8 +191,8 @@ const PatientsCorner = () => {
             className="border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 bg-white focus:outline-none focus:border-amber-500 cursor-pointer"
           >
             <option value="All Status">All Status</option>
-            <option value="Published">Published</option>
-            <option value="Draft">Draft</option>
+            <option value="Published">Published ({guides.filter(g => g.status === 'Published').length})</option>
+            <option value="Draft">Draft ({guides.filter(g => g.status !== 'Published').length})</option>
           </select>
         </div>
 
@@ -202,51 +207,54 @@ const PatientsCorner = () => {
         )}
       </div>
 
-      {/* Guides Table */}
-      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+      {/* Guides Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+              <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
                 <th className="px-5 py-3.5">Guide Title</th>
                 <th className="px-4 py-3.5">Category</th>
-                <th className="px-4 py-3.5 text-center">Tabs & Sections</th>
-                <th className="px-4 py-3.5 text-center">Display Order</th>
+                <th className="px-4 py-3.5 text-center">Structure</th>
+                <th className="px-4 py-3.5 text-center">Order</th>
                 <th className="px-4 py-3.5 text-center">Status</th>
                 <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
               {paginatedGuides.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-5 py-12 text-center text-slate-400">
-                    <span className="material-symbols-outlined text-4xl mb-2 text-slate-300 block">
-                      menu_book
-                    </span>
-                    <p className="font-semibold">No patient guides found matching criteria.</p>
+                    <span className="material-symbols-outlined text-4xl mb-2 text-slate-300">search_off</span>
+                    <p className="font-bold text-slate-600 text-sm">No Patient Guides found</p>
+                    <p className="text-xs text-slate-400 mt-1">Try changing your search term or filter parameters.</p>
                   </td>
                 </tr>
               ) : (
-                paginatedGuides.map(g => {
+                paginatedGuides.map((g) => {
                   const isPublished = g.status === 'Published';
-                  const tabCount = g.tabs?.length || 0;
-                  const totalSections = (g.tabs || []).reduce((acc, t) => acc + (t.sections?.length || 0), 0);
+                  const tabCount = Array.isArray(g.tabs) ? g.tabs.length : 0;
+                  const totalSections = (g.tabs || []).reduce((acc, t) => acc + (Array.isArray(t.sections) ? t.sections.length : 0), 0);
 
                   return (
-                    <tr key={g.id} className="hover:bg-slate-50/70 transition-colors">
-                      {/* Title & Short Description */}
+                    <tr key={g.id} className="hover:bg-slate-50/80 transition-colors">
+                      {/* Title & Info */}
                       <td className="px-5 py-3.5">
-                        <div className="font-bold text-slate-800 text-sm">{g.title}</div>
-                        {g.shortDescription && (
-                          <div className="text-slate-400 text-[11px] line-clamp-1 max-w-sm mt-0.5">
-                            {g.shortDescription}
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs border border-amber-200/50">
+                            <span className="material-symbols-outlined text-base">article</span>
                           </div>
-                        )}
+                          <div>
+                            <p className="font-bold text-slate-800 text-xs leading-snug">{g.title || 'Untitled Guide'}</p>
+                            <p className="text-[11px] text-slate-400 font-mono mt-0.5">/{g.slug || g.id}</p>
+                          </div>
+                        </div>
                       </td>
 
                       {/* Category */}
                       <td className="px-4 py-3.5">
-                        <span className="bg-blue-50 text-blue-700 font-semibold px-2.5 py-1 rounded-md border border-blue-100/80 inline-block text-[11px]">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                           {g.category || 'Inpatient Guide'}
                         </span>
                       </td>
@@ -312,30 +320,54 @@ const PatientsCorner = () => {
         </div>
 
         {/* Pagination Footer */}
-        {filtered.length > itemsPerPage && (
-          <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
-            <span>Showing {startIndex + 1} to {Math.min(endIndex, filtered.length)} of {filtered.length} guides</span>
-            <div className="flex items-center gap-1">
+        <div className="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <span>
+            Showing <span className="font-bold text-slate-700">{filtered.length === 0 ? 0 : startIndex + 1}</span> to{' '}
+            <span className="font-bold text-slate-700">{Math.min(endIndex, filtered.length)}</span> of{' '}
+            <span className="font-bold text-slate-700">{filtered.length}</span> guides
+          </span>
+
+          {totalPages > 1 && (
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-1"
               >
-                Previous
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+                <span>Previous</span>
               </button>
-              <span className="px-2 font-bold text-slate-700">{currentPage} / {totalPages}</span>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-8 h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
+                      currentPage === pageNum
+                        ? 'bg-[#fea619] text-slate-900 shadow-sm font-extrabold'
+                        : 'border border-slate-200 bg-white hover:bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-2.5 py-1 rounded border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition-colors flex items-center gap-1"
               >
-                Next
+                <span>Next</span>
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}

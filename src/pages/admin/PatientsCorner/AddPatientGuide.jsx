@@ -252,13 +252,14 @@ const AddPatientGuide = ({ mode = 'add' }) => {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [allGuides, setAllGuides] = useState([]);
 
   // Form State
   const [guideData, setGuideData] = useState({
     id: '',
     title: '',
-    categoryId: 'cat-inpatient',
-    category: 'Inpatient Guide',
+    categoryId: 'pc-cat-guide',
+    category: 'Patient Guide',
     slug: '',
     shortDescription: '',
     bannerImage: '',
@@ -275,19 +276,22 @@ const AddPatientGuide = ({ mode = 'add' }) => {
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null, itemName: '' });
 
   // Load Data
-  useEffect(() => {
+  const loadFormData = () => {
     getPatientCornerState(defaultPatientCornerState).then((state) => {
       const cats = state?.categories || defaultPatientCornerState.categories || [];
+      const gList = state?.guides || defaultPatientCornerState.guides || [];
       setCategories(cats);
+      setAllGuides(gList);
 
       if (isEdit && id) {
-        const found = (state?.guides || []).find(g => g.id === id || g.slug === id);
+        const found = gList.find(g => g.id === id || g.slug === id);
         if (found) {
-          setGuideData({
+          setGuideData(prev => ({
+            ...prev,
             id: found.id,
             title: found.title || '',
-            categoryId: found.categoryId || (cats[0]?.id || 'cat-inpatient'),
-            category: found.category || (cats[0]?.name || 'Inpatient Guide'),
+            categoryId: found.categoryId || (cats[0]?.id || 'pc-cat-guide'),
+            category: found.category || (cats[0]?.name || 'Patient Guide'),
             slug: found.slug || '',
             shortDescription: found.shortDescription || '',
             bannerImage: found.bannerImage || '',
@@ -307,7 +311,7 @@ const AddPatientGuide = ({ mode = 'add' }) => {
                   : [createDefaultSection('rich_text', `${t.title || 'Tab'} Content`)]
               }))
               : [createDefaultTab('Overview')]
-          });
+          }));
         } else {
           setAlertState({
             isOpen: true,
@@ -318,25 +322,55 @@ const AddPatientGuide = ({ mode = 'add' }) => {
         }
         setLoading(false);
       } else {
-        // Initialize Add Form
-        setGuideData({
-          id: `pc-${Date.now()}`,
-          title: '',
-          categoryId: cats[0]?.id || 'cat-inpatient',
-          category: cats[0]?.name || 'Inpatient Guide',
-          slug: '',
-          shortDescription: '',
-          bannerImage: '',
-          status: 'Published',
-          displayOrder: (state?.guides?.length || 0) + 1,
-          tabs: [
-            createDefaultTab('Overview'),
-            createDefaultTab('Guidelines')
-          ]
+        // Find first category with available slot
+        const availableCat = cats.find(c => {
+          const count = gList.filter(g => g.categoryId === c.id || g.category_id === c.id).length;
+          const maxLimit = c.max_items !== undefined ? c.max_items : (c.maxItems !== undefined ? c.maxItems : 6);
+          return count < maxLimit;
+        }) || cats[0];
+
+        // Initialize Add Form if title is empty
+        setGuideData(prev => {
+          if (prev.title) {
+            return { ...prev, categoryId: prev.categoryId || availableCat?.id || 'pc-cat-guide' };
+          }
+          return {
+            id: `pc-${Date.now()}`,
+            title: '',
+            categoryId: availableCat?.id || 'pc-cat-guide',
+            category: availableCat?.name || 'Patient Guide',
+            slug: '',
+            shortDescription: '',
+            bannerImage: '',
+            status: 'Published',
+            displayOrder: (gList.length || 0) + 1,
+            tabs: [
+              createDefaultTab('Overview'),
+              createDefaultTab('Guidelines')
+            ]
+          };
         });
         setLoading(false);
       }
     });
+  };
+
+  useEffect(() => {
+    loadFormData();
+
+    const handleSync = () => {
+      loadFormData();
+    };
+
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('focus', handleSync);
+
+    return () => {
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
   }, [id, isEdit]);
 
   // Handle Basic Field Updates
@@ -515,6 +549,21 @@ const AddPatientGuide = ({ mode = 'add' }) => {
       }
     }
 
+    // Capacity validation
+    const targetCat = categories.find(c => c.id === guideData.categoryId);
+    const maxLimit = targetCat?.max_items !== undefined ? targetCat.max_items : (targetCat?.maxItems !== undefined ? targetCat.maxItems : 6);
+    const existingCount = allGuides.filter(g => (g.categoryId === guideData.categoryId || g.category_id === guideData.categoryId) && g.id !== guideData.id).length;
+
+    if (existingCount >= maxLimit) {
+      setAlertState({
+        isOpen: true,
+        title: 'Category Limit Reached',
+        message: `Is category me already ${maxLimit} guides hain (maximum limit). Pehle koi guide hatao ya dusri category chuno.`,
+        type: 'error'
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       if (isEdit) {
@@ -643,12 +692,25 @@ const AddPatientGuide = ({ mode = 'add' }) => {
             <label className="font-bold text-slate-700">Category <span className="text-red-500">*</span></label>
             <select
               value={guideData.categoryId}
-              onChange={(e) => handleFieldChange('categoryId', e.target.value)}
+              onChange={(e) => {
+                const selectedCat = categories.find(c => c.id === e.target.value);
+                handleFieldChange('categoryId', e.target.value);
+                if (selectedCat) {
+                  handleFieldChange('category', selectedCat.name);
+                }
+              }}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-800 outline-none focus:border-amber-500 font-medium bg-white cursor-pointer"
             >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
+              {categories.map((c) => {
+                const count = allGuides.filter(g => (g.categoryId === c.id || g.category_id === c.id) && g.id !== guideData.id).length;
+                const maxLimit = c.max_items !== undefined ? c.max_items : (c.maxItems !== undefined ? c.maxItems : 6);
+                const isFull = isEdit ? (count >= maxLimit && c.id !== guideData.categoryId) : (count >= maxLimit);
+                return (
+                  <option key={c.id} value={c.id} disabled={isFull} className={isFull ? 'text-slate-400 bg-slate-100' : ''}>
+                    {c.name} ({count}/{maxLimit} guides{isFull ? ' - Full' : ''})
+                  </option>
+                );
+              })}
             </select>
           </div>
 

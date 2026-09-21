@@ -53,7 +53,7 @@ export default function SpiritualRetreatsManager() {
       setAlertModal({
         isOpen: true,
         title: 'Save Failed',
-        message: 'Unable to save retreats data.',
+        message: err.message || 'Unable to save retreats data.',
         type: 'error'
       });
     }
