@@ -24,7 +24,8 @@ import {
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
-import { getEducationResearchState, submitDnbInquiry } from '../../utils/api';
+import { dnbProgramData } from '../../data/dnbProgramData';
+import { getEducationResearchState, submitDnbInquiry, getEducationPrograms } from '../../utils/api';
 import Swal from 'sweetalert2';
 import './EducationSectionPage.css';
 
@@ -50,10 +51,11 @@ const EducationSectionPage = () => {
 
   // Determine section key
   const pathSegment = sectionSlug || location.pathname.split('/').filter(Boolean).pop() || 'nursing-program';
-  const sectionKey = SECTION_KEY_MAP[pathSegment] || 'nursingProgram';
+  const sectionKey = SECTION_KEY_MAP[pathSegment] || null;
 
-  const [eduState, setEduState] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [eduState, setEduState] = useState(dnbProgramData);
+  const [customProgramsList, setCustomProgramsList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [shareFeedback, setShareFeedback] = useState(false);
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
@@ -84,9 +86,15 @@ const EducationSectionPage = () => {
 
   const loadData = async () => {
     try {
-      const data = await getEducationResearchState(null);
+      const [data, progs] = await Promise.all([
+        getEducationResearchState(null),
+        getEducationPrograms([])
+      ]);
       if (data) {
         setEduState(data);
+      }
+      if (progs && Array.isArray(progs)) {
+        setCustomProgramsList(progs);
       }
     } catch (err) {
       console.warn('Error loading education research state:', err);
@@ -95,7 +103,17 @@ const EducationSectionPage = () => {
     }
   };
 
-  const currentSection = eduState?.[sectionKey] || null;
+  const allCustomPrograms = [
+    ...(eduState?.customPrograms || []),
+    ...customProgramsList
+  ];
+  const customProgram = allCustomPrograms.find(
+    (p) => p.slug === pathSegment || p.id === pathSegment
+  );
+  const isCustomProgram = Boolean(customProgram && !SECTION_KEY_MAP[pathSegment]);
+  const currentSection = isCustomProgram
+    ? customProgram
+    : (sectionKey ? eduState?.[sectionKey] : null) || customProgram || eduState?.nursingProgram;
 
   const handleShare = () => {
     if (navigator.share) {
@@ -166,6 +184,81 @@ const EducationSectionPage = () => {
             <Share2 size={13} />
             <span>Share</span>
           </button>
+        </div>
+      </div>
+
+      {/* Education Navigation Tabs */}
+      <div className="edu-nav-tabs-bar">
+        <div className="edu-nav-tabs-container">
+          <Link
+            to="/education/dnb-program"
+            className="edu-nav-tab"
+          >
+            DNB Program
+          </Link>
+          <Link
+            to="/education/nursing-program"
+            className={`edu-nav-tab ${pathSegment === 'nursing-program' || pathSegment === 'nursing' ? 'active' : ''}`}
+          >
+            Nursing School
+          </Link>
+          <Link
+            to="/education/cme"
+            className={`edu-nav-tab ${pathSegment === 'cme' ? 'active' : ''}`}
+          >
+            CME
+          </Link>
+          <Link
+            to="/education/cne"
+            className={`edu-nav-tab ${pathSegment === 'cne' ? 'active' : ''}`}
+          >
+            CNE
+          </Link>
+          <Link
+            to="/education/spiritual-care-course"
+            className={`edu-nav-tab ${pathSegment === 'spiritual-care-course' || pathSegment === 'spiritual-care' ? 'active' : ''}`}
+          >
+            Spiritual Care
+          </Link>
+          <Link
+            to="/education/clinical-research-course"
+            className={`edu-nav-tab ${pathSegment === 'clinical-research-course' || pathSegment === 'pgcr' ? 'active' : ''}`}
+          >
+            Clinical Research (PGCR)
+          </Link>
+          <Link
+            to="/education/clinical-trials"
+            className={`edu-nav-tab ${pathSegment === 'clinical-trials' ? 'active' : ''}`}
+          >
+            Clinical Trials
+          </Link>
+          <Link
+            to="/education/ethics-committee"
+            className={`edu-nav-tab ${pathSegment === 'ethics-committee' ? 'active' : ''}`}
+          >
+            Ethics Committee
+          </Link>
+          <Link
+            to="/education/publications"
+            className={`edu-nav-tab ${pathSegment === 'publications' ? 'active' : ''}`}
+          >
+            Publications
+          </Link>
+          <Link
+            to="/education/government-accreditation"
+            className={`edu-nav-tab ${pathSegment === 'government-accreditation' ? 'active' : ''}`}
+          >
+            Accreditations
+          </Link>
+          {allCustomPrograms.map((p) => (
+            <Link
+              key={p.id || p.slug}
+              to={`/education/${p.slug}`}
+              className={`edu-nav-tab ${pathSegment === p.slug ? 'active' : ''}`}
+            >
+              {p.title}
+            </Link>
+          ))}
         </div>
       </div>
 
@@ -707,6 +800,113 @@ const EducationSectionPage = () => {
               ))}
             </div>
           </div>
+        )}
+
+        {/* 10. CUSTOM DYNAMIC PROGRAM VIEW */}
+        {isCustomProgram && currentSection && (
+          <>
+            {/* Quick Metrics Grid */}
+            <div className="edu-stats-grid">
+              <div className="edu-stat-card">
+                <span className="edu-stat-label">Program Duration</span>
+                <div className="edu-stat-val" style={{ fontSize: '1.25rem' }}>{currentSection.duration || '1 Year'}</div>
+                <span className="edu-stat-sub">Academic Schedule</span>
+              </div>
+              <div className="edu-stat-card">
+                <span className="edu-stat-label">Intake Seats</span>
+                <div className="edu-stat-val" style={{ color: '#ea580c', fontSize: '1.25rem' }}>
+                  {currentSection.seats ? `${currentSection.seats} Seats` : 'Contact Office'}
+                </div>
+                <span className="edu-stat-sub">Annual Admissions</span>
+              </div>
+              <div className="edu-stat-card">
+                <span className="edu-stat-label">Academic Category</span>
+                <div className="edu-stat-val" style={{ color: '#1c5296', fontSize: '1rem', textTransform: 'none' }}>
+                  {currentSection.category || 'Academic Program'}
+                </div>
+                <span className="edu-stat-sub">Specialty Training</span>
+              </div>
+              <div className="edu-stat-card">
+                <span className="edu-stat-label">Accreditation Status</span>
+                <div className="edu-stat-val" style={{ color: '#16a34a', fontSize: '1rem', textTransform: 'none' }}>
+                  {currentSection.badge || 'Approved'}
+                </div>
+                <span className="edu-stat-sub">Statutory Recognition</span>
+              </div>
+            </div>
+
+            {/* Eligibility Box */}
+            {currentSection.eligibility && (
+              <div className="edu-info-box-orange">
+                <div className="edu-info-header">
+                  <CheckCircle2 size={18} />
+                  <span>Candidate Eligibility &amp; Admission Criteria</span>
+                </div>
+                <p className="edu-info-text">{currentSection.eligibility}</p>
+              </div>
+            )}
+
+            {/* Department Overview */}
+            <div className="edu-content-card">
+              <div className="edu-card-header">
+                <h2 className="edu-card-title">
+                  <BookOpen size={22} />
+                  Program Overview &amp; Clinical Curriculum
+                </h2>
+              </div>
+              <p className="edu-hero-desc" style={{ padding: '0 0.5rem', lineHeight: '1.7', whiteSpace: 'pre-line' }}>
+                {currentSection.overview}
+              </p>
+            </div>
+
+            {/* Key Training Highlights */}
+            {Array.isArray(currentSection.highlights) && currentSection.highlights.length > 0 && (
+              <div className="edu-content-card">
+                <div className="edu-card-header">
+                  <h2 className="edu-card-title">
+                    <Award size={22} />
+                    Core Highlights &amp; Clinical Rotations
+                  </h2>
+                </div>
+                <div className="edu-items-grid">
+                  {currentSection.highlights.map((h, idx) => (
+                    <div key={idx} className="edu-item-box">
+                      <div className="edu-item-top">
+                        <h4 className="edu-item-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <CheckCircle2 size={16} style={{ color: '#16a34a', flexShrink: 0 }} />
+                          {typeof h === 'string' ? h : (h.title || 'Highlight')}
+                        </h4>
+                        {typeof h === 'object' && h.desc && <p className="edu-item-desc">{h.desc}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Contact Strip */}
+            {currentSection.contactInfo && (
+              <div className="edu-contact-strip">
+                <span className="edu-contact-title">
+                  Department Secretariat &amp; Admissions Office
+                </span>
+                <div className="edu-contact-grid">
+                  <div className="edu-contact-item">
+                    <MapPin size={16} />
+                    <span>{currentSection.contactInfo.campus || 'Bhaktivedanta Hospital Campus, Mira Road'}</span>
+                  </div>
+                  <div className="edu-contact-item">
+                    <PhoneCall size={16} />
+                    <span>{currentSection.contactInfo.phone || '022 2845 8000'}</span>
+                  </div>
+                  <div className="edu-contact-item">
+                    <Mail size={16} />
+                    <span>{currentSection.contactInfo.email || 'education@bhaktivedantahospital.com'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Unified Call to Action Banner */}

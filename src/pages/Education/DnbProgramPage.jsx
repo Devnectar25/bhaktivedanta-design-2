@@ -20,13 +20,15 @@ import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
 import { dnbProgramData } from '../../data/dnbProgramData';
-import { getEducationResearchState, submitDnbInquiry } from '../../utils/api';
+import { getEducationResearchState, submitDnbInquiry, getEducationPrograms } from '../../utils/api';
 import Swal from 'sweetalert2';
+import './EducationSectionPage.css';
 import './DnbProgramPage.css';
 
 const DnbProgramPage = () => {
   const location = useLocation();
   const [programData, setProgramData] = useState(dnbProgramData);
+  const [customPrograms, setCustomPrograms] = useState([]);
   const [activeTab, setActiveTab] = useState('specialities');
   const [openAccordions, setOpenAccordions] = useState({ 'dnb-gm': true });
   const [testimonialSubtab, setTestimonialSubtab] = useState('achievements');
@@ -57,10 +59,19 @@ const DnbProgramPage = () => {
     }
 
     const loadDynamicData = () => {
-      getEducationResearchState(dnbProgramData)
-        .then((data) => {
-          if (data && data.seatsMatrix) {
-            setProgramData(data);
+      Promise.all([
+        getEducationResearchState(dnbProgramData),
+        getEducationPrograms([])
+      ])
+        .then(([data, progs]) => {
+          if (data && typeof data === 'object') {
+            setProgramData((prev) => ({
+              ...prev,
+              ...data
+            }));
+          }
+          if (progs && Array.isArray(progs)) {
+            setCustomPrograms(progs);
           }
         })
         .catch((err) => {
@@ -218,6 +229,81 @@ const DnbProgramPage = () => {
         </div>
       </div>
 
+      {/* Education Navigation Tabs */}
+      <div className="edu-nav-tabs-bar">
+        <div className="edu-nav-tabs-container">
+          <Link
+            to="/education/dnb-program"
+            className="edu-nav-tab active"
+          >
+            DNB Program
+          </Link>
+          <Link
+            to="/education/nursing-program"
+            className="edu-nav-tab"
+          >
+            Nursing School
+          </Link>
+          <Link
+            to="/education/cme"
+            className="edu-nav-tab"
+          >
+            CME
+          </Link>
+          <Link
+            to="/education/cne"
+            className="edu-nav-tab"
+          >
+            CNE
+          </Link>
+          <Link
+            to="/education/spiritual-care-course"
+            className="edu-nav-tab"
+          >
+            Spiritual Care
+          </Link>
+          <Link
+            to="/education/clinical-research-course"
+            className="edu-nav-tab"
+          >
+            Clinical Research (PGCR)
+          </Link>
+          <Link
+            to="/education/clinical-trials"
+            className="edu-nav-tab"
+          >
+            Clinical Trials
+          </Link>
+          <Link
+            to="/education/ethics-committee"
+            className="edu-nav-tab"
+          >
+            Ethics Committee
+          </Link>
+          <Link
+            to="/education/publications"
+            className="edu-nav-tab"
+          >
+            Publications
+          </Link>
+          <Link
+            to="/education/government-accreditation"
+            className="edu-nav-tab"
+          >
+            Accreditations
+          </Link>
+          {(customPrograms || []).map((p) => (
+            <Link
+              key={p.id || p.slug}
+              to={`/education/${p.slug}`}
+              className="edu-nav-tab"
+            >
+              {p.title}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {shareFeedback && <div className="dnb-share-toast">Page link copied to clipboard!</div>}
 
       {/* Main Body */}
@@ -242,7 +328,7 @@ const DnbProgramPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {programData.seatsMatrix.map((item) => (
+                {(programData.seatsMatrix || []).map((item) => (
                   <tr key={item.id}>
                     <td>{item.id}</td>
                     <td>{item.specialty}</td>
@@ -259,19 +345,23 @@ const DnbProgramPage = () => {
           </div>
 
           {/* Director Video Section */}
-          <div className="dnb-video-section">
-            <div className="dnb-video-card">
-              <div className="dnb-video-wrapper">
-                <iframe
-                  src={programData.directorVideo.embedUrl}
-                  title={programData.directorVideo.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+          {programData.directorVideo?.embedUrl && (
+            <div className="dnb-video-section">
+              <div className="dnb-video-card">
+                <div className="dnb-video-wrapper">
+                  <iframe
+                    src={programData.directorVideo.embedUrl}
+                    title={programData.directorVideo.title || "Director's Desk"}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                {programData.directorVideo.title && (
+                  <div className="dnb-video-caption">{programData.directorVideo.title}</div>
+                )}
               </div>
-              <div className="dnb-video-caption">{programData.directorVideo.title}</div>
             </div>
-          </div>
+          )}
         </section>
 
         {/* 5 Interactive Tabs (Matching Screenshot 4) */}
@@ -324,7 +414,7 @@ const DnbProgramPage = () => {
         {activeTab === 'specialities' && (
           <div className="dnb-tab-panel">
             <div className="dnb-specialties-accordion">
-              {programData.specialities.map((spec) => {
+              {(programData.specialities || []).map((spec) => {
                 const isOpen = Boolean(openAccordions[spec.id]);
                 return (
                   <div key={spec.id} className={`dnb-accordion-item ${isOpen ? 'open' : ''}`}>
@@ -450,7 +540,7 @@ const DnbProgramPage = () => {
               Academic &amp; Resident Facilities
             </h2>
             <div className="dnb-facilities-grid">
-              {programData.facilities.map((fac, idx) => (
+              {(programData.facilities || []).map((fac, idx) => (
                 <div key={idx} className="dnb-facility-card">
                   <div className="dnb-facility-img-wrap">
                     <img src={fac.image} alt={fac.title} className="dnb-facility-img" />
@@ -467,19 +557,21 @@ const DnbProgramPage = () => {
             <div className="dnb-digital-lib-card">
               <div className="dnb-digital-lib-content">
                 <div>
-                  <h3 className="dnb-spec-section-title">{programData.digitalLibrary.title}</h3>
-                  <p className="dnb-spec-desc">{programData.digitalLibrary.description}</p>
+                  <h3 className="dnb-spec-section-title">{programData.digitalLibrary?.title || 'Digital Library'}</h3>
+                  <p className="dnb-spec-desc">{programData.digitalLibrary?.description}</p>
                   <ul style={{ paddingLeft: '1.2rem', color: '#475569', fontSize: '0.92rem', lineHeight: '1.75' }}>
                     <li>Full-text access to PubMed, ScienceDirect & UpToDate</li>
                     <li>NBE online thesis repository and dissertation support</li>
                     <li>24/7 dedicated high-speed study terminals</li>
                   </ul>
                 </div>
-                <img
-                  src={programData.digitalLibrary.image}
-                  alt="Digital Library"
-                  className="dnb-digital-lib-img"
-                />
+                {programData.digitalLibrary?.image && (
+                  <img
+                    src={programData.digitalLibrary.image}
+                    alt="Digital Library"
+                    className="dnb-digital-lib-img"
+                  />
+                )}
               </div>
             </div>
 
@@ -487,7 +579,7 @@ const DnbProgramPage = () => {
             <div className="dnb-cme-card">
               <h3 className="dnb-cme-title">Conferences &amp; List of CME Programs</h3>
               <ul className="dnb-cme-list">
-                {programData.cmeList2023.map((cme, cmeIdx) => (
+                {(programData.cmeList2023 || []).map((cme, cmeIdx) => (
                   <li key={cmeIdx} className="dnb-cme-item">
                     <span className="dnb-cme-bullet">•</span>
                     <span>{cme}</span>
@@ -518,7 +610,7 @@ const DnbProgramPage = () => {
 
             {testimonialSubtab === 'achievements' ? (
               <div>
-                {programData.testimonials.achievements.map((ach) => (
+                {(programData.testimonials?.achievements || []).map((ach) => (
                   <div key={ach.id} className="dnb-achievement-card">
                     <div className="dnb-achievement-images">
                       <img src={ach.photo} alt={ach.studentName} className="dnb-achievement-img" />
@@ -532,7 +624,7 @@ const DnbProgramPage = () => {
               <div style={{ maxWidth: '750px', margin: '0 auto' }}>
                 <div className="dnb-video-wrapper">
                   <iframe
-                    src={programData.testimonials.video}
+                    src={programData.testimonials?.video}
                     title="DNB Student Testimonials"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -547,10 +639,10 @@ const DnbProgramPage = () => {
         {activeTab === 'research' && (
           <div className="dnb-tab-panel">
             <h2 className="dnb-spec-section-title">About the Medical Research Department</h2>
-            <p className="dnb-research-overview">{programData.research.overview}</p>
+            <p className="dnb-research-overview">{programData.research?.overview}</p>
 
             <div className="dnb-research-pillars">
-              {programData.research.pillars.map((pil, pIdx) => (
+              {(programData.research?.pillars || []).map((pil, pIdx) => (
                 <div key={pIdx} className="dnb-pillar-card">
                   <h4 className="dnb-pillar-title">{pil.title}</h4>
                   <p className="dnb-pillar-desc">{pil.desc}</p>
@@ -572,7 +664,7 @@ const DnbProgramPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {programData.research.publications.map((pub) => (
+                  {(programData.research?.publications || []).map((pub) => (
                     <tr key={pub.sr}>
                       <td>{pub.sr}</td>
                       <td>{pub.citation}</td>
@@ -602,7 +694,7 @@ const DnbProgramPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {programData.research.ethicsCommittee.map((m) => (
+                  {(programData.research?.ethicsCommittee || []).map((m) => (
                     <tr key={m.sr}>
                       <td>{m.sr}</td>
                       <td>
@@ -642,7 +734,7 @@ const DnbProgramPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {programData.research.scientificCommittee.map((m) => (
+                  {(programData.research?.scientificCommittee || []).map((m) => (
                     <tr key={m.sr}>
                       <td>{m.sr}</td>
                       <td>
@@ -662,10 +754,10 @@ const DnbProgramPage = () => {
         {activeTab === 'holistic' && (
           <div className="dnb-tab-panel">
             <div className="dnb-holistic-banner">
-              <h2 className="dnb-holistic-title">{programData.holisticProgram.title}</h2>
-              <div className="dnb-holistic-subtitle">{programData.holisticProgram.subtitle}</div>
-              <p className="dnb-holistic-intro">{programData.holisticProgram.intro}</p>
-              <div className="dnb-holistic-mission">{programData.holisticProgram.sacredMission}</div>
+              <h2 className="dnb-holistic-title">{programData.holisticProgram?.title}</h2>
+              <div className="dnb-holistic-subtitle">{programData.holisticProgram?.subtitle}</div>
+              <p className="dnb-holistic-intro">{programData.holisticProgram?.intro}</p>
+              <div className="dnb-holistic-mission">{programData.holisticProgram?.sacredMission}</div>
             </div>
 
             <h3 className="dnb-spec-section-title" style={{ marginBottom: '1.5rem' }}>
@@ -673,7 +765,7 @@ const DnbProgramPage = () => {
             </h3>
 
             <div className="dnb-objectives-grid">
-              {programData.holisticProgram.objectives.map((obj, oIdx) => (
+              {(programData.holisticProgram?.objectives || []).map((obj, oIdx) => (
                 <div key={oIdx} className="dnb-objective-card">
                   <div className="dnb-objective-icon">
                     <HeartHandshake size={22} />

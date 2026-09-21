@@ -406,6 +406,23 @@ export const deleteDnbInquiry = (id, fallbackList = []) =>
     return updated;
   });
 
+export const getEducationPrograms = (fallback = []) => 
+  apiGet('/education-research/programs', 'bhaktivedanta_education_custom_programs', fallback);
+
+export const createEducationProgram = (programData) => 
+  apiMutation('/education-research/programs', 'POST', programData, 'bhaktivedanta_education_custom_programs', (list = [], newProg) => {
+    const updated = [newProg, ...(Array.isArray(list) ? list : [])];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const deleteEducationProgram = (id) => 
+  apiMutation(`/education-research/programs/${id}`, 'DELETE', null, 'bhaktivedanta_education_custom_programs', (list = []) => {
+    const updated = (Array.isArray(list) ? list : []).filter(p => p.id !== id && p.slug !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
 // Spiritual Care State
 export const getSpiritualCareState = (fallback) => 
   apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
