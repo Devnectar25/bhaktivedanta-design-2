@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { showConfirmDialog } from '../../utils/swal';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const defaultNotifications = [
   {
