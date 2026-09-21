@@ -517,7 +517,7 @@ const RichTextEditor = ({
     if (!value) {
       const currentJson = editor.getJSON();
       if (currentJson.content && currentJson.content.length > 0 && currentJson.content[0].content) {
-        editor.commands.setContent({ type: 'doc', content: [{ type: 'paragraph', content: [] }] });
+        editor.commands.setContent({ type: 'doc', content: [{ type: 'paragraph', content: [] }] }, { emitUpdate: false });
       }
       return;
     }
@@ -527,9 +527,9 @@ const RichTextEditor = ({
     const incomingJsonStr = typeof normalized === 'object' ? JSON.stringify(normalized) : '';
 
     if (incomingJsonStr && incomingJsonStr !== currentJsonStr) {
-      editor.commands.setContent(normalized);
+      editor.commands.setContent(normalized, { emitUpdate: false });
     } else if (typeof value === 'string' && value !== editor.getHTML()) {
-      editor.commands.setContent(value);
+      editor.commands.setContent(value, { emitUpdate: false });
     }
   }, [value, editor]);
 

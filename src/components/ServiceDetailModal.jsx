@@ -11,9 +11,26 @@ import {
     ZoomIn,
     Maximize2,
     Minimize2,
+    HeartHandshake,
+    GraduationCap,
+    Compass,
+    Sun,
+    Calendar,
+    BookOpen,
+    Search,
+    ArrowLeft,
 } from "lucide-react";
 import RichTextRenderer from "./RichTextRenderer/RichTextRenderer";
-import { TabSectionsRenderer } from "./SectionRenderer/SectionRenderer";
+import { TabSectionsRenderer, LogoGridSection } from "./SectionRenderer/SectionRenderer";
+import AcronymBreakdown from "./AcronymBreakdown/AcronymBreakdown";
+import ActivityImageCard from "./ActivityImageCard/ActivityImageCard";
+import ContactInfoBlock from "./ContactInfoBlock/ContactInfoBlock";
+import PublicationCard from "./PublicationCard/PublicationCard";
+import ProgramCard from "./ProgramCard/ProgramCard";
+import FlexibleDetailPage from "./FlexibleDetailPage/FlexibleDetailPage";
+import { getSpiritualCareState, getServicesState } from "../utils/api";
+import { defaultSpiritualCareState } from "../data/defaultSpiritualCare";
+import { defaultServicesState, ensureStandardServiceTabs } from "../data/defaultServices";
 
 /* ------------------------------------------------------------------ */
 /*  Design tokens — matches hospital brand (navy + orange accent)      */
@@ -723,6 +740,644 @@ function GalleryRenderer({ items = [] }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Spiritual Care Renderers                                          */
+/* ------------------------------------------------------------------ */
+
+function SpiritualServicesOverviewRenderer() {
+    const [data, setData] = useState(defaultSpiritualCareState.services);
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.services) setData(res.services);
+        });
+    }, []);
+
+    const overview = data?.overview || defaultSpiritualCareState.services.overview;
+    const matchAcronym = overview?.acronymItems || defaultSpiritualCareState.services.overview.acronymItems;
+    const contact = data?.contact || defaultSpiritualCareState.services.contact;
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div>
+                <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: tokens.navy, margin: '0 0 16px' }}>
+                    {overview?.title || 'Healing Through Spiritual Warmth & Compassion'}
+                </h2>
+                <div style={{ lineHeight: 1.7, color: '#334155', fontSize: 15 }}>
+                    <RichTextRenderer content={overview?.content || ''} />
+                </div>
+            </div>
+
+            <div style={{ background: '#F8FAFC', padding: 24, borderRadius: 16, border: '1px solid #E2E8F0' }}>
+                <AcronymBreakdown
+                    title={overview?.acronymTitle || 'Our Core Guiding Values (MATCH)'}
+                    subtitle={overview?.acronymSubtitle || 'The foundational pillars that steer our clinical culture, caregiver attitude, and holistic healing environment:'}
+                    items={matchAcronym}
+                    variant="card"
+                />
+            </div>
+
+            <div style={{ background: '#FFFFFF', padding: 24, borderRadius: 16, border: '1px solid #E2E8F0' }}>
+                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, color: tokens.navy, margin: '0 0 10px' }}>
+                    A Sanctuary of Multi-Faith Compassion
+                </h3>
+                <p style={{ color: '#475569', fontSize: 14.5, lineHeight: 1.6, margin: '0 0 12px' }}>
+                    Our spiritual counselors respect and honor all faiths, spiritual traditions, and personal beliefs. Whether offering Vedic chants, silent meditation, scripture reading, or simply a listening heart during moments of distress, our team is dedicated to bringing peace and reassurance to every bedside.
+                </p>
+                <p style={{ color: '#475569', fontSize: 14.5, lineHeight: 1.6, margin: 0 }}>
+                    Spiritual rounds occur daily across ICU, CCU, post-operative recovery, pediatric, and general wards to support both patients and their families.
+                </p>
+            </div>
+
+            <ContactInfoBlock
+                title={contact?.title || 'Spiritual Care Helpline & OPD Desk'}
+                phones={contact?.phones || ['+91 22 2845 6000', '+91 22 6188 2200']}
+                emergencyPhone={contact?.emergencyPhone}
+                days={contact?.days || 'Monday – Sunday (24x7 Available)'}
+                timings={contact?.timings || 'Bedside rounds: 8:00 AM – 8:00 PM | Emergency Chaplaincy: 24 Hours'}
+                location={contact?.location || 'Ground Floor, Spiritual Care Central Desk'}
+                email={contact?.email}
+                note={contact?.note}
+                variant="card"
+            />
+        </div>
+    );
+}
+
+function SpiritualServicesOfferedRenderer() {
+    const [data, setData] = useState(defaultSpiritualCareState.services);
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.services) setData(res.services);
+        });
+    }, []);
+
+    const patientSupport = (data?.servicesOffered?.patientSupport || defaultSpiritualCareState.services.servicesOffered.patientSupport).filter(i => i.enabled !== false);
+    const counselling = (data?.servicesOffered?.counselling || defaultSpiritualCareState.services.servicesOffered.counselling).filter(i => i.enabled !== false);
+    const contact = data?.contact || defaultSpiritualCareState.services.contact;
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div>
+                <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: tokens.navy, margin: '0 0 8px' }}>
+                    Comprehensive Spiritual Care & Pastoral Services
+                </h2>
+                <p style={{ color: tokens.muted, fontSize: 14.5, margin: '0 0 24px' }}>
+                    We provide non-invasive, empathetic spiritual solace tailored to each patient's faith and comfort levels.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
+                    {/* Patient Support Column */}
+                    <div style={{ background: '#F8FAFC', padding: 24, borderRadius: 16, border: '1px solid #E2E8F0' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #E2E8F0' }}>
+                            <div style={{ width: 36, height: 36, borderRadius: 8, background: '#E0F2FE', color: '#0369A1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <CheckCircle2 size={20} />
+                            </div>
+                            <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, color: tokens.navy, margin: 0 }}>
+                                Patient Support Services
+                            </h3>
+                        </div>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                            {patientSupport.map(item => (
+                                <li key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: tokens.orange, marginTop: 8, flexShrink: 0 }} />
+                                    <div>
+                                        <strong style={{ display: 'block', fontSize: 14.5, color: '#1E293B' }}>{item.text}</strong>
+                                        {item.note && <span style={{ fontSize: 13, color: '#64748B' }}>{item.note}</span>}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Counselling Column */}
+                    <div style={{ background: '#F8FAFC', padding: 24, borderRadius: 16, border: '1px solid #E2E8F0' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #E2E8F0' }}>
+                            <div style={{ width: 36, height: 36, borderRadius: 8, background: '#FEF3C7', color: '#B45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <CheckCircle2 size={20} />
+                            </div>
+                            <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, color: tokens.navy, margin: 0 }}>
+                                Spiritual & Psychological Counselling
+                            </h3>
+                        </div>
+                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                            {counselling.map(item => (
+                                <li key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#3B82F6', marginTop: 8, flexShrink: 0 }} />
+                                    <div>
+                                        <strong style={{ display: 'block', fontSize: 14.5, color: '#1E293B' }}>{item.text}</strong>
+                                        {item.note && <span style={{ fontSize: 13, color: '#64748B' }}>{item.note}</span>}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <ContactInfoBlock
+                title={contact?.title || 'Spiritual Care Helpline & OPD Desk'}
+                phones={contact?.phones || ['+91 22 2845 6000', '+91 22 6188 2200']}
+                emergencyPhone={contact?.emergencyPhone}
+                days={contact?.days || 'Monday – Sunday (24x7 Available)'}
+                timings={contact?.timings || 'Bedside rounds: 8:00 AM – 8:00 PM | Emergency Chaplaincy: 24 Hours'}
+                location={contact?.location || 'Ground Floor, Spiritual Care Central Desk'}
+                email={contact?.email}
+                note={contact?.note}
+                variant="card"
+            />
+        </div>
+    );
+}
+
+function EducationalProgrammesModalRenderer() {
+    const [programmes, setProgrammes] = useState(defaultSpiritualCareState.programmes);
+    const [selectedProg, setSelectedProg] = useState(null);
+    const [garbhaService, setGarbhaService] = useState(null);
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.programmes && res.programmes.length > 0) {
+                setProgrammes(res.programmes);
+            }
+        });
+
+        getServicesState(defaultServicesState).then(res => {
+            const services = res?.services || defaultServicesState.services || [];
+            const match = services.find(s => (s.name || '').toLowerCase().includes('garbha') || s.id === 'srv5');
+            if (match) {
+                ensureStandardServiceTabs(match);
+                setGarbhaService(match);
+            }
+        });
+    }, []);
+
+    const handleSelectProgram = (prog) => {
+        if (prog.id === 'garbha-samskar' || prog.destinationType === 'existing') {
+            setSelectedProg({ type: 'garbha', prog });
+        } else {
+            setSelectedProg({ type: 'detail', prog });
+        }
+    };
+
+    if (selectedProg) {
+        if (selectedProg.type === 'garbha' && garbhaService) {
+            const normalizedGarbha = normalizeServiceData(garbhaService, 'Clinical Services');
+            return (
+                <div>
+                    <button
+                        type="button"
+                        onClick={() => setSelectedProg(null)}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            padding: '8px 14px',
+                            borderRadius: 8,
+                            background: '#F1F5F9',
+                            border: '1px solid #E2E8F0',
+                            color: '#334155',
+                            fontSize: 13,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            marginBottom: 20
+                        }}
+                    >
+                        <ArrowLeft size={16} />
+                        <span>Back to Educational Programmes</span>
+                    </button>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                        {normalizedGarbha.tabs.map((t) => (
+                            <div key={t.id || t.label} style={{ background: '#F8FAFC', padding: 24, borderRadius: 16, border: '1px solid #E2E8F0' }}>
+                                <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 18, color: tokens.navy, marginBottom: 14 }}>
+                                    {t.label}
+                                </h3>
+                                <TabContentRenderer tab={t} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        const detailPage = selectedProg.prog?.detailPage || {};
+        return (
+            <div>
+                <button
+                    type="button"
+                    onClick={() => setSelectedProg(null)}
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '8px 14px',
+                        borderRadius: 8,
+                        background: '#F1F5F9',
+                        border: '1px solid #E2E8F0',
+                        color: '#334155',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        marginBottom: 20
+                    }}
+                >
+                    <ArrowLeft size={16} />
+                    <span>Back to Educational Programmes</span>
+                </button>
+
+                <FlexibleDetailPage
+                    title={detailPage.title || selectedProg.prog?.title}
+                    subtitle={detailPage.subtitle || selectedProg.prog?.description}
+                    category={detailPage.category || 'Educational Programmes'}
+                    bannerImage={detailPage.bannerImage || selectedProg.prog?.image}
+                    blocks={detailPage.blocks || []}
+                    onBack={() => setSelectedProg(null)}
+                    showSharePrint={false}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div>
+                <p style={{ color: tokens.muted, fontSize: 14.5, margin: '0 0 24px', maxWidth: 750 }}>
+                    Empowering families, parents, and seekers with timeless wisdom, prenatal science, child psychology, and self-mastery courses conducted by experienced doctors and spiritual educators.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+                    {programmes.filter(p => p.enabled !== false).map((prog) => (
+                        <ProgramCard
+                            key={prog.id}
+                            image={prog.image}
+                            title={prog.title}
+                            description={prog.description}
+                            badge={prog.badge}
+                            duration={prog.duration}
+                            onClick={() => handleSelectProgram(prog)}
+                            ctaText={prog.destinationType === 'existing' ? 'Explore Service' : 'View Program Details'}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <ContactInfoBlock
+                title="Educational Programmes Desk & Registration"
+                phones={['+91 22 2845 6000', '+91 98200 12345']}
+                days="Monday – Saturday"
+                timings="9:30 AM – 5:30 PM"
+                location="Education Wing, 3rd Floor, Bhaktivedanta Hospital"
+                email="programmes@bhaktivedantahospital.com"
+                note="Prior registration is recommended as batch sizes are limited to ensure personalized attention."
+                variant="card"
+            />
+        </div>
+    );
+}
+
+function SpiritualRetreatsBiMonthlyRenderer() {
+    const [retreatsData, setRetreatsData] = useState(defaultSpiritualCareState.retreats);
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.retreats) setRetreatsData(res.retreats);
+        });
+    }, []);
+
+    const bimonthly = retreatsData?.bimonthly || defaultSpiritualCareState.retreats.bimonthly;
+    const contact = retreatsData?.contact || defaultSpiritualCareState.retreats.contact;
+    const activities = (bimonthly?.activities || defaultSpiritualCareState.retreats.bimonthly.activities).filter(a => a.enabled !== false);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div>
+                <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: tokens.navy, margin: '0 0 10px' }}>
+                    {bimonthly?.title || 'Weekend Eco-Wellness & Spiritual Immersion'}
+                </h2>
+                <p style={{ color: '#475569', fontSize: 14.5, lineHeight: 1.6, margin: '0 0 24px' }}>
+                    {bimonthly?.intro || 'Held every two months at tranquil retreat sanctuaries near Mumbai and Thane, our 2-day residential retreats are designed for patients, recovering individuals, families, and healthcare professionals seeking comprehensive physical and spiritual recharge.'}
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+                    {activities.map((act) => (
+                        <ActivityImageCard
+                            key={act.id}
+                            image={act.image}
+                            title={act.title}
+                            tag={act.tag}
+                            caption={act.caption}
+                            aspectRatio="16/10"
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <ContactInfoBlock
+                title={contact?.title || 'Bi-Monthly Retreat Registration Desk'}
+                phones={contact?.phones || ['+91 22 2845 6000', '+91 98200 54321']}
+                days={contact?.days || 'Monday – Saturday'}
+                timings={contact?.timings || '9:00 AM – 6:00 PM'}
+                location={contact?.location || 'Spiritual Care Wing, Bhaktivedanta Hospital'}
+                email={contact?.email || 'retreats@bhaktivedantahospital.com'}
+                note={contact?.note || 'Early bird registration is recommended as retreat accommodation capacity is limited to 40 participants per batch.'}
+                variant="card"
+            />
+        </div>
+    );
+}
+
+function SpiritualRetreatsAnnualRenderer() {
+    const [retreatsData, setRetreatsData] = useState(defaultSpiritualCareState.retreats);
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.retreats) setRetreatsData(res.retreats);
+        });
+    }, []);
+
+    const annual = retreatsData?.annual || defaultSpiritualCareState.retreats.annual;
+    const contact = retreatsData?.contact || defaultSpiritualCareState.retreats.contact;
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div>
+                <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: tokens.navy, margin: '0 0 14px' }}>
+                    {annual?.title || 'Holy Dhams & Sacred Pilgrimage (Annual Yatra)'}
+                </h2>
+                <div style={{ color: '#334155', fontSize: 14.5, lineHeight: 1.7 }}>
+                    <RichTextRenderer content={annual?.content || ''} />
+                </div>
+            </div>
+
+            <ContactInfoBlock
+                title={contact?.title || 'Annual Yatra Coordination Desk'}
+                phones={contact?.phones || ['+91 22 2845 6000', '+91 98200 54321']}
+                days={contact?.days || 'Monday – Saturday'}
+                timings={contact?.timings || '9:00 AM – 6:00 PM'}
+                location={contact?.location || 'Spiritual Care Wing, Bhaktivedanta Hospital'}
+                email={contact?.email || 'yatra@bhaktivedantahospital.com'}
+                note="Medical screening and fitness clearance are provided by our physicians prior to yatra departure."
+                variant="card"
+            />
+        </div>
+    );
+}
+
+function PublicationsModalRenderer() {
+    const [publications, setPublications] = useState(defaultSpiritualCareState.publications);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        getSpiritualCareState(defaultSpiritualCareState).then(res => {
+            if (res?.publications) setPublications(res.publications);
+        });
+    }, []);
+
+    const filteredPubs = publications.filter(p =>
+        (p.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(p.authors) ? p.authors.join(' ') : p.authors || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.journal || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div>
+                <p style={{ color: tokens.muted, fontSize: 14.5, margin: '0 0 20px', maxWidth: 750 }}>
+                    Demonstrating the therapeutic power of spiritual care through rigorous scientific research, randomized controlled trials, and peer-reviewed clinical literature.
+                </p>
+
+                {/* Search Input */}
+                <div style={{ position: 'relative', maxWidth: 450, marginBottom: 20 }}>
+                    <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+                    <input
+                        type="text"
+                        placeholder="Search publications by title, author, journal..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '10px 14px 10px 40px',
+                            borderRadius: 10,
+                            border: '1px solid #CBD5E1',
+                            fontFamily: "'Work Sans', sans-serif",
+                            fontSize: 14,
+                            outline: 'none',
+                            background: '#FFFFFF',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                        }}
+                    />
+                </div>
+
+                {/* Publications List */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {filteredPubs.length > 0 ? (
+                        filteredPubs.map(pub => (
+                            <PublicationCard
+                                key={pub.id}
+                                thumbnail={pub.thumbnail}
+                                title={pub.title}
+                                url={pub.url}
+                                authors={pub.authors}
+                                journal={pub.journal}
+                                year={pub.year}
+                                volume={pub.volume}
+                                doi={pub.doi}
+                                abstract={pub.abstract}
+                            />
+                        ))
+                    ) : (
+                        <div style={{ padding: 32, textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                            <p style={{ color: '#64748B', margin: 0, fontSize: 14 }}>No publications found matching your search.</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <ContactInfoBlock
+                title="Department of Medical Research & Ethics Committee"
+                phones={['+91 22 2845 6000', '+91 22 6188 2200']}
+                days="Monday – Friday"
+                timings="9:00 AM – 5:00 PM"
+                location="Research Wing, 4th Floor, Bhaktivedanta Hospital"
+                email="research@bhaktivedantahospital.com"
+                note="Researchers and clinicians interested in collaborating on spiritual care and palliative outcome studies are invited to contact the ethics board."
+                variant="card"
+            />
+        </div>
+    );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dynamic Renderers for Custom Admin-Defined Sections               */
+/* ------------------------------------------------------------------ */
+function DynamicTabBlocksRenderer({ tab }) {
+    if (Array.isArray(tab.blocks) && tab.blocks.length > 0) {
+        return (
+            <FlexibleDetailPage
+                title={tab.title || tab.label}
+                blocks={tab.blocks}
+                showSharePrint={false}
+            />
+        );
+    }
+    if (tab.overview?.content) {
+        return <RichTextRenderer content={tab.overview.content} />;
+    }
+    return <OverviewRenderer content={tab.content} />;
+}
+
+function DynamicCardGridRenderer({ tab }) {
+    const [selectedCard, setSelectedCard] = useState(null);
+    const cards = (tab.cards || []).filter(c => c.enabled !== false);
+    const contact = tab.contact;
+
+    if (selectedCard) {
+        const detailPage = selectedCard.detailPage || {};
+        return (
+            <div>
+                <button
+                    type="button"
+                    onClick={() => setSelectedCard(null)}
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '8px 14px',
+                        borderRadius: 8,
+                        background: '#F1F5F9',
+                        border: '1px solid #E2E8F0',
+                        color: '#334155',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        marginBottom: 20
+                    }}
+                >
+                    <ArrowLeft size={16} />
+                    <span>Back to {tab.label || 'Cards'}</span>
+                </button>
+
+                <FlexibleDetailPage
+                    title={detailPage.title || selectedCard.title}
+                    subtitle={detailPage.subtitle || selectedCard.description}
+                    category={detailPage.category || tab.label || 'Program Details'}
+                    bannerImage={detailPage.bannerImage || selectedCard.image}
+                    blocks={detailPage.blocks || []}
+                    onBack={() => setSelectedCard(null)}
+                    showSharePrint={false}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+                {cards.map((card) => (
+                    <ProgramCard
+                        key={card.id}
+                        image={card.image}
+                        title={card.title}
+                        description={card.description}
+                        badge={card.badge}
+                        duration={card.duration}
+                        onClick={() => setSelectedCard(card)}
+                        ctaText={card.ctaText || 'View Details'}
+                    />
+                ))}
+            </div>
+
+            {contact && (
+                <ContactInfoBlock
+                    title={contact.title || 'Department Desk & Information'}
+                    phones={contact.phones || ['+91 22 2845 6000']}
+                    days={contact.days || 'Monday – Saturday'}
+                    timings={contact.timings || '9:00 AM – 5:00 PM'}
+                    location={contact.location || 'Ground Floor, Spiritual Care Central Desk'}
+                    email={contact.email}
+                    note={contact.note}
+                    variant="card"
+                />
+            )}
+        </div>
+    );
+}
+
+function DynamicListRenderer({ tab }) {
+    const [searchTerm, setSearchTerm] = useState('');
+    const items = tab.items || [];
+    const contact = tab.contact;
+
+    const filteredItems = items.filter(item =>
+        (item.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(item.authors) ? item.authors.join(' ') : item.authors || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.journal || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
+            <div style={{ position: 'relative', maxWidth: 450, marginBottom: 12 }}>
+                <Search size={18} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+                <input
+                    type="text"
+                    placeholder="Search items by title, author, source..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '10px 14px 10px 40px',
+                        borderRadius: 10,
+                        border: '1px solid #CBD5E1',
+                        fontFamily: "'Work Sans', sans-serif",
+                        fontSize: 14,
+                        outline: 'none',
+                        background: '#FFFFFF',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                    }}
+                />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {filteredItems.length > 0 ? (
+                    filteredItems.map(item => (
+                        <PublicationCard
+                            key={item.id}
+                            thumbnail={item.thumbnail}
+                            title={item.title}
+                            url={item.url}
+                            authors={item.authors}
+                            journal={item.journal}
+                            year={item.year}
+                            volume={item.volume}
+                            doi={item.doi}
+                            abstract={item.abstract}
+                        />
+                    ))
+                ) : (
+                    <div style={{ padding: 32, textAlign: 'center', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0' }}>
+                        <p style={{ color: '#64748B', margin: 0, fontSize: 14 }}>No items found matching your search.</p>
+                    </div>
+                )}
+            </div>
+
+            {contact && (
+                <ContactInfoBlock
+                    title={contact.title || 'Department Desk & Information'}
+                    phones={contact.phones || ['+91 22 2845 6000']}
+                    days={contact.days || 'Monday – Friday'}
+                    timings={contact.timings || '9:00 AM – 5:00 PM'}
+                    location={contact.location || 'Research Wing, 4th Floor, Bhaktivedanta Hospital'}
+                    email={contact.email}
+                    note={contact.note}
+                    variant="card"
+                />
+            )}
+        </div>
+    );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Master switch — selects appropriate renderer for normalized tab    */
 /* ------------------------------------------------------------------ */
 function TabContentRenderer({ tab }) {
@@ -732,6 +1387,24 @@ function TabContentRenderer({ tab }) {
     }
 
     switch (tab.type) {
+        case "spiritual_services_overview":
+            return <SpiritualServicesOverviewRenderer />;
+        case "spiritual_services_offered":
+            return <SpiritualServicesOfferedRenderer />;
+        case "spiritual_programmes":
+            return <EducationalProgrammesModalRenderer />;
+        case "spiritual_retreats_bimonthly":
+            return <SpiritualRetreatsBiMonthlyRenderer />;
+        case "spiritual_retreats_annual":
+            return <SpiritualRetreatsAnnualRenderer />;
+        case "spiritual_publications":
+            return <PublicationsModalRenderer />;
+        case "dynamic_tab_blocks":
+            return <DynamicTabBlocksRenderer tab={tab} />;
+        case "dynamic_card_grid":
+            return <DynamicCardGridRenderer tab={tab} />;
+        case "dynamic_list":
+            return <DynamicListRenderer tab={tab} />;
         case "rich_text":
             return <OverviewRenderer content={tab.content} />;
         case "steps":
@@ -749,6 +1422,8 @@ function TabContentRenderer({ tab }) {
         case "faq":
         case "faqs":
             return <FaqRenderer items={tab.items || tab.faqs} />;
+        case "logo_grid":
+            return <LogoGridSection logos={tab.logos || tab.items} />;
         default:
             return <OverviewRenderer content={tab.content} />;
     }
@@ -759,6 +1434,117 @@ function TabContentRenderer({ tab }) {
 /* ------------------------------------------------------------------ */
 function normalizeServiceData(rawService, defaultCatName = "Healthcare Services") {
     if (!rawService) return null;
+
+    if (rawService.isSpiritualCare || rawService.spiritualType || rawService.category === 'Spiritual Care') {
+        const type = rawService.spiritualType || rawService.layout;
+        const name = rawService.name || rawService.title || 'Spiritual Care';
+        const category = 'Spiritual Care';
+
+        if (rawService.id === 'spiritual-care-services' || type === 'services') {
+            return {
+                category,
+                name,
+                tabs: [
+                    { id: 'overview', label: 'Overview', type: 'spiritual_services_overview' },
+                    { id: 'services-offered', label: 'Services Offered', type: 'spiritual_services_offered' }
+                ]
+            };
+        }
+        if (rawService.id === 'educational-programmes' || type === 'programmes') {
+            return {
+                category,
+                name,
+                tabs: [
+                    { id: 'programmes', label: 'Educational Programmes', type: 'spiritual_programmes' }
+                ]
+            };
+        }
+        if (rawService.id === 'spiritual-retreats' || type === 'retreats') {
+            return {
+                category,
+                name,
+                tabs: [
+                    { id: 'bimonthly', label: 'BI-Monthly Spiritual Retreat', type: 'spiritual_retreats_bimonthly' },
+                    { id: 'annual', label: 'Annual Spiritual Retreat', type: 'spiritual_retreats_annual' }
+                ]
+            };
+        }
+        if (rawService.id === 'publications' || type === 'publications') {
+            return {
+                category,
+                name,
+                tabs: [
+                    { id: 'publications', label: 'Publications & Papers', type: 'spiritual_publications' }
+                ]
+            };
+        }
+
+        // Generic Dynamic Section Tabs Layout
+        if (rawService.layout === 'tabs' && Array.isArray(rawService.tabs) && rawService.tabs.length > 0) {
+            return {
+                category,
+                name,
+                tabs: rawService.tabs.map(t => ({
+                    id: t.id || t.label,
+                    label: t.label || t.title || 'Overview',
+                    type: 'dynamic_tab_blocks',
+                    blocks: t.blocks || [],
+                    content: t.content || '',
+                    overview: t.overview
+                }))
+            };
+        }
+
+        // Generic Dynamic Section Card-Grid Layout
+        if (rawService.layout === 'card-grid') {
+            return {
+                category,
+                name,
+                tabs: [
+                    {
+                        id: 'cards',
+                        label: rawService.title || 'Programs',
+                        type: 'dynamic_card_grid',
+                        cards: rawService.cards || rawService.programmes || [],
+                        contact: rawService.contact
+                    }
+                ]
+            };
+        }
+
+        // Generic Dynamic Section List Layout
+        if (rawService.layout === 'list') {
+            return {
+                category,
+                name,
+                tabs: [
+                    {
+                        id: 'items',
+                        label: rawService.title || 'Publications',
+                        type: 'dynamic_list',
+                        items: rawService.items || rawService.publications || [],
+                        contact: rawService.contact
+                    }
+                ]
+            };
+        }
+
+        // Generic Dynamic Section Flexible Block Layout
+        if (rawService.layout === 'flexible' || (Array.isArray(rawService.blocks) && rawService.blocks.length > 0)) {
+            return {
+                category,
+                name,
+                tabs: [
+                    {
+                        id: 'flexible',
+                        label: rawService.title || 'Overview',
+                        type: 'dynamic_tab_blocks',
+                        blocks: rawService.blocks || []
+                    }
+                ]
+            };
+        }
+    }
 
     const category =
         rawService.category ||
@@ -809,6 +1595,8 @@ function normalizeServiceData(rawService, defaultCatName = "Healthcare Services"
             type = "gallery";
         } else if (type === "faq" || type === "faqs") {
             type = "faq";
+        } else if (type === "logo_grid" || type === "logos" || type === "partners") {
+            type = "logo_grid";
         }
 
         // If tab has doc content or content without items, ensure it's rich_text
@@ -902,6 +1690,17 @@ function normalizeServiceData(rawService, defaultCatName = "Healthcare Services"
                 answer: f.answer || f.description || f.content || f.a || "",
             }));
             return { id: t.id, label, type: "faq", items, sections: [] };
+        }
+
+        if (type === "logo_grid") {
+            const logos = (t.logos || t.items || []).map((l, idx) => ({
+                id: l.id || `logo-${idx}`,
+                name: l.name || l.title || l.company || '',
+                imageUrl: l.imageUrl || l.image || l.url || l.logo || '',
+                order: l.order || (idx + 1),
+                enabled: l.enabled !== false
+            }));
+            return { id: t.id, label, type: "logo_grid", logos, items: logos, sections: [] };
         }
 
         // Default: rich_text
@@ -1028,7 +1827,7 @@ export default function ServiceDetailModal({
     service,
     speciality,
     categoryName,
-    onClose = () => {},
+    onClose = () => { },
 }) {
     // Handle either prop name: service or speciality
     const rawData = service || speciality;
@@ -1234,11 +2033,13 @@ export default function ServiceDetailModal({
                 </div>
 
                 {/* Tabs navigation */}
-                <TabNav
-                    tabs={normalized.tabs}
-                    active={active}
-                    onChange={setActive}
-                />
+                {normalized.tabs && normalized.tabs.length > 1 && (
+                    <TabNav
+                        tabs={normalized.tabs}
+                        active={active}
+                        onChange={setActive}
+                    />
+                )}
 
                 {/* Tab content area */}
                 <div

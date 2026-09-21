@@ -83,10 +83,72 @@ export function FeatureListSection({ section }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 2. Accordion Section Renderer                                      */
+/* 2. Logo Grid Section Renderer                                      */
 /* ------------------------------------------------------------------ */
-export function AccordionSection({ section, defaultOpen = false }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen || section.settings?.defaultOpen === true);
+export function LogoGridSection({ section, logos: directLogos }) {
+  const rawLogos = directLogos || section?.logos || section?.items || [];
+  const logos = Array.isArray(rawLogos)
+    ? rawLogos
+      .filter(l => l && l.enabled !== false)
+      .sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [];
+
+  if (logos.length === 0) {
+    return (
+      <div className="section-empty-msg">
+        No partner logos listed yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="section-logo-grid">
+      {logos.map((logo, idx) => {
+        const name = logo.name || logo.title || logo.company || '';
+        const imgUrl = logo.imageUrl || logo.image || logo.url || logo.logo || '';
+
+        return (
+          <div key={logo.id || idx} className="section-logo-card" title={name}>
+            <div className="section-logo-img-wrapper">
+              {imgUrl ? (
+                <img
+                  src={imgUrl}
+                  alt={name || 'Partner Logo'}
+                  className="section-logo-img"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const fallback = e.currentTarget.parentElement?.querySelector('.section-logo-fallback');
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div
+                className="section-logo-fallback"
+                style={{ display: imgUrl ? 'none' : 'flex' }}
+              >
+                <span className="material-symbols-outlined section-logo-fallback-icon">
+                  business
+                </span>
+                <span className="section-logo-fallback-text">{name}</span>
+              </div>
+            </div>
+            {name && <span className="section-logo-name">{name}</span>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 2b. Single Accordion Item Renderer                                 */
+/* ------------------------------------------------------------------ */
+function AccordionItemRenderer({ item, defaultOpen = false }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen || item.defaultOpen === true);
+  if (item.enabled === false) return null;
+
+  const logos = Array.isArray(item.logos) ? item.logos : [];
 
   return (
     <div className="section-accordion-item">
@@ -96,7 +158,7 @@ export function AccordionSection({ section, defaultOpen = false }) {
         className={`section-accordion-header ${isOpen ? 'is-open' : ''}`}
         aria-expanded={isOpen}
       >
-        <span>{section.title || 'Section Details'}</span>
+        <span>{item.title || 'Section Item'}</span>
         <span className="section-accordion-toggle">
           {isOpen ? '−' : '+'}
         </span>
@@ -104,27 +166,63 @@ export function AccordionSection({ section, defaultOpen = false }) {
 
       {isOpen && (
         <div className="section-accordion-body">
-          {section.content && <RichTextRenderer content={section.content} />}
+          {item.content && <RichTextRenderer content={item.content} />}
 
-          {Array.isArray(section.items) && section.items.length > 0 && (
-            <FeatureListSection section={section} />
+          {item.contentType === 'logo_grid' || logos.length > 0 ? (
+            <LogoGridSection logos={logos} />
+          ) : null}
+
+          {Array.isArray(item.items) && item.items.length > 0 && (
+            <FeatureListSection section={item} />
           )}
 
-          {Array.isArray(section.steps) && section.steps.length > 0 && (
-            <StepsSection section={section} />
+          {Array.isArray(item.steps) && item.steps.length > 0 && (
+            <StepsSection section={item} />
           )}
 
-          {Array.isArray(section.cards) && section.cards.length > 0 && (
-            <CardsSection section={section} />
+          {Array.isArray(item.cards) && item.cards.length > 0 && (
+            <CardsSection section={item} />
           )}
 
-          {Array.isArray(section.faqs) && section.faqs.length > 0 && (
-            <FaqSection section={section} />
+          {Array.isArray(item.faqs) && item.faqs.length > 0 && (
+            <FaqSection section={item} />
           )}
         </div>
       )}
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* 2c. Accordion Section Renderer                                      */
+/* ------------------------------------------------------------------ */
+export function AccordionSection({ section, defaultOpen = false }) {
+  const accordionItems = Array.isArray(section.accordionItems)
+    ? section.accordionItems.filter(item => item && item.enabled !== false)
+    : [];
+
+  // If section contains multiple nested accordion items
+  if (accordionItems.length > 0) {
+    return (
+      <div className="section-accordion-group">
+        {section.content && (
+          <div className="section-accordion-intro">
+            <RichTextRenderer content={section.content} />
+          </div>
+        )}
+        {accordionItems.map((item, idx) => (
+          <AccordionItemRenderer
+            key={item.id || idx}
+            item={item}
+            defaultOpen={idx === 0 && defaultOpen}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Single accordion item fallback
+  return <AccordionItemRenderer item={section} defaultOpen={defaultOpen || section.settings?.defaultOpen === true} />;
 }
 
 /* ------------------------------------------------------------------ */
@@ -503,6 +601,8 @@ export function SectionRenderer({ section, showTitle = true }) {
         return <FaqSection section={section} />;
       case 'table':
         return <TableSection section={section} />;
+      case 'logo_grid':
+        return <LogoGridSection section={section} />;
       case 'rich_text':
       default:
         return (

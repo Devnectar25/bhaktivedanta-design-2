@@ -20,13 +20,11 @@ import CareersPage from './pages/Careers/CareersPage';
 import DnbProgramPage from './pages/Education/DnbProgramPage';
 import EducationSectionPage from './pages/Education/EducationSectionPage';
 
-
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin/AdminLogin';
 import Dashboard from './pages/admin/Dashboard/Dashboard';
 import AdminDoctors from './pages/admin/Doctors/Doctors';
-import Appointments from './pages/admin/Appointments/Appointments';
 import Events from './pages/admin/Events/Events';
 import DoctorAvailability from './pages/admin/Doctors/DoctorAvailability';
 import ContactQueries from './pages/admin/ContactQueries/ContactQueries';
@@ -50,7 +48,6 @@ import Careers from './pages/admin/Careers/Careers';
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
 import AddEvent from './pages/admin/Events/AddEvent';
-import AddAppointment from './pages/admin/Appointments/AddAppointment';
 import AddCategory from './pages/admin/Specialities/AddCategory';
 import AddService from './pages/admin/Services/AddService';
 import AddSpeciality from './pages/admin/Specialities/AddSpeciality';
@@ -63,108 +60,47 @@ import AddSubAdmin from './pages/admin/AdminUsers/AddSubAdmin';
 import AddAdminUser from './pages/admin/AdminUsers/AddAdminUser';
 import AddPatientGuide from './pages/admin/PatientsCorner/AddPatientGuide';
 
+// Public Layout & Spiritual Care Pages
+import PublicLayout from './components/PublicLayout/PublicLayout';
+import SpiritualCareServices from './pages/SpiritualCare/SpiritualCareServices';
+import EducationalProgrammes from './pages/SpiritualCare/EducationalProgrammes';
+import ProgramDetailPage from './pages/SpiritualCare/ProgramDetailPage';
+import SpiritualRetreats from './pages/SpiritualCare/SpiritualRetreats';
+import PublicationsPapers from './pages/SpiritualCare/PublicationsPapers';
+
 import './App.css';
 
-function ScrollToTop() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
-
+function HomeContent() {
   return (
-    <button
-      onClick={scrollToTop}
-      className={`scroll-to-top-btn ${isVisible ? 'visible' : ''}`}
-      aria-label="Scroll to top"
-    >
-      <ChevronUp size={24} />
-    </button>
-  );
-}
-
-function MainSite() {
-  const [selectedSpeciality, setSelectedSpeciality] = useState(null);
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
-  const [selectedPatientGuide, setSelectedPatientGuide] = useState(null);
-  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
-
-  const handleSelectSpeciality = (speciality, categoryName) => {
-    setSelectedSpeciality(speciality);
-    setSelectedCategoryName(categoryName);
-    setSelectedPatientGuide(null);
-  };
-
-  const handleSelectPatientGuide = (guide, categoryName) => {
-    setSelectedPatientGuide(guide);
-    setSelectedSpeciality(guide);
-    setSelectedCategoryName(categoryName || guide.category || 'Patients Corner');
-  };
-
-  const handleOpenAppointmentModal = () => {
-    setIsAppointmentModalOpen(true);
-  };
-
-  return (
-    <div className="app">
-      <Navbar
-        onSelectSpeciality={handleSelectSpeciality}
-        onSelectPatientGuide={handleSelectPatientGuide}
-        onOpenAppointment={handleOpenAppointmentModal}
-      />
-      <ScrollToTop />
-      <main>
-        <Hero />
-        <InfoSlider />
-        <WhyChooseUs />
-        <Doctors />
-        <Stats />
-        <NewDevelopments />
-        <Infrastructure />
-        <Testimonials />
-      </main>
-      <Footer />
-
-      <ServiceDetailModal
-        service={selectedPatientGuide || selectedSpeciality}
-        categoryName={selectedCategoryName}
-        onClose={() => {
-          setSelectedSpeciality(null);
-          setSelectedPatientGuide(null);
-          setSelectedCategoryName('');
-        }}
-      />
-
-      <AppointmentModal
-        isOpen={isAppointmentModalOpen}
-        onClose={() => setIsAppointmentModalOpen(false)}
-      />
-    </div>
+    <>
+      <Hero />
+      <InfoSlider />
+      <WhyChooseUs />
+      <Doctors />
+      <Stats />
+      <NewDevelopments />
+      <Infrastructure />
+      <Testimonials />
+    </>
   );
 }
 
 function App() {
   return (
     <Routes>
-      {/* Main Public Website Home */}
-      <Route path="/" element={<MainSite />} />
-      <Route path="/careers" element={<CareersPage />} />
+      {/* Main Public Website Home & Pages wrapped in PublicLayout */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<HomeContent />} />
+        <Route path="/services/:id" element={<HomeContent />} />
+        <Route path="/spiritual-care" element={<SpiritualCareServices />} />
+        <Route path="/spiritual-care/educational-programmes" element={<EducationalProgrammes />} />
+        <Route path="/spiritual-care/educational-programmes/:id" element={<ProgramDetailPage />} />
+        <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
+        <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
+        <Route path="/careers" element={<CareersPage />} />
+      </Route>
+
+      {/* Education & Medical Research Dedicated Routes */}
       <Route path="/education/dnb-program" element={<DnbProgramPage />} />
       <Route path="/education-careers/dnb-program" element={<DnbProgramPage />} />
       <Route path="/education/nursing-program" element={<EducationSectionPage />} />
@@ -198,7 +134,11 @@ function App() {
         <Route path="news" element={<News />} />
         <Route path="events" element={<Events />} />
         <Route path="gallery" element={<Gallery />} />
-        <Route path="appointments" element={<Appointments />} />
+        
+        {/* Appointments and Add Appointment internal admin functionality removed; redirected to dashboard */}
+        <Route path="appointments" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="add-appointment" element={<Navigate to="/admin/dashboard" replace />} />
+
         <Route path="contact-queries" element={<ContactQueries />} />
         <Route path="admin-users" element={<AdminUsers />} />
         <Route path="sub-admins" element={<SubAdmin />} />
@@ -209,6 +149,7 @@ function App() {
         <Route path="patients-corner" element={<PatientsCorner />} />
 
         <Route path="spiritual-care" element={<SpiritualCare />} />
+        <Route path="spiritual-care/:section" element={<SpiritualCare />} />
         <Route path="education-research" element={<EducationResearch />} />
         <Route path="associate-centres" element={<AssociateCentres />} />
         <Route path="careers" element={<Careers />} />
@@ -217,7 +158,6 @@ function App() {
         {/* Forms */}
         <Route path="add-doctor" element={<AddDoctor />} />
         <Route path="add-event" element={<AddEvent />} />
-        <Route path="add-appointment" element={<AddAppointment />} />
         <Route path="add-category" element={<AddCategory />} />
         <Route path="add-service" element={<AddService mode="add" />} />
         <Route path="edit-service/:id" element={<AddService mode="edit" />} />
