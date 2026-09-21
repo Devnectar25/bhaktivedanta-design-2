@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getSubadmins } from '../../../utils/api';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -68,12 +69,12 @@ const AdminLogin = () => {
     }, 3500);
   };
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const cleanUser = username.trim();
 
     if (!cleanUser) {
-      triggerToast("Please enter your username.", "error");
+      triggerToast("Please enter your username or email.", "error");
       return;
     }
     if (!password) {
@@ -82,23 +83,78 @@ const AdminLogin = () => {
     }
 
     const lowerUser = cleanUser.toLowerCase();
-    if ((lowerUser !== 'admin' && lowerUser !== 'admin@bhaktivedantahospital.com' && lowerUser !== 'superadmin') || password !== 'Admin') {
-      triggerToast("Invalid credentials! Username: Admin, Password: Admin", "error");
+    
+    // Check 1: Super Admin login
+    const isSuperAdmin = (lowerUser === 'admin' || lowerUser === 'admin@bhaktivedantahospital.com' || lowerUser === 'superadmin') && password === 'Admin';
+    
+    if (isSuperAdmin) {
+      triggerToast("Authenticating Super Admin...", "info");
+      setIsLoading(true);
+      setTimeout(() => {
+        localStorage.setItem('bhaktivedanta_admin_auth', 'true');
+        localStorage.setItem('adminToken', 'true');
+        localStorage.setItem('admin_username', cleanUser);
+        localStorage.setItem('subadmin_role', 'Super Admin');
+        triggerToast("Welcome Back Super Admin! Redirecting...", "success");
+        setTimeout(() => {
+          navigate('/admin/dashboard', { replace: true });
+        }, 800);
+      }, 600);
       return;
     }
 
-    triggerToast("Authenticating details...", "info");
+    // Check 2: Sub-Admin login
     setIsLoading(true);
+    const defaultSubAdmins = [
+      { username: 'admin.sneha', email: 'sneha@bhaktivedantahospital.com', password: 'Password123', role: 'Administrator', status: 'Active' },
+      { username: 'admin.rajesh', email: 'rajesh@bhaktivedantahospital.com', password: 'Password123', role: 'Content Manager', status: 'Active' },
+      { username: 'admin.dev', email: 'dev@bhaktivedantahospital.com', password: 'Password123', role: 'Developer', status: 'Active' }
+    ];
 
-    setTimeout(() => {
+    try {
+      let subadminsList = defaultSubAdmins;
+      try {
+        const res = await getSubadmins(defaultSubAdmins);
+        if (res && res.length > 0) subadminsList = res;
+      } catch (err) {}
+
+      const matchedUser = subadminsList.find(s => 
+        (s.username.toLowerCase() === lowerUser || s.email.toLowerCase() === lowerUser)
+      );
+
+      if (!matchedUser) {
+        setIsLoading(false);
+        triggerToast("Account not found. Please check username or email.", "error");
+        return;
+      }
+
+      if (matchedUser.status === 'Inactive') {
+        setIsLoading(false);
+        triggerToast("This sub-admin account is currently inactive. Contact Super Admin.", "error");
+        return;
+      }
+
+      const validPassword = matchedUser.password || 'Password123';
+      if (password !== validPassword) {
+        setIsLoading(false);
+        triggerToast("Incorrect password for sub-admin account.", "error");
+        return;
+      }
+
+      // Success Sub-Admin Login
       localStorage.setItem('bhaktivedanta_admin_auth', 'true');
       localStorage.setItem('adminToken', 'true');
-      localStorage.setItem('admin_username', cleanUser);
-      triggerToast("Welcome Back! Redirecting to Dashboard...", "success");
+      localStorage.setItem('admin_username', matchedUser.username);
+      localStorage.setItem('subadmin_role', matchedUser.role || 'Administration');
+      
+      triggerToast(`Welcome ${matchedUser.username}! Logged in as ${matchedUser.role}.`, "success");
       setTimeout(() => {
         navigate('/admin/dashboard', { replace: true });
       }, 800);
-    }, 600);
+    } catch (err) {
+      setIsLoading(false);
+      triggerToast("Authentication error. Please try again.", "error");
+    }
   };
 
   return (

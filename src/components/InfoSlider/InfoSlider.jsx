@@ -110,6 +110,7 @@ const InfoSlider = () => {
             <div className="mandala-ring ring-1"></div>
             <div className="mandala-ring ring-2"></div>
             <div className="mandala-ring ring-3"></div>
+            <div className="mandala-ring ring-4"></div>
             <div className="slider-img-wrap">
               <img src={slide.image} alt={slide.imageLabel} className="slider-portrait" />
             </div>

@@ -15,6 +15,11 @@ dist-ssr
 .env.local
 package-lock.json
 
+# Scratch and temporary files
+scratch/
+*.tmp
+.cache/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

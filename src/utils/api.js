@@ -72,10 +72,15 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
       const serverResult = await res.json();
 
       if (updateLocalFn && localStorageKey) {
-        const local = localStorage.getItem(localStorageKey);
-        let localData = local ? JSON.parse(local) : undefined;
-        const newLocalData = updateLocalFn(localData, serverResult);
-        localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+        try {
+          const local = localStorage.getItem(localStorageKey);
+          let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : [];
+          if (!Array.isArray(localData)) localData = [];
+          const newLocalData = updateLocalFn(localData, serverResult);
+          localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+        } catch (lErr) {
+          console.warn("[API] LocalStorage sync error:", lErr);
+        }
       }
       return serverResult;
     }
@@ -84,11 +89,16 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
   }
 
   if (updateLocalFn && localStorageKey) {
-    const local = localStorage.getItem(localStorageKey);
-    let localData = local ? JSON.parse(local) : undefined;
-    const newLocalData = updateLocalFn(localData, body);
-    localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
-    window.dispatchEvent(new Event('storage'));
+    try {
+      const local = localStorage.getItem(localStorageKey);
+      let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : [];
+      if (!Array.isArray(localData)) localData = [];
+      const newLocalData = updateLocalFn(localData, body);
+      localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+      window.dispatchEvent(new Event('storage'));
+    } catch (lErr) {
+      console.warn("[API] LocalStorage fallback sync error:", lErr);
+    }
     return body;
   }
   return null;
@@ -101,14 +111,17 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
 // Doctors
 export const getDoctors = (fallback) => apiGet('/doctors', 'bhaktivedanta_admin_doctors', fallback);
 export const saveDoctorsList = (list) => apiMutation('/doctors', 'PUT', list, 'bhaktivedanta_admin_doctors', (old, updated) => updated);
-export const addDoctor = (doc, fallbackList) => apiMutation('/doctors', 'POST', doc, 'bhaktivedanta_admin_doctors', (list = [], newDoc) => {
-  return [...list, newDoc];
+export const addDoctor = (doc, fallbackList) => apiMutation('/doctors', 'POST', doc, 'bhaktivedanta_admin_doctors', (list, newDoc) => {
+  const arr = Array.isArray(list) ? list : [];
+  return [newDoc, ...arr];
 });
-export const updateDoctor = (id, doc, fallbackList) => apiMutation(`/doctors/${id}`, 'PUT', doc, 'bhaktivedanta_admin_doctors', (list = [], updatedDoc) => {
-  return list.map(item => item.id === id ? { ...item, ...updatedDoc } : item);
+export const updateDoctor = (id, doc, fallbackList) => apiMutation(`/doctors/${id}`, 'PUT', doc, 'bhaktivedanta_admin_doctors', (list, updatedDoc) => {
+  const arr = Array.isArray(list) ? list : [];
+  return arr.map(item => item.id === id ? { ...item, ...updatedDoc } : item);
 });
-export const deleteDoctor = (id, fallbackList) => apiMutation(`/doctors/${id}`, 'DELETE', null, 'bhaktivedanta_admin_doctors', (list = []) => {
-  return list.filter(item => item.id !== id);
+export const deleteDoctor = (id, fallbackList) => apiMutation(`/doctors/${id}`, 'DELETE', null, 'bhaktivedanta_admin_doctors', (list) => {
+  const arr = Array.isArray(list) ? list : [];
+  return arr.filter(item => item.id !== id);
 });
 
 // Appointments
@@ -203,6 +216,20 @@ export const updateNews = (id, newsItem, fallbackList) => apiMutation(`/news/${i
 export const deleteNews = (id, fallbackList) => apiMutation(`/news/${id}`, 'DELETE', null, 'bhaktivedanta_admin_news', (list = []) => {
   return list.filter(item => item.id !== id);
 });
+
+// Blogs
+export const getBlogs = (fallback) => apiGet('/blogs', 'bhaktivedanta_admin_blogs', fallback);
+export const getBlogById = (id, fallback) => apiGet(`/blogs/${id}`, `bhaktivedanta_admin_blog_${id}`, fallback);
+export const addBlog = (blogItem) => apiMutation('/blogs', 'POST', blogItem, 'bhaktivedanta_admin_blogs', (list = [], newBlog) => {
+  return [newBlog, ...list];
+});
+export const updateBlog = (id, blogItem) => apiMutation(`/blogs/${id}`, 'PUT', blogItem, 'bhaktivedanta_admin_blogs', (list = [], updatedBlog) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedBlog } : item);
+});
+export const deleteBlog = (id) => apiMutation(`/blogs/${id}`, 'DELETE', null, 'bhaktivedanta_admin_blogs', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
+
 
 // Gallery
 export const getGallery = (fallback) => apiGet('/gallery', 'bhaktivedanta_admin_gallery', fallback);

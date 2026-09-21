@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
+import { deleteDoctor } from '../../../utils/api';
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -33,12 +34,26 @@ const Doctors = () => {
     loadDoctorsData();
   }, []);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to remove this doctor profile?")) {
-      const updated = doctors.filter(doc => doc.id !== id);
-      setDoctors(updated);
-      saveDoctors(updated);
+  const handleDelete = (doc, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
+    setDeleteDoctorModal(doc);
+  };
+
+  const confirmDeleteDoctor = async () => {
+    if (!deleteDoctorModal) return;
+    const targetId = deleteDoctorModal.id;
+    const updated = doctors.filter(doc => doc.id !== targetId);
+    setDoctors(updated);
+    saveDoctors(updated);
+    try {
+      await deleteDoctor(targetId);
+    } catch (err) {
+      console.error("Failed to delete doctor:", err);
+    }
+    setDeleteDoctorModal(null);
   };
 
   const handleToggleFeatured = (id) => {
@@ -71,9 +86,16 @@ const Doctors = () => {
     return ['All Departments', ...Array.from(depts).sort()];
   }, [doctors]);
 
-  // Filtered doctors list based on search and selected filters
+  // Helper function to extract numeric years of experience
+  const parseExpYears = (exp) => {
+    if (!exp) return 0;
+    const match = String(exp).match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+
+  // Filtered and sorted doctors list (most experienced doctor first)
   const filteredDoctors = useMemo(() => {
-    return doctors.filter(doc => {
+    const list = doctors.filter(doc => {
       const q = searchTerm.toLowerCase().trim();
       const nameMatch = !q || 
         (doc.name || '').toLowerCase().includes(q) ||
@@ -84,17 +106,14 @@ const Doctors = () => {
       const deptMatch = selectedDept === 'All Departments' || doc.department === selectedDept;
       
       let expMatch = true;
+      const yrs = parseExpYears(doc.experience);
       if (selectedExp === '5+ Years') {
-        const yrs = parseInt(doc.experience) || 0;
         expMatch = yrs >= 5;
       } else if (selectedExp === '10+ Years') {
-        const yrs = parseInt(doc.experience) || 0;
         expMatch = yrs >= 10;
       } else if (selectedExp === '15+ Years') {
-        const yrs = parseInt(doc.experience) || 0;
         expMatch = yrs >= 15;
       } else if (selectedExp === '20+ Years') {
-        const yrs = parseInt(doc.experience) || 0;
         expMatch = yrs >= 20;
       }
 
@@ -102,6 +121,9 @@ const Doctors = () => {
 
       return nameMatch && deptMatch && expMatch && availMatch;
     });
+
+    // Sort by experience descending (most experienced doctor at top)
+    return list.sort((a, b) => parseExpYears(b.experience) - parseExpYears(a.experience));
   }, [doctors, searchTerm, selectedDept, selectedExp, selectedAvail]);
 
   // Reset page to 1 when filters or search change
@@ -123,6 +145,22 @@ const Doctors = () => {
   const availableToday = doctors.filter(d => d.availability === 'Available').length;
   const featuredCount = doctors.filter(d => d.featured === 'Yes').length;
   const onLeaveCount = doctors.filter(d => d.availability === 'On Leave').length;
+
+  // Modal state for viewing doctor profile popup & deletion confirmation popup
+  const [selectedDoctorModal, setSelectedDoctorModal] = useState(null);
+  const [deleteDoctorModal, setDeleteDoctorModal] = useState(null);
+
+  // Lock background body scroll when modal popup is open
+  useEffect(() => {
+    if (selectedDoctorModal || deleteDoctorModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedDoctorModal, deleteDoctorModal]);
 
   return (
     <div className="space-y-6">
@@ -172,9 +210,7 @@ const Doctors = () => {
           </div>
           <div>
             <h3 className="font-bold text-2xl text-slate-800">{totalCount}</h3>
-            <p className="text-[10px] text-green-600 font-bold flex items-center gap-0.5 mt-1">
-              <span className="material-symbols-outlined text-[12px]">trending_up</span> Live Supabase Directory (bv_doctors)
-            </p>
+            <p className="text-[10px] text-slate-500 font-bold mt-1">Active registered doctors</p>
           </div>
         </div>
 
@@ -319,7 +355,6 @@ const Doctors = () => {
           <table className="w-full text-left border-collapse text-xs">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr className="text-slate-500 font-bold uppercase tracking-wider text-[11px]">
-                <th className="px-4 py-3 w-16 text-center">#</th>
                 <th className="px-4 py-3">Doctor Info</th>
                 <th className="px-4 py-3">Department</th>
                 <th className="px-4 py-3">Experience</th>
@@ -332,7 +367,7 @@ const Doctors = () => {
             <tbody className="divide-y divide-slate-100 text-slate-700">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-12 text-center text-slate-400">
+                  <td colSpan="7" className="px-4 py-12 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <span className="material-symbols-outlined text-3xl text-blue-500 animate-spin">progress_activity</span>
                       <span className="font-semibold text-slate-600">Loading doctors from database...</span>
@@ -341,7 +376,7 @@ const Doctors = () => {
                 </tr>
               ) : paginatedDoctors.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-4 py-10 text-center text-slate-400 font-medium">
+                  <td colSpan="7" className="px-4 py-10 text-center text-slate-400 font-medium">
                     <div className="flex flex-col items-center justify-center gap-1">
                       <span className="material-symbols-outlined text-3xl text-slate-300">person_off</span>
                       <p className="text-sm font-semibold text-slate-600">No doctors match the selected criteria.</p>
@@ -361,13 +396,15 @@ const Doctors = () => {
                   const fallbackAvatar = `/doctor${avatarNum}.png`;
 
                   return (
-                    <tr key={doc.id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="px-4 py-3 text-center font-bold text-slate-400 text-[11px]">
-                        {doc['sr.no'] || displayIndex}
-                      </td>
+                    <tr 
+                      key={doc.id} 
+                      className="hover:bg-blue-50/30 cursor-pointer transition-colors group"
+                      onClick={() => setSelectedDoctorModal(doc)}
+                      title={`Click to view profile of ${doc.name}`}
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200">
+                          <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200 group-hover:border-blue-300 group-hover:shadow-xs transition-all">
                             <img 
                               alt={doc.name} 
                               className="w-full h-full object-cover" 
@@ -379,7 +416,7 @@ const Doctors = () => {
                             />
                           </div>
                           <div className="min-w-0 max-w-[260px]">
-                            <p className="font-bold text-slate-800 text-sm leading-snug truncate" title={doc.name}>
+                            <p className="font-bold text-slate-800 group-hover:text-blue-600 text-sm leading-snug truncate transition-colors" title={doc.name}>
                               {doc.name}
                             </p>
                             <p className="text-[10px] text-slate-500 font-medium line-clamp-1" title={doc.qualifications}>
@@ -390,7 +427,7 @@ const Doctors = () => {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex flex-col max-w-[220px]">
-                          <span className="font-semibold text-slate-800 leading-snug">{doc.department}</span>
+                          <span className="font-semibold text-slate-800 group-hover:text-blue-600 leading-snug transition-colors">{doc.department}</span>
                           <span className="text-[10px] text-slate-500 line-clamp-1" title={doc.subSpeciality}>
                             {doc.subSpeciality}
                           </span>
@@ -412,7 +449,10 @@ const Doctors = () => {
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <button 
-                          onClick={() => handleToggleFeatured(doc.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleFeatured(doc.id);
+                          }}
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
                             doc.featured === 'Yes'
                               ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100'
@@ -429,21 +469,39 @@ const Doctors = () => {
                           <span className="font-semibold text-slate-600">{doc.status}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <td className="px-4 py-3 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                         <div className="flex justify-end gap-1.5">
                           <button 
-                            onClick={() => navigate(`/admin/add-doctor?edit=${doc.id}`)}
-                            className="w-7 h-7 rounded bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-blue-700 border border-slate-200 flex items-center justify-center transition-all"
-                            title="Edit Profile"
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedDoctorModal(doc);
+                            }}
+                            className="w-7 h-7 rounded bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+                            title="View Doctor Profile"
                           >
-                            <span className="material-symbols-outlined text-[16px]">edit</span>
+                            <span className="material-symbols-outlined text-[16px] pointer-events-none">visibility</span>
                           </button>
                           <button 
-                            onClick={() => handleDelete(doc.id)}
-                            className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              navigate(`/admin/add-doctor?edit=${doc.id}`);
+                            }}
+                            className="w-7 h-7 rounded bg-slate-50 hover:bg-blue-50 text-slate-500 hover:text-blue-700 border border-slate-200 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+                            title="Edit Profile"
+                          >
+                            <span className="material-symbols-outlined text-[16px] pointer-events-none">edit</span>
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={(e) => handleDelete(doc, e)}
+                            className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
                             title="Delete Doctor"
                           >
-                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            <span className="material-symbols-outlined text-[16px] pointer-events-none">delete</span>
                           </button>
                         </div>
                       </td>
@@ -530,6 +588,191 @@ const Doctors = () => {
           </div>
         )}
       </div>
+
+      {/* Doctor Profile View Modal Popup */}
+      {selectedDoctorModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[999999] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setSelectedDoctorModal(null)}
+          style={{ overscrollBehavior: 'contain' }}
+        >
+          <div 
+            className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 overflow-hidden relative transform transition-all animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+            style={{ overscrollBehavior: 'contain' }}
+          >
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#1e3a8a] text-white p-6 relative">
+              <button 
+                onClick={() => setSelectedDoctorModal(null)}
+                className="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center transition-all"
+                title="Close Modal"
+              >
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+
+              <div className="flex items-start gap-4">
+                <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-white/10 border-2 border-white/20 shadow-md">
+                  <img 
+                    src={selectedDoctorModal.image || `/doctor${((parseInt(selectedDoctorModal['sr.no'] || 1) - 1) % 4) + 1}.png`} 
+                    alt={selectedDoctorModal.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `/doctor${((parseInt(selectedDoctorModal['sr.no'] || 1) - 1) % 4) + 1}.png`;
+                    }}
+                  />
+                </div>
+                <div className="flex-1 pr-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      selectedDoctorModal.status === 'Active' 
+                        ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+                        : 'bg-slate-500/20 text-slate-300 border border-slate-500/30'
+                    }`}>
+                      {selectedDoctorModal.status || 'Active'}
+                    </span>
+                    {selectedDoctorModal.featured === 'Yes' && (
+                      <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[12px]">verified</span> Featured
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-xl font-bold text-white leading-tight">{selectedDoctorModal.name}</h3>
+                  <p className="text-xs text-amber-400 font-semibold mt-0.5">{selectedDoctorModal.subSpeciality || selectedDoctorModal.department}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-slate-700">
+              {/* Qualifications Block */}
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Qualifications & Credentials</span>
+                <p className="text-xs font-semibold text-slate-800 leading-relaxed">
+                  {selectedDoctorModal.qualifications || 'Medical Specialist Consultant'}
+                </p>
+              </div>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Department</span>
+                  <p className="text-xs font-bold text-slate-800">{selectedDoctorModal.department}</p>
+                </div>
+
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Experience</span>
+                  <p className="text-xs font-bold text-slate-800">{selectedDoctorModal.experience || '10+ Years'}</p>
+                </div>
+
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Availability</span>
+                  <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-0.5 ${
+                    selectedDoctorModal.availability === 'Available'
+                      ? 'bg-green-50 text-green-700 border border-green-200'
+                      : selectedDoctorModal.availability === 'Busy'
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                      : 'bg-red-50 text-red-700 border border-red-200'
+                  }`}>
+                    {selectedDoctorModal.availability || 'Available'}
+                  </span>
+                </div>
+
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Sub-Speciality</span>
+                  <p className="text-xs font-semibold text-slate-800 line-clamp-1">{selectedDoctorModal.subSpeciality || 'General Practitioner'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex items-center justify-between gap-3">
+              <button 
+                onClick={() => setSelectedDoctorModal(null)}
+                className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-all"
+              >
+                Close
+              </button>
+
+              <button 
+                onClick={() => {
+                  const id = selectedDoctorModal.id;
+                  setSelectedDoctorModal(null);
+                  navigate(`/admin/add-doctor?edit=${id}`);
+                }}
+                className="px-4 py-2 bg-[#fea619] hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 shadow-sm"
+              >
+                <span className="material-symbols-outlined text-sm">edit</span>
+                Edit Doctor Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Modern Deletion Confirmation Modal */}
+      {deleteDoctorModal && (
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-[999999] flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setDeleteDoctorModal(null)}
+          style={{ overscrollBehavior: 'contain' }}
+        >
+          <div 
+            className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden relative transform transition-all animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+            style={{ overscrollBehavior: 'contain' }}
+          >
+            <div className="p-6 text-center">
+              {/* Warning Icon Circle */}
+              <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 shadow-xs">
+                <span className="material-symbols-outlined text-3xl">warning</span>
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-1.5">Remove Doctor Profile?</h3>
+              <p className="text-xs text-slate-500 mb-4 leading-relaxed">
+                Are you sure you want to remove <strong className="text-slate-800 font-bold">{deleteDoctorModal.name}</strong>? This will remove the doctor from the hospital database.
+              </p>
+
+              {/* Doctor Summary Card */}
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/70 text-left flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-white border border-slate-200">
+                  <img 
+                    src={deleteDoctorModal.image || `/doctor${((parseInt(deleteDoctorModal['sr.no'] || 1) - 1) % 4) + 1}.png`} 
+                    alt={deleteDoctorModal.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `/doctor1.png`;
+                    }}
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-slate-800 truncate">{deleteDoctorModal.name}</p>
+                  <p className="text-[10px] text-slate-500 font-medium truncate">{deleteDoctorModal.department || deleteDoctorModal.qualifications}</p>
+                </div>
+              </div>
+
+              {/* Modal Action Buttons */}
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => setDeleteDoctorModal(null)}
+                  className="flex-1 px-4 py-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteDoctor}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-red-500/20 flex items-center justify-center gap-1.5"
+                >
+                  <span className="material-symbols-outlined text-base">delete</span>
+                  Delete Profile
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

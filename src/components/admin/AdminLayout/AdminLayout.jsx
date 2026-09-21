@@ -5,12 +5,28 @@ import AdminHeader from '../AdminHeader/AdminHeader';
 import ErrorBoundary from '../../ErrorBoundary';
 import '../unified-admin.css';
 
+const rolePermissions = {
+  'Super Admin': null,
+  'Administrator': null,
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'add-blog', 'edit-blog', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events'],
+  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs', 'add-blog', 'edit-blog'],
+  'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs', 'add-blog', 'edit-blog']
+};
+
 const AdminLayout = () => {
   const location = useLocation();
   const isAuthenticated = localStorage.getItem('bhaktivedanta_admin_auth') === 'true' || localStorage.getItem('adminToken') === 'true';
 
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  const userRole = localStorage.getItem('subadmin_role') || 'Super Admin';
+  const allowedRoutes = rolePermissions[userRole] || null;
+  const currentPathSegment = location.pathname.replace('/admin/', '').replace('/admin', '') || 'dashboard';
+
+  if (allowedRoutes && currentPathSegment && !allowedRoutes.some(r => currentPathSegment.startsWith(r))) {
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   useEffect(() => {
