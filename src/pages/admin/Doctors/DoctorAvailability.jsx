@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 const DoctorAvailability = () => {
   const [doctors, setDoctors] = useState([]);
@@ -34,7 +35,7 @@ const DoctorAvailability = () => {
   const handleSaveAvailability = (e) => {
     e.preventDefault();
     if (!selectedDocId) {
-      alert("Please select a doctor.");
+      showErrorAlert("Selection Error", "Please select a doctor.");
       return;
     }
 

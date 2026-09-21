@@ -28,6 +28,20 @@ export const showErrorAlert = (title, text) => {
   });
 };
 
+export const showInfoAlert = (title, text) => {
+  return Swal.fire({
+    title: title || 'Information',
+    text: text || '',
+    icon: 'info',
+    confirmButtonColor: '#1e3a8a',
+    borderRadius: '16px',
+    customClass: {
+      popup: 'rounded-2xl font-sans',
+      confirmButton: 'px-5 py-2.5 rounded-lg font-bold text-sm'
+    }
+  });
+};
+
 export const showConfirmDialog = async (title, text, confirmButtonText = 'Yes, Proceed') => {
   return Swal.fire({
     title: title || 'Are you sure?',

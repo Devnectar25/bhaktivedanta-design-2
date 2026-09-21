@@ -32,7 +32,7 @@
 }
 
 .contact-info-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   font-weight: 600;
   color: #132A4C;
@@ -70,7 +70,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 6px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.9rem;
   line-height: 1.45;
 }
@@ -157,7 +157,7 @@
 }
 
 .contact-note-text {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   color: #92400E;
   line-height: 1.4;

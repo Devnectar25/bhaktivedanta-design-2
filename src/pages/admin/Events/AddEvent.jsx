@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { initialEvents, saveEvents } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddEvent = () => {
   const [searchParams] = useSearchParams();
@@ -38,7 +39,7 @@ const AddEvent = () => {
     e.preventDefault();
 
     if (!title || !date || !venue) {
-      alert("Please fill in the required fields (Title, Date, Venue).");
+      showErrorAlert("Required Fields Missing", "Please fill in the required fields (Title, Date, Venue).");
       return;
     }
 

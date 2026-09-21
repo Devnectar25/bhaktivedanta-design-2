@@ -36,7 +36,7 @@
   background: rgba(232, 121, 43, 0.2);
   border: 1px solid rgba(232, 121, 43, 0.5);
   color: #FDBA74;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -47,7 +47,7 @@
 }
 
 .spiritual-hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   color: #FFFFFF;
@@ -56,7 +56,7 @@
 }
 
 .spiritual-hero-subtitle {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.125rem;
   color: #E2E8F0;
   margin: 0;
@@ -78,7 +78,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   font-weight: 600;
   color: #64748B;
@@ -107,7 +107,7 @@
 }
 
 .spiritual-section-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.75rem;
   font-weight: 600;
   color: #132A4C;
@@ -115,7 +115,7 @@
 }
 
 .spiritual-body-text {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   color: #334155;
   line-height: 1.7;
@@ -148,7 +148,7 @@
 }
 
 .spiritual-card-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
   color: #132A4C;
@@ -200,7 +200,7 @@
 }
 
 .spiritual-col-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
   color: #132A4C;
@@ -208,7 +208,7 @@
 }
 
 .spiritual-col-subtitle {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #64748B;
   display: block;
@@ -248,7 +248,7 @@
 }
 
 .spiritual-bullet-title {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.975rem;
   font-weight: 600;
   color: #1E293B;
@@ -256,7 +256,7 @@
 }
 
 .spiritual-bullet-note {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #64748B;
   margin-top: 3px;

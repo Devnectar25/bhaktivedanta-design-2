@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { initialTestimonials, saveTestimonials } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -18,8 +19,9 @@ const Testimonials = () => {
     saveTestimonials(newTests);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this testimonial?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete Testimonial", "Are you sure you want to delete this testimonial?", "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = testimonials.filter(t => t.id !== id);
       saveAndSetTestimonials(updated);
     }

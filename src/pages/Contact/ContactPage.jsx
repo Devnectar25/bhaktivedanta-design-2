@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Contact from '../../components/Contact/Contact';
+import './ContactPage.css';
 
 const ContactPage = () => {
   useEffect(() => {
@@ -7,7 +8,7 @@ const ContactPage = () => {
   }, []);
 
   return (
-    <div className="pt-8 pb-16 min-h-screen bg-slate-50">
+    <div className="contact-page-wrapper">
       <Contact />
     </div>
   );

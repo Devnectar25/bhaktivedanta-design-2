@@ -1,10 +1,66 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Footer.css';
-import { HeartPulse, Bone, BedDouble, MapPin } from 'lucide-react';
+import { 
+  HeartPulse, 
+  Bone, 
+  BedDouble, 
+  MapPin, 
+  FileText, 
+  ShieldCheck, 
+  Award, 
+  FileSpreadsheet 
+} from 'lucide-react';
+import { getStatutoryCompliancesState } from '../../utils/api';
+import { openPdfDocument } from '../../utils/pdfViewer';
+
+const iconMap = {
+  HeartPulse,
+  Bone,
+  BedDouble,
+  FileText,
+  ShieldCheck,
+  Award,
+  FileSpreadsheet
+};
+
+const defaultInitialCompliances = [
+  { id: 'comp-1', title: 'Coronary Stent Prices', icon: 'HeartPulse', pdfUrl: '' },
+  { id: 'comp-2', title: 'Knee Implant Prices', icon: 'Bone', pdfUrl: '' },
+  { id: 'comp-3', title: 'Indigent and Weaker Section Category', icon: 'BedDouble', pdfUrl: '' }
+];
 
 const Footer = () => {
   const navigate = useNavigate();
+  const [compliances, setCompliances] = useState(defaultInitialCompliances);
+  const [siteMapPdfUrl, setSiteMapPdfUrl] = useState('');
+
+  useEffect(() => {
+    const fetchCompliances = () => {
+      getStatutoryCompliancesState({ compliances: defaultInitialCompliances }).then(res => {
+        if (res) {
+          if (Array.isArray(res.compliances)) {
+            setCompliances(res.compliances);
+          }
+          if (res.siteMapPdfUrl) {
+            setSiteMapPdfUrl(res.siteMapPdfUrl);
+          }
+        }
+      }).catch(err => {
+        console.warn('Footer could not fetch statutory compliances:', err);
+      });
+    };
+
+    fetchCompliances();
+
+    const handleSync = () => fetchCompliances();
+    window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('focus', handleSync);
+    return () => {
+      window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
+  }, []);
 
   const handleLogoClick = (e) => {
     e.preventDefault();
@@ -13,6 +69,13 @@ const Footer = () => {
     } else {
       navigate('/');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleComplianceClick = (e, item) => {
+    e.preventDefault();
+    if (item.pdfUrl) {
+      openPdfDocument(item.pdfUrl, item.title);
     }
   };
 
@@ -71,32 +134,41 @@ const Footer = () => {
              <li><a href="#about">About Us</a></li>
              <li><a href="#faqs">FAQs</a></li>
              <li><a href="#blogs">Blogs</a></li>
-             <li><a href="#contact">Contact Us</a></li>
-             <li><a href="#sitemap">Site Map</a></li>
+             <li><Link to="/contact">Contact Us</Link></li>
+             <li>
+               <a 
+                 href={siteMapPdfUrl || '#sitemap'}
+                 onClick={(e) => {
+                   if (siteMapPdfUrl) {
+                     e.preventDefault();
+                     openPdfDocument(siteMapPdfUrl, 'Hospital Site Map');
+                   }
+                 }}
+               >
+                 Site Map
+               </a>
+             </li>
           </ul>
         </div>
 
         <div className="footer-col compliance-col">
           <h3>Statutory Compliances</h3>
           <ul className="footer-compliance-links">
-             <li>
-               <a href="#">
-                 <span className="compliance-icon-wrap"><HeartPulse size={16} /></span>
-                 <span>Coronary Stent Prices</span>
-               </a>
-             </li>
-             <li>
-               <a href="#">
-                 <span className="compliance-icon-wrap"><Bone size={16} /></span>
-                 <span>Knee Implant Prices</span>
-               </a>
-             </li>
-             <li>
-               <a href="#">
-                 <span className="compliance-icon-wrap"><BedDouble size={16} /></span>
-                 <span>Indigent and Weaker Section Category</span>
-               </a>
-             </li>
+            {compliances.map((item) => {
+              const IconComp = iconMap[item.icon] || FileText;
+              return (
+                <li key={item.id}>
+                  <a 
+                    href={item.pdfUrl || '#'} 
+                    onClick={(e) => handleComplianceClick(e, item)}
+                    title={item.pdfUrl ? `Open ${item.title} PDF` : `${item.title}`}
+                  >
+                    <span className="compliance-icon-wrap"><IconComp size={16} /></span>
+                    <span>{item.title}</span>
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
 

@@ -10,21 +10,28 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build
+.vite
 *.local
 .env
 .env.local
-package-lock.json
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Scratch and temporary files
 scratch/
 *.tmp
+*.temp
 .cache/
+.eslintcache
 
-# Editor directories and files
+# Editor & OS files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj

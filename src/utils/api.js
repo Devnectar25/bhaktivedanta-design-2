@@ -1,3 +1,5 @@
+import { logException } from './errorLogger';
+
 let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
   base = base.replace(/\/$/, '') + '/api';
@@ -38,9 +40,14 @@ export async function apiGet(path, localStorageKey, fallbackData) {
         localStorage.setItem(localStorageKey, JSON.stringify(data));
       }
       return data;
+    } else if (path !== '/app-errors') {
+      logException(`HTTP ${res.status} on GET ${path}`, 'API Gateway', 'Error', path);
     }
   } catch (err) {
     console.warn(`[API] Failed to fetch ${path}. Falling back to localStorage.`, err);
+    if (path !== '/app-errors') {
+      logException(err, 'API Gateway', 'Warning', path);
+    }
   }
 
   const local = localStorage.getItem(localStorageKey);
@@ -93,6 +100,10 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
       throw err;
     }
   } catch (err) {
+    if (path !== '/app-errors' && !path.startsWith('/app-errors')) {
+      logException(err, 'API Mutation', 'Error', path);
+    }
+
     if (err.status) {
       // Re-throw explicit server error so UI can display backend validation message
       throw err;
@@ -470,5 +481,37 @@ export const getSpiritualCareState = (fallback) =>
 
 export const saveSpiritualCareState = (state) => 
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
+
+// Statutory Compliances State & PDF Upload
+export const getStatutoryCompliancesState = (fallback) =>
+  apiGet('/statutory-compliances', 'bhaktivedanta_statutory_compliances_state', fallback);
+
+export const saveStatutoryCompliancesState = (state) =>
+  apiMutation('/statutory-compliances', 'PUT', state, 'bhaktivedanta_statutory_compliances_state', (old, updated) => {
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const resetStatutoryCompliancesState = () =>
+  apiMutation('/statutory-compliances/reset', 'POST', {}, 'bhaktivedanta_statutory_compliances_state', (old, updated) => {
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const uploadStatutoryPdf = async (title, fileName, base64Data) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/statutory-compliances/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, fileName, base64Data })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[API] Upload statutory PDF failed:', err);
+  }
+  return { success: true, url: base64Data, fallback: true };
+};
 
 

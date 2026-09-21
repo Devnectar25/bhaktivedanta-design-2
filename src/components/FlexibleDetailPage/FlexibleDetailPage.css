@@ -22,7 +22,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   color: #64748B;
 }
@@ -34,7 +34,7 @@
   background: #F1F5F9;
   border: 1px solid #E2E8F0;
   color: #132A4C;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   padding: 6px 12px;
@@ -82,7 +82,7 @@
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   color: #475569;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.825rem;
   font-weight: 600;
   padding: 6px 12px;
@@ -106,7 +106,7 @@
   display: inline-block;
   background: #EFF6FF;
   color: #1E40AF;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -117,7 +117,7 @@
 }
 
 .detail-hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 2.25rem;
   font-weight: 700;
   color: #132A4C;
@@ -126,7 +126,7 @@
 }
 
 .detail-hero-subtitle {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   color: #64748B;
   margin: 0;
@@ -189,7 +189,7 @@
 }
 
 .detail-heading-block.level-2 .detail-heading-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.65rem;
   font-weight: 600;
   color: #132A4C;
@@ -197,7 +197,7 @@
 }
 
 .detail-heading-block.level-3 .detail-heading-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
   color: #132A4C;
@@ -208,7 +208,7 @@
   display: inline-block;
   background: #FFF7ED;
   color: #C2410C;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
   font-weight: 700;
   padding: 3px 10px;
@@ -217,14 +217,14 @@
 }
 
 .detail-heading-sub {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   color: #64748B;
   margin: 0;
 }
 
 .detail-block-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
   color: #132A4C;
@@ -232,14 +232,14 @@
 }
 
 .detail-block-subtitle {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: #64748B;
   margin: 0 0 16px;
 }
 
 .detail-plain-text {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   color: #334155;
   line-height: 1.7;
@@ -291,7 +291,7 @@
 }
 
 .detail-image-caption {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #64748B;
   text-align: center;
@@ -340,7 +340,7 @@
 }
 
 .detail-bullet-text {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: #1E293B;
   font-weight: 500;
@@ -348,7 +348,7 @@
 }
 
 .detail-bullet-note {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.825rem;
   color: #64748B;
   margin-top: 2px;
@@ -427,7 +427,7 @@
 
 .detail-lightbox-caption {
   color: #FFFFFF;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   margin-top: 12px;
   text-align: center;

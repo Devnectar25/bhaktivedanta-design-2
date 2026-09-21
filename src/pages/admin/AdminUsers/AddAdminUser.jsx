@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { initialSubAdmins, saveSubAdmins } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddAdminUser = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const AddAdminUser = () => {
     e.preventDefault();
 
     if (!username || !email) {
-      alert("Please fill in Username and Email.");
+      showErrorAlert("Missing Information", "Please fill in Username and Email.");
       return;
     }
 

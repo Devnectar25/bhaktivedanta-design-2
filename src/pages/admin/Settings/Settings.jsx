@@ -14,7 +14,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-6xl mx-auto">
       {/* Toast Alert */}
       {saveToast && (
         <div className="fixed bottom-5 right-5 z-[9999] flex items-center gap-3 p-4 rounded-xl shadow-lg border border-green-100 bg-white max-w-sm w-full animate-bounce">
@@ -30,13 +30,14 @@ const Settings = () => {
           <span className="material-symbols-outlined text-xs">chevron_right</span>
           <span className="text-slate-600 font-bold">Settings</span>
         </nav>
-        <h2 className="text-2xl font-bold text-slate-800">Hospital Portal Settings</h2>
-        <p className="text-sm text-slate-500 font-medium">Configure global contact details, consultation defaults, and branding settings.</p>
+        <h2 className="text-2xl font-bold text-slate-800">Admin Portal Settings</h2>
+        <p className="text-sm text-slate-500 font-medium">
+          Manage general hospital configurations and portal parameters.
+        </p>
       </div>
 
-      {/* Settings Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-6 space-y-6 text-xs text-slate-700">
-        
+      {/* GENERAL SETTINGS FORM */}
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200/80 p-6 space-y-6 text-xs text-slate-700 max-w-4xl">
         {/* Hospital Branding */}
         <section className="space-y-4">
           <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2 flex items-center gap-2">
@@ -124,7 +125,6 @@ const Settings = () => {
             Save Settings
           </button>
         </div>
-
       </form>
     </div>
   );

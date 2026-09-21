@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { initialGallery, saveGallery } from '../../../data/adminState';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddGalleryMedia = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const AddGalleryMedia = () => {
     e.preventDefault();
 
     if (!title || !imageUrl) {
-      alert("Please fill in all fields (Title, Image URL).");
+      showErrorAlert("Required Fields Missing", "Please fill in all fields (Title, Image URL).");
       return;
     }
 

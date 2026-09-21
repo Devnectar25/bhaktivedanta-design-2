@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../../data/defaultSpecialities';
 import { getSpecialitiesState, saveSpecialitiesState } from '../../../utils/api';
+import { showErrorAlert } from '../../../utils/swal';
 
 const AddCategory = () => {
   const [searchParams] = useSearchParams();
@@ -42,12 +43,12 @@ const AddCategory = () => {
     e.preventDefault();
 
     if (!name) {
-      alert("Category name is required.");
+      showErrorAlert("Validation Error", "Category name is required.");
       return;
     }
 
     if (!editId && state.categories.length >= 6) {
-      alert("Maximum limit of 6 categories reached. You cannot add more categories.");
+      showErrorAlert("Limit Reached", "Maximum limit of 6 categories reached. You cannot add more categories.");
       return;
     }
 

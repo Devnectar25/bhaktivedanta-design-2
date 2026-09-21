@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { showConfirmDialog } from '../../utils/swal';
 
 const defaultNotifications = [
   {
@@ -100,9 +101,10 @@ const AdminHeader = ({ title }) => {
     saveNotifications(updated);
   };
 
-  const handleClearAll = (e) => {
+  const handleClearAll = async (e) => {
     e.stopPropagation();
-    if (window.confirm("Clear all notifications?")) {
+    const res = await showConfirmDialog("Clear Notifications", "Clear all notifications?", "Yes, Clear");
+    if (res.isConfirmed) {
       saveNotifications([]);
     }
   };

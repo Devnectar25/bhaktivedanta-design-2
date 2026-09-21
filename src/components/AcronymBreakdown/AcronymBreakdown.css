@@ -4,7 +4,7 @@
 }
 
 .acronym-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.35rem;
   font-weight: 600;
   color: #132A4C;
@@ -12,7 +12,7 @@
 }
 
 .acronym-subtitle {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: #64748B;
   margin-bottom: 1.25rem;
@@ -57,7 +57,7 @@
   border-radius: 10px;
   background: linear-gradient(135deg, #132A4C 0%, #1E3A8A 100%);
   color: #FFFFFF;
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   display: flex;
@@ -73,7 +73,7 @@
 }
 
 .acronym-word {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   color: #132A4C;
@@ -81,7 +81,7 @@
 }
 
 .acronym-desc {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.825rem;
   color: #64748B;
   margin-top: 2px;

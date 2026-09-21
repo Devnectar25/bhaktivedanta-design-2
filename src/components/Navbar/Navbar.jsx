@@ -452,7 +452,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             <button className="search-icon-btn" aria-label="Search">
               <span className="material-symbols-outlined">search</span>
             </button>
-            <a href="#contact" className="contact-us-link">Contact Us</a>
+            <Link to="/contact" className="contact-us-link">Contact Us</Link>
           </div>
         </div>
       </div>
