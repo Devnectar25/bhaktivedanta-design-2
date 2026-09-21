@@ -368,10 +368,66 @@ export const deleteCareerApplication = (id, fallbackList) =>
     return list.filter(item => item.id !== id);
   });
 
+// ==========================================
+// Education & Medical Research (DNB) API
+// ==========================================
+
+export const getEducationResearchState = (fallback) => 
+  apiGet('/education-research', 'bhaktivedanta_education_research_state', fallback);
+
+export const saveEducationResearchState = (stateData) => 
+  apiMutation('/education-research', 'PUT', stateData, 'bhaktivedanta_education_research_state', () => {
+    // Notify all open tabs/components
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return stateData;
+  });
+
+export const getDnbInquiries = (fallback = []) => 
+  apiGet('/education-research/inquiries', 'bhaktivedanta_dnb_inquiries', fallback);
+
+export const submitDnbInquiry = (inquiry, fallbackList = []) => 
+  apiMutation('/education-research/inquiries', 'POST', inquiry, 'bhaktivedanta_dnb_inquiries', (list = [], newInq) => {
+    const updated = [newInq, ...(Array.isArray(list) ? list : [])];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const updateDnbInquiry = (id, updates, fallbackList = []) => 
+  apiMutation(`/education-research/inquiries/${id}`, 'PUT', updates, 'bhaktivedanta_dnb_inquiries', (list = [], updatedItem) => {
+    const updated = (Array.isArray(list) ? list : []).map(i => i.id === id ? { ...i, ...updatedItem } : i);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const deleteDnbInquiry = (id, fallbackList = []) => 
+  apiMutation(`/education-research/inquiries/${id}`, 'DELETE', null, 'bhaktivedanta_dnb_inquiries', (list = []) => {
+    const updated = (Array.isArray(list) ? list : []).filter(i => i.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const getEducationPrograms = (fallback = []) => 
+  apiGet('/education-research/programs', 'bhaktivedanta_education_custom_programs', fallback);
+
+export const createEducationProgram = (programData) => 
+  apiMutation('/education-research/programs', 'POST', programData, 'bhaktivedanta_education_custom_programs', (list = [], newProg) => {
+    const updated = [newProg, ...(Array.isArray(list) ? list : [])];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const deleteEducationProgram = (id) => 
+  apiMutation(`/education-research/programs/${id}`, 'DELETE', null, 'bhaktivedanta_education_custom_programs', (list = []) => {
+    const updated = (Array.isArray(list) ? list : []).filter(p => p.id !== id && p.slug !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
 // Spiritual Care State
 export const getSpiritualCareState = (fallback) => 
   apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
 
 export const saveSpiritualCareState = (state) => 
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
+
 

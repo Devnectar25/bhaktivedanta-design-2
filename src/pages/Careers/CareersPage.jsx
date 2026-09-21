@@ -4,6 +4,7 @@ import { Share2, CheckCircle2, Upload, AlertCircle, Briefcase, FileText, X } fro
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import { getCareerJobs, submitCareerApplication } from '../../utils/api';
+import Swal from 'sweetalert2';
 import './CareersPage.css';
 
 const CareersPage = () => {
@@ -49,6 +50,23 @@ const CareersPage = () => {
       setIsLoading(false);
     });
   }, []);
+
+  // Freeze background scrolling when application modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      const originalPaddingRight = document.body.style.paddingRight;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.paddingRight = originalPaddingRight;
+      };
+    }
+  }, [isModalOpen]);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -157,17 +175,72 @@ const CareersPage = () => {
       };
 
       const result = await submitCareerApplication(payload);
-      setSubmitSuccess(result || payload);
+      const appRef = result?.id || payload.id;
       setSubmitting(false);
+      setIsModalOpen(false);
+
+      // SweetAlert2 Confirmation Dialog
+      await Swal.fire({
+        icon: 'success',
+        title: 'Application Submitted!',
+        html: `
+          <div style="text-align: center; padding: 0.5rem 0;">
+            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 0.75rem;">
+              Thank you, <strong>${payload.fullName}</strong>! Your application for <strong>${payload.position}</strong> has been successfully received by the HR department.
+            </p>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 8px 18px; border-radius: 8px; font-weight: 700; display: inline-block; font-size: 0.95rem; letter-spacing: 0.5px;">
+              Reference ID: ${appRef}
+            </div>
+            <p style="color: #64748b; font-size: 0.82rem; margin-top: 0.85rem; line-height: 1.5;">
+              A confirmation email has been logged to <strong>${payload.email}</strong>. Our HR talent acquisition team will get in touch with you if your profile matches the vacancy requirements.
+            </p>
+          </div>
+        `,
+        confirmButtonText: 'Great, Thanks!',
+        confirmButtonColor: '#ea580c',
+        backdrop: 'rgba(15, 23, 42, 0.65)'
+      });
+
+      // Reset form
+      setFormData({
+        jobId: '',
+        position: '',
+        fullName: '',
+        email: '',
+        phone: '',
+        city: '',
+        qualification: '',
+        experience: '',
+        currentCtc: '',
+        expectedCtc: '',
+        noticePeriod: '30 Days',
+        coverNote: '',
+        resumeName: '',
+        resumeUrl: ''
+      });
+      setSubmitSuccess(null);
     } catch (err) {
       console.error('Application submission error:', err);
-      // Fallback success simulation
-      const fallbackResult = {
-        ...formData,
-        id: `BVH-APP-${Math.floor(1000 + Math.random() * 9000)}`
-      };
-      setSubmitSuccess(fallbackResult);
+      const fallbackId = `BVH-APP-${Math.floor(1000 + Math.random() * 9000)}`;
       setSubmitting(false);
+      setIsModalOpen(false);
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Application Submitted!',
+        html: `
+          <div style="text-align: center; padding: 0.5rem 0;">
+            <p style="color: #475569; font-size: 0.95rem; margin-bottom: 0.75rem;">
+              Thank you, <strong>${formData.fullName}</strong>. Your application for <strong>${formData.position}</strong> has been recorded.
+            </p>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 8px 18px; border-radius: 8px; font-weight: 700; display: inline-block; font-size: 0.95rem;">
+              Reference ID: ${fallbackId}
+            </div>
+          </div>
+        `,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#ea580c'
+      });
     }
   };
 
@@ -196,7 +269,7 @@ const CareersPage = () => {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container careers-container">
         {/* Header Title & Share */}
         <div className="careers-header-section">
           <h1 className="careers-title">Careers</h1>

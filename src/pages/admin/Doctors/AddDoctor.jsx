@@ -12,9 +12,7 @@ const AddDoctor = () => {
   const [department, setDepartment] = useState('');
   const [subSpeciality, setSubSpeciality] = useState('');
   const [experience, setExperience] = useState('');
-  const [availability, setAvailability] = useState('Available');
   const [featured, setFeatured] = useState('No');
-  const [status, setStatus] = useState('Active');
   const [image, setImage] = useState('');
 
   // Loaded doctors state list
@@ -32,9 +30,7 @@ const AddDoctor = () => {
           setDepartment(match.department || '');
           setSubSpeciality(match.subSpeciality || '');
           setExperience(match.experience || '');
-          setAvailability(match.availability || 'Available');
           setFeatured(match.featured || 'No');
-          setStatus(match.status || 'Active');
           setImage(match.image || '');
         }
       }
@@ -76,9 +72,7 @@ const AddDoctor = () => {
             department,
             subSpeciality,
             experience: experience.toLowerCase().includes('year') ? experience : `${experience} Years`,
-            availability,
             featured,
-            status,
             image: image || doc.image
           };
         }
@@ -93,9 +87,7 @@ const AddDoctor = () => {
         department,
         subSpeciality,
         experience: `${experience} Years`,
-        availability,
         featured,
-        status,
         image: image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuANPEj_KoNMPpIwdzuCD7lYGdAKEkyCWh6bTaQK8MJs_R4JVyJRsEBiMWrTQzDsV176cPtU3yccFuudW15cKMl437nzqw5tE9A3l9ZZfasQ9SJx96vYIX962IHbmK_xdfUiAohF8eavUhpXeVEW2mV78f5ATYHcgBnBWY8_UJEKzHq4bco6SZZlKcz-S4YZpKBmO1txtux3VF6wZXMQIop-vEphp1s5HxLkKU8I_EDCo-tkZYHkrT4Ut51mTZnyQ3xI9td7l-2oX0w'
       };
       updatedList = [newDoc, ...doctorsList];
@@ -222,48 +214,24 @@ const AddDoctor = () => {
         {/* Right Column */}
         <div className="space-y-6">
           <section className="bg-white rounded-xl border border-slate-200/80 p-5 space-y-4">
-            <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2">Status &amp; Availability</h3>
+            <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2">Doctor Settings</h3>
             
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="font-bold text-slate-500 uppercase">Availability</label>
-                <select 
-                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium cursor-pointer"
-                  value={availability}
-                  onChange={(e) => setAvailability(e.target.value)}
-                >
-                  <option value="Available">Available</option>
-                  <option value="Busy">Busy</option>
-                  <option value="On Leave">On Leave</option>
-                </select>
+            <div className="flex items-center justify-between pt-1">
+              <div>
+                <span className="font-bold text-slate-700 block text-xs">Featured Doctor</span>
+                <span className="text-[10px] text-slate-400">Showcase doctor on public website</span>
               </div>
-
-              <div className="space-y-1">
-                <label className="font-bold text-slate-500 uppercase">Profile Visibility Status</label>
-                <select 
-                  className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium cursor-pointer"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-                <span className="font-bold text-slate-500 uppercase">Featured Doctor</span>
-                <button 
-                  type="button"
-                  onClick={() => setFeatured(featured === 'Yes' ? 'No' : 'Yes')}
-                  className={`px-4 py-1 rounded-lg font-bold border transition-all ${
-                    featured === 'Yes' 
-                      ? 'bg-amber-50 text-amber-600 border-amber-200' 
-                      : 'bg-slate-50 text-slate-400 border-slate-200'
-                  }`}
-                >
-                  {featured}
-                </button>
-              </div>
+              <button 
+                type="button"
+                onClick={() => setFeatured(featured === 'Yes' ? 'No' : 'Yes')}
+                className={`px-4 py-1.5 rounded-lg font-bold border transition-all ${
+                  featured === 'Yes' 
+                    ? 'bg-amber-50 text-amber-600 border-amber-200' 
+                    : 'bg-slate-50 text-slate-400 border-slate-200'
+                }`}
+              >
+                {featured}
+              </button>
             </div>
           </section>
 
