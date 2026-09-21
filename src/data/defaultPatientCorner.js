@@ -31,52 +31,46 @@ export const SECTION_TYPES = {
 
 export const defaultPatientCornerCategories = [
   {
-    id: 'cat-inpatient',
-    name: 'Inpatient Guide',
-    slug: 'inpatient-guide',
+    id: 'pc-cat-guide',
+    name: 'Patient Guide',
+    slug: 'patient-guide',
     description: 'Guidelines and instructions for admitted patients and their families.',
     order: 1,
     status: true,
+    max_items: 6,
+    maxItems: 6,
     adminId: 'ADM-001',
     adminName: 'Super Administrator',
     createdAt: '2026-08-01T10:00:00.000Z',
     updatedAt: '2026-08-20T10:00:00.000Z'
   },
   {
-    id: 'cat-visitor',
-    name: 'Visitor Rules',
-    slug: 'visitor-rules',
-    description: 'Visiting hours, ICU guidelines, and hospital visitor policies.',
+    id: 'pc-cat-consult',
+    name: 'Consultations',
+    slug: 'consultations',
+    description: 'Consultation scheduling and specialty services.',
     order: 2,
     status: true,
+    max_items: 6,
+    maxItems: 6,
     adminId: 'ADM-001',
     adminName: 'Super Administrator',
     createdAt: '2026-08-01T10:00:00.000Z',
     updatedAt: '2026-08-15T10:00:00.000Z'
   },
   {
-    id: 'cat-billing',
-    name: 'Billing Help',
-    slug: 'billing-help',
-    description: 'Insurance, cashless claims, and billing department procedures.',
+    id: 'pc-cat-quick',
+    name: 'Quick Links',
+    slug: 'quick-links',
+    description: 'Quick access links and resources for patients.',
     order: 3,
     status: true,
+    max_items: 6,
+    maxItems: 6,
     adminId: 'ADM-001',
     adminName: 'Super Administrator',
     createdAt: '2026-08-01T10:00:00.000Z',
     updatedAt: '2026-08-10T10:00:00.000Z'
-  },
-  {
-    id: 'cat-discharge',
-    name: 'Discharge Process',
-    slug: 'discharge-process',
-    description: 'Step-by-step discharge protocol, summary handover, and post-discharge care.',
-    order: 4,
-    status: true,
-    adminId: 'ADM-001',
-    adminName: 'Super Administrator',
-    createdAt: '2026-08-01T10:00:00.000Z',
-    updatedAt: '2026-08-01T10:00:00.000Z'
   }
 ];
 

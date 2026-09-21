@@ -317,51 +317,59 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     };
   }, []);
 
-  const handlePatientGuideClick = (linkName) => {
-    const normalizedName = (linkName || '').toLowerCase().trim();
+  const handlePatientGuideClick = (guideOrName) => {
+    let targetGuide = null;
     const guides = patientCornerData.guides || defaultPatientCornerState.guides || [];
 
-    const foundGuide = guides.find(g => {
-      const gTitle = (g.title || g.name || '').toLowerCase().trim();
-      const gSlug = (g.slug || '').toLowerCase().trim();
-      return (
-        gTitle === normalizedName ||
-        gSlug === normalizedName ||
-        gTitle.includes(normalizedName) ||
-        normalizedName.includes(gTitle) ||
-        (normalizedName === 'admission' && (gSlug === 'admission' || gTitle.includes('admission'))) ||
-        (normalizedName.includes('empanelled') && (gSlug.includes('insurance') || gSlug.includes('empanelled') || gTitle.includes('insurance') || gTitle.includes('tpa'))) ||
-        (normalizedName.includes('visitor') && (gSlug.includes('visitor') || gTitle.includes('visitor') || gTitle.includes('icu'))) ||
-        (normalizedName.includes('right') && (gSlug.includes('right') || gTitle.includes('right'))) ||
-        (normalizedName.includes('international') && (gSlug.includes('intl') || gSlug.includes('international') || gTitle.includes('international'))) ||
-        (normalizedName.includes('consultation') && (gSlug.includes('consultation') || gTitle.includes('consultation'))) ||
-        (normalizedName.includes('report') && (gSlug.includes('report') || gTitle.includes('report'))) ||
-        (normalizedName.includes('schedule') && (gSlug.includes('schedule') || gTitle.includes('schedule') || gTitle.includes('opd'))) ||
-        (normalizedName.includes('checkup') && (gSlug.includes('checkup') || gTitle.includes('checkup') || gTitle.includes('package')))
-      );
-    });
+    if (typeof guideOrName === 'object' && guideOrName !== null) {
+      targetGuide = guideOrName;
+    } else {
+      const normalizedName = (guideOrName || '').toLowerCase().trim();
+      targetGuide = guides.find(g => {
+        const gTitle = (g.title || g.name || '').toLowerCase().trim();
+        const gSlug = (g.slug || '').toLowerCase().trim();
+        return (
+          gTitle === normalizedName ||
+          gSlug === normalizedName ||
+          gTitle.includes(normalizedName) ||
+          normalizedName.includes(gTitle) ||
+          (normalizedName === 'admission' && (gSlug === 'admission' || gTitle.includes('admission'))) ||
+          (normalizedName.includes('empanelled') && (gSlug.includes('insurance') || gSlug.includes('empanelled') || gTitle.includes('insurance') || gTitle.includes('tpa'))) ||
+          (normalizedName.includes('visitor') && (gSlug.includes('visitor') || gTitle.includes('visitor') || gTitle.includes('icu'))) ||
+          (normalizedName.includes('right') && (gSlug.includes('right') || gTitle.includes('right'))) ||
+          (normalizedName.includes('international') && (gSlug.includes('intl') || gSlug.includes('international') || gTitle.includes('international'))) ||
+          (normalizedName.includes('consultation') && (gSlug.includes('consultation') || gTitle.includes('consultation'))) ||
+          (normalizedName.includes('report') && (gSlug.includes('report') || gTitle.includes('report'))) ||
+          (normalizedName.includes('schedule') && (gSlug.includes('schedule') || gTitle.includes('schedule') || gTitle.includes('opd'))) ||
+          (normalizedName.includes('checkup') && (gSlug.includes('checkup') || gTitle.includes('checkup') || gTitle.includes('package')))
+        );
+      });
+    }
 
-    const targetGuide = foundGuide || {
-      id: `guide-${normalizedName.replace(/[^a-z0-9]+/g, '-')}`,
-      title: linkName,
-      name: linkName,
-      category: 'Patients Corner',
-      categoryName: 'Patients Corner',
-      tabs: [
-        {
-          id: 't1',
-          title: 'Overview',
-          type: 'rich_text',
-          enabled: true,
-          content: `<p>Welcome to Bhaktivedanta Hospital & Research Institute — ${linkName}. Please contact our helpdesk or admission counter for further details.</p>`
-        }
-      ]
-    };
+    if (!targetGuide) {
+      const name = typeof guideOrName === 'string' ? guideOrName : 'Patient Guide';
+      targetGuide = {
+        id: `guide-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        title: name,
+        name: name,
+        category: 'Patients Corner',
+        categoryName: 'Patients Corner',
+        tabs: [
+          {
+            id: 't1',
+            title: 'Overview',
+            type: 'rich_text',
+            enabled: true,
+            content: `<p>Welcome to Bhaktivedanta Hospital & Research Institute — ${name}. Please contact our helpdesk or admission counter for further details.</p>`
+          }
+        ]
+      };
+    }
 
     if (onSelectPatientGuide) {
-      onSelectPatientGuide(targetGuide, targetGuide.category || 'Patients Corner');
+      onSelectPatientGuide(targetGuide, targetGuide.category || targetGuide.categoryName || 'Patients Corner');
     } else if (onSelectSpeciality) {
-      onSelectSpeciality(targetGuide, targetGuide.category || 'Patients Corner');
+      onSelectSpeciality(targetGuide, targetGuide.category || targetGuide.categoryName || 'Patients Corner');
     }
   };
 
@@ -655,6 +663,28 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                 }
 
                 if (menuItem.type === 'patients-mega-menu') {
+                  let columnsToRender = menuItem.columns;
+                  if (menuItem.name === 'Patients Corner') {
+                    const publishedGuides = (patientCornerData.guides || [])
+                      .filter(g => g.status === 'Published' || g.status === true || (g.status && g.status !== 'Draft'))
+                      .sort((a, b) => (parseInt(a.displayOrder || a.order, 10) || 0) - (parseInt(b.displayOrder || b.order, 10) || 0));
+
+                    const dynamicGuideLinks = publishedGuides.map(g => ({
+                      name: g.title || g.name,
+                      href: '#patients',
+                      guide: g
+                    }));
+
+                    columnsToRender = [
+                      {
+                        title: 'Patient Guide',
+                        links: dynamicGuideLinks.length > 0 ? dynamicGuideLinks : (menuItem.columns[0]?.links || [])
+                      },
+                      menuItem.columns[1] || { title: 'Consultations', links: [] },
+                      menuItem.columns[2] || { title: 'Quick Links', links: [] }
+                    ];
+                  }
+
                   return (
                     <div
                       key={menuItem.name}
@@ -675,15 +705,15 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       <div
                         className={`patients-mega-menu-wrapper animate-flyout-fade ${menuItem.name === 'Education & Medical Research' ? 'education-mega-menu-wrapper' : ''}`}
                         style={{
-                          width: menuItem.name === 'Education & Medical Research' ? '540px' : menuItem.columns.length === 2 ? '580px' : '860px',
+                          width: menuItem.name === 'Education & Medical Research' ? '540px' : columnsToRender.length === 2 ? '580px' : '860px',
                           left: 0
                         }}
                       >
                         <div
                           className="patients-mega-menu-grid"
-                          style={{ gridTemplateColumns: `repeat(${menuItem.columns.length}, 1fr)` }}
+                          style={{ gridTemplateColumns: `repeat(${columnsToRender.length}, 1fr)` }}
                         >
-                          {menuItem.columns.map((col, colIdx) => (
+                          {columnsToRender.map((col, colIdx) => (
                             <div key={colIdx} className="patients-mega-menu-column">
                               {col.title && (
                                 <h4 className={`patients-column-title ${col.hasArrow ? 'has-arrow-title' : ''}`}>
@@ -730,7 +760,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                           type="button"
                                           className="patients-column-link"
                                           onClick={() => {
-                                            handlePatientGuideClick(link.name);
+                                            handlePatientGuideClick(link.guide || link.name);
                                             setOpenNavDropdown(null);
                                           }}
                                           style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
@@ -959,6 +989,28 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'patients-mega-menu') {
                   const isOpen = activeMobileDropdown === menuItem.name;
+                  let columnsToRender = menuItem.columns;
+                  if (menuItem.name === 'Patients Corner') {
+                    const publishedGuides = (patientCornerData.guides || [])
+                      .filter(g => g.status === 'Published' || g.status === true || (g.status && g.status !== 'Draft'))
+                      .sort((a, b) => (parseInt(a.displayOrder || a.order, 10) || 0) - (parseInt(b.displayOrder || b.order, 10) || 0));
+
+                    const dynamicGuideLinks = publishedGuides.map(g => ({
+                      name: g.title || g.name,
+                      href: '#patients',
+                      guide: g
+                    }));
+
+                    columnsToRender = [
+                      {
+                        title: 'Patient Guide',
+                        links: dynamicGuideLinks.length > 0 ? dynamicGuideLinks : (menuItem.columns[0]?.links || [])
+                      },
+                      menuItem.columns[1] || { title: 'Consultations', links: [] },
+                      menuItem.columns[2] || { title: 'Quick Links', links: [] }
+                    ];
+                  }
+
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
                       <button
@@ -972,7 +1024,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       </button>
 
                       <div className={`mobile-accordion-content ${isOpen ? 'show' : ''}`}>
-                        {menuItem.columns.map((col, colIdx) => (
+                        {columnsToRender.map((col, colIdx) => (
                           <div key={colIdx} className="mobile-sub-category">
                             {col.title && (
                               <span className="mobile-sub-category-title" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1024,7 +1076,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                       key={lIdx}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
-                                        handlePatientGuideClick(link.name);
+                                        handlePatientGuideClick(link.guide || link.name);
                                         handleMobileLinkClick();
                                       }}
                                     >

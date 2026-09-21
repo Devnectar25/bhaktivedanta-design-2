@@ -90,7 +90,7 @@ export default function PublicationsManager() {
       setAlertModal({
         isOpen: true,
         title: 'Error Saving Paper',
-        message: 'Could not save the publication paper. Please try again.',
+        message: err.message || 'Could not save the publication paper. Please try again.',
         type: 'error'
       });
     }
