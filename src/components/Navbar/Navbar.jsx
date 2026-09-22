@@ -2,11 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
-import { getSpecialitiesState, getServicesState, getPatientCornerState } from '../../utils/api';
+import { getSpecialitiesState, getServicesState, getPatientCornerState, getSpiritualCareState } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
-import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
+import { createSlug } from '../../pages/DetailPage/DetailPage';
+
+const getSpiritualRoute = (secOrLink) => {
+  const id = (secOrLink?.id || secOrLink?.section?.id || '').toLowerCase().trim();
+  const name = (secOrLink?.name || secOrLink?.title || secOrLink?.section?.title || '').toLowerCase().trim();
+  if (id === 'spiritual-care-services' || name.includes('services')) return '/spiritual-care';
+  if (id === 'educational-programmes' || name.includes('educational')) return '/spiritual-care/educational-programmes';
+  if (id === 'spiritual-retreats' || name.includes('retreats')) return '/spiritual-care/spiritual-retreats';
+  if (id === 'publications' || name.includes('publication') || name.includes('paper')) return '/spiritual-care/publications-papers';
+  const slug = secOrLink?.slug || secOrLink?.section?.slug || id || createSlug(name);
+  return `/spiritual-care/${slug}`;
+};
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -73,12 +84,12 @@ const menuStructure = [
   {
     name: 'Spiritual care',
     type: 'dropdown',
-    to: '#spiritual-care',
+    to: '/spiritual-care',
     links: [
-      { name: 'Spiritual care Services', href: '#spiritual-care-services' },
-      { name: 'Educational Programmes', href: '#educational-programmes' },
-      { name: 'Spiritual care Retreats', href: '#spiritual-retreats' },
-      { name: 'Publications & Paper Presentations', href: '#publications' }
+      { name: 'Spiritual care Services', href: '/spiritual-care' },
+      { name: 'Educational Programmes', href: '/spiritual-care/educational-programmes' },
+      { name: 'Spiritual care Retreats', href: '/spiritual-care/spiritual-retreats' },
+      { name: 'Publications & Paper Presentations', href: '/spiritual-care/publications-papers' }
     ]
   },
   {
@@ -550,17 +561,17 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                   <ul key={colIdx} className="specialities-subpanel-list">
                                     {colItems.map((s, itemIdx) => (
                                       <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
-                                        <button
+                                        <Link
+                                          to={`/specialities/${s.slug || createSlug(s.name)}`}
                                           className="speciality-link-btn"
                                           onClick={() => {
-                                            onSelectSpeciality(s, currentCat.name);
                                             setActiveMegaCategory(null);
                                             setOpenNavDropdown(null);
                                           }}
                                         >
                                           <span className="link-btn-bullet"></span>
                                           <span className="link-btn-text">{s.name}</span>
-                                        </button>
+                                        </Link>
                                       </li>
                                     ))}
                                   </ul>
@@ -634,17 +645,17 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                   <ul key={colIdx} className="services-subpanel-list">
                                     {colItems.map((s, itemIdx) => (
                                       <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
-                                        <button
+                                        <Link
+                                          to={`/services/${s.slug || createSlug(s.name)}`}
                                           className="speciality-link-btn"
                                           onClick={() => {
-                                            onSelectSpeciality(s, currentCat.name);
                                             setActiveServiceCategory(null);
                                             setOpenNavDropdown(null);
                                           }}
                                         >
                                           <span className="link-btn-bullet"></span>
                                           <span className="link-btn-text">{s.name}</span>
-                                        </button>
+                                        </Link>
                                       </li>
                                     ))}
                                   </ul>
@@ -756,18 +767,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                           <span className="link-text">{link.name}</span>
                                         </button>
                                       ) : isPatientGuide ? (
-                                        <button
-                                          type="button"
+                                        <Link
+                                          to={`/patients-corner/${link.guide?.slug || createSlug(link.name)}`}
                                           className="patients-column-link"
-                                          onClick={() => {
-                                            handlePatientGuideClick(link.guide || link.name);
-                                            setOpenNavDropdown(null);
-                                          }}
-                                          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                          onClick={() => setOpenNavDropdown(null)}
                                         >
                                           <span className="link-btn-bullet"></span>
                                           <span className="link-text">{link.name}</span>
-                                        </button>
+                                        </Link>
                                       ) : (
                                         <a href={link.href} className="patients-column-link">
                                           <span className="link-btn-bullet"></span>
@@ -803,37 +810,35 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
-                      <a
-                        href={menuItem.to}
-                        className="nav-dropdown-trigger"
-                        onClick={(e) => {
-                          if (isSpiritualCare) {
-                            e.preventDefault();
-                            const firstSec = spiritualSections[0];
-                            handleSpiritualCareClick(firstSec || 'Spiritual care Services');
-                            setOpenNavDropdown(null);
-                          }
-                        }}
-                      >
-                        {menuItem.name}
-                      </a>
+                      {menuItem.to && menuItem.to.startsWith('/') ? (
+                        <Link
+                          to={menuItem.to}
+                          className="nav-dropdown-trigger"
+                          onClick={() => setOpenNavDropdown(null)}
+                        >
+                          {menuItem.name}
+                        </Link>
+                      ) : (
+                        <a
+                          href={menuItem.to}
+                          className="nav-dropdown-trigger"
+                        >
+                          {menuItem.name}
+                        </a>
+                      )}
                       <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
                         <ul className="dropdown-list patients-column-list">
                           {effectiveLinks.map((link, lIdx) => (
                             <li key={lIdx} className="patients-column-item">
                               {isSpiritualCare ? (
-                                <button
-                                  type="button"
+                                <Link
+                                  to={getSpiritualRoute(link)}
                                   className="patients-column-link"
-                                  onClick={() => {
-                                    handleSpiritualCareClick(link.section || link.name);
-                                    setOpenNavDropdown(null);
-                                  }}
-                                  style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                  onClick={() => setOpenNavDropdown(null)}
                                 >
                                   <span className="link-btn-bullet"></span>
                                   <span className="link-text">{link.name}</span>
-                                </button>
+                                </Link>
                               ) : (
                                 <a href={link.href} className="patients-column-link">
                                   <span className="link-btn-bullet"></span>
@@ -922,16 +927,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
                                   {catSpecs.map(spec => (
-                                    <button
+                                    <Link
                                       key={spec.id}
-                                      className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        onSelectSpeciality(spec, cat.name);
-                                        handleMobileLinkClick();
-                                      }}
+                                      to={`/specialities/${spec.slug || createSlug(spec.name)}`}
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {spec.name}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -967,16 +970,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
                                   {catServices.map(service => (
-                                    <button
+                                    <Link
                                       key={service.id}
-                                      className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        onSelectSpeciality(service, cat.name);
-                                        handleMobileLinkClick();
-                                      }}
+                                      to={`/services/${service.slug || createSlug(service.name)}`}
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {service.name}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -1072,16 +1073,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                                 if (isPatientGuide) {
                                   return (
-                                    <button
+                                    <Link
                                       key={lIdx}
-                                      className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        handlePatientGuideClick(link.guide || link.name);
-                                        handleMobileLinkClick();
-                                      }}
+                                      to={`/patients-corner/${link.guide?.slug || createSlug(link.name)}`}
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {link.name}
-                                    </button>
+                                    </Link>
                                   );
                                 }
 
@@ -1130,16 +1129,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                         <div className="mobile-sub-links">
                           {effectiveLinks.map((link, lIdx) => (
                             isSpiritualCare ? (
-                              <button
+                              <Link
                                 key={lIdx}
-                                className="mobile-sub-link-btn"
-                                onClick={() => {
-                                  handleSpiritualCareClick(link.section || link.name);
-                                  handleMobileLinkClick();
-                                }}
+                                to={getSpiritualRoute(link)}
+                                className="mobile-sub-link-a"
+                                onClick={handleMobileLinkClick}
                               >
                                 {link.name}
-                              </button>
+                              </Link>
                             ) : (
                               <a
                                 key={lIdx}

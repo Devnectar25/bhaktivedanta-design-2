@@ -74,6 +74,8 @@ import ProgramDetailPage from './pages/SpiritualCare/ProgramDetailPage';
 import SpiritualRetreats from './pages/SpiritualCare/SpiritualRetreats';
 import PublicationsPapers from './pages/SpiritualCare/PublicationsPapers';
 
+import DetailPage from './pages/DetailPage/DetailPage';
+
 import './App.css';
 
 function HomeContent() {
@@ -102,12 +104,23 @@ function App() {
         {/* Main Public Website Home & Pages wrapped in PublicLayout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomeContent />} />
-          <Route path="/services/:id" element={<HomeContent />} />
+
+          {/* 4 Dedicated Modules Full-Page Routes */}
+          <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
+          <Route path="/services/:slug" element={<DetailPage module="services" />} />
+          <Route path="/patients-corner/:slug" element={<DetailPage module="patients-corner" />} />
+          <Route path="/patient-corner/:slug" element={<DetailPage module="patients-corner" />} />
+
+          {/* Spiritual Care Dedicated Routes */}
           <Route path="/spiritual-care" element={<SpiritualCareServices />} />
+          <Route path="/spiritual-care/spiritual-care-services" element={<SpiritualCareServices />} />
           <Route path="/spiritual-care/educational-programmes" element={<EducationalProgrammes />} />
           <Route path="/spiritual-care/educational-programmes/:id" element={<ProgramDetailPage />} />
           <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
           <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
+          <Route path="/spiritual-care/publications" element={<PublicationsPapers />} />
+          <Route path="/spiritual-care/:slug" element={<DetailPage module="spiritual-care" />} />
+
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Route>

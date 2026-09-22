@@ -36,7 +36,7 @@ import { defaultServicesState, ensureStandardServiceTabs } from "../data/default
 /*  Design tokens — matches hospital brand (navy + orange accent)      */
 /*  elevated with Fraunces serif headings & Work Sans typography       */
 /* ------------------------------------------------------------------ */
-const tokens = {
+export const tokens = {
     navy: "#132A4C",
     navyLight: "#3B5A82",
     orange: "#E8792B",
@@ -52,7 +52,7 @@ const stepIcons = [ClipboardList, Stethoscope, ShieldCheck];
 /* ------------------------------------------------------------------ */
 /*  Reusable: TabNav (underline style, smooth horizontal scroll)       */
 /* ------------------------------------------------------------------ */
-function TabNav({ tabs, active, onChange }) {
+export function TabNav({ tabs, active, onChange }) {
     return (
         <div
             style={{
@@ -115,7 +115,7 @@ function parseRichTextContent(content) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: Overview & Rich Text Tabs (delegates to RichTextRenderer)*/
 /* ------------------------------------------------------------------ */
-function OverviewRenderer({ content }) {
+export function OverviewRenderer({ content }) {
     if (!content || (Array.isArray(content) && content.length === 0)) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
@@ -130,7 +130,7 @@ function OverviewRenderer({ content }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: How It Works (numbered steps with icon + connector)      */
 /* ------------------------------------------------------------------ */
-function StepsRenderer({ steps = [] }) {
+export function StepsRenderer({ steps = [] }) {
     if (!steps || steps.length === 0) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
@@ -229,7 +229,7 @@ function StepsRenderer({ steps = [] }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: Key Highlights (grid of feature badges)                  */
 /* ------------------------------------------------------------------ */
-function HighlightsRenderer({ items = [] }) {
+export function HighlightsRenderer({ items = [] }) {
     if (!items || items.length === 0) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
@@ -287,7 +287,7 @@ function HighlightsRenderer({ items = [] }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: Specialists & Cards (Doctor Profiles or Amenity Badges)  */
 /* ------------------------------------------------------------------ */
-function SpecialistsRenderer({ items = [] }) {
+export function SpecialistsRenderer({ items = [] }) {
     if (!items || items.length === 0) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
@@ -413,7 +413,7 @@ function SpecialistsRenderer({ items = [] }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: FAQs (Accordion List)                                    */
 /* ------------------------------------------------------------------ */
-function FaqRenderer({ items = [] }) {
+export function FaqRenderer({ items = [] }) {
     const [openIdx, setOpenIdx] = useState(0);
 
     if (!items || items.length === 0) {
@@ -497,7 +497,7 @@ function FaqRenderer({ items = [] }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: Testimonials (Patient Stories & Ratings)                 */
 /* ------------------------------------------------------------------ */
-function TestimonialsRenderer({ items = [] }) {
+export function TestimonialsRenderer({ items = [] }) {
     if (!items || items.length === 0) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
@@ -579,7 +579,7 @@ function TestimonialsRenderer({ items = [] }) {
 /* ------------------------------------------------------------------ */
 /*  Renderer: Photo Gallery (Grid with Lightbox Preview)               */
 /* ------------------------------------------------------------------ */
-function GalleryRenderer({ items = [] }) {
+export function GalleryRenderer({ items = [] }) {
     const [selectedImg, setSelectedImg] = useState(null);
 
     if (!items || items.length === 0) {
@@ -743,7 +743,7 @@ function GalleryRenderer({ items = [] }) {
 /*  Spiritual Care Renderers                                          */
 /* ------------------------------------------------------------------ */
 
-function SpiritualServicesOverviewRenderer() {
+export function SpiritualServicesOverviewRenderer() {
     const [data, setData] = useState(defaultSpiritualCareState.services);
 
     useEffect(() => {
@@ -803,7 +803,7 @@ function SpiritualServicesOverviewRenderer() {
     );
 }
 
-function SpiritualServicesOfferedRenderer() {
+export function SpiritualServicesOfferedRenderer() {
     const [data, setData] = useState(defaultSpiritualCareState.services);
 
     useEffect(() => {
@@ -890,7 +890,7 @@ function SpiritualServicesOfferedRenderer() {
     );
 }
 
-function EducationalProgrammesModalRenderer() {
+export function EducationalProgrammesModalRenderer() {
     const [programmes, setProgrammes] = useState(defaultSpiritualCareState.programmes);
     const [selectedProg, setSelectedProg] = useState(null);
     const [garbhaService, setGarbhaService] = useState(null);
@@ -1036,7 +1036,7 @@ function EducationalProgrammesModalRenderer() {
     );
 }
 
-function SpiritualRetreatsBiMonthlyRenderer() {
+export function SpiritualRetreatsBiMonthlyRenderer() {
     const [retreatsData, setRetreatsData] = useState(defaultSpiritualCareState.retreats);
 
     useEffect(() => {
@@ -1087,7 +1087,7 @@ function SpiritualRetreatsBiMonthlyRenderer() {
     );
 }
 
-function SpiritualRetreatsAnnualRenderer() {
+export function SpiritualRetreatsAnnualRenderer() {
     const [retreatsData, setRetreatsData] = useState(defaultSpiritualCareState.retreats);
 
     useEffect(() => {
@@ -1124,7 +1124,7 @@ function SpiritualRetreatsAnnualRenderer() {
     );
 }
 
-function PublicationsModalRenderer() {
+export function PublicationsModalRenderer() {
     const [publications, setPublications] = useState(defaultSpiritualCareState.publications);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -1211,7 +1211,7 @@ function PublicationsModalRenderer() {
 /* ------------------------------------------------------------------ */
 /*  Dynamic Renderers for Custom Admin-Defined Sections               */
 /* ------------------------------------------------------------------ */
-function DynamicTabBlocksRenderer({ tab }) {
+export function DynamicTabBlocksRenderer({ tab }) {
     if (Array.isArray(tab.blocks) && tab.blocks.length > 0) {
         return (
             <FlexibleDetailPage
@@ -1227,7 +1227,7 @@ function DynamicTabBlocksRenderer({ tab }) {
     return <OverviewRenderer content={tab.content} />;
 }
 
-function DynamicCardGridRenderer({ tab }) {
+export function DynamicCardGridRenderer({ tab }) {
     const [selectedCard, setSelectedCard] = useState(null);
     const cards = (tab.cards || []).filter(c => c.enabled !== false);
     const contact = tab.contact;
@@ -1304,7 +1304,7 @@ function DynamicCardGridRenderer({ tab }) {
     );
 }
 
-function DynamicListRenderer({ tab }) {
+export function DynamicListRenderer({ tab }) {
     const [searchTerm, setSearchTerm] = useState('');
     const items = tab.items || [];
     const contact = tab.contact;
@@ -1380,7 +1380,7 @@ function DynamicListRenderer({ tab }) {
 /* ------------------------------------------------------------------ */
 /*  Master switch — selects appropriate renderer for normalized tab    */
 /* ------------------------------------------------------------------ */
-function TabContentRenderer({ tab }) {
+export function TabContentRenderer({ tab }) {
     // If tab has nested sections, render via TabSectionsRenderer
     if (Array.isArray(tab?.sections) && tab.sections.length > 0) {
         return <TabSectionsRenderer tab={tab} />;
@@ -1432,7 +1432,7 @@ function TabContentRenderer({ tab }) {
 /* ------------------------------------------------------------------ */
 /*  Normalizer: Converts raw API data shape to normalized tab modal   */
 /* ------------------------------------------------------------------ */
-function normalizeServiceData(rawService, defaultCatName = "Healthcare Services") {
+export function normalizeServiceData(rawService, defaultCatName = "Healthcare Services") {
     if (!rawService) return null;
 
     if (rawService.isSpiritualCare || rawService.spiritualType || rawService.category === 'Spiritual Care') {

@@ -56,25 +56,6 @@ export default function PublicLayout({ children }) {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Check if route is /services/garbha-samskar or similar service path
-  useEffect(() => {
-    if (location.pathname.startsWith('/services/')) {
-      const slug = location.pathname.replace('/services/', '').toLowerCase();
-      getServicesState(defaultServicesState).then(res => {
-        const services = res?.services || defaultServicesState.services || [];
-        const match = services.find(s => {
-          const sSlug = (s.name || '').toLowerCase().replace(/\s+/g, '-');
-          return sSlug === slug || s.id === slug;
-        });
-        if (match) {
-          ensureStandardServiceTabs(match);
-          setSelectedSpeciality(match);
-          setSelectedCategoryName('Clinical Services');
-        }
-      });
-    }
-  }, [location.pathname]);
-
   const handleSelectSpeciality = (speciality, categoryName) => {
     setSelectedSpeciality(speciality);
     setSelectedCategoryName(categoryName);
