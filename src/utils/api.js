@@ -1,3 +1,5 @@
+import { logException } from './errorLogger';
+
 let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
   base = base.replace(/\/$/, '') + '/api';
@@ -38,9 +40,14 @@ export async function apiGet(path, localStorageKey, fallbackData) {
         localStorage.setItem(localStorageKey, JSON.stringify(data));
       }
       return data;
+    } else if (path !== '/app-errors') {
+      logException(`HTTP ${res.status} on GET ${path}`, 'API Gateway', 'Error', path);
     }
   } catch (err) {
     console.warn(`[API] Failed to fetch ${path}. Falling back to localStorage.`, err);
+    if (path !== '/app-errors') {
+      logException(err, 'API Gateway', 'Warning', path);
+    }
   }
 
   const local = localStorage.getItem(localStorageKey);
@@ -57,6 +64,7 @@ export async function apiGet(path, localStorageKey, fallbackData) {
  * General wrapper to handle mutation operations (POST/PUT/DELETE) with LocalStorage fallback.
  */
 export async function apiMutation(path, method, body, localStorageKey, updateLocalFn) {
+  let isNetworkError = false;
   try {
     const options = {
       method,
@@ -72,23 +80,50 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
       const serverResult = await res.json();
 
       if (updateLocalFn && localStorageKey) {
-        const local = localStorage.getItem(localStorageKey);
-        let localData = local ? JSON.parse(local) : undefined;
-        const newLocalData = updateLocalFn(localData, serverResult);
-        localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+        try {
+          const local = localStorage.getItem(localStorageKey);
+          let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : [];
+          if (!Array.isArray(localData)) localData = [];
+          const newLocalData = updateLocalFn(localData, serverResult);
+          localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+        } catch (lErr) {
+          console.warn("[API] LocalStorage sync error:", lErr);
+        }
       }
       return serverResult;
+    } else {
+      const errorJson = await res.json().catch(() => null);
+      const errorMessage = errorJson?.error || errorJson?.message || `Request failed with status ${res.status}`;
+      const err = new Error(errorMessage);
+      err.status = res.status;
+      err.data = errorJson;
+      throw err;
     }
   } catch (err) {
-    console.warn(`[API] Mutation ${method} ${path} failed. Applying changes to localStorage fallback.`, err);
+    if (path !== '/app-errors' && !path.startsWith('/app-errors')) {
+      logException(err, 'API Mutation', 'Error', path);
+    }
+
+    if (err.status) {
+      // Re-throw explicit server error so UI can display backend validation message
+      throw err;
+    }
+
+    console.warn(`[API] Mutation ${method} ${path} network failure. Applying changes to localStorage fallback.`, err);
+    isNetworkError = true;
   }
 
   if (updateLocalFn && localStorageKey) {
-    const local = localStorage.getItem(localStorageKey);
-    let localData = local ? JSON.parse(local) : undefined;
-    const newLocalData = updateLocalFn(localData, body);
-    localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
-    window.dispatchEvent(new Event('storage'));
+    try {
+      const local = localStorage.getItem(localStorageKey);
+      let localData = (local && local !== 'undefined' && local !== 'null') ? JSON.parse(local) : undefined;
+      const newLocalData = updateLocalFn(localData, body);
+      localStorage.setItem(localStorageKey, JSON.stringify(newLocalData));
+      window.dispatchEvent(new Event('storage'));
+      return newLocalData || body;
+    } catch (lErr) {
+      console.warn("[API] LocalStorage fallback sync error:", lErr);
+    }
     return body;
   }
   return null;
@@ -101,14 +136,17 @@ export async function apiMutation(path, method, body, localStorageKey, updateLoc
 // Doctors
 export const getDoctors = (fallback) => apiGet('/doctors', 'bhaktivedanta_admin_doctors', fallback);
 export const saveDoctorsList = (list) => apiMutation('/doctors', 'PUT', list, 'bhaktivedanta_admin_doctors', (old, updated) => updated);
-export const addDoctor = (doc, fallbackList) => apiMutation('/doctors', 'POST', doc, 'bhaktivedanta_admin_doctors', (list = [], newDoc) => {
-  return [...list, newDoc];
+export const addDoctor = (doc, fallbackList) => apiMutation('/doctors', 'POST', doc, 'bhaktivedanta_admin_doctors', (list, newDoc) => {
+  const arr = Array.isArray(list) ? list : [];
+  return [newDoc, ...arr];
 });
-export const updateDoctor = (id, doc, fallbackList) => apiMutation(`/doctors/${id}`, 'PUT', doc, 'bhaktivedanta_admin_doctors', (list = [], updatedDoc) => {
-  return list.map(item => item.id === id ? { ...item, ...updatedDoc } : item);
+export const updateDoctor = (id, doc, fallbackList) => apiMutation(`/doctors/${id}`, 'PUT', doc, 'bhaktivedanta_admin_doctors', (list, updatedDoc) => {
+  const arr = Array.isArray(list) ? list : [];
+  return arr.map(item => item.id === id ? { ...item, ...updatedDoc } : item);
 });
-export const deleteDoctor = (id, fallbackList) => apiMutation(`/doctors/${id}`, 'DELETE', null, 'bhaktivedanta_admin_doctors', (list = []) => {
-  return list.filter(item => item.id !== id);
+export const deleteDoctor = (id, fallbackList) => apiMutation(`/doctors/${id}`, 'DELETE', null, 'bhaktivedanta_admin_doctors', (list) => {
+  const arr = Array.isArray(list) ? list : [];
+  return arr.filter(item => item.id !== id);
 });
 
 // Appointments
@@ -203,6 +241,20 @@ export const updateNews = (id, newsItem, fallbackList) => apiMutation(`/news/${i
 export const deleteNews = (id, fallbackList) => apiMutation(`/news/${id}`, 'DELETE', null, 'bhaktivedanta_admin_news', (list = []) => {
   return list.filter(item => item.id !== id);
 });
+
+// Blogs
+export const getBlogs = (fallback) => apiGet('/blogs', 'bhaktivedanta_admin_blogs', fallback);
+export const getBlogById = (id, fallback) => apiGet(`/blogs/${id}`, `bhaktivedanta_admin_blog_${id}`, fallback);
+export const addBlog = (blogItem) => apiMutation('/blogs', 'POST', blogItem, 'bhaktivedanta_admin_blogs', (list = [], newBlog) => {
+  return [newBlog, ...list];
+});
+export const updateBlog = (id, blogItem) => apiMutation(`/blogs/${id}`, 'PUT', blogItem, 'bhaktivedanta_admin_blogs', (list = [], updatedBlog) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedBlog } : item);
+});
+export const deleteBlog = (id) => apiMutation(`/blogs/${id}`, 'DELETE', null, 'bhaktivedanta_admin_blogs', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
+
 
 // Gallery
 export const getGallery = (fallback) => apiGet('/gallery', 'bhaktivedanta_admin_gallery', fallback);
@@ -464,5 +516,36 @@ export const resetAboutUsState = () =>
     return actualData;
   });
 
+// Statutory Compliances State & PDF Upload
+export const getStatutoryCompliancesState = (fallback) =>
+  apiGet('/statutory-compliances', 'bhaktivedanta_statutory_compliances_state', fallback);
+
+export const saveStatutoryCompliancesState = (state) =>
+  apiMutation('/statutory-compliances', 'PUT', state, 'bhaktivedanta_statutory_compliances_state', (old, updated) => {
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const resetStatutoryCompliancesState = () =>
+  apiMutation('/statutory-compliances/reset', 'POST', {}, 'bhaktivedanta_statutory_compliances_state', (old, updated) => {
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return updated;
+  });
+
+export const uploadStatutoryPdf = async (title, fileName, base64Data) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/statutory-compliances/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, fileName, base64Data })
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[API] Upload statutory PDF failed:', err);
+  }
+  return { success: true, url: base64Data, fallback: true };
+};
 
 

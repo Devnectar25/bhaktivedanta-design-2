@@ -51,7 +51,7 @@
 }
 
 .publication-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   color: #132A4C;
@@ -88,7 +88,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 14px;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #64748B;
   margin-bottom: 6px;
@@ -138,7 +138,7 @@
 }
 
 .publication-abstract {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #64748B;
   line-height: 1.5;
@@ -151,7 +151,7 @@
 }
 
 .publication-doi {
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   color: #94A3B8;
   margin-top: auto;

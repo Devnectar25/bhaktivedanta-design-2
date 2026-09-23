@@ -1,52 +1,51 @@
-// Default data for doctors
 const defaultDoctors = [
   {
-    id: 'd1',
-    name: 'Dr. Anand Sharma',
-    qualifications: 'MBBS, MD (Cardiology)',
-    department: 'Cardiology',
-    subSpeciality: 'Interventional Cardiology',
+    id: 'doc-1',
+    name: 'Dr. Kshama Shah',
+    qualifications: 'MBBS, MD (Anesthesia)',
+    department: 'Anesthesiology',
+    subSpeciality: 'Head of Department & Consultant Anesthesiologist',
+    experience: '25 Years',
+    availability: 'Available',
+    featured: 'Yes',
+    status: 'Active',
+    image: '/doctor1.png'
+  },
+  {
+    id: 'doc-2',
+    name: 'Dr. Shilpa Mangesh Tiwaskar',
+    qualifications: 'MBBS, MD (Anesthesia)',
+    department: 'Anesthesiology',
+    subSpeciality: 'Consultant Anesthesiologist',
+    experience: '23 Years',
+    availability: 'Available',
+    featured: 'Yes',
+    status: 'Active',
+    image: '/doctor2.png'
+  },
+  {
+    id: 'doc-3',
+    name: 'Dr. Jyotsna Karande',
+    qualifications: 'MBBS, DA, BLS',
+    department: 'Anesthesiology',
+    subSpeciality: 'Consultant Anesthesiologist',
+    experience: '16 Years',
+    availability: 'Available',
+    featured: 'Yes',
+    status: 'Active',
+    image: '/doctor3.png'
+  },
+  {
+    id: 'doc-4',
+    name: 'Dr. Vivek Kulkarni',
+    qualifications: 'MBBS, MD (Anesthesia)',
+    department: 'Anesthesiology',
+    subSpeciality: 'Consultant Anesthesiologist',
     experience: '15 Years',
     availability: 'Available',
     featured: 'Yes',
     status: 'Active',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANPEj_KoNMPpIwdzuCD7lYGdAKEkyCWh6bTaQK8MJs_R4JVyJRsEBiMWrTQzDsV176cPtU3yccFuudW15cKMl437nzqw5tE9A3l9ZZfasQ9SJx96vYIX962IHbmK_xdfUiAohF8eavUhpXeVEW2mV78f5ATYHcgBnBWY8_UJEKzHq4bco6SZZlKcz-S4YZpKBmO1txtux3VF6wZXMQIop-vEphp1s5HxLkKU8I_EDCo-tkZYHkrT4Ut51mTZnyQ3xI9td7l-2oX0w'
-  },
-  {
-    id: 'd2',
-    name: 'Dr. Sunita Mehta',
-    qualifications: 'MBBS, DCH (Pediatrics)',
-    department: 'Pediatrics',
-    subSpeciality: 'Neonatology',
-    experience: '12 Years',
-    availability: 'Busy',
-    featured: 'No',
-    status: 'Active',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDCctp6yfJXf7-1rFuObb0Ki2WL_4iCXFdr-eeffAgsiEZprEBPHOITEx4lJ0ZWTsXptmVimAX02smmRNrEPwmNtaF7dixkBM6uBPqP8VS4iQ1ABwARcVsAB3sC4yikrBK00EVlJ3DccFWO6eFC2IHJGB1YA9CQ6sVwNk8ddW7A75POQ8GrGXGUUMUnB0J3eAMfa1R1DjZW9haVx1D0xDPuDGFDW2QHuIrzO0i6ewLX5xojfAXkHV34sQ8BZn_GbfXZfFQJlz1oxUg'
-  },
-  {
-    id: 'd3',
-    name: 'Dr. Rajesh Kulkarni',
-    qualifications: 'MS (Orthopedics)',
-    department: 'Orthopedics',
-    subSpeciality: 'Spine Surgery',
-    experience: '20 Years',
-    availability: 'Available',
-    featured: 'Yes',
-    status: 'Active',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBdmg0ndil9ygADvQlpCQmfNoIcNC45P9w5ROaS-TN6viovJ7ua3O24RzZYzLfTVj9t96-3KNF1OfDuw9ScwW29oKTg3cDqGJ4XgHANO7_tJ0x47COi4X5JOnr8kR-VGei69sIsz0FIQcDJ48vjI1UfIy73TDBjHz5rul75v0EVd33BlzU1VhW38IAadSKb-eDGGK5iV6PNrasvuzfmR1S5QdoIi6e1BhwOb_6H2DlyZ1uprGGWWu6nsM4ehW5RgyfYYdqFbVXbass'
-  },
-  {
-    id: 'd4',
-    name: 'Dr. Priya Verma',
-    qualifications: 'MD (Oncology)',
-    department: 'Oncology',
-    subSpeciality: 'Radiation Therapy',
-    experience: '8 Years',
-    availability: 'On Leave',
-    featured: 'No',
-    status: 'Inactive',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_HdwQUWFnwru1ZmIwrY4NBuEZ0_fKr5D2deJZ2IpoYbAYg8C4xB2wArEBfoFdTL42_089Du30ABxXwFERzM71sgFeUmXijTwlFYzt07mbY49JGxol4KT8g8LwA8x7U9LoroDDUSoWvOEDUCJOUurArP91HcNw8PpdVaUbas3sOrq4P9ElWiH6GLam51S89hffsSD3FX55tCwiZ9Dmrtj7AdfVNDNi_Hl3-TXWzuPP3qVVCCeahAhDc7T16QVNGY30Ls65W5QROBE'
+    image: '/doctor4.png'
   }
 ];
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialAppointments, saveAppointments } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -31,8 +32,9 @@ const Appointments = () => {
     saveAndSetAppointments(updated);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm(`Are you sure you want to delete appointment ${id}?`)) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete Appointment", `Are you sure you want to delete appointment ${id}?`, "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = appointments.filter(apt => apt.id !== id);
       saveAndSetAppointments(updated);
     }

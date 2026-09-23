@@ -67,7 +67,7 @@ export default function EducationalProgrammesManager() {
       setAlertModal({
         isOpen: true,
         title: 'Save Failed',
-        message: 'Unable to save programmes. Please try again.',
+        message: err.message || 'Unable to save programmes. Please try again.',
         type: 'error'
       });
     }
@@ -115,7 +115,7 @@ export default function EducationalProgrammesManager() {
               title: 'Module 1: Foundations',
               subtitle: 'Core principles',
               icon: 'school',
-              headerColor: 'linear-gradient(135deg, #132A4C 0%, #1E3A8A 100%)',
+              headerColor: 'linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%)',
               bulletPoints: ['Essential guidelines', 'Practical wellness techniques']
             },
             {

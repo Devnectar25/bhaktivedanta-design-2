@@ -17,9 +17,17 @@
 }
 
 .footer-logo-wrap {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.footer-logo-wrap:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
 }
 
 .footer-icon {

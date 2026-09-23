@@ -123,13 +123,15 @@
 }
 
 .btn-why-readmore {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   background-color: #1e3a8a;
   color: #ffffff !important;
   padding: 0.65rem 2.25rem;
   border-radius: 6px;
   font-weight: 700;
-  text-decoration: none;
+  text-decoration: none !important;
   font-size: 0.85rem;
   box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
   transition: all 0.2s ease;
@@ -139,6 +141,7 @@
   background-color: #1d4ed8;
   transform: translateY(-1.5px);
   box-shadow: 0 6px 18px rgba(30, 58, 138, 0.25);
+  text-decoration: none !important;
 }
 
 /* ==========================================

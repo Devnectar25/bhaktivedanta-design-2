@@ -32,8 +32,9 @@ const navLinks = [
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
   { name: 'About us', icon: 'info', to: 'about-us' },
+  { name: 'Blogs', icon: 'article', to: 'blogs' },
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
-  { name: 'Events', icon: 'event', to: 'events' },
+  { name: 'Statutory Compliances & Site Map', icon: 'gavel', to: 'statutory-compliances' },
   { divider: true },
 
   // Section 3
@@ -47,34 +48,50 @@ const navLinks = [
   { name: 'Settings', icon: 'settings', to: 'settings' }
 ];
 
+const rolePermissions = {
+  'Super Admin': null,
+  'Administrator': null,
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances'],
+  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs'],
+  'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs']
+};
+
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const userRole = localStorage.getItem('subadmin_role') || 'Super Admin';
+  const allowedRoutes = rolePermissions[userRole] || null;
+
+  const filteredNavLinks = allowedRoutes 
+    ? navLinks.filter(item => item.divider || !item.to || allowedRoutes.includes(item.to))
+    : navLinks;
 
   const handleLogout = () => {
     localStorage.removeItem('bhaktivedanta_admin_auth');
     localStorage.removeItem('adminToken');
     localStorage.removeItem('admin_username');
+    localStorage.removeItem('subadmin_role');
     sessionStorage.clear();
     window.location.href = '/admin/login';
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-[280px] premium-sidebar flex flex-col py-6 z-50 overflow-hidden text-white bg-slate-900">
-      <div className="px-6 mb-8 border-b border-white/10 pb-4 pt-2">
-        <NavLink to="dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <img src="/icon.png" alt="Icon" className="h-[62px] w-auto object-contain" />
+    <aside className="fixed left-0 top-0 h-full w-[280px] premium-sidebar flex flex-col pb-6 z-50 overflow-hidden text-white">
+      <div className="h-24 px-5 flex items-center border-b border-white/10 mb-2">
+        <NavLink to="dashboard" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity w-full">
+          <img src="/icon.png" alt="Icon" className="h-[58px] w-auto object-contain flex-shrink-0" />
           <img 
             src="/logo.png" 
             alt="Bhaktivedanta Hospital" 
-            className="h-[50px] w-auto object-contain" 
+            className="h-[48px] w-auto object-contain flex-1 min-w-0" 
             style={{ filter: 'brightness(0) invert(1)' }} 
           />
         </NavLink>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 custom-scrollbar space-y-1">
-        {navLinks.map((item, idx) => {
+        {filteredNavLinks.map((item, idx) => {
           if (item.divider) {
             return <div key={`div-${idx}`} className="h-px bg-white/10 my-3 mx-3"></div>;
           }

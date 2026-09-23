@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { initialGallery, saveGallery } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const Gallery = () => {
   const [gallery, setGallery] = useState([]);
@@ -17,8 +18,9 @@ const Gallery = () => {
     saveGallery(newGallery);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this media item?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete Media", "Are you sure you want to delete this media item?", "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = gallery.filter(item => item.id !== id);
       saveAndSetGallery(updated);
     }

@@ -299,11 +299,20 @@ const AddSpeciality = () => {
     }
 
     const newState = { ...(state || defaultSpecialitiesState), specialities: updatedSpecs };
-    saveSpecialitiesState(newState).then(() => {
-      window.dispatchEvent(new Event('admin_data_updated'));
-      window.dispatchEvent(new Event('storage'));
-      navigate('/admin/specialities');
-    });
+    saveSpecialitiesState(newState)
+      .then(() => {
+        window.dispatchEvent(new Event('admin_data_updated'));
+        window.dispatchEvent(new Event('storage'));
+        navigate('/admin/specialities');
+      })
+      .catch((err) => {
+        console.error('Error saving speciality:', err);
+        showAlert({
+          title: 'Save Error',
+          message: err.message || 'Failed to save speciality.',
+          type: 'error'
+        });
+      });
   };
 
   // Sort categories: active categories first, then by order

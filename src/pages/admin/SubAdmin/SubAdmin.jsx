@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getSubadmins, updateSubadmin, deleteSubadmin, addSubadmin } from '../../../utils/api';
+import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
 const defaultSubAdmins = [
   {
     username: 'admin.sneha',
     email: 'sneha@bhaktivedantahospital.com',
-    role: 'Administration',
+    role: 'Administrator',
     status: 'Active',
     created: '12 Oct 2023'
   },
   {
     username: 'admin.rajesh',
     email: 'rajesh@bhaktivedantahospital.com',
-    role: 'Clinical Manager',
+    role: 'Content Manager',
     status: 'Active',
     created: '15 Oct 2023'
   },
   {
-    username: 'admin.support',
-    email: 'helpdesk@bhaktivedantahospital.com',
-    role: 'Helpdesk Manager',
+    username: 'admin.dev',
+    email: 'dev@bhaktivedantahospital.com',
+    role: 'Developer',
     status: 'Active',
     created: '20 Jan 2024'
   }
@@ -31,10 +32,12 @@ const SubAdmin = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPasswordToggle, setShowPasswordToggle] = useState(false);
   const [newSubAdmin, setNewSubAdmin] = useState({
     username: '',
     email: '',
-    role: 'Administration',
+    password: '',
+    role: 'Administrator',
     status: 'Active'
   });
 
@@ -49,34 +52,38 @@ const SubAdmin = () => {
     });
   };
 
-  const handleDelete = (username) => {
-    if (window.confirm(`Are you sure you want to delete sub-admin account "${username}"?`)) {
+  const handleDelete = async (username) => {
+    const res = await showConfirmDialog('Delete Sub-Admin?', `Are you sure you want to delete sub-admin account "${username}"?`);
+    if (res.isConfirmed) {
       deleteSubadmin(username, subadmins).then(() => {
         setSubadmins(prev => prev.filter(s => s.username !== username));
+        showSuccessAlert('Deleted!', `Sub-admin account "${username}" deleted successfully.`);
       });
     }
   };
 
   const handleCreateSubAdmin = (e) => {
     e.preventDefault();
-    if (!newSubAdmin.username || !newSubAdmin.email) {
-      alert("Username and Email are required.");
+    if (!newSubAdmin.username || !newSubAdmin.email || !newSubAdmin.password) {
+      showErrorAlert("Required Fields Missing", "Username, Email, and Password are all required.");
       return;
     }
 
     const createdObj = {
       username: newSubAdmin.username.trim(),
       email: newSubAdmin.email.trim(),
+      password: newSubAdmin.password.trim(),
       role: newSubAdmin.role,
       status: newSubAdmin.status,
       created: new Date().toLocaleDateString()
     };
 
-    addSubadmin(createdObj, subadmins).then(() => {
-      setSubadmins(prev => [...prev, createdObj]);
+    addSubadmin(createdObj, subadmins).then((res) => {
+      const added = res && res.username ? res : createdObj;
+      setSubadmins(prev => [...prev.filter(s => s.username.toLowerCase() !== added.username.toLowerCase()), added]);
       setShowAddModal(false);
-      setNewSubAdmin({ username: '', email: '', role: 'Administration', status: 'Active' });
-      alert(`Sub-admin account "${createdObj.username}" created successfully.`);
+      setNewSubAdmin({ username: '', email: '', password: '', role: 'Administrator', status: 'Active' });
+      showSuccessAlert('Account Created!', `Sub-admin account "${added.username}" created successfully.`);
     });
   };
 
@@ -145,10 +152,10 @@ const SubAdmin = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
           >
             <option value="All">All Roles</option>
-            <option value="Administration">Administration</option>
-            <option value="Clinical Manager">Clinical Manager</option>
-            <option value="Helpdesk Manager">Helpdesk Manager</option>
-            <option value="Content Editor">Content Editor</option>
+            <option value="Administrator">Administrator</option>
+            <option value="Content Manager">Content Manager</option>
+            <option value="Developer">Developer</option>
+            <option value="Operations Manager">Operations Manager</option>
           </select>
         </div>
       </div>
@@ -255,16 +262,39 @@ const SubAdmin = () => {
               </div>
 
               <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Password *</label>
+                <div className="relative">
+                  <input 
+                    type={showPasswordToggle ? "text" : "password"} 
+                    required
+                    placeholder="Set account password..."
+                    value={newSubAdmin.password}
+                    onChange={(e) => setNewSubAdmin({ ...newSubAdmin, password: e.target.value })}
+                    className="w-full border border-slate-300 rounded-lg px-3 py-2 pr-10 outline-none focus:border-blue-600"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPasswordToggle(!showPasswordToggle)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 outline-none"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      {showPasswordToggle ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Role &amp; Permissions</label>
                 <select 
                   value={newSubAdmin.role}
                   onChange={(e) => setNewSubAdmin({ ...newSubAdmin, role: e.target.value })}
                   className="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none cursor-pointer"
                 >
-                  <option value="Administration">Administration</option>
-                  <option value="Clinical Manager">Clinical Manager</option>
-                  <option value="Helpdesk Manager">Helpdesk Manager</option>
-                  <option value="Content Editor">Content Editor</option>
+                  <option value="Administrator">Administrator</option>
+                  <option value="Content Manager">Content Manager</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Operations Manager">Operations Manager</option>
                 </select>
               </div>
 

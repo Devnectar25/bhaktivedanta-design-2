@@ -50,7 +50,7 @@ export default function SpiritualServicesManager() {
       setAlertModal({
         isOpen: true,
         title: 'Save Failed',
-        message: 'Unable to save changes. Please try again.',
+        message: err.message || 'Unable to save changes. Please try again.',
         type: 'error'
       });
     }

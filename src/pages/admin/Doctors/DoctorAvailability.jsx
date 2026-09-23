@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 const DoctorAvailability = () => {
   const [doctors, setDoctors] = useState([]);
@@ -34,7 +35,7 @@ const DoctorAvailability = () => {
   const handleSaveAvailability = (e) => {
     e.preventDefault();
     if (!selectedDocId) {
-      alert("Please select a doctor.");
+      showErrorAlert("Selection Error", "Please select a doctor.");
       return;
     }
 
@@ -66,12 +67,18 @@ const DoctorAvailability = () => {
     setSelectedStatus('Any Status');
   };
 
+  const parseExpYears = (exp) => {
+    if (!exp) return 0;
+    const match = String(exp).match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+  };
+
   const filtered = doctors.filter(doc => {
     const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDept = selectedDept === 'All Departments' || doc.department === selectedDept;
     const matchesStatus = selectedStatus === 'Any Status' || doc.availability === selectedStatus;
     return matchesSearch && matchesDept && matchesStatus;
-  });
+  }).sort((a, b) => parseExpYears(b.experience) - parseExpYears(a.experience));
 
   const totalCount = doctors.length;
   const availableCount = doctors.filter(d => d.availability === 'Available').length;

@@ -22,15 +22,57 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif !important;
   background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif !important;
   font-weight: 700;
   line-height: 1.2;
+}
+
+/* Non-interactive static text: prevent pointer cursors, text carets, and accidental text selection */
+.section-header,
+.section-label,
+.section-header h1,
+.section-header h2,
+.section-header h3,
+.section-header p,
+h1:not(a):not(button):not(.cursor-pointer),
+h2:not(a):not(button):not(.cursor-pointer),
+h3:not(a):not(button):not(.cursor-pointer),
+h4:not(a):not(button):not(.cursor-pointer),
+h5:not(a):not(button):not(.cursor-pointer),
+h6:not(a):not(button):not(.cursor-pointer) {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Ensure all interactive buttons, links, inputs retain proper cursors */
+a,
+button,
+select,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="search"],
+input[type="password"],
+textarea {
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 a {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './NewDevelopments.css';
 import { X, Calendar, ArrowRight, Tag } from 'lucide-react';
 
@@ -85,6 +85,18 @@ const NewDevelopments = () => {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [isAllModalOpen, setIsAllModalOpen] = useState(false);
 
+  // Lock background body scroll when modal popup is open
+  useEffect(() => {
+    if (selectedArticle || isAllModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [selectedArticle, isAllModalOpen]);
+
   const allArticles = [...developmentsData.featured, ...developmentsData.sidebar];
 
   return (
@@ -142,7 +154,8 @@ const NewDevelopments = () => {
                 className="btn-read-more"
                 onClick={() => setIsAllModalOpen(true)}
               >
-                Read More
+                <span>Read More</span>
+                <ArrowRight size={18} className="read-more-arrow" />
               </button>
             </div>
           </div>

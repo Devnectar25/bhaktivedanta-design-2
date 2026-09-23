@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loadAdminData, saveAdminData } from '../../../data/adminState';
+import { showConfirmDialog } from '../../../utils/swal';
 
 const defaultPackages = [
   {
@@ -48,8 +49,9 @@ const HealthPackages = () => {
     saveAdminData('bhaktivedanta_admin_packages', newPkgs);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this package?")) {
+  const handleDelete = async (id) => {
+    const res = await showConfirmDialog("Delete Package", "Are you sure you want to delete this package?", "Yes, Delete");
+    if (res.isConfirmed) {
       const updated = packages.filter(p => p.id !== id);
       saveAndSetPackages(updated);
     }

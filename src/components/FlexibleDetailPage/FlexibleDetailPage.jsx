@@ -10,6 +10,7 @@ import ActivityImageCard from '../ActivityImageCard/ActivityImageCard';
 import ContactInfoBlock from '../ContactInfoBlock/ContactInfoBlock';
 import PublicationCard from '../PublicationCard/PublicationCard';
 import ProgramCard from '../ProgramCard/ProgramCard';
+import { showSuccessAlert } from '../../utils/swal';
 
 import './FlexibleDetailPage.css';
 
@@ -57,7 +58,7 @@ export default function FlexibleDetailPage({
       } catch (e) { }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      showSuccessAlert('Link Copied', 'Link copied to clipboard!');
     }
   };
 

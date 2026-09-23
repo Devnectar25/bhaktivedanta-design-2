@@ -93,13 +93,18 @@
   border-color: #bae6fd;
 }
 
-.emergency-label {
+.emergency-badge .emergency-label {
   font-size: 0.7rem;
-  color: #0369a1;
+  color: #fea619 !important;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 2px;
+  transition: color 0.35s ease;
+}
+
+.navbar-header.scrolled .emergency-badge .emergency-label {
+  color: #0369a1 !important;
 }
 
 .emergency-number {
@@ -1375,6 +1380,7 @@
 
   .mobile-drawer-emergency .emergency-label {
     font-size: 0.65rem;
+    color: #0369a1 !important;
   }
 
   .mobile-drawer-emergency .emergency-number {

@@ -256,6 +256,16 @@ const CareersPage = () => {
 
   return (
     <div className="careers-page">
+
+      {/* Breadcrumb Navigation */}
+      <div className="careers-breadcrumb-bar">
+        <div className="container">
+          <Link to="/">Home</Link>
+          <span style={{ margin: '0 0.5rem', color: '#cbd5e1' }}>&gt;</span>
+          <span className="active">Careers</span>
+        </div>
+      </div>
+
       <div className="container careers-container">
         {/* Header Title & Share */}
         <div className="careers-header-section">
