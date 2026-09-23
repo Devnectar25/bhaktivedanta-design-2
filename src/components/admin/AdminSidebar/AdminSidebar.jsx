@@ -31,7 +31,7 @@ const navLinks = [
   { name: 'Education & Medical Research', icon: 'school', to: 'education-research' },
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
-  { name: 'About us', icon: 'info', to: 'dashboard' },
+  { name: 'About us', icon: 'info', to: 'about-us' },
   { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
   { name: 'Events', icon: 'event', to: 'events' },
   { divider: true },

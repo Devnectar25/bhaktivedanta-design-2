@@ -19,6 +19,11 @@ import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 import CareersPage from './pages/Careers/CareersPage';
 import DnbProgramPage from './pages/Education/DnbProgramPage';
 import EducationSectionPage from './pages/Education/EducationSectionPage';
+import AboutHospitalPage from './pages/About/AboutHospitalPage';
+import SriChaitanyaTrustPage from './pages/About/SriChaitanyaTrustPage';
+import OurManagementTeamPage from './pages/About/OurManagementTeamPage';
+import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
+import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -44,6 +49,7 @@ import SpiritualCare from './pages/admin/SpiritualCare/SpiritualCare';
 import EducationResearch from './pages/admin/EducationResearch/EducationResearch';
 import AssociateCentres from './pages/admin/AssociateCentres/AssociateCentres';
 import Careers from './pages/admin/Careers/Careers';
+import AdminAboutUs from './pages/admin/AboutUs/AboutUs';
 
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
@@ -98,22 +104,29 @@ function App() {
         <Route path="/spiritual-care/spiritual-retreats" element={<SpiritualRetreats />} />
         <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
         <Route path="/careers" element={<CareersPage />} />
-      </Route>
+        <Route path="/about-us" element={<AboutHospitalPage />} />
+        <Route path="/about-us/about-hospital" element={<AboutHospitalPage />} />
+        <Route path="/about-us/sri-chaitanya-health-care-and-trust-cst" element={<SriChaitanyaTrustPage />} />
+        <Route path="/about-us/our-management-team" element={<OurManagementTeamPage />} />
+        <Route path="/about-us/new-developments-updates" element={<NewDevelopmentsPage />} />
+        <Route path="/about-us/spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
+        <Route path="/about-us/our-spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
 
-      {/* Education & Medical Research Dedicated Routes */}
-      <Route path="/education/dnb-program" element={<DnbProgramPage />} />
-      <Route path="/education-careers/dnb-program" element={<DnbProgramPage />} />
-      <Route path="/education/nursing-program" element={<EducationSectionPage />} />
-      <Route path="/education/cme" element={<EducationSectionPage />} />
-      <Route path="/education/cne" element={<EducationSectionPage />} />
-      <Route path="/education/spiritual-care-course" element={<EducationSectionPage />} />
-      <Route path="/education/clinical-research-course" element={<EducationSectionPage />} />
-      <Route path="/education/clinical-trials" element={<EducationSectionPage />} />
-      <Route path="/education/ethics-committee" element={<EducationSectionPage />} />
-      <Route path="/education/publications" element={<EducationSectionPage />} />
-      <Route path="/education/government-accreditation" element={<EducationSectionPage />} />
-      <Route path="/education/:sectionSlug" element={<EducationSectionPage />} />
-      <Route path="/education" element={<Navigate to="/education/dnb-program" replace />} />
+        {/* Education & Medical Research Dedicated Routes */}
+        <Route path="/education/dnb-program" element={<DnbProgramPage />} />
+        <Route path="/education-careers/dnb-program" element={<DnbProgramPage />} />
+        <Route path="/education/nursing-program" element={<EducationSectionPage />} />
+        <Route path="/education/cme" element={<EducationSectionPage />} />
+        <Route path="/education/cne" element={<EducationSectionPage />} />
+        <Route path="/education/spiritual-care-course" element={<EducationSectionPage />} />
+        <Route path="/education/clinical-research-course" element={<EducationSectionPage />} />
+        <Route path="/education/clinical-trials" element={<EducationSectionPage />} />
+        <Route path="/education/ethics-committee" element={<EducationSectionPage />} />
+        <Route path="/education/publications" element={<EducationSectionPage />} />
+        <Route path="/education/government-accreditation" element={<EducationSectionPage />} />
+        <Route path="/education/:sectionSlug" element={<EducationSectionPage />} />
+        <Route path="/education" element={<Navigate to="/education/dnb-program" replace />} />
+      </Route>
 
 
       {/* Admin Login */}
@@ -153,6 +166,7 @@ function App() {
         <Route path="education-research" element={<EducationResearch />} />
         <Route path="associate-centres" element={<AssociateCentres />} />
         <Route path="careers" element={<Careers />} />
+        <Route path="about-us" element={<AdminAboutUs />} />
         <Route path="settings" element={<Settings />} />
 
         {/* Forms */}

@@ -1,0 +1,196 @@
+/* ==========================================================================
+   New Developments & Updates Page Styling
+   Bhaktivedanta Hospital & Research Institute
+   ========================================================================== */
+
+.dev-page-wrapper {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+  width: 100%;
+}
+
+/* Header Row */
+.dev-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.dev-page-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.dev-share-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1c5296;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(28, 82, 150, 0.25);
+}
+
+.dev-share-btn:hover {
+  background: #ea580c;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Grid Layout */
+.dev-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .dev-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .dev-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Card Styling */
+.dev-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dev-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
+}
+
+/* Thumbnail Wrap */
+.dev-thumbnail-wrap {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.dev-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.dev-card:hover .dev-thumbnail {
+  transform: scale(1.04);
+}
+
+/* Card Body */
+.dev-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dev-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e40af;
+  line-height: 1.45;
+  margin-bottom: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.dev-card:hover .dev-card-title {
+  color: #ea580c;
+}
+
+.dev-card-desc {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card Footer */
+.dev-card-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.dev-readmore-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ea580c;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.dev-readmore-link:hover {
+  color: #c2410c;
+  gap: 0.65rem;
+}
+
+/* Share Toast */
+.dev-share-toast {
+  position: fixed;
+  top: 140px;
+  right: 24px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: devFadeInOut 2.5s forwards;
+}
+
+@keyframes devFadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}

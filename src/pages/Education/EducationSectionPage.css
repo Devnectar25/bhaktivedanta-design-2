@@ -14,12 +14,12 @@
   flex-direction: column;
 }
 
-/* Breadcrumb Bar with Fixed Navbar Offset */
+/* Breadcrumb Bar */
 .edu-breadcrumb-bar {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0.9rem 0;
-  margin-top: 85px; /* Offset for fixed hospital navbar */
+  margin-top: 0;
   position: relative;
   z-index: 20;
 }
