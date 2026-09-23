@@ -1,5 +1,6 @@
 .careers-page {
   background-color: #ffffff;
+  min-height: 100vh;
   padding-top: 127px; /* Matches exact height of the two-tier fixed Navbar (75px + 52px) */
   padding-bottom: 0;
   font-family: 'Inter', sans-serif;
@@ -15,7 +16,7 @@
 
 @media (max-width: 991px) {
   .careers-page {
-    padding-top: 65px;
+    padding-top: 0;
   }
 }
 

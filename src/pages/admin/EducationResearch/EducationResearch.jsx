@@ -44,8 +44,8 @@ import {
 import { dnbProgramData } from '../../../data/dnbProgramData';
 import Swal from 'sweetalert2';
 
-// 12 Section Identifiers
-const SECTION_TABS = [
+// 10 Core Hospital Section Identifiers
+const CORE_SECTION_TABS = [
   { id: 'dnb', name: 'DNB Program', icon: GraduationCap, badge: 'NBE Accredited' },
   { id: 'nursing', name: 'Nursing Program', icon: Stethoscope, badge: 'MNC & INC' },
   { id: 'cme', name: 'CME', icon: Calendar, badge: 'MMC Credit' },
@@ -55,9 +55,7 @@ const SECTION_TABS = [
   { id: 'clinicalTrials', name: 'Clinical Trials', icon: FlaskConical, badge: 'NABH Accredited' },
   { id: 'ethics', name: 'Ethics Committee', icon: ShieldCheck, badge: 'CDSCO & DHR' },
   { id: 'publications', name: 'Publications', icon: FileText, badge: 'Indexed Theses' },
-  { id: 'accreditation', name: 'Government Accreditation', icon: Award, badge: 'Govt Approved' },
-  { id: 'customPrograms', name: 'New Education Courses', icon: Layers, badge: 'Dynamic Programs' },
-  { id: 'inquiries', name: 'Course Inquiries', icon: Mail, badge: 'Admissions' }
+  { id: 'accreditation', name: 'Government Accreditation', icon: Award, badge: 'Govt Approved' }
 ];
 
 const EducationResearch = () => {
@@ -69,9 +67,12 @@ const EducationResearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState('all');
 
-  // Dynamic Education Creation Modal
+  // Dynamic Education Creation/Editing Modal
   const [isNewEducationModalOpen, setIsNewEducationModalOpen] = useState(false);
+  const [editingProgramId, setEditingProgramId] = useState(null);
   const [newEducationForm, setNewEducationForm] = useState({
+    id: '',
+    slug: '',
     title: '',
     category: 'Post Doctoral Fellowship',
     badge: 'Accredited',
@@ -195,13 +196,61 @@ const EducationResearch = () => {
         getEducationPrograms([])
       ]);
       setInquiries(Array.isArray(inqList) ? inqList : []);
-      setCustomPrograms(Array.isArray(progs) && progs.length > 0 ? progs : (liveData?.customPrograms || []));
+      const rawProgs = Array.isArray(progs) && progs.length > 0 ? progs : (liveData?.customPrograms || []);
+      const standardSlugs = new Set([
+        'dnb-program', 'nursing-program', 'cme', 'cne', 'spiritual-care-course',
+        'clinical-research-course', 'clinical-trials', 'ethics-committee', 'publications', 'government-accreditation',
+        'dnb-general-medicine', 'dnb-paediatrics', 'dnb-ophthalmology', 'dnb-obstetrics-gynaecology',
+        'diploma-radio-diagnosis', 'dnb-urology', 'dnb-anesthesiology'
+      ]);
+      const dynamicProgs = rawProgs.filter(p => !standardSlugs.has(p.slug) && !standardSlugs.has(p.id));
+      setCustomPrograms(dynamicProgs);
     } catch (err) {
       console.warn('Error loading education research state:', err);
     }
   };
 
-  const handleCreateNewEducation = async (e) => {
+  const handleOpenCreateEducationModal = () => {
+    setEditingProgramId(null);
+    setNewEducationForm({
+      id: '',
+      slug: '',
+      title: '',
+      category: 'Post Doctoral Fellowship',
+      badge: 'Accredited',
+      duration: '1 Year',
+      seats: 2,
+      eligibility: '',
+      overview: '',
+      highlights: '',
+      faculty: '',
+      phone: '022 2845 8000',
+      email: 'education@bhaktivedantahospital.com'
+    });
+    setIsNewEducationModalOpen(true);
+  };
+
+  const handleOpenEditEducationModal = (prog) => {
+    setEditingProgramId(prog.id);
+    setNewEducationForm({
+      id: prog.id,
+      slug: prog.slug || '',
+      title: prog.title || '',
+      category: prog.category || 'Post Doctoral Fellowship',
+      badge: prog.badge || 'Accredited',
+      duration: prog.duration || '1 Year',
+      seats: prog.seats ?? 2,
+      eligibility: prog.eligibility || '',
+      overview: prog.overview || '',
+      highlights: Array.isArray(prog.highlights) ? prog.highlights.join('\n') : (prog.highlights || ''),
+      faculty: Array.isArray(prog.faculties) ? prog.faculties.map(f => typeof f === 'string' ? f : f.name).join(', ') : (prog.faculty || ''),
+      phone: prog.phone || prog.contactInfo?.phone || '022 2845 8000',
+      email: prog.email || prog.contactInfo?.email || 'education@bhaktivedantahospital.com'
+    });
+    setIsNewEducationModalOpen(true);
+  };
+
+  const handleSaveEducationProgram = async (e) => {
     e.preventDefault();
     if (!newEducationForm.title.trim()) {
       Swal.fire('Error', 'Education Program Title is required', 'error');
@@ -209,30 +258,32 @@ const EducationResearch = () => {
     }
 
     try {
+      const targetId = newEducationForm.id || `edu-prog-${Date.now()}`;
       const payload = {
         ...newEducationForm,
-        slug: newEducationForm.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+        id: targetId,
+        slug: newEducationForm.slug || newEducationForm.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
       };
       await createEducationProgram(payload);
       await loadData();
       setIsNewEducationModalOpen(false);
       Swal.fire({
         icon: 'success',
-        title: 'Education Program Created!',
-        text: `"${payload.title}" is now saved to PostgreSQL database and live at /education/${payload.slug}`,
+        title: editingProgramId ? 'Education Program Updated!' : 'Education Program Created!',
+        text: `"${payload.title}" is saved to PostgreSQL database and live at /education/${payload.slug}`,
         confirmButtonColor: '#ea580c'
       });
-      setActiveSection('customPrograms');
+      setActiveSection(`custom_${targetId}`);
     } catch (err) {
-      console.error('Error creating education program:', err);
-      Swal.fire('Error', 'Failed to create education program in database', 'error');
+      console.error('Error saving education program:', err);
+      Swal.fire('Error', 'Failed to save education program in database', 'error');
     }
   };
 
   const handleDeleteCustomProgram = async (id, title) => {
     const res = await Swal.fire({
       title: `Delete "${title}"?`,
-      text: 'This will remove the education program and all its records permanently from the database.',
+      text: 'This will remove the education program permanently from the database and remove its tab.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#dc2626',
@@ -242,6 +293,7 @@ const EducationResearch = () => {
       try {
         await deleteEducationProgram(id);
         await loadData();
+        setActiveSection('dnb');
         Swal.fire('Deleted', 'Program removed from database.', 'success');
       } catch (err) {
         Swal.fire('Error', 'Could not delete program', 'error');
@@ -782,94 +834,115 @@ const EducationResearch = () => {
       }
     };
 
-    return (
-      <div className="space-y-6 font-sans text-slate-800 pb-16">
-        {/* Top Banner Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
-              <GraduationCap className="text-orange-600" size={30} />
-              Education &amp; Medical Research Master Console
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Database management console covering all 10 programs from start to end (DNB, Nursing, CME, CNE, Clinical Research, Trials, IEC &amp; Accreditations).
-            </p>
-          </div>
+  const allSectionTabs = [
+    ...CORE_SECTION_TABS,
+    ...customPrograms.map((prog) => ({
+      id: `custom_${prog.id}`,
+      programId: prog.id,
+      name: prog.title,
+      icon: Layers,
+      badge: prog.badge || prog.category || 'Dynamic Program',
+      isCustom: true,
+      program: prog
+    }))
+  ];
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={handleResetDefaults}
-              className="px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 flex items-center gap-1.5 transition shadow-2xs"
-            >
-              <RotateCcw size={14} />
-              Reset Database Defaults
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setNewEducationForm({
-                  title: '',
-                  category: 'Post Doctoral Fellowship',
-                  badge: 'Accredited',
-                  duration: '1 Year',
-                  seats: 2,
-                  eligibility: '',
-                  overview: '',
-                  highlights: '',
-                  faculty: '',
-                  phone: '022 2845 8000',
-                  email: 'education@bhaktivedantahospital.com'
-                });
-                setIsNewEducationModalOpen(true);
-              }}
-              className="px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
-            >
-              <Plus size={15} />
-              Create New Education Program
-            </button>
-            <a
-              href="/education/dnb-program"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
-            >
-              <ExternalLink size={14} />
-              Open Public Portal
-            </a>
-          </div>
+  const activeCustomProgram = customPrograms.find(
+    (p) => p.id === activeSection || `custom_${p.id}` === activeSection
+  );
+
+  return (
+    <div className="space-y-6 font-sans text-slate-800 pb-16">
+      {/* Top Banner Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <GraduationCap className="text-orange-600" size={30} />
+            Education &amp; Medical Research Master Console
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500">
+            Database management console covering all 10 programs from start to end (DNB, Nursing, CME, CNE, Clinical Research, Trials, IEC &amp; Accreditations).
+          </p>
         </div>
 
-        {/* Primary Section Selector (All 10 Programs + Inquiries) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs font-semibold">
-            {SECTION_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeSection === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveSection(tab.id)}
-                  className={`p-3 rounded-xl flex flex-col items-start gap-1 transition text-left relative ${isActive
-                      ? 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-sm'
-                      : 'bg-slate-50/70 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
-                    }`}
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <Icon size={18} className={isActive ? 'text-white' : 'text-orange-600'} />
-                    <span
-                      className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-orange-100 text-orange-800'
-                        }`}
-                    >
-                      {tab.badge}
-                    </span>
-                  </div>
-                  <span className="font-bold text-xs mt-1 truncate w-full">{tab.name}</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={handleResetDefaults}
+            className="px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 flex items-center gap-1.5 transition shadow-2xs"
+          >
+            <RotateCcw size={14} />
+            Reset Database Defaults
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSection('inquiries')}
+            className={`px-3.5 py-2 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition shadow-2xs ${
+              activeSection === 'inquiries'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <Mail size={14} className={activeSection === 'inquiries' ? 'text-white' : 'text-orange-600'} />
+            Course Inquiries Pipeline
+            <span
+              className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                activeSection === 'inquiries' ? 'bg-white/20 text-white' : 'bg-orange-100 text-orange-800'
+              }`}
+            >
+              {inquiries.length}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={handleOpenCreateEducationModal}
+            className="px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
+          >
+            <Plus size={15} />
+            Create New Education Program
+          </button>
+          <a
+            href="/education/dnb-program"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
+          >
+            <ExternalLink size={14} />
+            Open Public Portal
+          </a>
         </div>
+      </div>
+
+      {/* Primary Section Selector (All 10 Programs + Added Education Programs) */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs font-semibold">
+          {allSectionTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeSection === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSection(tab.id)}
+                className={`p-3 rounded-xl flex flex-col items-start gap-1 transition text-left relative ${isActive
+                    ? 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-sm'
+                    : 'bg-slate-50/70 hover:bg-slate-100 text-slate-700 border border-slate-200/80'
+                  }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <Icon size={18} className={isActive ? 'text-white' : 'text-orange-600'} />
+                  <span
+                    className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-orange-100 text-orange-800'
+                      }`}
+                  >
+                    {tab.badge}
+                  </span>
+                </div>
+                <span className="font-bold text-xs mt-1 truncate w-full">{tab.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
         {/* =========================================================================
           VIEW 1: DNB POSTGRADUATE PROGRAM
@@ -2168,115 +2241,142 @@ const EducationResearch = () => {
         {/* =========================================================================
           VIEW 11: DYNAMIC / CUSTOM EDUCATION PROGRAMS (POSTGRESQL DATABASE)
           ========================================================================= */}
-        {activeSection === 'customPrograms' && (
+        {(activeCustomProgram || activeSection === 'customPrograms') && (
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
-            <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-slate-200">
-              <div>
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Layers className="text-orange-600" size={20} />
-                  Custom Education Programs &amp; Courses ({customPrograms.length})
-                </h3>
-                <p className="text-xs text-slate-500">
-                  New academic offerings created by administration, saved to PostgreSQL database, and rendered dynamically on the public portal.
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setNewEducationForm({
-                    title: '',
-                    category: 'Post Doctoral Fellowship',
-                    badge: 'Accredited',
-                    duration: '1 Year',
-                    seats: 2,
-                    eligibility: '',
-                    overview: '',
-                    highlights: '',
-                    faculty: '',
-                    phone: '022 2845 8000',
-                    email: 'education@bhaktivedantahospital.com'
-                  });
-                  setIsNewEducationModalOpen(true);
-                }}
-                className="px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
-              >
-                <Plus size={14} /> Create New Education Program
-              </button>
-            </div>
+            {activeCustomProgram ? (
+              <>
+                <div className="flex items-start justify-between flex-wrap gap-4 pb-5 border-b border-slate-200">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="px-2.5 py-0.5 bg-orange-100 text-orange-800 font-bold rounded text-[11px] uppercase tracking-wider">
+                        {activeCustomProgram.badge || 'Accredited'}
+                      </span>
+                      <span className="px-2.5 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-[11px]">
+                        {activeCustomProgram.category || 'Academic Program'}
+                      </span>
+                      <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded text-[10px]">
+                        {activeCustomProgram.status || 'Active'}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                      <Layers className="text-orange-600" size={22} />
+                      {activeCustomProgram.title}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-mono mt-1">
+                      Public Live Route:{' '}
+                      <a
+                        href={`/education/${activeCustomProgram.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline font-semibold"
+                      >
+                        /education/{activeCustomProgram.slug}
+                      </a>
+                    </p>
+                  </div>
 
-            {customPrograms.length === 0 ? (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <a
+                      href={`/education/${activeCustomProgram.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg flex items-center gap-1.5 transition shadow-2xs"
+                    >
+                      <ExternalLink size={14} /> View Live Page
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditEducationModal(activeCustomProgram)}
+                      className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-1.5 transition"
+                    >
+                      <Edit2 size={13} /> Edit Program Details
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCustomProgram(activeCustomProgram.id, activeCustomProgram.title)}
+                      className="px-3.5 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg flex items-center gap-1.5 transition"
+                    >
+                      <Trash2 size={14} /> Delete Program
+                    </button>
+                  </div>
+                </div>
+
+                {/* Quick Metrics Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span className="text-slate-400 font-semibold uppercase text-[10px]">Duration</span>
+                    <div className="text-base font-bold text-slate-900 mt-1">{activeCustomProgram.duration || '1 Year'}</div>
+                  </div>
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span className="text-slate-400 font-semibold uppercase text-[10px]">Intake Capacity</span>
+                    <div className="text-base font-bold text-orange-600 mt-1">{activeCustomProgram.seats ? `${activeCustomProgram.seats} Seats` : 'Contact Dept'}</div>
+                  </div>
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span className="text-slate-400 font-semibold uppercase text-[10px]">Contact Phone</span>
+                    <div className="text-base font-bold text-slate-900 mt-1">{activeCustomProgram.phone || activeCustomProgram.contactInfo?.phone || '022 2845 8000'}</div>
+                  </div>
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <span className="text-slate-400 font-semibold uppercase text-[10px]">Department Email</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 truncate">{activeCustomProgram.email || activeCustomProgram.contactInfo?.email || 'education@bhaktivedantahospital.com'}</div>
+                  </div>
+                </div>
+
+                {/* Program Details Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                  <div className="p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <GraduationCap size={16} className="text-orange-600" />
+                        Candidate Eligibility
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditEducationModal(activeCustomProgram)}
+                        className="text-xs text-orange-600 hover:text-orange-700 font-semibold"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <p className="text-slate-700 leading-relaxed whitespace-pre-line">
+                      {activeCustomProgram.eligibility || 'Candidate must possess recognized medical or paramedical qualifications.'}
+                    </p>
+                  </div>
+
+                  <div className="p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                        <BookOpen size={16} className="text-orange-600" />
+                        Overview &amp; Curriculum Mission
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditEducationModal(activeCustomProgram)}
+                        className="text-xs text-orange-600 hover:text-orange-700 font-semibold"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <p className="text-slate-700 leading-relaxed whitespace-pre-line">
+                      {activeCustomProgram.overview || 'Comprehensive academic, clinical and research training.'}
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
               <div className="text-center py-12 px-4 border border-dashed border-slate-300 rounded-2xl bg-slate-50/50 space-y-3">
                 <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mx-auto">
                   <GraduationCap size={24} />
                 </div>
                 <h4 className="text-base font-bold text-slate-800">No Custom Education Programs Added Yet</h4>
                 <p className="text-xs text-slate-500 max-w-md mx-auto">
-                  Admins can create new academic programs (such as Fellowships, Paramedical Diplomas, or Certificate Courses) with custom eligibility, seats, and curriculum that are stored directly in PostgreSQL database.
+                  Admins can create new academic programs (such as Fellowships, Paramedical Diplomas, or Certificate Courses) with custom eligibility, seats, and curriculum that are stored directly in the database.
                 </p>
                 <button
-                  onClick={() => setIsNewEducationModalOpen(true)}
+                  onClick={handleOpenCreateEducationModal}
                   className="px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg inline-flex items-center gap-1.5 transition"
                 >
                   <Plus size={14} /> Add First Program Now
                 </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                {customPrograms.map((prog) => (
-                  <div key={prog.id} className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3 hover:shadow-xs transition">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded text-[10px]">
-                          {prog.category || 'Academic Program'}
-                        </span>
-                        <h4 className="font-bold text-slate-900 text-sm mt-1">{prog.title}</h4>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleDeleteCustomProgram(prog.id, prog.title)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Delete from database"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 p-2.5 bg-white border border-slate-200 rounded-xl">
-                      <div>
-                        <span className="text-[10px] text-slate-400 font-semibold uppercase">Duration</span>
-                        <div className="font-bold text-slate-800">{prog.duration || '1 Year'}</div>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-slate-400 font-semibold uppercase">Intake</span>
-                        <div className="font-bold text-orange-600">{prog.seats ? `${prog.seats} Seats` : 'Contact Dept'}</div>
-                      </div>
-                    </div>
-
-                    {prog.eligibility && (
-                      <div className="text-[11px] text-slate-600">
-                        <strong className="text-slate-800">Eligibility:</strong> {prog.eligibility}
-                      </div>
-                    )}
-
-                    <p className="text-slate-600 text-[11px] line-clamp-2 leading-relaxed">
-                      {prog.overview}
-                    </p>
-
-                    <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        Route: /education/{prog.slug}
-                      </span>
-                      <a
-                        href={`/education/${prog.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg flex items-center gap-1 transition"
-                      >
-                        <ExternalLink size={12} /> View Live Page
-                      </a>
-                    </div>
-                  </div>
-                ))}
               </div>
             )}
           </div>
@@ -2735,7 +2835,7 @@ const EducationResearch = () => {
               <div className="flex items-center justify-between pb-3 border-b border-slate-200">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <GraduationCap className="text-orange-600" size={20} />
-                  Create New Education Program (PostgreSQL)
+                  {editingProgramId ? 'Edit Education Program & Course' : 'Create New Education Program (PostgreSQL)'}
                 </h3>
                 <button
                   type="button"
@@ -2746,7 +2846,7 @@ const EducationResearch = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleCreateNewEducation} className="space-y-3 text-xs">
+              <form onSubmit={handleSaveEducationProgram} className="space-y-3 text-xs">
                 <div>
                   <label className="block font-semibold mb-1 text-slate-700">Program / Course Title *</label>
                   <input
@@ -2866,7 +2966,7 @@ const EducationResearch = () => {
                     type="submit"
                     className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg shadow-xs"
                   >
-                    Save to Database &amp; Publish
+                    {editingProgramId ? 'Save Changes & Update' : 'Save to Database & Publish'}
                   </button>
                 </div>
               </form>

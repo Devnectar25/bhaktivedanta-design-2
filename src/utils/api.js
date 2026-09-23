@@ -482,6 +482,40 @@ export const getSpiritualCareState = (fallback) =>
 export const saveSpiritualCareState = (state) => 
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
 
+// About Us State
+export const getAboutUsState = async (fallback) => {
+  const result = await apiGet('/about-us', 'bhaktivedanta_about_us_state', fallback);
+  if (result && result.data && (result.data.aboutHospital || result.data.visionMissionValues)) {
+    return result.data;
+  }
+  if (result && (result.aboutHospital || result.visionMissionValues)) {
+    return result;
+  }
+  return fallback;
+};
+
+export const saveAboutUsState = (state) => 
+  apiMutation('/about-us', 'PUT', state, 'bhaktivedanta_about_us_state', (old, res) => {
+    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
+      ? res.data
+      : (res && (res.aboutHospital || res.visionMissionValues))
+        ? res
+        : state;
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return actualData;
+  });
+
+export const resetAboutUsState = () =>
+  apiMutation('/about-us/reset', 'POST', {}, 'bhaktivedanta_about_us_state', (old, res) => {
+    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
+      ? res.data
+      : (res && (res.aboutHospital || res.visionMissionValues))
+        ? res
+        : old;
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return actualData;
+  });
+
 // Statutory Compliances State & PDF Upload
 export const getStatutoryCompliancesState = (fallback) =>
   apiGet('/statutory-compliances', 'bhaktivedanta_statutory_compliances_state', fallback);

@@ -21,6 +21,11 @@ import AppointmentModal from './components/AppointmentModal/AppointmentModal';
 import CareersPage from './pages/Careers/CareersPage';
 import DnbProgramPage from './pages/Education/DnbProgramPage';
 import EducationSectionPage from './pages/Education/EducationSectionPage';
+import AboutHospitalPage from './pages/About/AboutHospitalPage';
+import SriChaitanyaTrustPage from './pages/About/SriChaitanyaTrustPage';
+import OurManagementTeamPage from './pages/About/OurManagementTeamPage';
+import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
+import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
 
 // Admin Layout & Pages
@@ -48,6 +53,7 @@ import SpiritualCare from './pages/admin/SpiritualCare/SpiritualCare';
 import EducationResearch from './pages/admin/EducationResearch/EducationResearch';
 import AssociateCentres from './pages/admin/AssociateCentres/AssociateCentres';
 import Careers from './pages/admin/Careers/Careers';
+import AdminAboutUs from './pages/admin/AboutUs/AboutUs';
 import StatutoryCompliances from './pages/admin/StatutoryCompliances/StatutoryCompliances';
 
 // Admin Forms
@@ -104,6 +110,7 @@ function App() {
         {/* Main Public Website Home & Pages wrapped in PublicLayout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomeContent />} />
+          <Route path="/services/:id" element={<HomeContent />} />
 
           {/* 4 Dedicated Modules Full-Page Routes */}
           <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
@@ -120,6 +127,15 @@ function App() {
           <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
           <Route path="/spiritual-care/publications" element={<PublicationsPapers />} />
           <Route path="/spiritual-care/:slug" element={<DetailPage module="spiritual-care" />} />
+
+          {/* About Us Routes */}
+          <Route path="/about-us" element={<AboutHospitalPage />} />
+          <Route path="/about-us/about-hospital" element={<AboutHospitalPage />} />
+          <Route path="/about-us/sri-chaitanya-health-care-and-trust-cst" element={<SriChaitanyaTrustPage />} />
+          <Route path="/about-us/our-management-team" element={<OurManagementTeamPage />} />
+          <Route path="/about-us/new-developments-updates" element={<NewDevelopmentsPage />} />
+          <Route path="/about-us/spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
+          <Route path="/about-us/our-spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
 
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -140,7 +156,6 @@ function App() {
         <Route path="/education/:sectionSlug" element={<EducationSectionPage />} />
         <Route path="/education" element={<Navigate to="/education/dnb-program" replace />} />
 
-
         {/* Admin Login */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
@@ -160,7 +175,7 @@ function App() {
           <Route path="blogs" element={<Blogs />} />
           <Route path="events" element={<Events />} />
           <Route path="gallery" element={<Gallery />} />
-          
+
           {/* Appointments and Add Appointment internal admin functionality removed; redirected to dashboard */}
           <Route path="appointments" element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="add-appointment" element={<Navigate to="/admin/dashboard" replace />} />
@@ -179,6 +194,7 @@ function App() {
           <Route path="education-research" element={<EducationResearch />} />
           <Route path="associate-centres" element={<AssociateCentres />} />
           <Route path="careers" element={<Careers />} />
+          <Route path="about-us" element={<AdminAboutUs />} />
           <Route path="statutory-compliances" element={<StatutoryCompliances />} />
           <Route path="settings" element={<Settings />} />
 
