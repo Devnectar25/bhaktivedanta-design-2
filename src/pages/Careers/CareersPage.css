@@ -20,38 +20,14 @@
   }
 }
 
-/* Breadcrumb */
-.careers-breadcrumb-bar {
-  background-color: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
-  padding: 0.85rem 0 0.6rem 0;
-  font-size: 0.84rem;
-  color: #64748b;
-}
-
-.careers-breadcrumb-bar a {
-  color: #64748b;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.careers-breadcrumb-bar a:hover {
-  color: #1e3a8a;
-}
-
-.careers-breadcrumb-bar span.active {
-  color: #64748b;
-  font-weight: 500;
-}
-
 /* Title & Header Section */
 .careers-header-section {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1.25rem;
-  margin-bottom: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .careers-title {
