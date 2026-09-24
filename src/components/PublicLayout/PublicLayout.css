@@ -10,3 +10,9 @@
   width: 100%;
   padding-top: 127px; /* Matches exact 127px combined height of fixed two-tier navbar */
 }
+
+@media (max-width: 1100px) {
+  .public-main-content {
+    padding-top: 60px; /* Matches single-tier mobile navbar height */
+  }
+}
