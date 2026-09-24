@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
     rel="stylesheet">
   <script>
-    if (window.location.pathname.startsWith('/admin')) {
+    if (window.location.pathname.startsWith('/admin') || window.location.pathname.startsWith('/feedback') || window.location.pathname.includes('feedback')) {
       // Define tailwind config
       window.tailwind = {
         config: {
@@ -91,7 +91,7 @@
         document.head.appendChild(twScript);
       }
 
-      if (!document.getElementById('admin-inline-style-override')) {
+      if (window.location.pathname.startsWith('/admin') && !document.getElementById('admin-inline-style-override')) {
         const styleOverride = document.createElement('style');
         styleOverride.id = 'admin-inline-style-override';
         styleOverride.textContent = 'html { font-size: 17px !important; } body { background-color: #f8f9ff !important; font-family: "Inter", sans-serif !important; color: #121c2a !important; }';

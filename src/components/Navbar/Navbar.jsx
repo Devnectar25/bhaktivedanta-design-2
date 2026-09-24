@@ -61,7 +61,7 @@ const menuStructure = [
       {
         title: 'Quick Links',
         links: [
-          { name: 'Feedback', href: '#testimonials' },
+          { name: 'Feedback', to: '/feedback' },
           { name: 'Announcements', href: '#patients' },
           { name: 'Blogs', href: '#patients' },
           { name: 'OPD Schedule', href: '#patients' },
@@ -873,10 +873,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   <span className="material-symbols-outlined">assignment</span>
                   <span>Patients Report</span>
                 </a>
-                <a href="#testimonials" className="appointment-dropdown-btn">
+                <Link to="/feedback" className="appointment-dropdown-btn">
                   <span className="material-symbols-outlined">support_agent</span>
                   <span>Feedback</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>

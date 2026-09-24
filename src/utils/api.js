@@ -4,7 +4,7 @@ let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
   base = base.replace(/\/$/, '') + '/api';
 }
-const API_BASE_URL = base;
+export const API_BASE_URL = base;
 
 /**
  * Helper to check if backend is online.
@@ -317,6 +317,18 @@ export const updateAppError = (id, errorItem) => apiMutation(`/app-errors/${id}`
   return list.map(item => item.id === id ? { ...item, ...updatedError } : item);
 });
 export const clearAppErrors = () => apiMutation('/app-errors', 'DELETE', null, 'bhaktivedanta_admin_app_errors', () => []);
+
+// Feedback Collection
+export const getFeedback = (fallback) => apiGet('/feedback', 'bhaktivedanta_admin_feedback', fallback);
+export const addFeedback = (feedbackItem) => apiMutation('/feedback', 'POST', feedbackItem, 'bhaktivedanta_admin_feedback', (list = [], newItem) => {
+  return [newItem, ...list];
+});
+export const updateFeedback = (id, feedbackItem) => apiMutation(`/feedback/${id}`, 'PUT', feedbackItem, 'bhaktivedanta_admin_feedback', (list = [], updatedItem) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedItem } : item);
+});
+export const deleteFeedback = (id) => apiMutation(`/feedback/${id}`, 'DELETE', null, 'bhaktivedanta_admin_feedback', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
 
 // Patients Corner State (Unified object)
 export const getPatientCornerState = (fallback) => apiGet('/patient-corner', 'bhaktivedanta_patient_corner_state', fallback);

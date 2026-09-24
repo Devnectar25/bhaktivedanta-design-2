@@ -119,17 +119,25 @@ const defaultEvents = [
 const defaultTestimonials = [
   {
     id: 'TST-201',
-    patientName: 'Harish Mehta',
-    disease: 'Angioplasty Patient',
-    content: 'The care and attention I received at Bhaktivedanta Hospital was exceptional. Dr. Anand Sharma is highly professional and compassionate.',
+    patientName: 'Pradeep Jena',
+    disease: 'Heart Surgery Patient',
+    content: 'Bhaktivedanta Hospital saved my life with the fastest care I could find. The doctors and nurses were exceptionally kind throughout my treatment.',
     rating: 5,
     status: 'Approved'
   },
   {
     id: 'TST-202',
-    patientName: 'Nalini Iyer',
-    disease: 'Maternity Care',
-    content: 'Very clean facilities and caring nursing staff. Standard protocols were strictly followed during my delivery. Highly recommended.',
+    patientName: 'Anjali Sharma',
+    disease: 'Spine Surgery Recovery',
+    content: 'The nursing staff treated me like family during my recovery. The blend of spiritual warmth and clinical excellence is what makes this hospital truly unique.',
+    rating: 5,
+    status: 'Approved'
+  },
+  {
+    id: 'TST-203',
+    patientName: 'Vikram Malhotra',
+    disease: 'Critical Care Patient',
+    content: 'State-of-the-art diagnostic facilities and highly professional doctors. I highly recommend Bhaktivedanta for anyone seeking high-end critical care.',
     rating: 5,
     status: 'Approved'
   }
@@ -198,11 +206,25 @@ const defaultQueries = [
 // Default data for sub admins
 const defaultSubAdmins = [
   {
-    username: 'admin.sneha',
-    email: 'sneha@bhaktivedantahospital.com',
-    role: 'Administration',
+    username: 'admin.aksh',
+    email: 'aksh@bhaktivedantahospital.com',
+    role: 'Operations Manager',
     status: 'Active',
-    created: '12 Oct 2023'
+    created: '9/21/2026'
+  },
+  {
+    username: 'admin.kuldeep',
+    email: 'kuldeep@bhaktivedantahospital.com',
+    role: 'Administrator',
+    status: 'Active',
+    created: '9/21/2026'
+  },
+  {
+    username: 'admin.Neha',
+    email: 'Neha@bhaktivedantahospital.com',
+    role: 'Content Manager',
+    status: 'Active',
+    created: '9/21/2026'
   },
   {
     username: 'admin.rajesh',

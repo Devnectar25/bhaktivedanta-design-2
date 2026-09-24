@@ -32,11 +32,15 @@
     background: rgba(0, 0, 0, 0.2);
 }
 
-/* Light Scrollbar for Content Canvas */
+/* Light Scrollbar for Content Canvas (Vertical only) */
 body::-webkit-scrollbar,
 .content-scrollbar::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
+    height: 0px;
+}
+::-webkit-scrollbar:horizontal {
+    height: 0px !important;
+    display: none !important;
 }
 body::-webkit-scrollbar-track,
 .content-scrollbar::-webkit-scrollbar-track {
@@ -50,6 +54,19 @@ body::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb:hover,
 .content-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #a8a8b9;
+}
+
+/* Utility to completely hide scrollbars */
+.no-scrollbar::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    height: 0px !important;
+    width: 0px !important;
+}
+.no-scrollbar,
+.hide-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
 
 /* Sidebar Styling */

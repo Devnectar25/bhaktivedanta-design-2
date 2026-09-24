@@ -49,6 +49,8 @@ import EducationResearch from './pages/admin/EducationResearch/EducationResearch
 import AssociateCentres from './pages/admin/AssociateCentres/AssociateCentres';
 import Careers from './pages/admin/Careers/Careers';
 import StatutoryCompliances from './pages/admin/StatutoryCompliances/StatutoryCompliances';
+import PatientFeedback from './pages/admin/Feedback/PatientFeedback';
+import FeedbackPage from './pages/Feedback/FeedbackPage';
 
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
@@ -110,6 +112,7 @@ function App() {
           <Route path="/spiritual-care/publications-papers" element={<PublicationsPapers />} />
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
         </Route>
 
         {/* Education & Medical Research Dedicated Routes */}
@@ -153,6 +156,7 @@ function App() {
           <Route path="add-appointment" element={<Navigate to="/admin/dashboard" replace />} />
 
           <Route path="contact-queries" element={<ContactQueries />} />
+          <Route path="patient-feedback" element={<PatientFeedback />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="sub-admins" element={<SubAdmin />} />
           <Route path="help-desk" element={<HelpDesk />} />

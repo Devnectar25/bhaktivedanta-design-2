@@ -38,7 +38,8 @@ const navLinks = [
   { divider: true },
 
   // Section 3
-  { name: 'Feedback', icon: 'support_agent', to: 'help-desk' },
+  { name: 'Patient Feedback', icon: 'rate_review', to: 'patient-feedback' },
+  { name: 'Help Desk', icon: 'support_agent', to: 'help-desk' },
   { name: 'Contact Queries', icon: 'contact_support', to: 'contact-queries' },
   { divider: true },
 
