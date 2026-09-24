@@ -705,19 +705,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                 if (menuItem.type === 'patients-mega-menu') {
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
-                    ? [
-                      {
-                        ...menuItem.columns[0],
-                        links: [
-                          ...menuItem.columns[0].links,
-                          ...customEducationPrograms.map(p => ({
-                            name: p.title,
-                            to: `/education/${p.slug || p.id}`
-                          }))
-                        ]
-                      },
-                      menuItem.columns[1]
-                    ]
+                        {
+                          ...menuItem.columns[0],
+                          links: [
+                            ...menuItem.columns[0].links,
+                            ...customEducationPrograms.map(p => ({
+                              name: p.title,
+                              to: `/education/${p.slug || p.id}`
+                            }))
+                          ]
+                        },
+                        menuItem.columns[1]
+                      ]
                     : menuItem.columns;
 
                   return (
@@ -1130,19 +1129,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   const isOpen = activeMobileDropdown === menuItem.name;
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
-                    ? [
-                      {
-                        ...menuItem.columns[0],
-                        links: [
-                          ...menuItem.columns[0].links,
-                          ...customEducationPrograms.map(p => ({
-                            name: p.title,
-                            to: `/education/${p.slug || p.id}`
-                          }))
-                        ]
-                      },
-                      menuItem.columns[1]
-                    ]
+                        {
+                          ...menuItem.columns[0],
+                          links: [
+                            ...menuItem.columns[0].links,
+                            ...customEducationPrograms.map(p => ({
+                              name: p.title,
+                              to: `/education/${p.slug || p.id}`
+                            }))
+                          ]
+                        },
+                        menuItem.columns[1]
+                      ]
                     : menuItem.columns;
 
                   return (
