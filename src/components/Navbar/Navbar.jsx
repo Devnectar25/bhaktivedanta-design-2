@@ -705,6 +705,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                 if (menuItem.type === 'patients-mega-menu') {
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
+                    ? [
                         {
                           ...menuItem.columns[0],
                           links: [
@@ -1129,6 +1130,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   const isOpen = activeMobileDropdown === menuItem.name;
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
+                    ? [
                         {
                           ...menuItem.columns[0],
                           links: [
