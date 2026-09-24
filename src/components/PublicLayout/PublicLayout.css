@@ -8,4 +8,5 @@
 .public-main-content {
   flex: 1;
   width: 100%;
+  padding-top: 127px; /* Matches exact 127px combined height of fixed two-tier navbar */
 }

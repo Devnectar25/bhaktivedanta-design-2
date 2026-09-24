@@ -16,8 +16,6 @@ import {
   PhoneCall,
   Calendar
 } from 'lucide-react';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
 import { dnbProgramData } from '../../data/dnbProgramData';
 import { getEducationResearchState, submitDnbInquiry, getEducationPrograms } from '../../utils/api';
@@ -95,6 +93,21 @@ const DnbProgramPage = () => {
       window.removeEventListener('focus', handleSync);
     };
   }, [location.hash]);
+
+  const STANDARD_SLUGS = new Set([
+    'dnb-program', 'nursing-program', 'cme', 'cne', 'spiritual-care-course',
+    'clinical-research-course', 'clinical-trials', 'ethics-committee', 'publications', 'government-accreditation',
+    'dnb-general-medicine', 'dnb-paediatrics', 'dnb-ophthalmology', 'dnb-obstetrics-gynaecology',
+    'diploma-radio-diagnosis', 'dnb-urology', 'dnb-anesthesiology'
+  ]);
+
+  const rawCustomPrograms = [
+    ...(programData?.customPrograms || []),
+    ...(customPrograms || [])
+  ];
+  const allCustomPrograms = Array.from(
+    new Map(rawCustomPrograms.filter(Boolean).map((p) => [p.slug || p.id, p])).values()
+  ).filter(p => !STANDARD_SLUGS.has(p.slug) && !STANDARD_SLUGS.has(p.id));
 
   const handleShare = () => {
     if (navigator.share) {
@@ -206,29 +219,6 @@ const DnbProgramPage = () => {
 
   return (
     <div className="dnb-page-wrapper">
-      {/* Top Navbar */}
-      <Navbar solid={true} onOpenAppointment={() => setIsAppointmentModalOpen(true)} />
-
-      {/* Breadcrumbs */}
-      <div className="dnb-breadcrumb-bar">
-        <div className="dnb-breadcrumb-container">
-          <nav className="dnb-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/" className="dnb-breadcrumb-link">
-              Home
-            </Link>
-            <span className="dnb-breadcrumb-separator">/</span>
-            <span className="dnb-breadcrumb-link">Education & Medical Research</span>
-            <span className="dnb-breadcrumb-separator">/</span>
-            <span className="dnb-breadcrumb-current">DNB Program</span>
-          </nav>
-
-          <button className="dnb-share-btn" onClick={handleShare} aria-label="Share this page">
-            <Share2 size={16} />
-            <span>Share</span>
-          </button>
-        </div>
-      </div>
-
       {/* Education Navigation Tabs */}
       <div className="edu-nav-tabs-bar">
         <div className="edu-nav-tabs-container">
@@ -242,7 +232,7 @@ const DnbProgramPage = () => {
             to="/education/nursing-program"
             className="edu-nav-tab"
           >
-            Nursing School
+            Nursing Program
           </Link>
           <Link
             to="/education/cme"
@@ -260,13 +250,13 @@ const DnbProgramPage = () => {
             to="/education/spiritual-care-course"
             className="edu-nav-tab"
           >
-            Spiritual Care
+            Spiritual Care Course
           </Link>
           <Link
             to="/education/clinical-research-course"
             className="edu-nav-tab"
           >
-            Clinical Research (PGCR)
+            Clinical Research Course
           </Link>
           <Link
             to="/education/clinical-trials"
@@ -290,15 +280,15 @@ const DnbProgramPage = () => {
             to="/education/government-accreditation"
             className="edu-nav-tab"
           >
-            Accreditations
+            Government Accreditation
           </Link>
-          {(customPrograms || []).map((p) => (
+          {allCustomPrograms.map((p) => (
             <Link
               key={p.id || p.slug}
-              to={`/education/${p.slug}`}
+              to={p.slug?.startsWith('/') ? p.slug : `/education/${p.slug || p.id}`}
               className="edu-nav-tab"
             >
-              {p.title}
+              {p.title || p.name}
             </Link>
           ))}
         </div>
@@ -908,9 +898,6 @@ const DnbProgramPage = () => {
 
       {/* Appointment Modal */}
       <AppointmentModal isOpen={isAppointmentModalOpen} onClose={() => setIsAppointmentModalOpen(false)} />
-
-      {/* Global Footer */}
-      <Footer />
     </div>
   );
 };
