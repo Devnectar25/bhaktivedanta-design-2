@@ -74,8 +74,9 @@ const Footer = () => {
 
   const handleComplianceClick = (e, item) => {
     e.preventDefault();
-    if (item.pdfUrl) {
-      openPdfDocument(item.pdfUrl, item.title);
+    const targetUrl = item.pdfUrl || item.fileUrl;
+    if (targetUrl) {
+      openPdfDocument(targetUrl, item.title);
     }
   };
 
@@ -159,9 +160,9 @@ const Footer = () => {
               return (
                 <li key={item.id}>
                   <a 
-                    href={item.pdfUrl || '#'} 
+                    href={item.pdfUrl || item.fileUrl || '#'} 
                     onClick={(e) => handleComplianceClick(e, item)}
-                    title={item.pdfUrl ? `Open ${item.title} PDF` : `${item.title}`}
+                    title={(item.pdfUrl || item.fileUrl) ? `Open ${item.title} PDF` : `${item.title}`}
                   >
                     <span className="compliance-icon-wrap"><IconComp size={16} /></span>
                     <span>{item.title}</span>
