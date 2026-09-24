@@ -8,15 +8,14 @@
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(12, 26, 53, 0.15);
-  /* Slight matching overlay for initial transparency */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: none;
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
   transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* Scrolled / Non-Home state - 100% solid white background, zero blur bleed */
+/* Scrolled state - deeper shadow */
 .navbar-header.scrolled {
   background: #ffffff !important;
   backdrop-filter: none !important;
@@ -28,7 +27,7 @@
 .navbar-top-tier {
   height: 75px;
   background-color: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
@@ -62,12 +61,12 @@
   object-fit: contain;
 }
 
-/* Typographic logo text - inverted white initially, normal colors when scrolled */
+/* Typographic logo text - authentic colors on all pages */
 .logo-text {
   height: 50px;
   width: auto;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  filter: none;
   transition: filter 0.35s ease;
 }
 
@@ -75,14 +74,14 @@
   filter: none;
 }
 
-/* Middle Emergency Contact Pill */
+/* Middle Emergency Contact Pill - Consistent styling across all pages */
 .emergency-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
   border-radius: 8px;
   padding: 0.35rem 1.25rem;
   text-align: center;
@@ -100,6 +99,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 2px;
   transition: color 0.35s ease;
 }
 
@@ -108,11 +108,11 @@
 }
 
 .emergency-number {
-  font-size: 1.1rem;
-  color: #ffffff;
+  font-size: 1.05rem;
   font-weight: 800;
-  margin-top: 1px;
-  transition: color 0.35s ease;
+  color: #0c4a6e;
+  letter-spacing: 0.5px;
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .navbar-header.scrolled .emergency-number {
@@ -174,22 +174,13 @@
 
 .contact-us-link {
   font-size: 0.9rem;
-  color: #ffffff;
   font-weight: 700;
+  color: #1e3a8a;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
   transition: color 0.2s ease;
 }
 
-.navbar-header.scrolled .contact-us-link {
-  color: #1e3a8a;
-}
-
-.contact-us-link:hover {
-  color: #fbbf24;
-}
-
+.contact-us-link:hover,
 .navbar-header.scrolled .contact-us-link:hover {
   color: #ea580c;
 }
@@ -249,32 +240,24 @@
 .nav-link-item-simple {
   font-size: 0.84rem;
   font-weight: 700;
-  color: #ffffff;
-  /* White at top */
+  color: #1e3a8a;
   text-decoration: none;
   display: flex;
   align-items: center;
   transition: color 0.2s ease;
   white-space: nowrap;
-  /* Prevents text from wrapping into two lines */
 }
 
 .navbar-header.scrolled .nav-dropdown-trigger,
 .navbar-header.scrolled .nav-link-item-simple {
   color: #1e3a8a;
-  /* Deep blue when scrolled */
 }
 
 .nav-dropdown-trigger:hover,
-.nav-link-item-simple:hover {
-  color: #fbbf24;
-  /* Amber hover at top */
-}
-
+.nav-link-item-simple:hover,
 .navbar-header.scrolled .nav-dropdown-trigger:hover,
 .navbar-header.scrolled .nav-link-item-simple:hover {
   color: #ea580c;
-  /* Orange hover when scrolled */
 }
 
 /* Simple Dropdown list menu styling - Aligned to left edge of parent links */
@@ -311,27 +294,179 @@
   pointer-events: auto;
 }
 
-/* About Us Dropdown Specific Styling - comfortably fits longest item on one single line */
+/* About Us Dropdown Specific Styling - Exactly matching user screenshot */
+.about-us-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.about-us-trigger .nav-dropdown-arrow {
+  font-size: 1.05rem;
+  line-height: 1;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.about-us-nav-item:hover .about-us-trigger,
+.about-us-trigger.trigger-active,
+.about-us-trigger.active {
+  color: #f58634 !important;
+}
+
+.about-us-nav-item:hover .about-us-trigger .nav-dropdown-arrow,
+.about-us-nav-item.is-open .about-us-trigger .nav-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
 .about-us-dropdown-menu {
-  width: 420px;
-  min-width: 420px;
-  max-width: 420px;
-  padding: 0.75rem 1.25rem 0.75rem 0.75rem;
+  width: max-content;
+  min-width: 290px;
+  max-width: 360px;
+  background: #ffffff;
+  border-radius: 0 0 6px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 3px solid #f58634 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  padding: 16px 20px 18px 20px;
+}
+
+.about-us-dropdown-menu .dropdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-us-dropdown-menu .patients-column-item {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .about-us-dropdown-menu .patients-column-link {
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #4b5563;
+  padding: 5px 0;
+  border-radius: 0;
+  line-height: 1.45;
+  transition: color 0.15s ease;
   white-space: nowrap;
+  display: inline-flex;
   align-items: center;
-  width: 100%;
-  box-sizing: border-box;
+  text-decoration: none;
+  background: transparent;
 }
 
 .about-us-dropdown-menu .patients-column-link .link-btn-bullet {
-  margin-top: 0;
+  display: none !important;
 }
 
-.about-us-dropdown-menu .link-text {
-  white-space: nowrap;
+.about-us-dropdown-menu .patients-column-link:hover {
+  color: #f58634;
+  background-color: transparent;
+  transform: none;
+}
+
+/* About Hospital item with chevron */
+.about-hospital-parent-item {
+  display: block;
+}
+
+.about-hospital-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-hospital-link {
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #4b5563;
+  padding: 5px 0;
+  line-height: 1.45;
+  text-decoration: none;
+  background: transparent;
+  transition: color 0.15s ease;
+}
+
+.about-hospital-row:hover .about-hospital-link,
+.about-hospital-link:hover {
+  color: #f58634;
+}
+
+.about-hospital-toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  transition: color 0.15s ease;
+}
+
+.about-hospital-row:hover .about-hospital-toggle-btn,
+.about-hospital-toggle-btn:hover {
+  color: #f58634;
+}
+
+.about-sub-chevron {
+  font-size: 1.1rem;
+  line-height: 1;
+  color: inherit;
+  transition: transform 0.2s ease;
+  transform: rotate(-90deg);
+}
+
+.about-sub-chevron.open {
+  transform: rotate(0deg);
+}
+
+/* Indented sub-items under About Hospital */
+.about-nested-sublinks-container {
+  padding-left: 18px;
+  margin: 1px 0 2px 0;
+  list-style: none;
+}
+
+.about-nested-sublinks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.about-nested-sub-item {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-nested-sublink {
+  font-family: inherit !important;
+  font-size: 0.86rem !important;
+  font-weight: 500 !important;
+  color: #4b5563 !important;
+  padding: 4px 0 !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  transition: color 0.15s ease !important;
+  display: inline-block !important;
+}
+
+.about-nested-sublink:hover {
+  color: #f58634 !important;
+  background-color: transparent !important;
+  transform: none !important;
 }
 
 
@@ -366,38 +501,34 @@
   box-shadow: 0 6px 16px rgba(234, 88, 12, 0.25);
 }
 
-/* Appointment Hover Dropdown Menu - Always Visible */
+/* Appointment Hover Dropdown Menu - Standard hover dropdown across all pages */
 .appointment-dropdown-menu {
   position: absolute;
   top: 100%;
-  right: 50%;
+  right: 0;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
   border: 1px solid rgba(15, 23, 42, 0.08);
-  padding: 0.85rem;
+  border-top: 3px solid #ea580c;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  opacity: 1;
-  visibility: visible;
-  transform: translate(50%, -10px);
+  gap: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
   z-index: 1000;
-  width: 220px;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  width: 210px;
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
+  pointer-events: none;
 }
 
-/* Hide the dropdown entirely when scrolled away from Hero section or when any navigation dropdown is open */
-.navbar-header.scrolled .appointment-dropdown-menu,
-.appointment-dropdown-menu.dropdown-active-hidden,
-.desktop-nav-menu:has(.nav-item-dropdown-container.is-open) .appointment-dropdown-menu,
-.bottom-tier-container:has(.nav-item-dropdown-container.is-open) .appointment-dropdown-menu,
-.desktop-nav-menu:has(.nav-item-dropdown-container:hover) .appointment-dropdown-menu,
-.bottom-tier-container:has(.nav-item-dropdown-container:hover) .appointment-dropdown-menu {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  display: none !important;
+.nav-appointment-action:hover .appointment-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* Dropdown Buttons */
@@ -786,6 +917,14 @@
   color: #f58634;
   background-color: #fff7ed;
   transform: translateX(3px);
+}
+
+.education-mega-menu-wrapper .patients-column-list {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #f58634 #f8fafc;
+  padding-right: 4px;
 }
 
 

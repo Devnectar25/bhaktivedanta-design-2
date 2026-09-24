@@ -21,8 +21,6 @@ import {
   Sparkles,
   X
 } from 'lucide-react';
-import Navbar from '../../components/Navbar/Navbar';
-import Footer from '../../components/Footer/Footer';
 import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
 import { dnbProgramData } from '../../data/dnbProgramData';
 import { getEducationResearchState, submitDnbInquiry, getEducationPrograms } from '../../utils/api';
@@ -103,12 +101,23 @@ const EducationSectionPage = () => {
     }
   };
 
-  const allCustomPrograms = [
+  const STANDARD_SLUGS = new Set([
+    'dnb-program', 'nursing-program', 'cme', 'cne', 'spiritual-care-course',
+    'clinical-research-course', 'clinical-trials', 'ethics-committee', 'publications', 'government-accreditation',
+    'dnb-general-medicine', 'dnb-paediatrics', 'dnb-ophthalmology', 'dnb-obstetrics-gynaecology',
+    'diploma-radio-diagnosis', 'dnb-urology', 'dnb-anesthesiology'
+  ]);
+
+  const rawCustomPrograms = [
     ...(eduState?.customPrograms || []),
     ...customProgramsList
   ];
-  const customProgram = allCustomPrograms.find(
-    (p) => p.slug === pathSegment || p.id === pathSegment
+  const allCustomPrograms = Array.from(
+    new Map(rawCustomPrograms.filter(Boolean).map((p) => [p.slug || p.id, p])).values()
+  ).filter(p => !STANDARD_SLUGS.has(p.slug) && !STANDARD_SLUGS.has(p.id));
+
+  const customProgram = rawCustomPrograms.find(
+    (p) => p && (p.slug === pathSegment || p.id === pathSegment)
   );
   const isCustomProgram = Boolean(customProgram && !SECTION_KEY_MAP[pathSegment]);
   const currentSection = isCustomProgram
@@ -167,32 +176,12 @@ const EducationSectionPage = () => {
 
   return (
     <div className="edu-page-wrapper">
-      <Navbar solid={true} onOpenAppointment={() => setIsAppointmentModalOpen(true)} />
-
-      {/* Breadcrumb Bar */}
-      <div className="edu-breadcrumb-bar">
-        <div className="edu-breadcrumb-container">
-          <nav className="edu-breadcrumbs">
-            <Link to="/" className="edu-breadcrumb-link">Home</Link>
-            <span className="edu-breadcrumb-separator">/</span>
-            <Link to="/education/dnb-program" className="edu-breadcrumb-link">Education &amp; Medical Research</Link>
-            <span className="edu-breadcrumb-separator">/</span>
-            <span className="edu-breadcrumb-current">{currentSection?.title || 'Program Overview'}</span>
-          </nav>
-
-          <button onClick={handleShare} className="edu-share-btn" title="Share Page">
-            <Share2 size={13} />
-            <span>Share</span>
-          </button>
-        </div>
-      </div>
-
       {/* Education Navigation Tabs */}
       <div className="edu-nav-tabs-bar">
         <div className="edu-nav-tabs-container">
           <Link
             to="/education/dnb-program"
-            className="edu-nav-tab"
+            className={`edu-nav-tab ${pathSegment === 'dnb-program' ? 'active' : ''}`}
           >
             DNB Program
           </Link>
@@ -200,7 +189,7 @@ const EducationSectionPage = () => {
             to="/education/nursing-program"
             className={`edu-nav-tab ${pathSegment === 'nursing-program' || pathSegment === 'nursing' ? 'active' : ''}`}
           >
-            Nursing School
+            Nursing Program
           </Link>
           <Link
             to="/education/cme"
@@ -218,13 +207,13 @@ const EducationSectionPage = () => {
             to="/education/spiritual-care-course"
             className={`edu-nav-tab ${pathSegment === 'spiritual-care-course' || pathSegment === 'spiritual-care' ? 'active' : ''}`}
           >
-            Spiritual Care
+            Spiritual Care Course
           </Link>
           <Link
             to="/education/clinical-research-course"
             className={`edu-nav-tab ${pathSegment === 'clinical-research-course' || pathSegment === 'pgcr' ? 'active' : ''}`}
           >
-            Clinical Research (PGCR)
+            Clinical Research Course
           </Link>
           <Link
             to="/education/clinical-trials"
@@ -248,15 +237,15 @@ const EducationSectionPage = () => {
             to="/education/government-accreditation"
             className={`edu-nav-tab ${pathSegment === 'government-accreditation' ? 'active' : ''}`}
           >
-            Accreditations
+            Government Accreditation
           </Link>
           {allCustomPrograms.map((p) => (
             <Link
               key={p.id || p.slug}
-              to={`/education/${p.slug}`}
-              className={`edu-nav-tab ${pathSegment === p.slug ? 'active' : ''}`}
+              to={p.slug?.startsWith('/') ? p.slug : `/education/${p.slug || p.id}`}
+              className={`edu-nav-tab ${pathSegment === p.slug || pathSegment === p.id ? 'active' : ''}`}
             >
-              {p.title}
+              {p.title || p.name}
             </Link>
           ))}
         </div>
@@ -1023,7 +1012,6 @@ const EducationSectionPage = () => {
         </div>
       )}
 
-      <Footer />
       <AppointmentModal isOpen={isAppointmentModalOpen} onClose={() => setIsAppointmentModalOpen(false)} />
     </div>
   );

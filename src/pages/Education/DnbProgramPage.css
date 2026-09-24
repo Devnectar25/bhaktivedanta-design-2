@@ -15,7 +15,7 @@
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   padding: 0.85rem 0;
-  margin-top: 75px; /* Offset for fixed navbar */
+  margin-top: 0;
 }
 
 .dnb-breadcrumb-container {
@@ -882,9 +882,11 @@
   margin-bottom: 2.5rem;
 }
 
+.dnb-holistic-banner h2,
 .dnb-holistic-title {
   font-size: 2rem;
   font-weight: 700;
+  color: #ffffff !important;
   margin-bottom: 0.5rem;
 }
 

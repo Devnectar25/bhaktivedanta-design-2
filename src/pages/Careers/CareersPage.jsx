@@ -256,6 +256,7 @@ const CareersPage = () => {
 
   return (
     <div className="careers-page">
+
       {/* Breadcrumb Navigation */}
       <div className="careers-breadcrumb-bar">
         <div className="container">
