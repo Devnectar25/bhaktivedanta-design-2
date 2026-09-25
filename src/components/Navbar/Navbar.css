@@ -181,6 +181,7 @@
   display: inline-flex;
   align-items: center;
   transition: color 0.2s ease;
+  cursor: pointer;
 }
 
 .contact-us-link:hover {

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Testimonials.css';
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { initialReviews } from '../../data/adminState';
 
 const fallbackReviews = [
@@ -30,8 +31,31 @@ const fallbackReviews = [
   }
 ];
 
+const GAP_PX = 24;
+
 const Testimonials = () => {
   const [items, setItems] = useState(fallbackReviews);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [withTransition, setWithTransition] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const isJumpingRef = useRef(false);
+
+  // Responsive visible count: 3 on desktop, 2 on tablet, 1 on mobile
+  useEffect(() => {
+    const updateVisibleCount = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(3);
+      }
+    };
+    updateVisibleCount();
+    window.addEventListener('resize', updateVisibleCount);
+    return () => window.removeEventListener('resize', updateVisibleCount);
+  }, []);
 
   useEffect(() => {
     initialReviews().then(data => {
@@ -46,47 +70,190 @@ const Testimonials = () => {
     });
   }, []);
 
+  const totalItems = items.length;
+  const canRotate = totalItems > visibleCount;
+
+  // Handle Next rotation
+  const handleNext = () => {
+    if (!canRotate || isJumpingRef.current) return;
+    setWithTransition(true);
+    setCurrentIndex(prev => prev + 1);
+  };
+
+  // Handle Previous rotation
+  const handlePrev = () => {
+    if (!canRotate || isJumpingRef.current) return;
+    if (currentIndex === 0) {
+      isJumpingRef.current = true;
+      setWithTransition(false);
+      setCurrentIndex(totalItems);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setWithTransition(true);
+          setCurrentIndex(totalItems - 1);
+          isJumpingRef.current = false;
+        });
+      });
+    } else {
+      setWithTransition(true);
+      setCurrentIndex(prev => prev - 1);
+    }
+  };
+
+  // Infinite seamless reset on transition end
+  const handleTransitionEnd = () => {
+    if (currentIndex >= totalItems) {
+      setWithTransition(false);
+      setCurrentIndex(0);
+    }
+  };
+
+  // Direct dot click
+  const handleDotClick = (dotIdx) => {
+    if (!canRotate) return;
+    setWithTransition(true);
+    setCurrentIndex(dotIdx);
+  };
+
+  // Auto-rotation timer (4.5s), pauses on hover
+  useEffect(() => {
+    if (!canRotate || isPaused) return;
+
+    const interval = setInterval(() => {
+      handleNext();
+    }, 4500);
+
+    return () => clearInterval(interval);
+  }, [canRotate, isPaused, currentIndex, totalItems, visibleCount]);
+
+  // Display list contains cloned buffer at the end for seamless continuous looping
+  const displayList = canRotate
+    ? [...items, ...items.slice(0, visibleCount)]
+    : items;
+
+  // Transform calculation
+  const transform = canRotate
+    ? `translateX(calc(-1 * ${currentIndex} * (100% + ${GAP_PX}px) / ${visibleCount}))`
+    : 'none';
+
+  const transition = withTransition
+    ? 'transform 0.55s cubic-bezier(0.25, 1, 0.5, 1)'
+    : 'none';
+
   return (
     <section id="testimonials" className="testimonials-section">
       <div className="container">
-        <div className="section-header">
-          <p className="section-label">Patient Reviews</p>
-          <h2>Stories of <span>Hope & Healing</span></h2>
-        </div>
-        
-        <div className="testimonials-grid">
-          {items.map((item, index) => {
-            const name = item.patientName || item.name || 'Anonymous';
-            const tag = item.disease || item.tag || 'Patient Review';
-            const starCount = item.rating || item.stars || 5;
-            const quoteText = item.content || item.quote || '';
-            const initial = name.charAt(0).toUpperCase();
+        {/* Header with Title and Rotation Arrow Buttons */}
+        <div className="section-header-row">
+          <div className="section-header-text">
+            <p className="section-label">Patient Reviews</p>
+            <h2>Stories of <span>Hope &amp; Healing</span></h2>
+          </div>
 
-            return (
-              <div key={item.id || index} className="testimonial-card compact-glass fade-in" style={{ '--i': index }}>
-                <div className="card-top">
-                  <Quote className="quote-icon" size={40} />
-                  <div className="stars">
-                    {[...Array(starCount)].map((_, i) => (
-                      <Star key={i} fill="#f59e0b" color="#f59e0b" size={18} />
-                    ))}
+          {canRotate && (
+            <div className="carousel-nav-controls">
+              <button
+                type="button"
+                onClick={handlePrev}
+                className="carousel-nav-btn prev"
+                aria-label="Previous reviews"
+                title="Previous reviews"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="carousel-nav-btn next"
+                aria-label="Next reviews"
+                title="Next reviews"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Carousel Viewport (Overflow hidden, only 3 cards at a time, never below) */}
+        <div
+          className="testimonials-carousel-wrapper"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={() => setIsPaused(true)}
+          onTouchEnd={() => setIsPaused(false)}
+        >
+          <div
+            className="testimonials-track"
+            style={{
+              transform,
+              transition,
+              gap: `${GAP_PX}px`
+            }}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            {displayList.map((item, index) => {
+              const name = item.patientName || item.name || 'Anonymous';
+              const tag = item.disease || item.tag || 'Patient Review';
+              const starCount = item.rating || item.stars || 5;
+              const quoteText = item.content || item.quote || '';
+              const initial = name.charAt(0).toUpperCase();
+
+              return (
+                <div
+                  key={`${item.id || index}-${index}`}
+                  className="testimonial-slide"
+                  style={{
+                    flex: `0 0 calc((100% - ${(visibleCount - 1) * GAP_PX}px) / ${visibleCount})`
+                  }}
+                >
+                  <div className="testimonial-card compact-glass">
+                    <div className="card-top">
+                      <Quote className="quote-icon" size={40} />
+                      <div className="stars">
+                        {[...Array(starCount)].map((_, i) => (
+                          <Star key={i} fill="#f59e0b" color="#f59e0b" size={18} />
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="quote">"{quoteText}"</p>
+
+                    <div className="patient-info">
+                      <div className="patient-avatar">
+                        {initial}
+                      </div>
+                      <div className="patient-meta">
+                        <span className="patient-name">{name}</span>
+                        <span className="patient-tag">{tag}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                
-                <p className="quote">"{quoteText}"</p>
-                
-                <div className="patient-info">
-                   <div className="patient-avatar">
-                     {initial}
-                   </div>
-                   <div className="patient-meta">
-                      <span className="patient-name">{name}</span>
-                      <span className="patient-tag">{tag}</span>
-                   </div>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Footer with Carousel Dots & View All Reviews Button */}
+        <div className="testimonials-footer">
+          {canRotate && (
+            <div className="carousel-dots">
+              {items.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  type="button"
+                  className={`carousel-dot ${dotIdx === (currentIndex % totalItems) ? 'active' : ''}`}
+                  onClick={() => handleDotClick(dotIdx)}
+                  aria-label={`Go to slide ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
+          )}
+
+          <Link to="/testimonials" className="btn-view-all-reviews">
+            <span>View All Reviews</span>
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </div>
     </section>
