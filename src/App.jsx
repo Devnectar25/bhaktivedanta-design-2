@@ -27,6 +27,7 @@ import OurManagementTeamPage from './pages/About/OurManagementTeamPage';
 import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
 import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
+import TestimonialsPage from './pages/Testimonials/TestimonialsPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -142,6 +143,7 @@ function App() {
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/testimonials" element={<TestimonialsPage />} />
         </Route>
 
         {/* Education & Medical Research Dedicated Routes */}
@@ -199,6 +201,7 @@ function App() {
           <Route path="associate-centres" element={<AssociateCentres />} />
           <Route path="careers" element={<Careers />} />
           <Route path="about-us" element={<AdminAboutUs />} />
+          <Route path="new-developments" element={<Navigate to="/admin/about-us?tab=newDevelopments" replace />} />
           <Route path="statutory-compliances" element={<StatutoryCompliances />} />
           <Route path="settings" element={<Settings />} />
 

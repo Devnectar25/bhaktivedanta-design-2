@@ -1,0 +1,393 @@
+/* =========================================================================
+   Dignitary & VIP Testimonials Page - Compact Luxury Design
+   ========================================================================= */
+
+.vip-testimonials-page {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+  position: relative;
+}
+
+.vip-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Floating Toast Notification */
+.vip-toast {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.65rem 1.15rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: vipToastSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vipToastSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================================
+   Compact Header Section
+   ========================================================================= */
+.vip-hero-section {
+  background: linear-gradient(180deg, #edf4ff 0%, #f8fafc 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 1.75rem 0 1.25rem;
+  position: relative;
+}
+
+.vip-header-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.vip-share-button {
+  position: absolute;
+  right: 0;
+  top: 0.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  color: #1e3a8a;
+  border: 1px solid #e2e8f0;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.vip-share-button:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+  border-color: #1e3a8a;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.18);
+  transform: scale(1.03);
+}
+
+/* Header Typography */
+.vip-header-content {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.vip-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  padding: 0.25rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 0.65rem;
+}
+
+.vip-title {
+  font-size: 2.35rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1.2;
+  margin: 0 0 0.65rem 0;
+  letter-spacing: -0.5px;
+}
+
+.vip-title span {
+  color: #d97706;
+}
+
+.vip-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #64748b;
+  margin: 0;
+}
+
+/* =========================================================================
+   Cards Grid & Container
+   ========================================================================= */
+.vip-cards-container {
+  padding-top: 1.75rem;
+  padding-bottom: 4rem;
+}
+
+.vip-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem;
+}
+
+/* Individual Modern Card */
+.vip-testimonial-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.85rem 1.85rem 1.5rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.vip-testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 36px rgba(30, 58, 138, 0.09), 0 8px 14px rgba(0, 0, 0, 0.03);
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+/* Watermark in background */
+.vip-card-watermark {
+  position: absolute;
+  right: 1.15rem;
+  top: 1.15rem;
+  color: #1e3a8a;
+  opacity: 0.04;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.vip-testimonial-card:hover .vip-card-watermark {
+  opacity: 0.08;
+}
+
+.vip-card-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Profile Row (Avatar + Details) */
+.vip-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.vip-avatar-wrap {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  min-width: 68px;
+  min-height: 68px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
+  flex-shrink: 0;
+}
+
+.vip-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+  display: block;
+}
+
+.vip-avatar-badge {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.vip-profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vip-dignitary-name {
+  font-size: 1.075rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1.35;
+  margin: 0 0 0.25rem 0;
+}
+
+.vip-dignitary-title {
+  font-size: 0.785rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Quote Section */
+.vip-quote-section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.35rem;
+}
+
+.vip-quote-icon-bar {
+  margin-bottom: 0.5rem;
+}
+
+.vip-quote-symbol {
+  color: #ea580c;
+  opacity: 0.9;
+}
+
+.vip-quote-body {
+  font-size: 0.935rem;
+  line-height: 1.7;
+  color: #334155;
+  margin: 0;
+  font-weight: 450;
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Card Footer */
+.vip-card-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.vip-endorsement-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.vip-shield-icon {
+  color: #2563eb;
+}
+
+/* =========================================================================
+   Empty & Loading States
+   ========================================================================= */
+.vip-loading-state,
+.vip-empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.vip-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #d97706;
+  border-radius: 50%;
+  animation: vipSpin 0.8s linear infinite;
+  margin: 0 auto 0.75rem;
+}
+
+@keyframes vipSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================================
+   Responsive Design
+   ========================================================================= */
+@media (max-width: 900px) {
+  .vip-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+  }
+
+  .vip-title {
+    font-size: 2rem;
+  }
+
+  .vip-hero-section {
+    padding: 1.5rem 0 1rem;
+  }
+
+  .vip-share-button {
+    position: static;
+    margin-top: 0.75rem;
+  }
+
+  .vip-header-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .vip-testimonial-card {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-radius: 18px;
+  }
+
+  .vip-avatar-wrap {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+  }
+
+  .vip-title {
+    font-size: 1.75rem;
+  }
+
+  .vip-subtitle {
+    font-size: 0.885rem;
+  }
+}

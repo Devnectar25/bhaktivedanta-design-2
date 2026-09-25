@@ -69,11 +69,11 @@ const NewDevelopmentsPage = () => {
               {/* Thumbnail Image */}
               <div className="dev-thumbnail-wrap">
                 <img 
-                  src={dev.imageUrl} 
+                  src={dev.imageUrl || dev.image || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80'} 
                   alt={dev.title} 
                   className="dev-thumbnail"
                   onError={(e) => {
-                    e.target.src = 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/17037550688385.png';
+                    e.target.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80';
                   }}
                 />
               </div>

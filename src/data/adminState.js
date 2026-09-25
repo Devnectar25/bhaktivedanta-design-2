@@ -1,53 +1,5 @@
-const defaultDoctors = [
-  {
-    id: 'doc-1',
-    name: 'Dr. Kshama Shah',
-    qualifications: 'MBBS, MD (Anesthesia)',
-    department: 'Anesthesiology',
-    subSpeciality: 'Head of Department & Consultant Anesthesiologist',
-    experience: '25 Years',
-    availability: 'Available',
-    featured: 'Yes',
-    status: 'Active',
-    image: '/doctor1.png'
-  },
-  {
-    id: 'doc-2',
-    name: 'Dr. Shilpa Mangesh Tiwaskar',
-    qualifications: 'MBBS, MD (Anesthesia)',
-    department: 'Anesthesiology',
-    subSpeciality: 'Consultant Anesthesiologist',
-    experience: '23 Years',
-    availability: 'Available',
-    featured: 'Yes',
-    status: 'Active',
-    image: '/doctor2.png'
-  },
-  {
-    id: 'doc-3',
-    name: 'Dr. Jyotsna Karande',
-    qualifications: 'MBBS, DA, BLS',
-    department: 'Anesthesiology',
-    subSpeciality: 'Consultant Anesthesiologist',
-    experience: '16 Years',
-    availability: 'Available',
-    featured: 'Yes',
-    status: 'Active',
-    image: '/doctor3.png'
-  },
-  {
-    id: 'doc-4',
-    name: 'Dr. Vivek Kulkarni',
-    qualifications: 'MBBS, MD (Anesthesia)',
-    department: 'Anesthesiology',
-    subSpeciality: 'Consultant Anesthesiologist',
-    experience: '15 Years',
-    availability: 'Available',
-    featured: 'Yes',
-    status: 'Active',
-    image: '/doctor4.png'
-  }
-];
+import defaultDoctors from './defaultDoctors.json';
+
 
 // Default data for appointments
 const defaultAppointments = [
@@ -115,33 +67,6 @@ const defaultEvents = [
   }
 ];
 
-// Default data for testimonials
-const defaultTestimonials = [
-  {
-    id: 'TST-201',
-    patientName: 'Pradeep Jena',
-    disease: 'Heart Surgery Patient',
-    content: 'Bhaktivedanta Hospital saved my life with the fastest care I could find. The doctors and nurses were exceptionally kind throughout my treatment.',
-    rating: 5,
-    status: 'Approved'
-  },
-  {
-    id: 'TST-202',
-    patientName: 'Anjali Sharma',
-    disease: 'Spine Surgery Recovery',
-    content: 'The nursing staff treated me like family during my recovery. The blend of spiritual warmth and clinical excellence is what makes this hospital truly unique.',
-    rating: 5,
-    status: 'Approved'
-  },
-  {
-    id: 'TST-203',
-    patientName: 'Vikram Malhotra',
-    disease: 'Critical Care Patient',
-    content: 'State-of-the-art diagnostic facilities and highly professional doctors. I highly recommend Bhaktivedanta for anyone seeking high-end critical care.',
-    rating: 5,
-    status: 'Approved'
-  }
-];
 
 // Default data for news
 const defaultNews = [
@@ -240,6 +165,7 @@ import {
   getAppointments, saveAppointmentsList,
   getEvents, saveEventsList,
   getTestimonials, saveTestimonialsList,
+  getReviews, saveReviewsList,
   getNews, saveNewsList,
   getGallery, saveGalleryList,
   getQueries, saveQueriesList,
@@ -256,8 +182,83 @@ export const saveAppointments = (data) => saveAppointmentsList(data);
 export const initialEvents = () => getEvents(defaultEvents);
 export const saveEvents = (data) => saveEventsList(data);
 
-export const initialTestimonials = () => getTestimonials(defaultTestimonials);
+export const defaultVipTestimonials = [
+  {
+    id: 'VIP-01',
+    name: 'Hon. Late Dr. A. P. J. Abdul Kalam',
+    designation: 'Former President Of India And Senior Scientist',
+    content: "Bhaktivedanta Hospital's commitment to provide quality healthcare services to everyone, without any discrimination, is really commendable. When I visit the hospital facilities, I see the righteousness prevailing. Please keep it up!",
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/A._P._J._Abdul_Kalam_in_2008.jpg/440px-A._P._J._Abdul_Kalam_in_2008.jpg',
+    status: 'Approved'
+  },
+  {
+    id: 'VIP-02',
+    name: 'Gaur Gopal Das',
+    designation: 'Indian Monk, International Life Coach, Wellness Advisor, Author & Motivational Strategist',
+    content: 'I have known Bhaktivedanta Hospital for the last 25 years as one of the most ethical & trusted hospitals in Mumbai providing world class medical services while staying true to their mission of providing affordable healthcare services, especially to the poor & needy.',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=256&q=80',
+    status: 'Approved'
+  },
+  {
+    id: 'VIP-03',
+    name: 'Mr. Alfred B. Ford',
+    designation: 'Director – Ford Motor Foundation, Detroit USA',
+    content: 'It has been a privilege for so many years to have known the doctors and staff of the Bhaktivedanta Hospital & Research Institute, Mumbai...I urge you from the bottom of my heart to please support this worthy project.',
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    status: 'Approved'
+  },
+  {
+    id: 'VIP-04',
+    name: 'Dr. Subramanian Swamy',
+    designation: 'Ex-Rajya Sabha MP And Former Union Cabinet Minister',
+    content: 'Very impressed by the organised way this hospital is run. Congrats.',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    status: 'Approved'
+  },
+  {
+    id: 'VIP-05',
+    name: 'Ms. Niddhi Choudhari',
+    designation: 'IAS, Ex-VMS Officer, Ex-RBI Officer',
+    content: 'Thank you, Bhaktivedanta Hospital & Research Institute, for always co-operating with Palghar District Health Administration in improving health service delivery.',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    status: 'Approved'
+  },
+  {
+    id: 'VIP-06',
+    name: 'Mr. Madhur Vishnu Talwalkar',
+    designation: 'Director – Talwalkars Better Value Fitness Ltd.',
+    content: 'Hats off to Bhaktivedanta Hospital & Research Institute for their great social work in India. Great!',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    status: 'Approved'
+  }
+];
+
+export const defaultReviews = [
+  {
+    id: 'TST-201',
+    patientName: 'Harish Mehta',
+    disease: 'Angioplasty Patient',
+    content: 'The care and attention I received at Bhaktivedanta Hospital was exceptional. Dr. Anand Sharma is highly professional and compassionate.',
+    rating: 5,
+    status: 'Approved'
+  },
+  {
+    id: 'TST-202',
+    patientName: 'Nalini Iyer',
+    disease: 'Maternity Care',
+    content: 'Very clean facilities and caring nursing staff. Standard protocols were strictly followed during my delivery. Highly recommended.',
+    rating: 5,
+    status: 'Approved'
+  }
+];
+
+export const defaultTestimonials = defaultVipTestimonials;
+
+export const initialTestimonials = () => getTestimonials(defaultVipTestimonials);
 export const saveTestimonials = (data) => saveTestimonialsList(data);
+
+export const initialReviews = () => getReviews(defaultReviews);
+export const saveReviews = (data) => saveReviewsList(data);
 
 export const initialNews = () => getNews(defaultNews);
 export const saveNews = (data) => saveNewsList(data);

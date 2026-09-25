@@ -1,40 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import './Testimonials.css';
 import { Star, Quote } from 'lucide-react';
-import { initialTestimonials } from '../../data/adminState';
+import { initialReviews } from '../../data/adminState';
 
-const fallbackTestimonials = [
+const fallbackReviews = [
+  {
+    id: 'TST-202',
+    patientName: "Nalini Iyer",
+    disease: "Maternity Care",
+    rating: 5,
+    content: "Very clean facilities and caring nursing staff. Standard protocols were strictly followed during my delivery. Highly recommended.",
+    status: "Approved"
+  },
   {
     id: 'TST-201',
+    patientName: "Harish Mehta",
+    disease: "Angioplasty Patient",
+    rating: 5,
+    content: "The care and attention I received at Bhaktivedanta Hospital was exceptional. Dr. Anand Sharma is highly professional and compassionate.",
+    status: "Approved"
+  },
+  {
+    id: 'TST-203',
     patientName: "Pradeep Jena",
     disease: "Heart Surgery Patient",
     rating: 5,
     content: "Bhaktivedanta Hospital saved my life with the fastest care I could find. The doctors and nurses were exceptionally kind throughout my treatment.",
     status: "Approved"
-  },
-  {
-    id: 'TST-202',
-    patientName: "Anjali Sharma",
-    disease: "Spine Surgery Recovery",
-    rating: 5,
-    content: "The nursing staff treated me like family during my recovery. The blend of spiritual warmth and clinical excellence is what makes this hospital truly unique.",
-    status: "Approved"
-  },
-  {
-    id: 'TST-203',
-    patientName: "Vikram Malhotra",
-    disease: "Critical Care Patient",
-    rating: 5,
-    content: "State-of-the-art diagnostic facilities and highly professional doctors. I highly recommend Bhaktivedanta for anyone seeking high-end critical care.",
-    status: "Approved"
   }
 ];
 
 const Testimonials = () => {
-  const [items, setItems] = useState(fallbackTestimonials);
+  const [items, setItems] = useState(fallbackReviews);
 
   useEffect(() => {
-    initialTestimonials().then(data => {
+    initialReviews().then(data => {
       if (Array.isArray(data) && data.length > 0) {
         const approvedOnly = data.filter(t => t.status === 'Approved' || !t.status);
         if (approvedOnly.length > 0) {
@@ -50,7 +50,7 @@ const Testimonials = () => {
     <section id="testimonials" className="testimonials-section">
       <div className="container">
         <div className="section-header">
-          <p className="section-label">Testimonials</p>
+          <p className="section-label">Patient Reviews</p>
           <h2>Stories of <span>Hope & Healing</span></h2>
         </div>
         

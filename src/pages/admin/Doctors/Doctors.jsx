@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
+import defaultDoctors from '../../../data/defaultDoctors.json';
 import { deleteDoctor } from '../../../utils/api';
 
 const Doctors = () => {
@@ -17,15 +18,30 @@ const Doctors = () => {
 
   const navigate = useNavigate();
 
-  const loadDoctorsData = () => {
+  const loadDoctorsData = (forceRefresh = false) => {
     setLoading(true);
+    if (forceRefresh) {
+      try {
+        localStorage.removeItem('bhaktivedanta_admin_doctors');
+      } catch (e) { }
+    }
     initialDoctors().then(data => {
       if (Array.isArray(data)) {
-        setDoctors(data);
+        if (data.length <= 4 && Array.isArray(defaultDoctors) && defaultDoctors.length > 4) {
+          setDoctors(defaultDoctors);
+          try {
+            localStorage.setItem('bhaktivedanta_admin_doctors', JSON.stringify(defaultDoctors));
+          } catch (e) { }
+        } else {
+          setDoctors(data);
+        }
       }
       setLoading(false);
     }).catch(err => {
       console.error("Failed to load doctors:", err);
+      if (Array.isArray(defaultDoctors) && defaultDoctors.length > 0) {
+        setDoctors(defaultDoctors);
+      }
       setLoading(false);
     });
   };
@@ -182,7 +198,7 @@ const Doctors = () => {
         </div>
         <div className="flex items-center gap-2.5">
           <button 
-            onClick={loadDoctorsData}
+            onClick={() => loadDoctorsData(true)}
             className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-3.5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm active:scale-95"
             title="Refresh list from database"
           >

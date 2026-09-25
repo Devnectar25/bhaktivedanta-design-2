@@ -37,7 +37,16 @@ export async function apiGet(path, localStorageKey, fallbackData) {
     if (res.ok) {
       const data = await res.json();
       if (data) {
-        localStorage.setItem(localStorageKey, JSON.stringify(data));
+        try {
+          localStorage.setItem(localStorageKey, JSON.stringify(data));
+        } catch (storageErr) {
+          console.warn(`[LocalStorage] Quota exceeded or error caching ${localStorageKey}:`, storageErr.message);
+          try {
+            // Free up quota by clearing bloated client error logs and retry
+            localStorage.removeItem('bhaktivedanta_admin_app_errors');
+            localStorage.setItem(localStorageKey, JSON.stringify(data));
+          } catch (retryErr) { }
+        }
       }
       return data;
     } else if (path !== '/app-errors') {
@@ -54,6 +63,9 @@ export async function apiGet(path, localStorageKey, fallbackData) {
   if (local) {
     try {
       const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && Array.isArray(fallbackData) && parsed.length < fallbackData.length && parsed.length <= 4) {
+        return fallbackData;
+      }
       return parsed;
     } catch (e) { }
   }
@@ -216,7 +228,7 @@ export const deleteEvent = (id, fallbackList) => apiMutation(`/events/${id}`, 'D
   return list.filter(item => item.id !== id);
 });
 
-// Testimonials
+// Testimonials (Dignitary & VIP Endorsements)
 export const getTestimonials = (fallback) => apiGet('/testimonials', 'bhaktivedanta_admin_testimonials', fallback);
 export const saveTestimonialsList = (list) => apiMutation('/testimonials', 'PUT', list, 'bhaktivedanta_admin_testimonials', (old, updated) => updated);
 export const addTestimonial = (test, fallbackList) => apiMutation('/testimonials', 'POST', test, 'bhaktivedanta_admin_testimonials', (list = [], newTest) => {
@@ -226,6 +238,19 @@ export const updateTestimonial = (id, test, fallbackList) => apiMutation(`/testi
   return list.map(item => item.id === id ? { ...item, ...updatedTest } : item);
 });
 export const deleteTestimonial = (id, fallbackList) => apiMutation(`/testimonials/${id}`, 'DELETE', null, 'bhaktivedanta_admin_testimonials', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
+
+// Patient Reviews (Stories of Hope & Healing)
+export const getReviews = (fallback) => apiGet('/reviews', 'bhaktivedanta_admin_reviews', fallback);
+export const saveReviewsList = (list) => apiMutation('/reviews', 'PUT', list, 'bhaktivedanta_admin_reviews', (old, updated) => updated);
+export const addReview = (rev, fallbackList) => apiMutation('/reviews', 'POST', rev, 'bhaktivedanta_admin_reviews', (list = [], newRev) => {
+  return [...list, newRev];
+});
+export const updateReview = (id, rev, fallbackList) => apiMutation(`/reviews/${id}`, 'PUT', rev, 'bhaktivedanta_admin_reviews', (list = [], updatedRev) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedRev } : item);
+});
+export const deleteReview = (id, fallbackList) => apiMutation(`/reviews/${id}`, 'DELETE', null, 'bhaktivedanta_admin_reviews', (list = []) => {
   return list.filter(item => item.id !== id);
 });
 
@@ -311,7 +336,7 @@ export const deleteHelpDeskTicket = (id, fallbackList) => apiMutation(`/helpdesk
 // Application Errors
 export const getAppErrors = (fallback) => apiGet('/app-errors', 'bhaktivedanta_admin_app_errors', fallback);
 export const addAppError = (errorItem) => apiMutation('/app-errors', 'POST', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], newError) => {
-  return [newError, ...list];
+  return [newError, ...list].slice(0, 30);
 });
 export const updateAppError = (id, errorItem) => apiMutation(`/app-errors/${id}`, 'PUT', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], updatedError) => {
   return list.map(item => item.id === id ? { ...item, ...updatedError } : item);
