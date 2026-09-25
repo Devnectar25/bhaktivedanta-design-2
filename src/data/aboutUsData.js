@@ -818,5 +818,7 @@ export const defaultAboutUsData = {
     "photoUrl": "https://www.bhaktivedantahospital.com/images/idhs/gaur-vilas-das.png",
     "bio": "H. G. Gaur Vilas Das is a dedicated teacher at ISKCON Chowpatty, Mumbai, renowned for his deep discourses on the Srimad Bhagavatam.\n\nHe regularly conducts classes on scriptural topics, including recent lectures like SB 3.7.10 – Causes of Distress, and SB 3.7.42 – Emblems of Enthusiasm, helping seekers understand the philosophical depth and practical applications of the teachings.\n\nHis style is gentle, thoughtful, and inclusive. He encourages seekers to explore spiritual growth through devotion, mindfulness, and service. He often shares short snippets from his classes on social media to reach wider audiences.\n\nAt our organization, H. G. Gaur Vilas Das supports our spiritual foundation by offering guidance rooted in Vedic wisdom, inspiring individuals to cultivate inner peace and devotion, and strengthening our community through scriptural teaching and personal example."
   }
-]
+],
+  customSections: []
 };
+

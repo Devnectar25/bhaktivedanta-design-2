@@ -50,6 +50,7 @@ export default function PublicLayout({ children }) {
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isHomePage = location.pathname === '/' || location.pathname === '';
 
   // Scroll to top on route change
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function PublicLayout({ children }) {
       />
       <ScrollToTop />
 
-      <main className="public-main-content">
+      <main className={`public-main-content ${isHomePage ? 'home-main-content' : ''}`}>
         {children || <Outlet />}
       </main>
 

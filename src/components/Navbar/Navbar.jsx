@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
-import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState } from '../../utils/api';
+import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
 import { getSpiritualCareState } from '../../utils/api';
@@ -111,26 +111,18 @@ const menuStructure = [
   },
   {
     name: 'Our Associate Centre',
-    type: 'patients-mega-menu',
-    to: '#associate',
-    columns: [
-      {
-        links: [
-          { name: 'Swami Shraddhanand Hospital', href: '#associate' },
-          { name: 'Sheth P. V. Doshi Hospital', href: '#associate' },
-          { name: 'Primary Health Care Centre - Pophran', href: '#associate' },
-          { name: 'Hamrapur Healthcare Centre', href: '#associate' },
-          { name: 'Ambiste Healthcare Centre', href: '#associate' }
-        ]
-      },
-      {
-        links: [
-          { name: 'Bhaktivedanta Polyclinic', href: '#associate' },
-          { name: 'Bhaktivedanta Hospital - Vrindavan', href: '#associate' },
-          { name: 'Bhaktivedanta Eye Hospital - Barsana', href: '#associate' },
-          { name: 'Saksham Community Health Centre - Dhuktan', href: '#associate' }
-        ]
-      }
+    type: 'dropdown',
+    to: '/our-associate-centre/swami-shraddhanand-hospital',
+    links: [
+      { name: 'Swami Shraddhanand Hospital', href: '/our-associate-centre/swami-shraddhanand-hospital' },
+      { name: 'Sheth P. V. Doshi Hospital', href: '/our-associate-centre/sheth-pb-doshi-hospital' },
+      { name: 'Primary Health Care Centre – Pophran', href: '/our-associate-centre/primary-health-care-centre-pophran' },
+      { name: 'Hamrapur Healthcare Centre', href: '/our-associate-centre/hamrapur-healthcare-centre' },
+      { name: 'Ambiste Healthcare Centre', href: '/our-associate-centre/ambiste-healthcare-centre' },
+      { name: 'Bhaktivedanta Polyclinic', href: '/our-associate-centre/bhaktivedanta-polyclinic' },
+      { name: 'Bhaktivedanta Hospital – Vrindavan', href: '/our-associate-centre/bhaktivedanta-hospital-vrindavan' },
+      { name: 'Bhaktivedanta Eye Hospital – Barsana', href: '/our-associate-centre/bhaktivedanta-eye-hospital-barsana' },
+      { name: 'Saksham Community Health Centre – Dhuktan', href: '/our-associate-centre/saksham-community-health-centre-dhuktan' }
     ]
   },
   {
@@ -197,13 +189,11 @@ const EmblemLogo = () => (
   </svg>
 );
 
-const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, solid = true }) => {
-  const navigate = useNavigate();
+const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, solid = false }) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/' || location.pathname === '';
   const [scrolled, setScrolled] = useState(false);
-  // Consistent solid white navbar across all pages for a cohesive hospital portal
-  const isSolid = true;
+  const isSolid = solid || !isHomePage || scrolled;
 
   const resolveNavHref = (href) => {
     if (!href) return '#';
@@ -224,6 +214,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   const [customEducationPrograms, setCustomEducationPrograms] = useState([]);
   const [aboutHospitalOpen, setAboutHospitalOpen] = useState(true);
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
+  const [associateCentresListState, setAssociateCentresListState] = useState([]);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
 
@@ -331,12 +322,24 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       });
     };
 
+    const fetchAssociateCentres = () => {
+      getAssociateCentres().then(centres => {
+        if (Array.isArray(centres) && centres.length > 0) {
+          const activeCentres = centres.filter(c => c.status !== 'Inactive');
+          setAssociateCentresListState(activeCentres);
+        }
+      }).catch(err => {
+        console.warn('Navbar could not load live associate centres:', err);
+      });
+    };
+
     // Initial fetch on mount
     fetchSpecialities();
     fetchServices();
     fetchPatientCorner();
     fetchSpiritualCare();
     fetchEducationPrograms();
+    fetchAssociateCentres();
 
     const handleSync = (e) => {
       if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
@@ -354,15 +357,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       if (!e || !e.key || e.key === 'bhaktivedanta_education_custom_programs' || e.key === 'bhaktivedanta_education_research_state') {
         fetchEducationPrograms();
       }
+      if (!e || !e.key || e.key === 'bhaktivedanta_associate_centres_cache') {
+        fetchAssociateCentres();
+      }
     };
 
     window.addEventListener('storage', handleSync);
     window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('associate_centres_updated', handleSync);
     window.addEventListener('focus', handleSync);
 
     return () => {
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('associate_centres_updated', handleSync);
       window.removeEventListener('focus', handleSync);
     };
   }, []);
@@ -824,6 +832,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'dropdown') {
                   const isAboutUs = menuItem.name.toLowerCase().includes('about');
+                  const isAssociateCentre = menuItem.name.toLowerCase().includes('associate');
                   const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
                   const isDropdownActive = openNavDropdown === menuItem.name;
                   const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
@@ -831,19 +840,21 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
                   const effectiveLinks = isSpiritualCare
                     ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
-                    : menuItem.links;
+                    : isAssociateCentre && associateCentresListState.length > 0
+                      ? associateCentresListState.map(c => ({ name: c.title || c.name, href: `/our-associate-centre/${c.slug}` }))
+                      : menuItem.links;
 
                   return (
                     <div
                       key={menuItem.name}
-                      className={`nav-item-dropdown-container ${isAboutUs ? 'about-us-nav-item' : ''} ${isDropdownActive ? 'is-open' : ''}`}
+                      className={`nav-item-dropdown-container ${isAboutUs ? 'about-us-nav-item' : ''} ${isAssociateCentre ? 'associate-nav-item' : ''} ${isDropdownActive ? 'is-open' : ''}`}
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
                       {menuItem.to && menuItem.to.startsWith('/') ? (
                         <Link
                           to={menuItem.to}
-                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
+                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
                           onClick={(e) => {
                             if (isSpiritualCare) {
                               e.preventDefault();
@@ -854,7 +865,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                           }}
                         >
                           <span>{menuItem.name}</span>
-                          {isAboutUs && (
+                          {(isAboutUs || isAssociateCentre) && (
                             <span className="material-symbols-outlined nav-dropdown-arrow">
                               expand_more
                             </span>
@@ -863,7 +874,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       ) : (
                         <a
                           href={menuItem.to}
-                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
+                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
                           onClick={(e) => {
                             if (isSpiritualCare) {
                               e.preventDefault();
@@ -874,14 +885,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                           }}
                         >
                           <span>{menuItem.name}</span>
-                          {isAboutUs && (
+                          {(isAboutUs || isAssociateCentre) && (
                             <span className="material-symbols-outlined nav-dropdown-arrow">
                               expand_more
                             </span>
                           )}
                         </a>
                       )}
-                      <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''}`}>
+                      <div className={`simple-dropdown-menu ${isAboutUs ? 'about-us-dropdown-menu' : ''} ${isAssociateCentre ? 'associate-dropdown-menu' : ''}`}>
                         <ul className="dropdown-list patients-column-list">
                           {effectiveLinks.map((link, lIdx) => {
                             if (isAboutUs && link.hasSubmenu && link.subLinks) {
@@ -966,7 +977,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                     className="patients-column-link"
                                     onClick={() => setOpenNavDropdown(null)}
                                   >
-                                    {!isAboutUs && <span className="link-btn-bullet"></span>}
+                                    {!isAboutUs && !isAssociateCentre && <span className="link-btn-bullet"></span>}
                                     <span className="link-text">{link.name}</span>
                                   </Link>
                                 ) : (
@@ -975,7 +986,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                     className="patients-column-link"
                                     onClick={() => setOpenNavDropdown(null)}
                                   >
-                                    {!isAboutUs && <span className="link-btn-bullet"></span>}
+                                    {!isAboutUs && !isAssociateCentre && <span className="link-btn-bullet"></span>}
                                     <span className="link-text">{link.name}</span>
                                   </a>
                                 )}
@@ -1243,13 +1254,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'dropdown') {
                   const isOpen = activeMobileDropdown === menuItem.name;
+                  const isAssociateCentre = menuItem.name.toLowerCase().includes('associate');
                   const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
                   const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
                     .filter(s => s.enabled !== false)
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
                   const effectiveLinks = isSpiritualCare
                     ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
-                    : menuItem.links;
+                    : isAssociateCentre && associateCentresListState.length > 0
+                      ? associateCentresListState.map(c => ({ name: c.title || c.name, href: `/our-associate-centre/${c.slug}` }))
+                      : menuItem.links;
 
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">
@@ -1300,6 +1314,15 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                               >
                                 {link.name}
                               </button>
+                            ) : link.href && link.href.startsWith('/') ? (
+                              <Link
+                                key={lIdx}
+                                to={link.href}
+                                className="mobile-sub-link-a"
+                                onClick={handleMobileLinkClick}
+                              >
+                                {link.name}
+                              </Link>
                             ) : (
                               <a
                                 key={lIdx}
