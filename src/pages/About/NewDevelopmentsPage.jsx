@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Share2, ExternalLink, Calendar, ArrowRight } from 'lucide-react';
+import { Share2, ExternalLink, Calendar, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAboutUsState } from '../../utils/api';
 import { defaultAboutUsData } from '../../data/aboutUsData';
 import './NewDevelopmentsPage.css';
@@ -7,6 +7,8 @@ import './NewDevelopmentsPage.css';
 const NewDevelopmentsPage = () => {
   const [developments, setDevelopments] = useState(defaultAboutUsData.newDevelopments || []);
   const [shareFeedback, setShareFeedback] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   useEffect(() => {
     loadData();
@@ -30,6 +32,11 @@ const NewDevelopmentsPage = () => {
       console.warn('Could not load new developments data:', err);
     }
   };
+
+  const totalPages = Math.max(1, Math.ceil(developments.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedDevelopments = developments.slice(startIndex, endIndex);
 
   const handleShare = () => {
     if (navigator.share) {
@@ -64,7 +71,7 @@ const NewDevelopmentsPage = () => {
 
         {/* 3-Column Developments Grid */}
         <div className="dev-grid">
-          {developments.map((dev, idx) => (
+          {paginatedDevelopments.map((dev, idx) => (
             <article key={dev.id || idx} className="dev-card group">
               {/* Thumbnail Image */}
               <div className="dev-thumbnail-wrap">
@@ -97,6 +104,52 @@ const NewDevelopmentsPage = () => {
             </article>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="dev-pagination-container">
+            <span className="dev-pagination-info">
+              Showing <strong>{startIndex + 1}</strong> to <strong>{Math.min(endIndex, developments.length)}</strong> of <strong>{developments.length}</strong> updates
+            </span>
+            <div className="dev-pagination-controls">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => {
+                  setCurrentPage(p => Math.max(1, p - 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="dev-page-btn prev-next"
+              >
+                <ChevronLeft size={16} /> Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => {
+                    setCurrentPage(pageNum);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className={`dev-page-btn number ${currentPage === pageNum ? 'active' : ''}`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+              <button
+                type="button"
+                disabled={currentPage === totalPages}
+                onClick={() => {
+                  setCurrentPage(p => Math.min(totalPages, p + 1));
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="dev-page-btn prev-next"
+              >
+                Next <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

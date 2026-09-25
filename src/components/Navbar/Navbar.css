@@ -8,14 +8,14 @@
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: #ffffff !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  background: rgba(12, 26, 53, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: none;
   transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* Scrolled state - deeper shadow */
+/* Scrolled / Non-Home state - 100% solid white background */
 .navbar-header.scrolled {
   background: #ffffff !important;
   backdrop-filter: none !important;
@@ -27,7 +27,7 @@
 .navbar-top-tier {
   height: 75px;
   background-color: transparent;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
@@ -61,12 +61,12 @@
   object-fit: contain;
 }
 
-/* Typographic logo text - authentic colors on all pages */
+/* Typographic logo text - inverted white initially, normal colors when scrolled */
 .logo-text {
   height: 50px;
   width: auto;
   object-fit: contain;
-  filter: none;
+  filter: brightness(0) invert(1);
   transition: filter 0.35s ease;
 }
 
@@ -74,14 +74,14 @@
   filter: none;
 }
 
-/* Middle Emergency Contact Pill - Consistent styling across all pages */
+/* Middle Emergency Contact Pill */
 .emergency-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #e0f2fe;
-  border: 1px solid #bae6fd;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   padding: 0.35rem 1.25rem;
   text-align: center;
@@ -108,15 +108,16 @@
 }
 
 .emergency-number {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  color: #0c4a6e;
+  color: #ffffff;
   letter-spacing: 0.5px;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: color 0.35s ease;
 }
 
 .navbar-header.scrolled .emergency-number {
-  color: #0369a1;
+  color: #0c4a6e;
 }
 
 /* Top Right Items - Perfectly aligned in a horizontal line */
@@ -175,12 +176,21 @@
 .contact-us-link {
   font-size: 0.9rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #ffffff;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition: color 0.2s ease;
 }
 
-.contact-us-link:hover,
+.contact-us-link:hover {
+  color: #fbbf24;
+}
+
+.navbar-header.scrolled .contact-us-link {
+  color: #1e3a8a;
+}
+
 .navbar-header.scrolled .contact-us-link:hover {
   color: #ea580c;
 }
@@ -240,7 +250,7 @@
 .nav-link-item-simple {
   font-size: 0.84rem;
   font-weight: 700;
-  color: #1e3a8a;
+  color: #ffffff;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -248,13 +258,16 @@
   white-space: nowrap;
 }
 
+.nav-dropdown-trigger:hover,
+.nav-link-item-simple:hover {
+  color: #fbbf24;
+}
+
 .navbar-header.scrolled .nav-dropdown-trigger,
 .navbar-header.scrolled .nav-link-item-simple {
   color: #1e3a8a;
 }
 
-.nav-dropdown-trigger:hover,
-.nav-link-item-simple:hover,
 .navbar-header.scrolled .nav-dropdown-trigger:hover,
 .navbar-header.scrolled .nav-link-item-simple:hover {
   color: #ea580c;
@@ -329,6 +342,65 @@
   border-top: 3px solid #f58634 !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   padding: 16px 20px 18px 20px;
+}
+
+/* Our Associate Centre Dropdown Specific Styling - Matching user screenshot */
+.associate-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.associate-trigger .nav-dropdown-arrow {
+  font-size: 1.05rem;
+  line-height: 1;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.associate-nav-item:hover .associate-trigger,
+.associate-trigger.trigger-active,
+.associate-trigger.active {
+  color: #f58634 !important;
+}
+
+.associate-nav-item:hover .associate-trigger .nav-dropdown-arrow,
+.associate-nav-item.is-open .associate-trigger .nav-dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.associate-dropdown-menu {
+  width: max-content;
+  min-width: 380px;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 0 0 6px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 3px solid #f58634 !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  padding: 12px 14px 14px 14px;
+}
+
+.associate-dropdown-menu .patients-column-item {
+  margin-bottom: 2px;
+}
+
+.associate-dropdown-menu .patients-column-link {
+  display: block;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #334155;
+  padding: 8px 14px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.associate-dropdown-menu .patients-column-link:hover {
+  background: #fff7ea;
+  color: #ea580c;
+  padding-left: 18px;
 }
 
 .about-us-dropdown-menu .dropdown-list {
@@ -501,7 +573,7 @@
   box-shadow: 0 6px 16px rgba(234, 88, 12, 0.25);
 }
 
-/* Appointment Hover Dropdown Menu - Standard hover dropdown across all pages */
+/* Appointment Hover Dropdown Menu - Visible on Top Hero, Hides on Scrolled/Subpages */
 .appointment-dropdown-menu {
   position: absolute;
   top: 100%;
@@ -515,20 +587,27 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(8px);
-  z-index: 1000;
-  width: 210px;
-  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.22s;
-  pointer-events: none;
-}
-
-.nav-appointment-action:hover .appointment-dropdown-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  z-index: 1000;
+  width: 210px;
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
   pointer-events: auto;
+}
+
+/* Hide when scrolled or when explicit class added */
+.navbar-header.scrolled .appointment-dropdown-menu,
+.appointment-dropdown-menu.dropdown-active-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* When scrolled, still open on hover */
+.navbar-header.scrolled .nav-appointment-action:hover .appointment-dropdown-menu {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 /* Dropdown Buttons */

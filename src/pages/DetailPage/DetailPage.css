@@ -7,7 +7,7 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #F8FAFC;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #1E2733;
   padding-top: 0;
 }
@@ -107,7 +107,7 @@
 }
 
 .detail-fallback-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 34px;
   font-weight: 600;
   color: #FFFFFF;
@@ -247,7 +247,7 @@
 }
 
 .detail-main-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   font-size: 32px;
   font-weight: 600;
   color: #132A4C;
@@ -325,7 +325,7 @@
 .detail-tab-btn {
   background: none;
   border: none;
-  font-family: 'Work Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: #64748B;
@@ -418,7 +418,7 @@
 }
 
 .detail-not-found-card h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Inter', sans-serif;
   color: #132A4C;
   margin-top: 0;
   margin-bottom: 12px;

@@ -519,39 +519,52 @@ export const getSpiritualCareState = (fallback) =>
 export const saveSpiritualCareState = (state) => 
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
 
-// About Us State
-export const getAboutUsState = async (fallback) => {
-  const result = await apiGet('/about-us', 'bhaktivedanta_about_us_state', fallback);
-  if (result && result.data && (result.data.aboutHospital || result.data.visionMissionValues)) {
-    return result.data;
-  }
-  if (result && (result.aboutHospital || result.visionMissionValues)) {
-    return result;
+// ── About Us State (Pure Local Storage - No Database Flow) ─────────────────
+
+const ABOUT_US_STORAGE_KEY = 'bhaktivedanta_about_us_state';
+
+/** GET About Us state from local storage or fallback defaults (no database) */
+export const getAboutUsState = (fallback) => {
+  try {
+    const local = localStorage.getItem(ABOUT_US_STORAGE_KEY);
+    if (local && local !== 'undefined' && local !== 'null') {
+      const parsed = JSON.parse(local);
+      if (parsed && (parsed.aboutHospital || parsed.visionMissionValues)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage read error:', err);
   }
   return fallback;
 };
 
-export const saveAboutUsState = (state) => 
-  apiMutation('/about-us', 'PUT', state, 'bhaktivedanta_about_us_state', (old, res) => {
-    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
-      ? res.data
-      : (res && (res.aboutHospital || res.visionMissionValues))
-        ? res
-        : state;
+/** SAVE About Us state to local storage (no database) */
+export const saveAboutUsState = (state) => {
+  try {
+    localStorage.setItem(ABOUT_US_STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new Event('admin_data_updated'));
-    return actualData;
-  });
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage save error:', err);
+  }
+  return state;
+};
 
-export const resetAboutUsState = () =>
-  apiMutation('/about-us/reset', 'POST', {}, 'bhaktivedanta_about_us_state', (old, res) => {
-    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
-      ? res.data
-      : (res && (res.aboutHospital || res.visionMissionValues))
-        ? res
-        : old;
+/** Reset About Us state in local storage (no database) */
+export const resetAboutUsState = (fallback) => {
+  try {
+    localStorage.removeItem(ABOUT_US_STORAGE_KEY);
+    window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new Event('admin_data_updated'));
-    return actualData;
-  });
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage reset error:', err);
+  }
+  return fallback;
+};
+
+/** Section helper stubs for local operation */
+export const getAboutUsSections = async () => [];
 
 // Statutory Compliances State & PDF Upload
 export const getStatutoryCompliancesState = (fallback) =>
@@ -584,5 +597,59 @@ export const uploadStatutoryPdf = async (title, fileName, base64Data) => {
   }
   return { success: true, url: base64Data, fallback: true };
 };
+
+// =============================================================
+// Associate Centres Database API
+// =============================================================
+export const ASSOCIATE_CENTRES_STORAGE_KEY = 'bhaktivedanta_associate_centres_cache';
+
+export const getAssociateCentres = (fallback = []) =>
+  apiGet('/associate-centres', ASSOCIATE_CENTRES_STORAGE_KEY, fallback);
+
+export const getAssociateCentreByIdOrSlug = async (idOrSlug) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/associate-centres/${idOrSlug}`, {
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[API] Get associate centre failed:', err);
+  }
+  const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+  if (local) {
+    try {
+      const list = JSON.parse(local);
+      return list.find(c => c.id === idOrSlug || c.slug === idOrSlug) || null;
+    } catch (e) { }
+  }
+  return null;
+};
+
+export const createAssociateCentre = (centreData) =>
+  apiMutation('/associate-centres', 'POST', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, newCentre) => {
+    const updated = [newCentre, ...(Array.isArray(oldData) ? oldData : [])];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
+export const updateAssociateCentre = (id, centreData) =>
+  apiMutation(`/associate-centres/${id}`, 'PUT', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, updatedCentre) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).map(c => (c.id === id ? { ...c, ...updatedCentre } : c));
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
+export const deleteAssociateCentre = (id) =>
+  apiMutation(`/associate-centres/${id}`, 'DELETE', null, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).filter(c => c.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
 
 

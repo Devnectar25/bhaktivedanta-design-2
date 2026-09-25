@@ -28,6 +28,7 @@ import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
 import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
 import TestimonialsPage from './pages/Testimonials/TestimonialsPage';
+import AssociateCentreDetailPage from './pages/AssociateCentres/AssociateCentreDetailPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -113,7 +114,6 @@ function App() {
         {/* Main Public Website Home & Pages wrapped in PublicLayout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomeContent />} />
-          <Route path="/services/:id" element={<HomeContent />} />
 
           {/* 4 Dedicated Modules Full-Page Routes */}
           <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
@@ -139,6 +139,10 @@ function App() {
           <Route path="/about-us/new-developments-updates" element={<NewDevelopmentsPage />} />
           <Route path="/about-us/spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
           <Route path="/about-us/our-spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
+
+          {/* Associate Centre Routes */}
+          <Route path="/our-associate-centre" element={<Navigate to="/our-associate-centre/swami-shraddhanand-hospital" replace />} />
+          <Route path="/our-associate-centre/:slug" element={<AssociateCentreDetailPage />} />
 
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />

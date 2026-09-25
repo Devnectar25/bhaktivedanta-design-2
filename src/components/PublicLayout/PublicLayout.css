@@ -8,7 +8,11 @@
 .public-main-content {
   flex: 1;
   width: 100%;
-  padding-top: 127px; /* Matches exact 127px combined height of fixed two-tier navbar */
+  padding-top: 127px; /* Matches exact 127px combined height of fixed two-tier navbar on subpages */
+}
+
+.public-main-content.home-main-content {
+  padding-top: 0; /* Home page hero section extends to top under transparent navbar */
 }
 
 @media (max-width: 1100px) {
