@@ -8,6 +8,7 @@ import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../.
 import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
 import { createSlug } from '../../pages/DetailPage/DetailPage';
+import SearchModal from '../SearchModal/SearchModal';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -204,6 +205,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
   const [activeMegaCategory, setActiveMegaCategory] = useState(null);
 
@@ -224,6 +226,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Global shortcut to toggle search modal (Ctrl+K / Cmd+K)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -496,7 +510,12 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
           <div className="top-right-section">
             <EmblemLogo />
-            <button className="search-icon-btn" aria-label="Search">
+            <button
+              className="search-icon-btn"
+              aria-label="Search website"
+              title="Search website (Ctrl + K)"
+              onClick={() => setIsSearchOpen(true)}
+            >
               <span className="material-symbols-outlined">search</span>
             </button>
             <Link to="/contact" className="contact-us-link">Contact Us</Link>
@@ -514,15 +533,26 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
               <img src="/logo.png" alt="Bhaktivedanta" className="logo-text" />
             </Link>
 
-            <button
-              className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
-            >
-              <span className="bar"></span>
-              <span className="bar"></span>
-              <span className="bar"></span>
-            </button>
+            <div className="mobile-header-actions">
+              <button
+                className="search-icon-btn mobile-search-btn"
+                aria-label="Search website"
+                title="Search website"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <span className="material-symbols-outlined">search</span>
+              </button>
+
+              <button
+                className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle navigation menu"
+              >
+                <span className="bar"></span>
+                <span className="bar"></span>
+                <span className="bar"></span>
+              </button>
+            </div>
           </div>
 
           {/* Desktop Navigation Links */}
@@ -1393,6 +1423,11 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
           </div>
         </div>
       </div>
+
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </header>
   );
 };

@@ -1,0 +1,442 @@
+/* ==========================================================================
+   COMMAND PALETTE / DYNAMIC SEARCH MODAL STYLES
+   ========================================================================== */
+
+/* Fullscreen Glass Backdrop */
+.search-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4.5rem 1rem 2rem;
+  animation: searchBackdropFadeIn 0.25s ease forwards;
+}
+
+@keyframes searchBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Floating Dialog Container */
+.search-modal-dialog {
+  width: 100%;
+  max-width: 680px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25),
+              0 0 0 1px rgba(226, 232, 240, 0.8),
+              0 0 40px rgba(30, 58, 138, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+  animation: searchDialogScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes searchDialogScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Input Bar */
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1.5px solid #f1f5f9;
+  background: #ffffff;
+  position: relative;
+}
+
+.search-input-icon {
+  color: #1e3a8a;
+  flex-shrink: 0;
+}
+
+.search-input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #1e293b;
+  background: transparent;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.search-input-field::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.search-clear-btn {
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.search-close-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.search-key-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Filter Pills Row */
+.search-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #fafafa;
+  border-bottom: 1px solid #f1f5f9;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.search-filter-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.search-filter-pill {
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.search-filter-pill:hover {
+  color: #1e3a8a;
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.search-filter-pill.active {
+  background: #1e3a8a;
+  color: #ffffff;
+  border-color: #1e3a8a;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+}
+
+/* Results Area */
+.search-results-area {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 52vh;
+  padding: 0.75rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.search-results-area::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-results-area::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.search-results-area::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.search-results-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.6rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.search-nav-hint {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: none;
+}
+
+/* Result Item Card */
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+  margin-bottom: 0.35rem;
+  background: #ffffff;
+}
+
+.search-result-item:hover,
+.search-result-item.active {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  transform: translateX(4px);
+}
+
+.search-result-item.active {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.result-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.search-result-item.active .result-icon-box {
+  background: #dbeafe;
+}
+
+.cat-icon.page { color: #475569; }
+.cat-icon.specialities { color: #0284c7; }
+.cat-icon.services { color: #e11d48; }
+.cat-icon.associate { color: #059669; }
+.cat-icon.doctors { color: #7c3aed; }
+.cat-icon.education { color: #d97706; }
+.cat-icon.spiritual { color: #ea580c; }
+
+.result-content-box {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.result-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-item.active .result-title {
+  color: #1e3a8a;
+}
+
+.result-category-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.cat-pages { background: #f1f5f9; color: #475569; }
+.cat-about-us { background: #e0e7ff; color: #4338ca; }
+.cat-specialities { background: #e0f2fe; color: #0369a1; }
+.cat-services { background: #ffe4e6; color: #be123c; }
+.cat-associate-centres { background: #dcfce7; color: #15803d; }
+.cat-doctors { background: #f3e8ff; color: #6b21a8; }
+.cat-education { background: #fef3c7; color: #b45309; }
+.cat-spiritual-care { background: #ffedd5; color: #c2410c; }
+
+.result-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-action-box {
+  color: #94a3b8;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.search-result-item:hover .result-action-box,
+.search-result-item.active .result-action-box {
+  opacity: 1;
+  transform: translateX(0);
+  color: #1e3a8a;
+}
+
+/* Empty State */
+.search-empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.empty-icon {
+  margin: 0 auto 1rem;
+}
+
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem;
+}
+
+.empty-subtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0 0 1.5rem;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.empty-suggestions-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.empty-suggestions-tags span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.empty-suggestions-tags span:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+  border-color: #1e3a8a;
+  transform: translateY(-1px);
+}
+
+/* Footer Shortcuts */
+.search-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.25rem;
+  padding: 0.85rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.footer-shortcut-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.key-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #475569;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .search-modal-backdrop {
+    padding: 1.5rem 0.75rem;
+  }
+  .search-modal-dialog {
+    max-height: 90vh;
+    border-radius: 20px;
+  }
+  .search-input-wrapper {
+    padding: 1rem 1.25rem;
+  }
+  .search-input-field {
+    font-size: 1rem;
+  }
+  .search-nav-hint {
+    display: none;
+  }
+  .search-modal-footer {
+    display: none;
+  }
+}
