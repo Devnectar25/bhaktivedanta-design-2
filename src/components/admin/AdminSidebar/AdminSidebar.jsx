@@ -32,13 +32,15 @@ const navLinks = [
   { name: 'Our Associate Centre', icon: 'domain', to: 'associate-centres' },
   { name: 'Careers', icon: 'work', to: 'careers' },
   { name: 'About us', icon: 'info', to: 'about-us' },
+  { name: 'New Developments & Updates', icon: 'trending_up', to: 'about-us?tab=newDevelopments' },
   { name: 'Blogs', icon: 'article', to: 'blogs' },
-  { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
+  { name: 'Testimonials & Reviews', icon: 'reviews', to: 'testimonials' },
   { name: 'Statutory Compliances & Site Map', icon: 'gavel', to: 'statutory-compliances' },
   { divider: true },
 
   // Section 3
-  { name: 'Feedback', icon: 'support_agent', to: 'help-desk' },
+  { name: 'Patient Feedback', icon: 'rate_review', to: 'patient-feedback' },
+  { name: 'Help Desk', icon: 'support_agent', to: 'help-desk' },
   { name: 'Contact Queries', icon: 'contact_support', to: 'contact-queries' },
   { divider: true },
 
@@ -51,7 +53,7 @@ const navLinks = [
 const rolePermissions = {
   'Super Admin': null,
   'Administrator': null,
-  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances'],
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances', 'about-us'],
   'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs'],
   'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs']
 };
@@ -64,7 +66,11 @@ const AdminSidebar = () => {
   const allowedRoutes = rolePermissions[userRole] || null;
 
   const filteredNavLinks = allowedRoutes 
-    ? navLinks.filter(item => item.divider || !item.to || allowedRoutes.includes(item.to))
+    ? navLinks.filter(item => {
+        if (item.divider || !item.to) return true;
+        const routeBase = item.to.split('?')[0];
+        return allowedRoutes.includes(item.to) || allowedRoutes.includes(routeBase);
+      })
     : navLinks;
 
   const handleLogout = () => {
@@ -132,13 +138,20 @@ const AdminSidebar = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
-                  isActive || location.pathname.includes(item.to)
+              className={({ isActive }) => {
+                const currentFullPath = location.pathname + location.search;
+                const isCurrent = item.to.includes('?')
+                  ? currentFullPath.includes(item.to)
+                  : (item.to === 'about-us'
+                      ? location.pathname.includes('about-us') && !location.search.includes('tab=newDevelopments')
+                      : (isActive || location.pathname.includes(item.to)));
+
+                return `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
+                  isCurrent
                     ? 'active-nav-link bg-white/20 text-white shadow-sm font-semibold' 
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`
-              }
+                }`;
+              }}
             >
               <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
               <span>{item.name}</span>

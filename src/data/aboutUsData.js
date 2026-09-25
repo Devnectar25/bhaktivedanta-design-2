@@ -606,46 +606,64 @@ export const defaultAboutUsData = {
 ],
   newDevelopments: [
   {
-    "id": 1,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17163767396301.png",
-    "title": "5th Annual Critical Care &amp; Infectious Disease Symposium",
-    "description": "We are happy to share the success of our recently concluded symposium, dedicated to advancing knowledge in critical care and infec...",
-    "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/5th-annual-critical-care-amp-infectious-disease-symposium"
-  },
-  {
     "id": 2,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17745244152554.jpg",
+    "imageUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
     "title": "Oncology Updates – Bridging Science and Practice",
-    "description": "The Department of Oncology conducted a CME titled “Oncology Updates – Bridging Science and Practice”, aimed at integrating the latest scientific advances into day-to-day clinical care.",
+    "category": "Medical CME",
+    "date": "October 2024",
+    "description": "The Department of Oncology conducted a CME titled \"Oncology Updates – Bridging Science and Practice\", aimed at integrating the latest clinical research with practical patient care strategies.",
+    "fullContent": "The Department of Oncology at Bhaktivedanta Hospital & Research Institute hosted a landmark Continuing Medical Education (CME) program titled \"Oncology Updates – Bridging Science and Practice\".\n\nThe event gathered leading oncologists, radiation specialists, and clinical researchers from across the region to deliberate on modern therapeutic modalities, precision medicine, and integrative cancer care protocols.\n\nKey topics included targeted immunotherapy advancements, early detection screening protocols, and the hospital's holistic supportive care framework that combines clinical treatment with emotional and spiritual support for patients and caregivers.",
     "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/oncology-updates--bridging-science-and-practice"
   },
   {
     "id": 3,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17375586822567.webp",
-    "title": "Urology for Everyone: Innovation &amp; Care&quot; - Exhibition Cum CME",
-    "description": "We had announced the exhibition cum CME &quot;Urology for Everyone: Innovation &amp; Care,&quot; which explored the latest advancements in urological health.",
+    "imageUrl": "https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=800&q=80",
+    "title": "Urology for Everyone: Innovation & Care\" - Exhibition Cum CME",
+    "category": "Exhibition & CME",
+    "date": "November 2024",
+    "description": "We had announced the exhibition cum CME \"Urology for Everyone: Innovation & Care,\" which explored the latest advancements in urology, minimally invasive procedures, and preventive health.",
+    "fullContent": "Bhaktivedanta Hospital & Research Institute successfully conducted a mega Exhibition cum CME themed \"Urology for Everyone: Innovation & Care\".\n\nThe initiative served as an educational platform for medical practitioners, medical students, and the general public, highlighting state-of-the-art diagnostic technologies, laser stone treatments, and minimally invasive urological surgery techniques.\n\nInteractive stalls, live equipment demonstrations, and expert panel discussions empowered attendees with actionable knowledge on urological health, kidney disease prevention, and cutting-edge surgical options.",
     "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/urology-for-everyone-innovation-care-exhibition-cum-cme"
   },
   {
     "id": 4,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17331496511690.png",
+    "imageUrl": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=300&q=80",
     "title": "Celebrating World Hospice and Palliative Care Day - 2024",
-    "description": "We are delighted to share that World Hospice and Palliative Care Day (WHPCD)-2024 was celebrated at Bhaktivedanta Hospital &amp; Research Institute on 27th October 2024.",
+    "category": "Community Care",
+    "date": "October 2024",
+    "description": "In observance of World Hospice and Palliative Care Day 2024, Bhaktivedanta Hospital organized awareness sessions highlighting holistic, spiritual, and compassionate end-of-life care.",
+    "fullContent": "In observance of World Hospice and Palliative Care Day 2024, Bhaktivedanta Hospital & Research Institute reaffirmed its commitment to compassionate, dignified care for patients with chronic and terminal illnesses.\n\nThe department organized specialized workshops focusing on symptom management, pain relief protocols, psychological counseling, and spiritual care support for families navigating end-of-life care.",
     "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/celebrating-world-hospice-and-palliative-care-day"
   },
   {
     "id": 5,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17319978852507.webp",
-    "title": "Lighting Up Lives: Bhaktivedanta Hospital&#039;s Unique Diwali Celebration",
+    "imageUrl": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=300&q=80",
+    "title": "Lighting Up Lives: Bhaktivedanta Hospital's Unique Diwali Celebration",
+    "category": "Hospital Events",
+    "date": "November 2024",
     "description": "The Department of Medical Nutrition Therapy at Bhaktivedanta Hospital and Research Institute celebrated the festival of lights - Diwali, with a heartwarming initiative aimed at sharing joy and creating lasting memories.",
+    "fullContent": "Bringing joy and warmth to those recovering in wards, Bhaktivedanta Hospital organized a heartwarming Diwali celebration under the banner \"Lighting Up Lives\".\n\nHospital leadership, doctors, and volunteers visited inpatient units to distribute nutritious sweets, handmade greeting cards, and devotional gifts while conducting live acoustic kirtan sessions to elevate the mood of patients and healthcare heroes alike.",
     "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/lighting-up-lives-bhaktivedanta-hospitals-unique-diwali-celebration"
   },
   {
     "id": 6,
-    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17294895394081.png",
+    "imageUrl": "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=300&q=80",
     "title": "Breast Reconstruction and Cancer Awareness Event, 2024",
+    "category": "Awareness Campaign",
+    "date": "October 2024",
     "description": "On 16th October 2024, we hosted an insightful session dedicated to raising awareness about breast cancer, self-examination, reconstruction, and post-cancer care.",
+    "fullContent": "As part of Breast Cancer Awareness Month, our Department of Plastic Surgery and Surgical Oncology conducted a specialized seminar titled \"Restoring Hope: Breast Reconstruction & Comprehensive Care\".\n\nSurgeons provided in-depth guidance on advanced reconstructive techniques following mastectomy, emphasizing physical recovery, self-image restoration, and long-term wellness for cancer survivors.",
     "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/breast-reconstruction-and-cancer-awareness-event-"
+  },
+  {
+    "id": 1,
+    "imageUrl": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/posts/17163767396301.png",
+    "title": "5th Annual Critical Care &amp; Infectious Disease Symposium",
+    "category": "Medical CME",
+    "date": "May 2024",
+    "description": "We are happy to share the success of our recently concluded symposium, dedicated to advancing knowledge in critical care and infectious disease management.",
+    "fullContent": "We are happy to share the success of our recently concluded symposium, dedicated to advancing knowledge in critical care and infectious disease management. Healthcare professionals from across the country attended interactive clinical workshops and lectures.",
+    "readMoreLink": "https://www.bhaktivedantahospital.com/about-us/new-developments-and-updates/5th-annual-critical-care-amp-infectious-disease-symposium"
   },
   {
     "id": 7,

@@ -204,7 +204,7 @@ export default function SpiritualCare() {
   return (
     <div className="space-y-6 font-sans">
       {/* Top Header Card */}
-      <div className="bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#1e3a8a] text-white p-6 rounded-2xl shadow-xl border border-blue-400/30">
+      <div className="bg-gradient-to-r from-[#1e3a8a] via-[#172554] to-[#111827] text-white p-6 rounded-2xl shadow-xl border border-white/10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 border border-orange-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">

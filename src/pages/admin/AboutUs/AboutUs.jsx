@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Building2,
   Calendar,
@@ -23,13 +24,16 @@ import {
   Heart,
   Users,
   TrendingUp,
+  Upload,
+  ArrowUp,
+  ArrowDown,
+  Star,
+  Tag,
   ChevronLeft,
   ChevronRight,
-  Upload,
   PlusCircle,
   FolderPlus,
   FileText,
-  Star,
   Activity,
   Bookmark,
   X
@@ -68,10 +72,28 @@ const isTabActive = (secId, currentTab) => {
 };
 
 export default function AdminAboutUs() {
-  const [activeTab, setActiveTab] = useState('aboutHospital');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(tabParam || 'aboutHospital');
   const [aboutState, setAboutState] = useState(defaultAboutUsData);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const currentTab = searchParams.get('tab');
+    if (currentTab && currentTab !== activeTab) {
+      setActiveTab(currentTab);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', tabId);
+      return next;
+    }, { replace: true });
+  };
 
   // History timeline pagination (10 items per page)
   const [historyPage, setHistoryPage] = useState(1);
@@ -157,10 +179,14 @@ export default function AdminAboutUs() {
   // New Developments edit modal
   const [editingDev, setEditingDev] = useState(null);
   const [isDevModalOpen, setIsDevModalOpen] = useState(false);
+  const devFileInputRef = useRef(null);
   const [devForm, setDevForm] = useState({
     id: null,
     title: '',
+    category: 'Medical CME',
+    date: '',
     description: '',
+    fullContent: '',
     imageUrl: '',
     readMoreLink: ''
   });
@@ -1159,18 +1185,95 @@ export default function AdminAboutUs() {
     const handleOpenDevModal = (dev = null) => {
       if (dev) {
         setEditingDev(dev);
-        setDevForm({ ...dev });
+        setDevForm({
+          id: dev.id,
+          title: dev.title || '',
+          category: dev.category || 'Medical CME',
+          date: dev.date || 'October 2024',
+          description: dev.description || dev.excerpt || '',
+          fullContent: dev.fullContent || dev.description || '',
+          imageUrl: dev.imageUrl || dev.image || '',
+          readMoreLink: dev.readMoreLink || ''
+        });
       } else {
         setEditingDev(null);
         setDevForm({
           id: Date.now(),
           title: '',
+          category: 'Medical CME',
+          date: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
           description: '',
+          fullContent: '',
           imageUrl: '',
           readMoreLink: ''
         });
       }
       setIsDevModalOpen(true);
+    };
+
+    const handleDevImageUpload = (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire('File Too Large', 'Please select an image smaller than 5MB.', 'warning');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+          setDevForm(prev => ({ ...prev, imageUrl: compressedBase64 }));
+        };
+      };
+      reader.readAsDataURL(file);
+    };
+
+    const handleMoveDev = async (index, direction) => {
+      const currentList = [...(aboutState.newDevelopments || [])];
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= currentList.length) return;
+
+      const [movedItem] = currentList.splice(index, 1);
+      currentList.splice(targetIndex, 0, movedItem);
+
+      const nextState = {
+        ...aboutState,
+        newDevelopments: currentList
+      };
+      await commitAndSave(nextState, 'Post order updated successfully!');
+    };
+
+    const handleMakeDevTop = async (index) => {
+      if (index === 0) return;
+      const currentList = [...(aboutState.newDevelopments || [])];
+      const [movedItem] = currentList.splice(index, 1);
+      currentList.unshift(movedItem);
+
+      const nextState = {
+        ...aboutState,
+        newDevelopments: currentList
+      };
+      await commitAndSave(nextState, 'Moved to Featured Card #1 on Home Page!');
     };
 
     const handleSaveDev = async (e) => {
@@ -1182,7 +1285,7 @@ export default function AdminAboutUs() {
 
       let updatedDevs = [...(aboutState.newDevelopments || [])];
       if (editingDev) {
-        updatedDevs = updatedDevs.map(d => d.id === editingDev.id ? { ...devForm } : d);
+        updatedDevs = updatedDevs.map(d => d.id === editingDev.id ? { ...d, ...devForm } : d);
       } else {
         updatedDevs.unshift({ ...devForm, id: devForm.id || Date.now() });
       }
@@ -1349,7 +1452,7 @@ export default function AdminAboutUs() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 title={tab.label}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl font-bold text-xs lg:text-xs xl:text-sm transition-all text-left justify-start ${isActive
                   ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
@@ -1371,7 +1474,7 @@ export default function AdminAboutUs() {
             return (
               <button
                 key={tabKey}
-                onClick={() => setActiveTab(tabKey)}
+                onClick={() => handleTabChange(tabKey)}
                 title={sec.title}
                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl font-bold text-xs lg:text-xs xl:text-sm transition-all text-left justify-start relative group ${isActive
                   ? 'bg-orange-600 text-white shadow-md shadow-orange-500/20'
@@ -3011,9 +3114,20 @@ export default function AdminAboutUs() {
                     </h2>
                     <p className="text-xs text-slate-500 mt-1">
                       Manage hospital clinical symposiums, equipment inaugurations, medical camps, and community updates.
+                      <span className="ml-1 text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                        ★ Posts #1 &amp; #2 appear as Featured Cards on Home Page. Posts #3 to #6 appear in Home Page Sidebar.
+                      </span>
                     </p>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
+                    <a
+                      href="/#developments"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                    >
+                      <ExternalLink size={14} /> View on Home Page
+                    </a>
                     <a
                       href="/about-us/new-developments-updates"
                       target="_blank"
@@ -3025,7 +3139,7 @@ export default function AdminAboutUs() {
                     <button
                       type="button"
                       onClick={() => handleOpenDevModal()}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold shadow-md transition-all"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
                     >
                       <Plus size={16} /> Add Development Post
                     </button>
@@ -3034,69 +3148,149 @@ export default function AdminAboutUs() {
 
                 {/* Grid of Development Posts */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-6">
-                  {paginatedDevs.map((dev, idx) => (
-                    <div
-                      key={dev.id || idx}
-                      className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-                    >
-                      <div>
-                        {/* Image Thumbnail */}
-                        <div className="w-full h-36 bg-slate-100 overflow-hidden">
-                          <img
-                            src={dev.imageUrl}
-                            alt={dev.title}
-                            className="w-full h-full object-cover"
-                            onError={e => {
-                              e.target.src = 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/17037550688385.png';
-                            }}
-                          />
+                  {paginatedDevs.map((dev, idx) => {
+                    const globalIdx = (devPage - 1) * devPerPage + idx;
+                    const isFeatured1 = globalIdx === 0;
+                    const isFeatured2 = globalIdx === 1;
+                    const isSidebar = globalIdx >= 2 && globalIdx <= 5;
+
+                    return (
+                      <div
+                        key={dev.id || globalIdx}
+                        className={`rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between ${
+                          isFeatured1 || isFeatured2
+                            ? 'border-amber-400 ring-2 ring-amber-400/20'
+                            : isSidebar
+                              ? 'border-blue-300'
+                              : 'border-slate-200'
+                        }`}
+                      >
+                        <div>
+                          {/* Status / Position Badge Bar */}
+                          <div className={`px-4 py-2 text-xs font-bold flex items-center justify-between border-b ${
+                            isFeatured1
+                              ? 'bg-amber-500 text-white border-amber-600'
+                              : isFeatured2
+                                ? 'bg-amber-600 text-white border-amber-700'
+                                : isSidebar
+                                  ? 'bg-blue-50 text-blue-700 border-blue-100'
+                                  : 'bg-slate-50 text-slate-600 border-slate-100'
+                          }`}>
+                            <div className="flex items-center gap-1.5">
+                              {(isFeatured1 || isFeatured2) && <Star size={13} className="fill-current" />}
+                              <span>
+                                {isFeatured1 && '⭐ 1st Featured Card (Home Page)'}
+                                {isFeatured2 && '⭐ 2nd Featured Card (Home Page)'}
+                                {isSidebar && `📌 Home Sidebar #${globalIdx - 1}`}
+                                {!isFeatured1 && !isFeatured2 && !isSidebar && `Post #${globalIdx + 1} (Archives)`}
+                              </span>
+                            </div>
+
+                            {/* Reordering Controls */}
+                            <div className="flex items-center gap-1">
+                              {globalIdx > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMakeDevTop(globalIdx)}
+                                  title="Move to #1 Featured spot"
+                                  className="p-1 rounded bg-black/10 hover:bg-black/20 text-current transition-colors"
+                                >
+                                  <Star size={12} />
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                disabled={globalIdx === 0}
+                                onClick={() => handleMoveDev(globalIdx, -1)}
+                                title="Move Up"
+                                className={`p-1 rounded transition-colors ${globalIdx === 0 ? 'opacity-30 cursor-not-allowed' : 'bg-black/10 hover:bg-black/20 text-current'}`}
+                              >
+                                <ArrowUp size={12} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={globalIdx === (aboutState.newDevelopments?.length || 1) - 1}
+                                onClick={() => handleMoveDev(globalIdx, 1)}
+                                title="Move Down"
+                                className={`p-1 rounded transition-colors ${globalIdx === (aboutState.newDevelopments?.length || 1) - 1 ? 'opacity-30 cursor-not-allowed' : 'bg-black/10 hover:bg-black/20 text-current'}`}
+                              >
+                                <ArrowDown size={12} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Image Thumbnail */}
+                          <div className="w-full h-40 bg-slate-100 overflow-hidden relative">
+                            <img
+                              src={dev.imageUrl || dev.image}
+                              alt={dev.title}
+                              className="w-full h-full object-cover"
+                              onError={e => {
+                                e.target.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80';
+                              }}
+                            />
+                            {(dev.category || dev.date) && (
+                              <div className="absolute bottom-2 left-2 flex items-center gap-1.5 flex-wrap">
+                                {dev.category && (
+                                  <span className="px-2 py-0.5 bg-black/70 backdrop-blur-sm text-white text-[10px] font-bold rounded-md">
+                                    {dev.category}
+                                  </span>
+                                )}
+                                {dev.date && (
+                                  <span className="px-2 py-0.5 bg-black/70 backdrop-blur-sm text-white text-[10px] font-medium rounded-md">
+                                    {dev.date}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="p-4">
+                            <h4 className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug mb-1.5">
+                              {(dev.title || '').replace(/&amp;/g, '&').replace(/&quot;/g, '"')}
+                            </h4>
+                            <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                              {(dev.description || dev.excerpt || '').replace(/&amp;/g, '&').replace(/&#039;/g, "'")}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="p-4">
-                          <h4 className="text-sm font-bold text-slate-800 line-clamp-2 leading-snug mb-1.5">
-                            {dev.title.replace(/&amp;/g, '&').replace(/&quot;/g, '"')}
-                          </h4>
-                          <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                            {dev.description.replace(/&amp;/g, '&').replace(/&#039;/g, "'")}
-                          </p>
+                        <div className="p-4 pt-0 border-t border-slate-100 flex items-center justify-between">
+                          {dev.readMoreLink ? (
+                            <a
+                              href={dev.readMoreLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[11px] font-bold text-orange-600 hover:underline inline-flex items-center gap-1"
+                            >
+                              <ExternalLink size={12} /> Read More
+                            </a>
+                          ) : (
+                            <span className="text-[11px] text-slate-400">No external link</span>
+                          )}
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenDevModal(dev)}
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+                              title="Edit"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteDev(dev.id)}
+                              className="p-1.5 text-rose-600 hover:bg-rose-50 rounded"
+                              title="Delete"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
                       </div>
-
-                      <div className="p-4 pt-0 border-t border-slate-100 flex items-center justify-between">
-                        {dev.readMoreLink ? (
-                          <a
-                            href={dev.readMoreLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[11px] font-bold text-orange-600 hover:underline inline-flex items-center gap-1"
-                          >
-                            <ExternalLink size={12} /> Read More
-                          </a>
-                        ) : (
-                          <span className="text-[11px] text-slate-400">No external link</span>
-                        )}
-
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenDevModal(dev)}
-                            className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                            title="Edit"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteDev(dev.id)}
-                            className="p-1.5 text-rose-600 hover:bg-rose-50 rounded"
-                            title="Delete"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Pagination Controls */}
@@ -3974,30 +4168,101 @@ export default function AdminAboutUs() {
         {/* DEVELOPMENT POST EDIT MODAL */}
         {isDevModalOpen && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <TrendingUp size={20} className="text-orange-600" />
-                {editingDev ? 'Edit Development Update' : 'Add New Development Update'}
-              </h3>
+            <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b pb-3">
+                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <TrendingUp size={20} className="text-orange-600" />
+                  {editingDev ? 'Edit Development Update' : 'Add New Development Update'}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsDevModalOpen(false)}
+                  className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                >
+                  ✕
+                </button>
+              </div>
+
               <form onSubmit={handleSaveDev} className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Post Title *</label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 5th Annual Critical Care Symposium"
+                    placeholder="e.g. Oncology Updates – Bridging Science and Practice"
                     value={devForm.title}
                     onChange={e => setDevForm({ ...devForm, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-orange-500"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-semibold outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                   />
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Category / Tag</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Medical CME"
+                      value={devForm.category || ''}
+                      onChange={e => setDevForm({ ...devForm, category: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
+                    />
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {['Medical CME', 'Exhibition & CME', 'Hospital Events', 'Community Care', 'Awareness Campaign', 'Surgical Innovation'].map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => setDevForm({ ...devForm, category: tag })}
+                          className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${
+                            devForm.category === tag
+                              ? 'bg-orange-600 text-white border-orange-600'
+                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Publication / Event Date</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. October 2024"
+                      value={devForm.date || ''}
+                      onChange={e => setDevForm({ ...devForm, date: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">Displayed on the card &amp; article detail modal</p>
+                  </div>
+                </div>
+
+                {/* Cover Image with File Picker & URL */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Cover Image URL</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Cover Image</label>
+                  <input
+                    type="file"
+                    ref={devFileInputRef}
+                    accept="image/*"
+                    onChange={handleDevImageUpload}
+                    className="hidden"
+                  />
+                  <div className="flex items-center gap-2 mb-2">
+                    <button
+                      type="button"
+                      onClick={() => devFileInputRef.current?.click()}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-300 transition-colors"
+                    >
+                      <Upload size={14} className="text-orange-600" />
+                      Upload from Computer
+                    </button>
+                    <span className="text-xs text-slate-400">or paste URL below:</span>
+                  </div>
+
                   <input
                     type="text"
-                    placeholder="https://... (URL to post image)"
-                    value={devForm.imageUrl}
+                    placeholder="https://... (direct image link or uploaded base64)"
+                    value={devForm.imageUrl || ''}
                     onChange={e => setDevForm({ ...devForm, imageUrl: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
                   />
@@ -4005,39 +4270,58 @@ export default function AdminAboutUs() {
 
                 {/* Image Preview */}
                 {devForm.imageUrl && (
-                  <div className="h-32 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                  <div className="relative h-36 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group">
                     <img
                       src={devForm.imageUrl}
                       alt="Preview"
                       className="w-full h-full object-cover"
                       onError={e => { e.target.style.display = 'none'; }}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setDevForm({ ...devForm, imageUrl: '' })}
+                      className="absolute top-2 right-2 bg-rose-600 hover:bg-rose-700 text-white text-xs px-2 py-1 rounded-lg font-bold shadow"
+                    >
+                      Remove
+                    </button>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Description / Summary Excerpt</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Card Summary / Excerpt *</label>
                   <textarea
-                    rows={3}
-                    placeholder="Brief description of the event, milestone or medical conference..."
-                    value={devForm.description}
+                    rows={2}
+                    placeholder="Brief 1-2 sentence overview shown directly on the card..."
+                    value={devForm.description || ''}
                     onChange={e => setDevForm({ ...devForm, description: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Read More Article / Link URL</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Full Detailed Article / Story</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Detailed multi-paragraph writeup shown when users click the card in the popup modal..."
+                    value={devForm.fullContent || ''}
+                    onChange={e => setDevForm({ ...devForm, fullContent: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
+                  />
+                  <p className="text-[11px] text-slate-400 mt-1">Leave empty to use Card Summary</p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Read More Article / External Link</label>
                   <input
                     type="text"
-                    placeholder="https://..."
-                    value={devForm.readMoreLink}
+                    placeholder="https://... (official news link, press release, or hospital page)"
+                    value={devForm.readMoreLink || ''}
                     onChange={e => setDevForm({ ...devForm, readMoreLink: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm outline-none focus:border-orange-500"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setIsDevModalOpen(false)}
@@ -4047,9 +4331,9 @@ export default function AdminAboutUs() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-bold shadow"
+                    className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-sm font-bold shadow-md transition-all active:scale-95"
                   >
-                    Save Update
+                    Save &amp; Update Live
                   </button>
                 </div>
               </form>

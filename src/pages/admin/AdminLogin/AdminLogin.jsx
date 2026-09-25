@@ -106,9 +106,10 @@ const AdminLogin = () => {
     // Check 2: Sub-Admin login
     setIsLoading(true);
     const defaultSubAdmins = [
-      { username: 'admin.sneha', email: 'sneha@bhaktivedantahospital.com', password: 'Password123', role: 'Administrator', status: 'Active' },
-      { username: 'admin.rajesh', email: 'rajesh@bhaktivedantahospital.com', password: 'Password123', role: 'Content Manager', status: 'Active' },
-      { username: 'admin.dev', email: 'dev@bhaktivedantahospital.com', password: 'Password123', role: 'Developer', status: 'Active' }
+      { username: 'admin.aksh', email: 'aksh@bhaktivedantahospital.com', password: 'Password123', role: 'Operations Manager', status: 'Active' },
+      { username: 'admin.kuldeep', email: 'kuldeep@bhaktivedantahospital.com', password: 'Password123', role: 'Administrator', status: 'Active' },
+      { username: 'admin.Neha', email: 'Neha@bhaktivedantahospital.com', password: 'Password123', role: 'Content Manager', status: 'Active' },
+      { username: 'admin.rajesh', email: 'rajesh@bhaktivedantahospital.com', password: 'Password123', role: 'Administration', status: 'Active' }
     ];
 
     try {

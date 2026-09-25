@@ -283,7 +283,7 @@ const Blogs = () => {
             </button>
           </div>
         ) : (
-          <div className="w-full overflow-x-auto">
+          <div className="w-full overflow-x-auto no-scrollbar">
             <table className="w-full text-left border-collapse table-fixed">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">

@@ -9,12 +9,12 @@
   background-color: #F8FAFC;
   font-family: 'Inter', sans-serif;
   color: #1E2733;
-  padding-top: 135px; /* Exact offset for the two-tier fixed Navbar (75px + 52px) */
+  padding-top: 0;
 }
 
 @media (max-width: 991px) {
   .detail-full-page-wrapper {
-    padding-top: 70px;
+    padding-top: 0;
   }
 }
 

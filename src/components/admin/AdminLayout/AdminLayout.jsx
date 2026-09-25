@@ -8,9 +8,9 @@ import '../unified-admin.css';
 const rolePermissions = {
   'Super Admin': null,
   'Administrator': null,
-  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'add-blog', 'edit-blog', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events'],
-  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs', 'add-blog', 'edit-blog'],
-  'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs', 'add-blog', 'edit-blog']
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'add-blog', 'edit-blog', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'patient-feedback'],
+  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'patient-feedback', 'services', 'specialities', 'blogs', 'add-blog', 'edit-blog'],
+  'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patient-feedback', 'patients-corner', 'testimonials', 'careers', 'blogs', 'add-blog', 'edit-blog']
 };
 
 const AdminLayout = () => {
