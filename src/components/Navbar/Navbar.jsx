@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres } from '../../utils/api';
@@ -7,6 +7,7 @@ import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defa
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
 import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
+import { createSlug } from '../../pages/DetailPage/DetailPage';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -415,11 +416,8 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       ]
     };
 
-    if (onSelectPatientGuide) {
-      onSelectPatientGuide(targetGuide, targetGuide.category || 'Patients Corner');
-    } else if (onSelectSpeciality) {
-      onSelectSpeciality(targetGuide, targetGuide.category || 'Patients Corner');
-    }
+    const slug = foundGuide?.slug || targetGuide.slug || createSlug(linkName);
+    navigate(`/patients-corner/${slug}`);
   };
 
   const handleSpiritualCareClick = (sectionOrName) => {
@@ -430,9 +428,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     } else {
       const normalized = (sectionOrName || '').toLowerCase().trim();
       const allSections = spiritualCareData.sections || defaultSpiritualSections;
-      targetSection = allSections.find(s => 
-        s.id === normalized || 
-        (s.title && s.title.toLowerCase() === normalized) || 
+      targetSection = allSections.find(s =>
+        s.id === normalized ||
+        (s.title && s.title.toLowerCase() === normalized) ||
         (s.title && s.title.toLowerCase().includes(normalized)) ||
         (s.title && normalized.includes(s.title.toLowerCase()))
       );
@@ -602,7 +600,8 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                         <button
                                           className="speciality-link-btn"
                                           onClick={() => {
-                                            onSelectSpeciality(s, currentCat.name);
+                                            const slug = s.slug || createSlug(s.name);
+                                            navigate(`/specialities/${slug}`);
                                             setActiveMegaCategory(null);
                                             setOpenNavDropdown(null);
                                           }}
@@ -686,7 +685,8 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                         <button
                                           className="speciality-link-btn"
                                           onClick={() => {
-                                            onSelectSpeciality(s, currentCat.name);
+                                            const slug = s.slug || createSlug(s.name);
+                                            navigate(`/services/${slug}`);
                                             setActiveServiceCategory(null);
                                             setOpenNavDropdown(null);
                                           }}
@@ -1077,7 +1077,8 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                       key={spec.id}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
-                                        onSelectSpeciality(spec, cat.name);
+                                        const slug = spec.slug || createSlug(spec.name);
+                                        navigate(`/specialities/${slug}`);
                                         handleMobileLinkClick();
                                       }}
                                     >
@@ -1122,7 +1123,8 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                       key={service.id}
                                       className="mobile-sub-link-btn"
                                       onClick={() => {
-                                        onSelectSpeciality(service, cat.name);
+                                        const slug = service.slug || createSlug(service.name);
+                                        navigate(`/services/${slug}`);
                                         handleMobileLinkClick();
                                       }}
                                     >

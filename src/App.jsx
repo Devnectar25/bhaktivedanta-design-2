@@ -111,7 +111,6 @@ function App() {
         {/* Main Public Website Home & Pages wrapped in PublicLayout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomeContent />} />
-          <Route path="/services/:id" element={<HomeContent />} />
 
           {/* 4 Dedicated Modules Full-Page Routes */}
           <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
