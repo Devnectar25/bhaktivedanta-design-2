@@ -8,6 +8,8 @@ const Events = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [selectedStatus, setSelectedStatus] = useState('All Statuses');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const navigate = useNavigate();
 
@@ -32,6 +34,7 @@ const Events = () => {
     setSearchTerm('');
     setSelectedCategory('All Categories');
     setSelectedStatus('All Statuses');
+    setCurrentPage(1);
   };
 
   // Filter list
@@ -52,6 +55,17 @@ const Events = () => {
 
     return matchesSearch && matchesCategory && matchesStatus;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedEvents = filtered.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [filtered.length, totalPages, currentPage]);
 
   const totalCount = events.length;
   const upcomingCount = events.filter(e => e.status === 'Upcoming' || e.status === 'Scheduled').length;
@@ -143,7 +157,10 @@ const Events = () => {
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none"
             placeholder="Name or ID..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
           />
         </div>
         <div className="w-[180px] space-y-1">
@@ -151,7 +168,10 @@ const Events = () => {
           <select 
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option>All Categories</option>
             <option>Health Camp</option>
@@ -165,7 +185,10 @@ const Events = () => {
           <select 
             className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-1.5 text-xs rounded-lg outline-none cursor-pointer"
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setCurrentPage(1);
+            }}
           >
             <option>All Statuses</option>
             <option>Upcoming</option>
@@ -201,7 +224,7 @@ const Events = () => {
                 <td colSpan="6" className="px-4 py-8 text-center text-slate-400 font-medium">No matching events found.</td>
               </tr>
             ) : (
-              filtered.map((evt) => {
+              paginatedEvents.map((evt) => {
                 let category = 'Outreach';
                 if (evt.title.toLowerCase().includes('camp') || evt.title.toLowerCase().includes('check-up')) {
                   category = 'Health Camp';
@@ -260,6 +283,54 @@ const Events = () => {
             )}
           </tbody>
         </table>
+
+        {/* Pagination Controls Footer */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <p className="text-slate-500 font-medium">
+              Showing <span className="font-bold text-slate-700">{filtered.length > 0 ? startIndex + 1 : 0}</span> to{' '}
+              <span className="font-bold text-slate-700">{Math.min(endIndex, filtered.length)}</span> of{' '}
+              <span className="font-bold text-slate-700">{filtered.length}</span> events
+            </p>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                disabled={currentPage === 1}
+                className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 font-bold flex items-center justify-center transition-all shadow-sm active:scale-95"
+                title="Previous Page"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_left</span>
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  type="button"
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 ${
+                    currentPage === pageNum
+                      ? 'bg-[#1e3a8a] text-white border border-[#1e3a8a]'
+                      : 'bg-white hover:bg-slate-50 text-slate-600 border border-slate-200'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 font-bold flex items-center justify-center transition-all shadow-sm active:scale-95"
+                title="Next Page"
+              >
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

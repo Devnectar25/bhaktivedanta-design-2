@@ -27,6 +27,7 @@ import OurManagementTeamPage from './pages/About/OurManagementTeamPage';
 import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
 import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
+import AssociateCentreDetailPage from './pages/AssociateCentres/AssociateCentreDetailPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -136,6 +137,10 @@ function App() {
           <Route path="/about-us/new-developments-updates" element={<NewDevelopmentsPage />} />
           <Route path="/about-us/spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
           <Route path="/about-us/our-spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
+
+          {/* Associate Centre Routes */}
+          <Route path="/our-associate-centre" element={<Navigate to="/our-associate-centre/swami-shraddhanand-hospital" replace />} />
+          <Route path="/our-associate-centre/:slug" element={<AssociateCentreDetailPage />} />
 
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
