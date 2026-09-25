@@ -499,7 +499,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             <button className="search-icon-btn" aria-label="Search">
               <span className="material-symbols-outlined">search</span>
             </button>
-            <a href={resolveNavHref('#contact')} className="contact-us-link">Contact Us</a>
+            <Link to="/contact" className="contact-us-link">Contact Us</Link>
           </div>
         </div>
       </div>
@@ -1366,6 +1366,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
               })}
 
               <div className="mobile-drawer-footer">
+                <Link
+                  to="/contact"
+                  className="mobile-nav-link-simple"
+                  style={{ display: 'block', textAlign: 'center', marginBottom: '12px', fontWeight: 700 }}
+                  onClick={handleMobileLinkClick}
+                >
+                  Contact Us
+                </Link>
                 <button
                   type="button"
                   className="btn-book-appointment-mobile"
