@@ -46,8 +46,8 @@ h2 span {
 /* Scroll To Top Button */
 .scroll-to-top-btn {
   position: fixed;
-  bottom: 2.5rem;
-  right: 2.5rem;
+  bottom: 156px;
+  right: 25px;
   width: 50px;
   height: 50px;
   background-color: var(--secondary); /* Premium orange background */
@@ -64,7 +64,7 @@ h2 span {
   transform: translateY(20px) scale(0.8);
   pointer-events: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 999;
+  z-index: 997;
 }
 
 .scroll-to-top-btn.visible {
@@ -81,8 +81,8 @@ h2 span {
 
 @media (max-width: 768px) {
   .scroll-to-top-btn {
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: 136px;
+    right: 18px;
     width: 44px;
     height: 44px;
   }

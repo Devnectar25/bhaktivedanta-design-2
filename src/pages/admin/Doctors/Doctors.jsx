@@ -17,15 +17,20 @@ const Doctors = () => {
 
   const navigate = useNavigate();
 
-  const loadDoctorsData = () => {
+  const loadDoctorsData = (forceRefresh = false) => {
     setLoading(true);
+    if (forceRefresh) {
+      try {
+        localStorage.removeItem('bhaktivedanta_admin_doctors');
+      } catch (e) { }
+    }
     initialDoctors().then(data => {
       if (Array.isArray(data)) {
         setDoctors(data);
       }
       setLoading(false);
     }).catch(err => {
-      console.error("Failed to load doctors:", err);
+      console.error("Failed to load doctors from database:", err);
       setLoading(false);
     });
   };
@@ -182,7 +187,7 @@ const Doctors = () => {
         </div>
         <div className="flex items-center gap-2.5">
           <button 
-            onClick={loadDoctorsData}
+            onClick={() => loadDoctorsData(true)}
             className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-3.5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm active:scale-95"
             title="Refresh list from database"
           >

@@ -5,25 +5,32 @@ import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../ut
 
 const defaultSubAdmins = [
   {
-    username: 'admin.sneha',
-    email: 'sneha@bhaktivedantahospital.com',
+    username: 'admin.aksh',
+    email: 'aksh@bhaktivedantahospital.com',
+    role: 'Operations Manager',
+    status: 'Active',
+    created: '9/21/2026'
+  },
+  {
+    username: 'admin.kuldeep',
+    email: 'kuldeep@bhaktivedantahospital.com',
     role: 'Administrator',
     status: 'Active',
-    created: '12 Oct 2023'
+    created: '9/21/2026'
+  },
+  {
+    username: 'admin.Neha',
+    email: 'Neha@bhaktivedantahospital.com',
+    role: 'Content Manager',
+    status: 'Active',
+    created: '9/21/2026'
   },
   {
     username: 'admin.rajesh',
     email: 'rajesh@bhaktivedantahospital.com',
-    role: 'Content Manager',
+    role: 'Administration',
     status: 'Active',
     created: '15 Oct 2023'
-  },
-  {
-    username: 'admin.dev',
-    email: 'dev@bhaktivedantahospital.com',
-    role: 'Developer',
-    status: 'Active',
-    created: '20 Jan 2024'
   }
 ];
 

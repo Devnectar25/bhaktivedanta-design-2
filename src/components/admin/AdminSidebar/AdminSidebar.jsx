@@ -8,7 +8,7 @@ const navLinks = [
   { 
     name: 'Appointments', 
     icon: 'calendar_month', 
-    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    externalUrl: 'https://his.bhaktivedantahospital.com/EHR/', 
     isExternal: true 
   },
   */
@@ -17,7 +17,7 @@ const navLinks = [
   { 
     name: 'Patient Report', 
     icon: 'analytics', 
-    externalUrl: 'https://www.bhaktivedantahospital.com', 
+    externalUrl: 'https://his.bhaktivedantahospital.com/EHR/', 
     isExternal: true 
   },
   */
@@ -33,12 +33,13 @@ const navLinks = [
   { name: 'Careers', icon: 'work', to: 'careers' },
   { name: 'About us', icon: 'info', to: 'about-us' },
   { name: 'Blogs', icon: 'article', to: 'blogs' },
-  { name: 'Testimonials', icon: 'reviews', to: 'testimonials' },
+  { name: 'Testimonials & Reviews', icon: 'reviews', to: 'testimonials' },
   { name: 'Statutory Compliances & Site Map', icon: 'gavel', to: 'statutory-compliances' },
   { divider: true },
 
   // Section 3
-  { name: 'Feedback', icon: 'support_agent', to: 'help-desk' },
+  { name: 'FAQs', icon: 'quiz', to: 'faqs' },
+  { name: 'Patient Feedback', icon: 'rate_review', to: 'patient-feedback' },
   { name: 'Contact Queries', icon: 'contact_support', to: 'contact-queries' },
   { divider: true },
 
@@ -51,9 +52,9 @@ const navLinks = [
 const rolePermissions = {
   'Super Admin': null,
   'Administrator': null,
-  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances'],
-  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'help-desk', 'services', 'specialities', 'blogs'],
-  'Operations Manager': ['dashboard', 'doctors', 'help-desk', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs']
+  'Content Manager': ['dashboard', 'specialities', 'services', 'blogs', 'patients-corner', 'spiritual-care', 'education-research', 'associate-centres', 'careers', 'testimonials', 'events', 'statutory-compliances', 'about-us', 'faqs'],
+  'Developer': ['dashboard', 'application-errors', 'settings', 'sub-admins', 'contact-queries', 'services', 'specialities', 'blogs', 'faqs'],
+  'Operations Manager': ['dashboard', 'doctors', 'contact-queries', 'patients-corner', 'testimonials', 'careers', 'blogs', 'faqs']
 };
 
 const AdminSidebar = () => {
@@ -64,7 +65,11 @@ const AdminSidebar = () => {
   const allowedRoutes = rolePermissions[userRole] || null;
 
   const filteredNavLinks = allowedRoutes 
-    ? navLinks.filter(item => item.divider || !item.to || allowedRoutes.includes(item.to))
+    ? navLinks.filter(item => {
+        if (item.divider || !item.to) return true;
+        const routeBase = item.to.split('?')[0];
+        return allowedRoutes.includes(item.to) || allowedRoutes.includes(routeBase);
+      })
     : navLinks;
 
   const handleLogout = () => {
@@ -132,13 +137,15 @@ const AdminSidebar = () => {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
-                  isActive || location.pathname.includes(item.to)
+              className={({ isActive }) => {
+                const isCurrent = isActive || location.pathname.includes(item.to);
+
+                return `flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all smooth-transition text-sm font-medium ${
+                  isCurrent
                     ? 'active-nav-link bg-white/20 text-white shadow-sm font-semibold' 
                     : 'text-white/80 hover:bg-white/10 hover:text-white'
-                }`
-              }
+                }`;
+              }}
             >
               <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
               <span>{item.name}</span>

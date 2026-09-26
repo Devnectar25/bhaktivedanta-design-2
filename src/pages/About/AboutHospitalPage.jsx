@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   HeartHandshake,
   CheckCircle2,
+  ChevronLeft,
   ChevronRight,
   ExternalLink,
   MapPin,
@@ -112,6 +113,10 @@ const AboutHospitalPage = () => {
   const [expandedQuality, setExpandedQuality] = useState(false);
   const [expandedValues, setExpandedValues] = useState(false);
 
+  // History timeline pagination (10 items per page)
+  const [historyPage, setHistoryPage] = useState(1);
+  const historyPerPage = 10;
+
   useEffect(() => {
     loadData();
 
@@ -135,7 +140,7 @@ const AboutHospitalPage = () => {
     } else if (hash === 'hospital-in-news' || hash === 'news') {
       setActiveSection('events');
       setEventsSubTab('news');
-    } else if (hash && ['about', 'vision-mission', 'awards', 'events', 'history', 'chairman', 'inspiration', 'logo', 'all'].includes(hash)) {
+    } else if (hash && (['about', 'vision-mission', 'awards', 'events', 'history', 'chairman', 'inspiration', 'logo', 'all'].includes(hash) || hash.startsWith('custom_') || hash.startsWith('custom-'))) {
       setActiveSection(hash);
     } else {
       setActiveSection('about');
@@ -244,6 +249,19 @@ const AboutHospitalPage = () => {
           >
             Hospital Logo
           </button>
+          {(aboutData.customSections || []).map((sec) => {
+            const secKey = sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`;
+            return (
+              <button
+                key={sec.id}
+                type="button"
+                onClick={() => handleTabClick(secKey)}
+                className={`about-nav-tab ${activeSection === secKey ? 'active' : ''}`}
+              >
+                {sec.title}
+              </button>
+            );
+          })}
           <button
             type="button"
             onClick={() => handleTabClick('all')}
@@ -582,42 +600,110 @@ const AboutHospitalPage = () => {
         )}
 
         {/* SECTION 2: HISTORY OF HOSPITAL (Active on 'history' or 'all') */}
-        {(activeSection === 'history' || activeSection === 'all') && (
-          <section id="history" className="about-section-block">
-            <div className="about-block-header">
-              <span className="about-section-pretitle">Heritage &amp; Milestones</span>
-              <h2 className="about-block-heading">
-                <Calendar size={22} className="about-heading-icon" />
-                History of Hospital (1986 to Present)
-              </h2>
-              <p className="about-block-subtext">
-                Tracing our inspirational evolution from voluntary medical outreach camps to an advanced multi-speciality research hospital.
-              </p>
-            </div>
+        {(activeSection === 'history' || activeSection === 'all') && (() => {
+          // Sort in decreasing order (newest/latest year first)
+          const sortedHistory = [...(history || [])].sort((a, b) => {
+            const yearA = parseInt((a?.year || '').toString().match(/\d{4}/)?.[0] || '0', 10);
+            const yearB = parseInt((b?.year || '').toString().match(/\d{4}/)?.[0] || '0', 10);
+            if (yearB !== yearA) return yearB - yearA;
+            return (b.sr || 0) - (a.sr || 0);
+          });
+          const totalHistoryItems = sortedHistory.length;
+          const totalHistoryPages = Math.max(1, Math.ceil(totalHistoryItems / historyPerPage));
+          const paginatedHistory = sortedHistory.slice(
+            (historyPage - 1) * historyPerPage,
+            historyPage * historyPerPage
+          );
 
-            <div className="about-timeline-container">
-              <div className="about-timeline-line"></div>
-              {(history || []).map((milestone, mIdx) => (
-                <div key={mIdx} className="about-timeline-item">
-                  <div className="about-timeline-badge">
-                    <span>{milestone.year}</span>
-                  </div>
-                  <div className="about-timeline-content">
-                    <div className="about-timeline-header">
-                      <h3 className="about-timeline-title">{milestone.title}</h3>
-                      {milestone.location && (
-                        <span className="about-timeline-location">
-                          <MapPin size={13} /> {milestone.location}
-                        </span>
-                      )}
+          return (
+            <section id="history" className="about-section-block">
+              <div className="about-block-header">
+                <span className="about-section-pretitle">Heritage &amp; Milestones</span>
+                <h2 className="about-block-heading">
+                  <Calendar size={22} className="about-heading-icon" />
+                  History of Hospital (1986 to Present)
+                </h2>
+                <p className="about-block-subtext">
+                  Tracing our inspirational evolution from voluntary medical outreach camps to an advanced multi-speciality research hospital.
+                </p>
+              </div>
+
+              <div className="about-timeline-container">
+                <div className="about-timeline-line"></div>
+                {paginatedHistory.map((milestone, mIdx) => (
+                  <div key={milestone.sr || mIdx} className="about-timeline-item">
+                    <div className="about-timeline-badge">
+                      <span>{milestone.year}</span>
                     </div>
-                    <p className="about-timeline-detail">{milestone.detail}</p>
+                    <div className="about-timeline-content">
+                      <div className="about-timeline-header">
+                        <h3 className="about-timeline-title">{milestone.title}</h3>
+                        {milestone.location && (
+                          <span className="about-timeline-location">
+                            <MapPin size={13} /> {milestone.location}
+                          </span>
+                        )}
+                      </div>
+                      <p className="about-timeline-detail">{milestone.detail}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* History Timeline Pagination (10 items per page) */}
+              {totalHistoryPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 pt-5 border-t border-slate-200">
+                  <span className="text-xs text-slate-500 font-medium">
+                    Showing <strong className="text-slate-800">{(historyPage - 1) * historyPerPage + 1}</strong> to{' '}
+                    <strong className="text-slate-800">{Math.min(historyPage * historyPerPage, totalHistoryItems)}</strong> of{' '}
+                    <strong className="text-slate-800">{totalHistoryItems}</strong> milestones
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      disabled={historyPage === 1}
+                      onClick={() => {
+                        setHistoryPage(p => Math.max(1, p - 1));
+                        document.getElementById('history')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition-all"
+                    >
+                      <ChevronLeft size={14} /> Previous
+                    </button>
+                    {Array.from({ length: totalHistoryPages }, (_, i) => i + 1).map(pageNum => (
+                      <button
+                        key={pageNum}
+                        type="button"
+                        onClick={() => {
+                          setHistoryPage(pageNum);
+                          document.getElementById('history')?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+                          historyPage === pageNum
+                            ? 'bg-orange-600 text-white shadow-sm'
+                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      disabled={historyPage === totalHistoryPages}
+                      onClick={() => {
+                        setHistoryPage(p => Math.min(totalHistoryPages, p + 1));
+                        document.getElementById('history')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition-all"
+                    >
+                      Next <ChevronRight size={14} />
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              )}
+            </section>
+          );
+        })()}
 
         {/* SECTION 3: CHAIRMAN'S MESSAGE (Active on 'chairman' or 'all') */}
         {(activeSection === 'chairman' || activeSection === 'all') && (
@@ -785,6 +871,101 @@ const AboutHospitalPage = () => {
           </section>
         )}
 
+        {/* CUSTOM SECTIONS RENDERING */}
+        {(aboutData.customSections || []).map((sec) => {
+          const secKey = sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`;
+          if (activeSection !== secKey && activeSection !== 'all') return null;
+
+          return (
+            <section key={sec.id} id={secKey} className="about-section-block">
+              <div className="about-block-header">
+                {sec.badge && <span className="about-section-pretitle">{sec.badge}</span>}
+                <h2 className="about-block-heading">{sec.title}</h2>
+                {sec.description && <p className="about-block-subtext">{sec.description}</p>}
+              </div>
+
+              {sec.bannerImage && (
+                <div style={{ borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', maxHeight: '380px', border: '1px solid #e2e8f0' }}>
+                  <img
+                    src={sec.bannerImage}
+                    alt={sec.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={e => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+              )}
+
+              {sec.content && (
+                <div className="about-paragraphs-list" style={{ marginBottom: '24px' }}>
+                  {sec.content.split('\n\n').map((para, pIdx) => (
+                    <p key={pIdx} className="about-paragraph">{para}</p>
+                  ))}
+                </div>
+              )}
+
+              {Array.isArray(sec.items) && sec.items.length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px', marginTop: '24px' }}>
+                  {sec.items.map((item, idx) => (
+                    <div
+                      key={item.id || idx}
+                      style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        border: '1px solid #e2e8f0',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        transition: 'transform 0.2s, box-shadow 0.2s'
+                      }}
+                    >
+                      {item.imageUrl && (
+                        <div style={{ height: '180px', overflow: 'hidden', background: '#f1f5f9' }}>
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={e => { e.target.style.display = 'none'; }}
+                          />
+                        </div>
+                      )}
+                      <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <div>
+                          {item.badge && (
+                            <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#ea580c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                              {item.badge}
+                            </span>
+                          )}
+                          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1e293b', marginTop: '4px' }}>
+                            {item.title}
+                          </h4>
+                          {item.description && (
+                            <p style={{ fontSize: '13px', color: '#64748b', marginTop: '8px', lineHeight: '1.6' }}>
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+                        {item.link && (
+                          <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: '600', color: '#ea580c', textDecoration: 'none' }}
+                            >
+                              Learn More <ExternalLink size={13} />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
+
         {/* Bottom CTA Banner */}
         <section className="about-cta-banner">
           <div>
@@ -793,12 +974,15 @@ const AboutHospitalPage = () => {
               Book a consultation or visit Bhaktivedanta Hospital &amp; Research Institute in Mira Road.
             </p>
           </div>
-          <button
-            onClick={() => setIsAppointmentModalOpen(true)}
+          <a
+            href="https://his.bhaktivedantahospital.com/EHR/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="about-cta-btn"
+            style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Book Appointment
-          </button>
+          </a>
         </section>
       </main>
 

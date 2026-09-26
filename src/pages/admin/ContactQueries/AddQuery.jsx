@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { initialQueries, saveQueries } from '../../../data/adminState';
-import { showErrorAlert } from '../../../utils/swal';
+import { addQuery } from '../../../utils/api';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 const AddQuery = () => {
   const navigate = useNavigate();
@@ -10,14 +10,9 @@ const AddQuery = () => {
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const [queriesList, setQueriesList] = useState([]);
-
-  useEffect(() => {
-    setQueriesList(initialQueries());
-  }, []);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !email || !subject || !message) {
@@ -25,19 +20,28 @@ const AddQuery = () => {
       return;
     }
 
+    setSubmitting(true);
+
     const newQuery = {
-      id: `QRY-${Date.now().toString().substring(8)}`,
-      name,
-      email,
-      subject,
-      message,
+      id: `QRY-${Math.floor(5000 + Math.random() * 5000)}`,
+      name: name.trim(),
+      email: email.trim(),
+      subject: subject.trim(),
+      message: message.trim(),
       date: new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
       status: 'Pending'
     };
 
-    const updatedList = [newQuery, ...queriesList];
-    saveQueries(updatedList);
-    navigate('/admin/contact-queries');
+    try {
+      await addQuery(newQuery);
+      showSuccessAlert("Query Saved!", `Manual query for "${newQuery.name}" saved to database successfully.`);
+      navigate('/admin/contact-queries');
+    } catch (err) {
+      console.error("Failed to save manual query:", err);
+      showErrorAlert("Save Failed", "Could not save manual query to the database.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -120,9 +124,17 @@ const AddQuery = () => {
           </button>
           <button
             type="submit"
-            className="bg-[#fea619] hover:bg-amber-500 text-slate-900 px-6 py-2 rounded-lg font-bold transition-all shadow-sm"
+            disabled={submitting}
+            className="bg-[#fea619] hover:bg-amber-500 text-slate-900 px-6 py-2 rounded-lg font-bold transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
           >
-            Save Query
+            {submitting ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
+                <span>Saving Query...</span>
+              </>
+            ) : (
+              <span>Save Query</span>
+            )}
           </button>
         </div>
       </form>

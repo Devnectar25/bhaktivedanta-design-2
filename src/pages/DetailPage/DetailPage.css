@@ -9,6 +9,7 @@
   background-color: #F8FAFC;
   font-family: 'Inter', sans-serif;
   color: #1E2733;
+  padding-top: 0;
 }
 
 @media (max-width: 991px) {

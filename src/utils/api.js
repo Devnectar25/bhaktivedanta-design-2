@@ -4,7 +4,7 @@ let base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
   base = base.replace(/\/$/, '') + '/api';
 }
-const API_BASE_URL = base;
+export const API_BASE_URL = base;
 
 /**
  * Helper to check if backend is online.
@@ -37,7 +37,16 @@ export async function apiGet(path, localStorageKey, fallbackData) {
     if (res.ok) {
       const data = await res.json();
       if (data) {
-        localStorage.setItem(localStorageKey, JSON.stringify(data));
+        try {
+          localStorage.setItem(localStorageKey, JSON.stringify(data));
+        } catch (storageErr) {
+          console.warn(`[LocalStorage] Quota exceeded or error caching ${localStorageKey}:`, storageErr.message);
+          try {
+            // Free up quota by clearing bloated client error logs and retry
+            localStorage.removeItem('bhaktivedanta_admin_app_errors');
+            localStorage.setItem(localStorageKey, JSON.stringify(data));
+          } catch (retryErr) { }
+        }
       }
       return data;
     } else if (path !== '/app-errors') {
@@ -54,6 +63,9 @@ export async function apiGet(path, localStorageKey, fallbackData) {
   if (local) {
     try {
       const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && Array.isArray(fallbackData) && parsed.length < fallbackData.length && parsed.length <= 4) {
+        return fallbackData;
+      }
       return parsed;
     } catch (e) { }
   }
@@ -216,7 +228,7 @@ export const deleteEvent = (id, fallbackList) => apiMutation(`/events/${id}`, 'D
   return list.filter(item => item.id !== id);
 });
 
-// Testimonials
+// Testimonials (Dignitary & VIP Endorsements)
 export const getTestimonials = (fallback) => apiGet('/testimonials', 'bhaktivedanta_admin_testimonials', fallback);
 export const saveTestimonialsList = (list) => apiMutation('/testimonials', 'PUT', list, 'bhaktivedanta_admin_testimonials', (old, updated) => updated);
 export const addTestimonial = (test, fallbackList) => apiMutation('/testimonials', 'POST', test, 'bhaktivedanta_admin_testimonials', (list = [], newTest) => {
@@ -226,6 +238,19 @@ export const updateTestimonial = (id, test, fallbackList) => apiMutation(`/testi
   return list.map(item => item.id === id ? { ...item, ...updatedTest } : item);
 });
 export const deleteTestimonial = (id, fallbackList) => apiMutation(`/testimonials/${id}`, 'DELETE', null, 'bhaktivedanta_admin_testimonials', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
+
+// Patient Reviews (Stories of Hope & Healing)
+export const getReviews = (fallback) => apiGet('/reviews', 'bhaktivedanta_admin_reviews', fallback);
+export const saveReviewsList = (list) => apiMutation('/reviews', 'PUT', list, 'bhaktivedanta_admin_reviews', (old, updated) => updated);
+export const addReview = (rev, fallbackList) => apiMutation('/reviews', 'POST', rev, 'bhaktivedanta_admin_reviews', (list = [], newRev) => {
+  return [...list, newRev];
+});
+export const updateReview = (id, rev, fallbackList) => apiMutation(`/reviews/${id}`, 'PUT', rev, 'bhaktivedanta_admin_reviews', (list = [], updatedRev) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedRev } : item);
+});
+export const deleteReview = (id, fallbackList) => apiMutation(`/reviews/${id}`, 'DELETE', null, 'bhaktivedanta_admin_reviews', (list = []) => {
   return list.filter(item => item.id !== id);
 });
 
@@ -311,12 +336,24 @@ export const deleteHelpDeskTicket = (id, fallbackList) => apiMutation(`/helpdesk
 // Application Errors
 export const getAppErrors = (fallback) => apiGet('/app-errors', 'bhaktivedanta_admin_app_errors', fallback);
 export const addAppError = (errorItem) => apiMutation('/app-errors', 'POST', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], newError) => {
-  return [newError, ...list];
+  return [newError, ...list].slice(0, 30);
 });
 export const updateAppError = (id, errorItem) => apiMutation(`/app-errors/${id}`, 'PUT', errorItem, 'bhaktivedanta_admin_app_errors', (list = [], updatedError) => {
   return list.map(item => item.id === id ? { ...item, ...updatedError } : item);
 });
 export const clearAppErrors = () => apiMutation('/app-errors', 'DELETE', null, 'bhaktivedanta_admin_app_errors', () => []);
+
+// Feedback Collection
+export const getFeedback = (fallback) => apiGet('/feedback', 'bhaktivedanta_admin_feedback', fallback);
+export const addFeedback = (feedbackItem) => apiMutation('/feedback', 'POST', feedbackItem, 'bhaktivedanta_admin_feedback', (list = [], newItem) => {
+  return [newItem, ...list];
+});
+export const updateFeedback = (id, feedbackItem) => apiMutation(`/feedback/${id}`, 'PUT', feedbackItem, 'bhaktivedanta_admin_feedback', (list = [], updatedItem) => {
+  return list.map(item => item.id === id ? { ...item, ...updatedItem } : item);
+});
+export const deleteFeedback = (id) => apiMutation(`/feedback/${id}`, 'DELETE', null, 'bhaktivedanta_admin_feedback', (list = []) => {
+  return list.filter(item => item.id !== id);
+});
 
 // Patients Corner State (Unified object)
 export const getPatientCornerState = (fallback) => apiGet('/patient-corner', 'bhaktivedanta_patient_corner_state', fallback);
@@ -482,39 +519,52 @@ export const getSpiritualCareState = (fallback) =>
 export const saveSpiritualCareState = (state) => 
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
 
-// About Us State
-export const getAboutUsState = async (fallback) => {
-  const result = await apiGet('/about-us', 'bhaktivedanta_about_us_state', fallback);
-  if (result && result.data && (result.data.aboutHospital || result.data.visionMissionValues)) {
-    return result.data;
-  }
-  if (result && (result.aboutHospital || result.visionMissionValues)) {
-    return result;
+// ── About Us State (Pure Local Storage - No Database Flow) ─────────────────
+
+const ABOUT_US_STORAGE_KEY = 'bhaktivedanta_about_us_state';
+
+/** GET About Us state from local storage or fallback defaults (no database) */
+export const getAboutUsState = (fallback) => {
+  try {
+    const local = localStorage.getItem(ABOUT_US_STORAGE_KEY);
+    if (local && local !== 'undefined' && local !== 'null') {
+      const parsed = JSON.parse(local);
+      if (parsed && (parsed.aboutHospital || parsed.visionMissionValues)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage read error:', err);
   }
   return fallback;
 };
 
-export const saveAboutUsState = (state) => 
-  apiMutation('/about-us', 'PUT', state, 'bhaktivedanta_about_us_state', (old, res) => {
-    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
-      ? res.data
-      : (res && (res.aboutHospital || res.visionMissionValues))
-        ? res
-        : state;
+/** SAVE About Us state to local storage (no database) */
+export const saveAboutUsState = (state) => {
+  try {
+    localStorage.setItem(ABOUT_US_STORAGE_KEY, JSON.stringify(state));
+    window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new Event('admin_data_updated'));
-    return actualData;
-  });
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage save error:', err);
+  }
+  return state;
+};
 
-export const resetAboutUsState = () =>
-  apiMutation('/about-us/reset', 'POST', {}, 'bhaktivedanta_about_us_state', (old, res) => {
-    const actualData = (res && res.data && (res.data.aboutHospital || res.data.visionMissionValues))
-      ? res.data
-      : (res && (res.aboutHospital || res.visionMissionValues))
-        ? res
-        : old;
+/** Reset About Us state in local storage (no database) */
+export const resetAboutUsState = (fallback) => {
+  try {
+    localStorage.removeItem(ABOUT_US_STORAGE_KEY);
+    window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new Event('admin_data_updated'));
-    return actualData;
-  });
+  } catch (err) {
+    console.warn('[AboutUs] LocalStorage reset error:', err);
+  }
+  return fallback;
+};
+
+/** Section helper stubs for local operation */
+export const getAboutUsSections = async () => [];
 
 // Statutory Compliances State & PDF Upload
 export const getStatutoryCompliancesState = (fallback) =>
@@ -547,5 +597,125 @@ export const uploadStatutoryPdf = async (title, fileName, base64Data) => {
   }
   return { success: true, url: base64Data, fallback: true };
 };
+
+// =============================================================
+// Associate Centres Database API
+// =============================================================
+export const ASSOCIATE_CENTRES_STORAGE_KEY = 'bhaktivedanta_associate_centres_cache';
+
+export const getAssociateCentres = (fallback = []) =>
+  apiGet('/associate-centres', ASSOCIATE_CENTRES_STORAGE_KEY, fallback);
+
+export const getAssociateCentreByIdOrSlug = async (idOrSlug) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/associate-centres/${idOrSlug}`, {
+      cache: 'no-store'
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('[API] Get associate centre failed:', err);
+  }
+  const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+  if (local) {
+    try {
+      const list = JSON.parse(local);
+      return list.find(c => c.id === idOrSlug || c.slug === idOrSlug) || null;
+    } catch (e) { }
+  }
+  return null;
+};
+
+export const createAssociateCentre = (centreData) =>
+  apiMutation('/associate-centres', 'POST', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, newCentre) => {
+    const updated = [newCentre, ...(Array.isArray(oldData) ? oldData : [])];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
+export const updateAssociateCentre = (id, centreData) =>
+  apiMutation(`/associate-centres/${id}`, 'PUT', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, updatedCentre) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).map(c => (c.id === id ? { ...c, ...updatedCentre } : c));
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
+export const deleteAssociateCentre = (id) =>
+  apiMutation(`/associate-centres/${id}`, 'DELETE', null, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).filter(c => c.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('associate_centres_updated'));
+    return updated;
+  });
+
+// =============================================================
+// Hospital Settings & Contact Details API
+// =============================================================
+export const HOSPITAL_SETTINGS_STORAGE_KEY = 'bhaktivedanta_hospital_settings_cache';
+
+export const defaultHospitalSettings = {
+  id: 'hospital-settings-main',
+  hospitalName: 'Bhaktivedanta Hospital & Research Institute',
+  adminEmail: 'admin@bhaktivedantahospital.com',
+  contactTitle: 'Contact Us',
+  contactPhone: '079-69002222',
+  contactWhatsapp: '8400146262',
+  contactEmail: 'info@bhaktivedantahospital.com',
+  contactAddress: 'Mira Road East, Thane, Maharashtra 401107',
+  mapUrl: 'https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6',
+  emergencyPhone: '079 6900 2222',
+  emergencyLabel: 'For Emergency & Appointments',
+  appointmentSlot: '20 minutes',
+  updatedAt: new Date().toISOString()
+};
+
+export const getHospitalSettings = (fallback = defaultHospitalSettings) =>
+  apiGet('/settings', HOSPITAL_SETTINGS_STORAGE_KEY, fallback);
+
+export const updateHospitalSettings = (settingsData) =>
+  apiMutation('/settings', 'PUT', settingsData, HOSPITAL_SETTINGS_STORAGE_KEY, (oldData, updatedResult) => {
+    const newSettings = updatedResult?.settings || updatedResult || settingsData;
+    const merged = { ...(oldData || defaultHospitalSettings), ...newSettings };
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hospital_settings_updated'));
+    return merged;
+  });
+
+// =============================================================
+// FAQs Database API
+// =============================================================
+export const FAQS_STORAGE_KEY = 'bhaktivedanta_faqs_cache';
+
+export const getFaqs = (fallback = []) =>
+  apiGet('/faqs', FAQS_STORAGE_KEY, fallback);
+
+export const createFaq = (faqData) =>
+  apiMutation('/faqs', 'POST', faqData, FAQS_STORAGE_KEY, (oldData, newFaq) => {
+    const updated = [...(Array.isArray(oldData) ? oldData : []), newFaq];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+export const updateFaq = (id, faqData) =>
+  apiMutation(`/faqs/${id}`, 'PUT', faqData, FAQS_STORAGE_KEY, (oldData, updatedFaq) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).map(f => (f.id === id ? { ...f, ...updatedFaq } : f));
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+export const deleteFaq = (id) =>
+  apiMutation(`/faqs/${id}`, 'DELETE', null, FAQS_STORAGE_KEY, (oldData) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).filter(f => f.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+
 
 

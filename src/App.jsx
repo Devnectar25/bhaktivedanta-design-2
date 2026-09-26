@@ -27,6 +27,9 @@ import OurManagementTeamPage from './pages/About/OurManagementTeamPage';
 import NewDevelopmentsPage from './pages/About/NewDevelopmentsPage';
 import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
+import TestimonialsPage from './pages/Testimonials/TestimonialsPage';
+import AssociateCentreDetailPage from './pages/AssociateCentres/AssociateCentreDetailPage';
+import FaqsPage from './pages/Faqs/FaqsPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -55,6 +58,9 @@ import AssociateCentres from './pages/admin/AssociateCentres/AssociateCentres';
 import Careers from './pages/admin/Careers/Careers';
 import AdminAboutUs from './pages/admin/AboutUs/AboutUs';
 import StatutoryCompliances from './pages/admin/StatutoryCompliances/StatutoryCompliances';
+import PatientFeedback from './pages/admin/Feedback/PatientFeedback';
+import FeedbackPage from './pages/Feedback/FeedbackPage';
+import AdminFaqs from './pages/admin/Faqs/Faqs';
 
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
@@ -136,8 +142,16 @@ function App() {
           <Route path="/about-us/spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
           <Route path="/about-us/our-spiritual-advisors" element={<OurSpiritualAdvisorsPage />} />
 
+          {/* Associate Centre Routes */}
+          <Route path="/our-associate-centre" element={<Navigate to="/our-associate-centre/swami-shraddhanand-hospital" replace />} />
+          <Route path="/our-associate-centre/:slug" element={<AssociateCentreDetailPage />} />
+
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/testimonials" element={<TestimonialsPage />} />
+          <Route path="/faqs" element={<FaqsPage />} />
         </Route>
 
         {/* Education & Medical Research Dedicated Routes */}
@@ -180,6 +194,7 @@ function App() {
           <Route path="add-appointment" element={<Navigate to="/admin/dashboard" replace />} />
 
           <Route path="contact-queries" element={<ContactQueries />} />
+          <Route path="patient-feedback" element={<PatientFeedback />} />
           <Route path="admin-users" element={<AdminUsers />} />
           <Route path="sub-admins" element={<SubAdmin />} />
           <Route path="help-desk" element={<HelpDesk />} />
@@ -194,7 +209,9 @@ function App() {
           <Route path="associate-centres" element={<AssociateCentres />} />
           <Route path="careers" element={<Careers />} />
           <Route path="about-us" element={<AdminAboutUs />} />
+          <Route path="new-developments" element={<Navigate to="/admin/about-us?tab=newDevelopments" replace />} />
           <Route path="statutory-compliances" element={<StatutoryCompliances />} />
+          <Route path="faqs" element={<AdminFaqs />} />
           <Route path="settings" element={<Settings />} />
 
           {/* Forms */}

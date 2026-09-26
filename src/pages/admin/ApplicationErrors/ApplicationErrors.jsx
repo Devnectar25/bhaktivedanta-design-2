@@ -63,7 +63,7 @@ const ApplicationErrors = () => {
     const simulated = {
       id: `ERR-${Math.floor(1000 + Math.random() * 9000)}`,
       timestamp: new Date().toLocaleString(),
-      level: ['Error', 'Warning', 'Critical'][Math.floor(Math.random() * 3)],
+      level: 'Error',
       source: 'System Diagnostic Test',
       message: 'Simulated runtime check exception triggered from Admin Console.',
       endpoint: '/api/health-check',
@@ -72,7 +72,7 @@ const ApplicationErrors = () => {
     };
 
     addAppError(simulated).then(() => {
-      setErrors(prev => [simulated, ...prev]);
+      getAppErrors(defaultErrors).then(data => setErrors(data || defaultErrors));
     });
   };
 
@@ -106,9 +106,9 @@ const ApplicationErrors = () => {
     return itemStatus === filterVal;
   }
 
-  const criticalCount = errors.filter(e => e.level === 'Critical').length;
-  const errorCount = errors.filter(e => e.level === 'Error').length;
-  const warningCount = errors.filter(e => e.level === 'Warning').length;
+  const criticalCount = errors.filter(e => e.level === 'Critical').reduce((acc, e) => acc + (parseInt(e.count, 10) || 1), 0);
+  const errorCount = errors.filter(e => e.level === 'Error').reduce((acc, e) => acc + (parseInt(e.count, 10) || 1), 0);
+  const warningCount = errors.filter(e => e.level === 'Warning').reduce((acc, e) => acc + (parseInt(e.count, 10) || 1), 0);
 
   return (
     <div className="space-y-6 font-sans">
@@ -256,8 +256,15 @@ const ApplicationErrors = () => {
                     {err.endpoint && <div className="font-mono text-[10px] text-slate-400">{err.endpoint}</div>}
                   </td>
                   <td className="px-4 py-3 max-w-sm">
-                    <div className="font-medium text-slate-800 truncate" title={err.message}>
-                      {err.message}
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium text-slate-800 truncate" title={err.message}>
+                        {err.message}
+                      </div>
+                      {(err.count > 1) && (
+                        <span className="shrink-0 bg-purple-100 text-purple-800 border border-purple-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full" title={`Triggered ${err.count} times`}>
+                          {err.count}x
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-3">
@@ -322,10 +329,17 @@ const ApplicationErrors = () => {
                   <div className="font-bold text-slate-800">{selectedError.source}</div>
                 </div>
                 <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Occurrences</span>
+                  <div className="font-bold text-purple-700 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm">repeat</span>
+                    {selectedError.count || 1} {(selectedError.count || 1) === 1 ? 'time' : 'times'}
+                  </div>
+                </div>
+                <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase">Timestamp</span>
                   <div className="font-mono text-slate-700">{selectedError.timestamp}</div>
                 </div>
-                <div>
+                <div className="col-span-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase">Endpoint</span>
                   <div className="font-mono text-slate-700">{selectedError.endpoint || 'N/A'}</div>
                 </div>

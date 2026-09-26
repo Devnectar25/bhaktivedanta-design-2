@@ -3,101 +3,11 @@ import {
   getCareerJobs, addCareerJob, updateCareerJob, deleteCareerJob,
   getCareerApplications, updateCareerApplication, deleteCareerApplication 
 } from '../../../utils/api';
+import { defaultCareerJobs } from '../../../data/careersData';
 import Swal from 'sweetalert2';
 
-const defaultJobs = [
-  {
-    id: 'JOB-101',
-    category: 'Consultant Vacancy',
-    title: 'Interventional Radiologist',
-    department: 'Radiology & Imaging',
-    positions: '01',
-    qualification: 'DNB (Radio Diagnosis), Fellowship in Interventional Radiology',
-    experience: '2-3 years of relevant experience',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Seeking a skilled Interventional Radiologist with experience in vascular and non-vascular interventions, fluoroscopy, and CT-guided procedures.',
-    postedDate: '2026-08-15'
-  },
-  {
-    id: 'JOB-102',
-    category: 'Consultant Vacancy',
-    title: 'Consultant Cardiologist',
-    department: 'Cardiology',
-    positions: '02',
-    qualification: 'DM / DNB (Cardiology)',
-    experience: '3-5 years of post-DM/DNB experience in clinical & interventional cardiology',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Full-time consultant required for our cardiac catheterization lab, echo cardiology, and OPD/IPD consultations.',
-    postedDate: '2026-08-18'
-  },
-  {
-    id: 'JOB-103',
-    category: 'Nursing Vacancy',
-    title: 'Senior Staff Nurse (ICU & Critical Care)',
-    department: 'Critical Care / ICU',
-    positions: '08',
-    qualification: 'B.Sc Nursing / GNM with MNC registration',
-    experience: '2+ years in Intensive Care Unit / Cardiac ICU',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Dedicated nursing professionals to deliver compassionate, skilled bedside care to critically ill patients.',
-    postedDate: '2026-08-20'
-  },
-  {
-    id: 'JOB-104',
-    category: 'Nursing Vacancy',
-    title: 'Staff Nurse (Operation Theatre - OT)',
-    department: 'Operation Theatre',
-    positions: '04',
-    qualification: 'B.Sc Nursing / GNM with MNC registration',
-    experience: '1-3 years of OT experience in multi-speciality setup',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Assisting surgical teams across Orthopedic, Cardiac, General Laparoscopic, and ENT surgical interventions.',
-    postedDate: '2026-08-22'
-  },
-  {
-    id: 'JOB-105',
-    category: 'Paramedical Vacancy',
-    title: 'Medical Laboratory Technologist (Pathology)',
-    department: 'Pathology & Blood Bank',
-    positions: '03',
-    qualification: 'B.Sc / M.Sc in Medical Laboratory Technology (MLT)',
-    experience: '1+ year experience in automated biochemistry and hematology',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Operating advanced hematology and biochemistry analyzers under NABL accredited quality guidelines.',
-    postedDate: '2026-08-25'
-  },
-  {
-    id: 'JOB-106',
-    category: 'Paramedical Vacancy',
-    title: 'Clinical Pharmacist',
-    department: 'Pharmacy',
-    positions: '03',
-    qualification: 'B.Pharm / Pharm.D with State Pharmacy Council registration',
-    experience: '1-2 years in hospital IPD/OPD dispensing',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Medication reconciliation, IPD prescription review, patient counselling, and inventory oversight.',
-    postedDate: '2026-08-28'
-  },
-  {
-    id: 'JOB-107',
-    category: 'Admin & Support Vacancy',
-    title: 'Patient Care Coordinator (Helpdesk & Admission)',
-    department: 'Front Office & Guest Relations',
-    positions: '04',
-    qualification: 'Any Graduate / Healthcare Administration diploma',
-    experience: '1-3 years in hospital reception, billing or patient coordination',
-    location: 'Mira Road, Mumbai',
-    status: 'Active',
-    description: 'Welcoming patients, managing admission procedures, insurance coordination, and addressing patient queries.',
-    postedDate: '2026-09-01'
-  }
-];
+const defaultJobs = defaultCareerJobs;
+
 
 const defaultApplications = [
   {

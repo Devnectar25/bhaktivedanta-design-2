@@ -10,9 +10,10 @@
 
 .why-testimonials-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem;
   align-items: stretch;
+  width: 100%;
 }
 
 /* ==========================================
@@ -21,7 +22,6 @@
 .why-choose-us-panel {
   position: relative;
   background-color: #fffaf4;
-  /* Soft cream color matching user screenshot */
   padding: 3rem 2.5rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(12, 26, 53, 0.02);
@@ -29,6 +29,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .why-choose-us-panel::after {
@@ -148,10 +151,33 @@
    RIGHT COLUMN: Testimonials
    ========================================== */
 .testimonials-panel {
+  position: relative;
+  background-color: #fffaf4;
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(12, 26, 53, 0.02);
+  border: 1px solid rgba(234, 88, 12, 0.05);
   display: flex;
   flex-direction: column;
-  padding: 0 0 3rem 1.5rem;
   height: 100%;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.testimonials-panel::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 130px;
+  height: 130px;
+  background-image: url('/emblem.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .testimonials-header {
@@ -170,16 +196,22 @@
 .testimonials-stack-layout {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   flex: 1;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.25rem;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .testimonials-stack {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.15rem;
   flex: 1;
+  min-width: 0;
+  justify-content: center;
 }
 
 .stack-card {
@@ -192,6 +224,9 @@
   box-shadow: 0 8px 30px rgba(12, 26, 53, 0.04);
   border: 1px solid rgba(12, 26, 53, 0.03);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stack-card:hover {
@@ -218,6 +253,8 @@
 
 .stack-card-content {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stack-card-quote {
@@ -226,6 +263,13 @@
   color: #475569;
   margin: 0 0 0.65rem 0;
   font-weight: 500;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stack-card-name {
@@ -233,6 +277,9 @@
   font-weight: 800;
   color: #ea580c;
   margin: 0 0 0.15rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stack-card-title {
@@ -240,6 +287,9 @@
   color: #ea580c;
   font-weight: 700;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Dots navigation indicator on right */
@@ -269,16 +319,17 @@
 }
 
 .btn-testimonials-more {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   background-color: #ea580c;
   color: #ffffff !important;
   padding: 0.65rem 2.25rem;
   border-radius: 6px;
   font-weight: 700;
-  text-decoration: none;
+  text-decoration: none !important;
   font-size: 0.85rem;
   box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
-  transition: all 0.2s ease;
 }
 
 .btn-testimonials-more:hover {

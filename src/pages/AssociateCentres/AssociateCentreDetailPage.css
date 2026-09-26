@@ -1,0 +1,582 @@
+/* =============================================================
+   Associate Centre Detail Page Styles
+   Strict reproduction of https://www.bhaktivedantahospital.com/our-associate-centre/swami-shraddhanand-hospital
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;500;600;700&display=swap');
+
+.ac-page-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 16px 20px 60px !important;
+  box-sizing: border-box !important;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: #333333 !important;
+}
+
+/* Title & Share Header Row */
+.ac-title-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  margin-bottom: 24px !important;
+  min-height: 48px !important;
+  width: 100% !important;
+}
+
+.ac-page-title {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #2664A8 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 0 50px !important;
+  line-height: 1.3 !important;
+}
+
+.ac-share-container {
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 20 !important;
+}
+
+.ac-share-btn {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+}
+
+.ac-share-btn:hover {
+  background: #f8fafc !important;
+  color: #f58634 !important;
+  border-color: #f58634 !important;
+}
+
+.ac-share-menu {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  right: 0 !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 8px 0 !important;
+  min-width: 175px !important;
+  z-index: 100 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ac-share-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 9px 16px !important;
+  color: #334155 !important;
+  text-decoration: none !important;
+  font-size: 13.5px !important;
+  background: none !important;
+  border: none !important;
+  width: 100% !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+
+.ac-share-item:hover {
+  background: #fff7ea !important;
+  color: #f58634 !important;
+}
+
+/* =============================================================
+   Hero / Banner Section (.row.abban)
+   ============================================================= */
+.ac-hero-banner {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  height: 383px !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+  margin-bottom: 36px !important;
+  background: #fff7ea !important;
+  position: relative !important;
+}
+
+.ac-hero-image-wrap {
+  flex: 1 1 auto !important;
+  height: 383px !important;
+  min-width: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.ac-hero-image {
+  width: 100% !important;
+  height: 383px !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* Floating / Right Contact Card (.contact-bhakthi.vvcon) */
+.ac-hero-contact-card {
+  width: 440px !important;
+  min-width: 440px !important;
+  max-width: 440px !important;
+  height: 383px !important;
+  background: #fff7ea !important;
+  padding: 45px 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  border-left: 2px solid rgba(245, 134, 52, 0.2) !important;
+}
+
+.ac-card-hospital-name {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #f58634 !important;
+  margin: 0 0 22px 0 !important;
+  line-height: 1.35 !important;
+}
+
+.ac-card-contact-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  margin-bottom: 18px !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  color: #333333 !important;
+}
+
+.ac-card-contact-row:last-child {
+  margin-bottom: 0 !important;
+}
+
+.ac-card-icon {
+  color: #f58634 !important;
+  flex-shrink: 0 !important;
+  margin-top: 3px !important;
+}
+
+.ac-card-contact-row a {
+  color: #333333 !important;
+  text-decoration: none !important;
+  transition: color 0.15s !important;
+}
+
+.ac-card-contact-row a:hover {
+  color: #f58634 !important;
+  text-decoration: underline !important;
+}
+
+/* =============================================================
+   Tabs Navigation (.tabs.tabs-responsive)
+   ============================================================= */
+.ac-tabs-bar {
+  display: flex !important;
+  flex-direction: row !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  margin-bottom: 36px !important;
+  gap: 6px !important;
+}
+
+.ac-tab-item {
+  padding: 12px 28px !important;
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  background: none !important;
+  border: none !important;
+  border-bottom: 3px solid transparent !important;
+  margin-bottom: -2px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+}
+
+.ac-tab-item:hover {
+  color: #2664A8 !important;
+}
+
+.ac-tab-item.active {
+  color: #2664A8 !important;
+  border-bottom-color: #f58634 !important;
+}
+
+/* =============================================================
+   Tab 1: Overview
+   ============================================================= */
+.ac-features-row {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+  margin-bottom: 36px !important;
+}
+
+.ac-feature-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 20px !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.ac-feature-box:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+.ac-feature-icon-wrap {
+  width: 52px !important;
+  height: 52px !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.ac-feature-icon-img {
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain !important;
+}
+
+.ac-feature-text {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #9f2022 !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+.ac-overview-paragraphs {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+.ac-overview-paragraphs p {
+  font-size: 16.5px !important;
+  line-height: 1.85 !important;
+  color: #475569 !important;
+  margin: 0 !important;
+}
+
+/* =============================================================
+   Tab 2: Services
+   ============================================================= */
+.ac-services-box {
+  background: #edf8fe !important;
+  border-radius: 10px !important;
+  padding: 36px 40px !important;
+  margin-bottom: 48px !important;
+}
+
+.ac-services-title {
+  font-size: 21px !important;
+  font-weight: 600 !important;
+  color: #2664A8 !important;
+  margin: 0 0 24px 0 !important;
+  line-height: 1.4 !important;
+}
+
+.ac-services-columns {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 32px !important;
+}
+
+.ac-services-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.ac-services-list li {
+  position: relative !important;
+  padding-left: 24px !important;
+  margin-bottom: 14px !important;
+  font-size: 16.5px !important;
+  color: #334155 !important;
+  line-height: 1.5 !important;
+}
+
+.ac-services-list li::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 8px !important;
+  width: 9px !important;
+  height: 9px !important;
+  border-radius: 50% !important;
+  background-color: #fac299 !important;
+}
+
+/* Community Services */
+.ac-community-section {
+  text-align: center !important;
+  padding: 10px 0 30px !important;
+}
+
+.ac-community-heading {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #2664A8 !important;
+  margin: 0 0 36px 0 !important;
+}
+
+.ac-community-grid {
+  display: flex !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 32px !important;
+}
+
+.ac-community-card {
+  width: 220px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding: 24px 16px !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.25s ease !important;
+}
+
+.ac-community-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 10px 24px rgba(38, 100, 168, 0.12) !important;
+  border-color: #e2e8f0 !important;
+}
+
+.ac-community-icon-container {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 50% !important;
+  background: #f8fafc !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 16px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.ac-community-icon-img {
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain !important;
+}
+
+.ac-community-title {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+  color: #333333 !important;
+  margin: 0 !important;
+  line-height: 1.35 !important;
+}
+
+/* =============================================================
+   Tab 3: Contact Us
+   ============================================================= */
+.ac-contact-layout {
+  display: grid !important;
+  grid-template-columns: 1.35fr 1fr !important;
+  gap: 32px !important;
+  align-items: start !important;
+}
+
+.ac-contact-map-col {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.ac-map-frame {
+  width: 100% !important;
+  height: 440px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+.ac-map-frame iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  display: block !important;
+}
+
+.ac-map-address-banner {
+  background: #ffffff !important;
+  padding: 16px 20px !important;
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  font-size: 14.5px !important;
+  color: #475569 !important;
+}
+
+/* Right Column: Our Associate Centres List (scrollable) */
+.ac-other-centres-col {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 24px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+.ac-other-centres-heading {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 21px !important;
+  font-weight: 700 !important;
+  color: #2664A8 !important;
+  margin-top: 0 !important;
+  margin-bottom: 18px !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.ac-scroll-list {
+  max-height: 440px !important;
+  overflow-y: auto !important;
+  padding-right: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.ac-scroll-list::-webkit-scrollbar {
+  width: 5px !important;
+}
+
+.ac-scroll-list::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+  border-radius: 10px !important;
+}
+
+.ac-scroll-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 10px !important;
+}
+
+.ac-scroll-card {
+  padding: 14px 16px !important;
+  background: #ffffff !important;
+  border: 1px solid #f1f5f9 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.2s ease !important;
+}
+
+.ac-scroll-card:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07) !important;
+}
+
+.ac-scroll-card-title {
+  font-family: 'Libre Baskerville', Georgia, serif !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #2664A8 !important;
+  margin: 0 0 8px 0 !important;
+}
+
+.ac-scroll-card-address {
+  font-size: 13.5px !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.ac-scroll-card-phone {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  color: #475569 !important;
+  margin-bottom: 8px !important;
+}
+
+.ac-scroll-card-link {
+  display: inline-block !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #f58634 !important;
+  text-decoration: none !important;
+}
+
+.ac-scroll-card-link:hover {
+  color: #ea580c !important;
+  text-decoration: underline !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ac-hero-banner {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+
+  .ac-hero-image-wrap {
+    height: 280px !important;
+  }
+
+  .ac-hero-image {
+    height: 280px !important;
+  }
+
+  .ac-hero-contact-card {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    padding: 30px 24px !important;
+    border-left: none !important;
+    border-top: 3px solid #f58634 !important;
+  }
+
+  .ac-features-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ac-contact-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ac-services-columns {
+    grid-template-columns: 1fr !important;
+  }
+}
