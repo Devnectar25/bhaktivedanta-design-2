@@ -15,6 +15,7 @@ import Stats from './components/Stats/Stats';
 import NewDevelopments from './components/NewDevelopments/NewDevelopments';
 import Infrastructure from './components/Infrastructure/Infrastructure';
 import Testimonials from './components/Testimonials/Testimonials';
+import ServicesPage from './pages/Services/ServicesPage';
 import Footer from './components/Footer/Footer';
 import ServiceDetailModal from './components/ServiceDetailModal';
 import AppointmentModal from './components/AppointmentModal/AppointmentModal';
@@ -119,6 +120,7 @@ function App() {
 
           {/* 4 Dedicated Modules Full-Page Routes */}
           <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
+          <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<DetailPage module="services" />} />
           <Route path="/patients-corner/:slug" element={<DetailPage module="patients-corner" />} />
           <Route path="/patient-corner/:slug" element={<DetailPage module="patients-corner" />} />
@@ -212,6 +214,7 @@ function App() {
           <Route path="new-developments" element={<Navigate to="/admin/about-us?tab=newDevelopments" replace />} />
           <Route path="statutory-compliances" element={<StatutoryCompliances />} />
           <Route path="faqs" element={<AdminFaqs />} />
+          <Route path="hero-banners" element={<Navigate to="/admin/settings?tab=hero-banners" replace />} />
           <Route path="settings" element={<Settings />} />
 
           {/* Forms */}
