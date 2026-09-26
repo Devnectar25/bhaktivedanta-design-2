@@ -15,9 +15,21 @@
   flex-wrap: wrap;
 }
 
+.section-header-row.centered {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
 .section-header-text {
   flex: 1;
   min-width: 250px;
+}
+
+.section-header-row.centered .section-header-text {
+  text-align: center;
+  flex: none;
 }
 
 .testimonials-section .section-label {
@@ -290,6 +302,10 @@
   .section-header-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .section-header-row.centered {
+    align-items: center;
+    text-align: center;
   }
   .carousel-nav-controls {
     align-self: flex-end;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import './Testimonials.css';
-import { Star, Quote, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
 import { initialReviews } from '../../data/adminState';
 
 const fallbackReviews = [
@@ -71,33 +70,13 @@ const Testimonials = () => {
   }, []);
 
   const totalItems = items.length;
-  const canRotate = totalItems > visibleCount;
+  const canRotate = totalItems > 1;
 
   // Handle Next rotation
   const handleNext = () => {
     if (!canRotate || isJumpingRef.current) return;
     setWithTransition(true);
     setCurrentIndex(prev => prev + 1);
-  };
-
-  // Handle Previous rotation
-  const handlePrev = () => {
-    if (!canRotate || isJumpingRef.current) return;
-    if (currentIndex === 0) {
-      isJumpingRef.current = true;
-      setWithTransition(false);
-      setCurrentIndex(totalItems);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setWithTransition(true);
-          setCurrentIndex(totalItems - 1);
-          isJumpingRef.current = false;
-        });
-      });
-    } else {
-      setWithTransition(true);
-      setCurrentIndex(prev => prev - 1);
-    }
   };
 
   // Infinite seamless reset on transition end
@@ -108,20 +87,13 @@ const Testimonials = () => {
     }
   };
 
-  // Direct dot click
-  const handleDotClick = (dotIdx) => {
-    if (!canRotate) return;
-    setWithTransition(true);
-    setCurrentIndex(dotIdx);
-  };
-
-  // Auto-rotation timer (4.5s), pauses on hover
+  // Auto-rotation timer (3.5s), pauses on hover
   useEffect(() => {
     if (!canRotate || isPaused) return;
 
     const interval = setInterval(() => {
       handleNext();
-    }, 4500);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, [canRotate, isPaused, currentIndex, totalItems, visibleCount]);
@@ -143,35 +115,12 @@ const Testimonials = () => {
   return (
     <section id="testimonials" className="testimonials-section">
       <div className="container">
-        {/* Header with Title and Rotation Arrow Buttons */}
-        <div className="section-header-row">
+        {/* Header with Title Centered */}
+        <div className="section-header-row centered">
           <div className="section-header-text">
             <p className="section-label">Patient Reviews</p>
             <h2>Stories of <span>Hope &amp; Healing</span></h2>
           </div>
-
-          {canRotate && (
-            <div className="carousel-nav-controls">
-              <button
-                type="button"
-                onClick={handlePrev}
-                className="carousel-nav-btn prev"
-                aria-label="Previous reviews"
-                title="Previous reviews"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                type="button"
-                onClick={handleNext}
-                className="carousel-nav-btn next"
-                aria-label="Next reviews"
-                title="Next reviews"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Carousel Viewport (Overflow hidden, only 3 cards at a time, never below) */}
@@ -234,27 +183,6 @@ const Testimonials = () => {
           </div>
         </div>
 
-        {/* Footer with Carousel Dots & View All Reviews Button */}
-        <div className="testimonials-footer">
-          {canRotate && (
-            <div className="carousel-dots">
-              {items.map((_, dotIdx) => (
-                <button
-                  key={dotIdx}
-                  type="button"
-                  className={`carousel-dot ${dotIdx === (currentIndex % totalItems) ? 'active' : ''}`}
-                  onClick={() => handleDotClick(dotIdx)}
-                  aria-label={`Go to slide ${dotIdx + 1}`}
-                />
-              ))}
-            </div>
-          )}
-
-          <Link to="/testimonials" className="btn-view-all-reviews">
-            <span>View All Reviews</span>
-            <ArrowRight size={16} />
-          </Link>
-        </div>
       </div>
     </section>
   );

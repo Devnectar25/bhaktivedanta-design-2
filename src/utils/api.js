@@ -651,5 +651,71 @@ export const deleteAssociateCentre = (id) =>
     return updated;
   });
 
+// =============================================================
+// Hospital Settings & Contact Details API
+// =============================================================
+export const HOSPITAL_SETTINGS_STORAGE_KEY = 'bhaktivedanta_hospital_settings_cache';
+
+export const defaultHospitalSettings = {
+  id: 'hospital-settings-main',
+  hospitalName: 'Bhaktivedanta Hospital & Research Institute',
+  adminEmail: 'admin@bhaktivedantahospital.com',
+  contactTitle: 'Contact Us',
+  contactPhone: '079-69002222',
+  contactWhatsapp: '8400146262',
+  contactEmail: 'info@bhaktivedantahospital.com',
+  contactAddress: 'Mira Road East, Thane, Maharashtra 401107',
+  mapUrl: 'https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6',
+  emergencyPhone: '079 6900 2222',
+  emergencyLabel: 'For Emergency & Appointments',
+  appointmentSlot: '20 minutes',
+  updatedAt: new Date().toISOString()
+};
+
+export const getHospitalSettings = (fallback = defaultHospitalSettings) =>
+  apiGet('/settings', HOSPITAL_SETTINGS_STORAGE_KEY, fallback);
+
+export const updateHospitalSettings = (settingsData) =>
+  apiMutation('/settings', 'PUT', settingsData, HOSPITAL_SETTINGS_STORAGE_KEY, (oldData, updatedResult) => {
+    const newSettings = updatedResult?.settings || updatedResult || settingsData;
+    const merged = { ...(oldData || defaultHospitalSettings), ...newSettings };
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hospital_settings_updated'));
+    return merged;
+  });
+
+// =============================================================
+// FAQs Database API
+// =============================================================
+export const FAQS_STORAGE_KEY = 'bhaktivedanta_faqs_cache';
+
+export const getFaqs = (fallback = []) =>
+  apiGet('/faqs', FAQS_STORAGE_KEY, fallback);
+
+export const createFaq = (faqData) =>
+  apiMutation('/faqs', 'POST', faqData, FAQS_STORAGE_KEY, (oldData, newFaq) => {
+    const updated = [...(Array.isArray(oldData) ? oldData : []), newFaq];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+export const updateFaq = (id, faqData) =>
+  apiMutation(`/faqs/${id}`, 'PUT', faqData, FAQS_STORAGE_KEY, (oldData, updatedFaq) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).map(f => (f.id === id ? { ...f, ...updatedFaq } : f));
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+export const deleteFaq = (id) =>
+  apiMutation(`/faqs/${id}`, 'DELETE', null, FAQS_STORAGE_KEY, (oldData) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).filter(f => f.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('faqs_updated'));
+    return updated;
+  });
+
+
 
 

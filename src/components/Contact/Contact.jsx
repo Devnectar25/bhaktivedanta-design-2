@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Contact.css';
 import { Phone, Mail, MapPin, Send, MessageSquare } from 'lucide-react';
-import { addQuery } from '../../utils/api';
+import { addQuery, getHospitalSettings, defaultHospitalSettings } from '../../utils/api';
 import { showSuccessAlert, showErrorAlert } from '../../utils/swal';
 
 const Contact = () => {
+  const [settings, setSettings] = useState(defaultHospitalSettings);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,6 +14,25 @@ const Contact = () => {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    getHospitalSettings().then(res => {
+      if (res) setSettings(prev => ({ ...prev, ...res }));
+    }).catch(() => {});
+
+    const handleSync = () => {
+      getHospitalSettings().then(res => {
+        if (res) setSettings(prev => ({ ...prev, ...res }));
+      }).catch(() => {});
+    };
+
+    window.addEventListener('hospital_settings_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('hospital_settings_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,8 +102,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="contact-item-label">Emergency / Helpline</div>
-                  <a href="tel:07969002222" className="contact-item-value">
-                    079-69002222
+                  <a href={`tel:${String(settings.contactPhone || '07969002222').replace(/\s+/g, '')}`} className="contact-item-value">
+                    {settings.contactPhone || '079-69002222'}
                   </a>
                 </div>
               </div>
@@ -94,8 +114,13 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="contact-item-label">WhatsApp Support</div>
-                  <a href="https://wa.me/8400146262" target="_blank" rel="noopener noreferrer" className="contact-item-value">
-                    +91 84001 46262
+                  <a 
+                    href={`https://wa.me/${String(settings.contactWhatsapp || '8400146262').replace(/[^0-9]/g, '')}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="contact-item-value"
+                  >
+                    {settings.contactWhatsapp ? `+91 ${settings.contactWhatsapp}` : '+91 84001 46262'}
                   </a>
                 </div>
               </div>
@@ -106,8 +131,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="contact-item-label">Official Email</div>
-                  <a href="mailto:info@bhaktivedantahospital.com" className="contact-item-value" style={{ fontSize: '0.9rem' }}>
-                    info@bhaktivedantahospital.com
+                  <a href={`mailto:${settings.contactEmail || 'info@bhaktivedantahospital.com'}`} className="contact-item-value" style={{ fontSize: '0.9rem' }}>
+                    {settings.contactEmail || 'info@bhaktivedantahospital.com'}
                   </a>
                 </div>
               </div>
@@ -118,8 +143,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="contact-item-label">Hospital Location</div>
-                  <div className="contact-item-value" style={{ fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4' }}>
-                    Srishti Complex, Bhaktivedanta Swami Marg, Mira Road (East), Thane - 401107
+                  <div className="contact-item-value" style={{ fontSize: '0.85rem', fontWeight: '500', lineHeight: '1.4', whiteSpace: 'pre-line' }}>
+                    {settings.contactAddress || 'Mira Road East, Thane, \nMaharashtra 401107'}
                   </div>
                 </div>
               </div>

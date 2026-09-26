@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { initialDoctors, saveDoctors } from '../../../data/adminState';
-import defaultDoctors from '../../../data/defaultDoctors.json';
 import { deleteDoctor } from '../../../utils/api';
 
 const Doctors = () => {
@@ -27,21 +26,11 @@ const Doctors = () => {
     }
     initialDoctors().then(data => {
       if (Array.isArray(data)) {
-        if (data.length <= 4 && Array.isArray(defaultDoctors) && defaultDoctors.length > 4) {
-          setDoctors(defaultDoctors);
-          try {
-            localStorage.setItem('bhaktivedanta_admin_doctors', JSON.stringify(defaultDoctors));
-          } catch (e) { }
-        } else {
-          setDoctors(data);
-        }
+        setDoctors(data);
       }
       setLoading(false);
     }).catch(err => {
-      console.error("Failed to load doctors:", err);
-      if (Array.isArray(defaultDoctors) && defaultDoctors.length > 0) {
-        setDoctors(defaultDoctors);
-      }
+      console.error("Failed to load doctors from database:", err);
       setLoading(false);
     });
   };

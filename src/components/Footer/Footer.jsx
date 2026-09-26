@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Footer.css';
 import { 
   HeartPulse, 
@@ -11,7 +11,7 @@ import {
   Award, 
   FileSpreadsheet 
 } from 'lucide-react';
-import { getStatutoryCompliancesState } from '../../utils/api';
+import { getStatutoryCompliancesState, getHospitalSettings, defaultHospitalSettings } from '../../utils/api';
 import { openPdfDocument } from '../../utils/pdfViewer';
 
 const iconMap = {
@@ -32,8 +32,10 @@ const defaultInitialCompliances = [
 
 const Footer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [compliances, setCompliances] = useState(defaultInitialCompliances);
   const [siteMapPdfUrl, setSiteMapPdfUrl] = useState('');
+  const [settings, setSettings] = useState(defaultHospitalSettings);
 
   useEffect(() => {
     const fetchCompliances = () => {
@@ -51,13 +53,32 @@ const Footer = () => {
       });
     };
 
-    fetchCompliances();
+    const fetchSettings = () => {
+      getHospitalSettings().then(res => {
+        if (res && typeof res === 'object') {
+          setSettings(prev => ({ ...prev, ...res }));
+        }
+      }).catch(err => {
+        console.warn('Footer could not fetch hospital settings:', err);
+      });
+    };
 
-    const handleSync = () => fetchCompliances();
+    fetchCompliances();
+    fetchSettings();
+
+    const handleSync = () => {
+      fetchCompliances();
+      fetchSettings();
+    };
+
     window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('hospital_settings_updated', handleSync);
+    window.addEventListener('storage', handleSync);
     window.addEventListener('focus', handleSync);
     return () => {
       window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('hospital_settings_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
       window.removeEventListener('focus', handleSync);
     };
   }, []);
@@ -68,6 +89,16 @@ const Footer = () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       navigate('/');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleContactClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === '/contact' || location.pathname === '/contact-us') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/contact');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -132,10 +163,10 @@ const Footer = () => {
           <h3>Quick Links</h3>
           <ul className="footer-links">
              <li><a href="/" onClick={handleLogoClick}>Home</a></li>
-             <li><a href="#about">About Us</a></li>
-             <li><a href="#faqs">FAQs</a></li>
+             <li><Link to="/about-us/about-hospital">About Us</Link></li>
+             <li><Link to="/faqs">FAQs</Link></li>
              <li><a href="#blogs">Blogs</a></li>
-             <li><Link to="/contact">Contact Us</Link></li>
+             <li><a href="/contact" onClick={handleContactClick}>Contact Us</a></li>
              <li>
                <a 
                  href={siteMapPdfUrl || '#sitemap'}
@@ -174,18 +205,48 @@ const Footer = () => {
         </div>
 
         <div className="footer-col">
-          <h3>Contact Us</h3>
+          <h3>
+            <a 
+              href="/contact" 
+              onClick={handleContactClick} 
+              style={{ color: 'inherit', textDecoration: 'none', cursor: 'pointer' }}
+              title="Contact Us"
+            >
+              {settings.contactTitle || 'Contact Us'}
+            </a>
+          </h3>
           <ul className="footer-info">
-             <li>Phone: 079-69002222</li>
-             <li>WhatsApp: 8400146262</li>
-             <li>info@bhaktivedantahospital.com</li>
-             <li className="footer-address">
-               Mira Road East, Thane, <br />Maharashtra 401107
+             <li>
+               Phone: {settings.contactPhone ? (
+                 <a href={`tel:${String(settings.contactPhone).replace(/\s+/g, '')}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                   {settings.contactPhone}
+                 </a>
+               ) : '079-69002222'}
+             </li>
+             <li>
+               WhatsApp: {settings.contactWhatsapp ? (
+                 <a 
+                   href={`https://wa.me/${String(settings.contactWhatsapp).replace(/[^0-9]/g, '')}`} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   style={{ color: 'inherit', textDecoration: 'none' }}
+                 >
+                   {settings.contactWhatsapp}
+                 </a>
+               ) : '8400146262'}
+             </li>
+             <li>
+               <a href={`mailto:${settings.contactEmail || 'info@bhaktivedantahospital.com'}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                 {settings.contactEmail || 'info@bhaktivedantahospital.com'}
+               </a>
+             </li>
+             <li className="footer-address" style={{ whiteSpace: 'pre-line' }}>
+               {settings.contactAddress || 'Mira Road East, Thane, \nMaharashtra 401107'}
              </li>
           </ul>
           <div className="view-map-wrap">
             <a 
-              href="https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6" 
+              href={settings.mapUrl || 'https://maps.app.goo.gl/yX3uLp8jXz2U4u1D6'} 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-view-map"
