@@ -251,6 +251,7 @@ const AddPatientGuide = ({ mode = 'add' }) => {
 
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
+  const [uploadingBanner, setUploadingBanner] = useState(false);
   const [categories, setCategories] = useState([]);
   const [allGuides, setAllGuides] = useState([]);
 
@@ -270,6 +271,10 @@ const AddPatientGuide = ({ mode = 'add' }) => {
 
   // Active Tab Index in Builder
   const [activeTabIdx, setActiveTabIdx] = useState(0);
+
+  // Inline Tab Creation State
+  const [isAddingTab, setIsAddingTab] = useState(false);
+  const [newTabTitle, setNewTabTitle] = useState('');
 
   // Modal Dialogs State
   const [alertState, setAlertState] = useState({ isOpen: false, title: '', message: '', type: 'info' });
@@ -390,11 +395,68 @@ const AddPatientGuide = ({ mode = 'add' }) => {
     });
   };
 
+  // Image Upload processor for Guide Banner
+  const processImageUpload = (file) => {
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setAlertState({
+        isOpen: true,
+        title: 'File Size Exceeded',
+        message: 'The selected image exceeds the 10MB limit. Please choose a smaller image file.',
+        type: 'warning'
+      });
+      return;
+    }
+
+    setUploadingBanner(true);
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        let res = await fetch('http://localhost:5000/api/patient-corner/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            guideTitle: guideData.title || 'patient-guide',
+            fileName: file.name,
+            base64Data
+          })
+        });
+
+        if (!res.ok) {
+          res = await fetch('http://localhost:5000/api/services/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              serviceName: guideData.title || 'patient-guide',
+              fileName: file.name,
+              base64Data
+            })
+          });
+        }
+
+        const data = await res.json();
+        if (data && data.url) {
+          handleFieldChange('bannerImage', data.url);
+        } else {
+          handleFieldChange('bannerImage', base64Data);
+        }
+      } catch (err) {
+        console.warn('Upload fallback to local base64:', err);
+        handleFieldChange('bannerImage', base64Data);
+      } finally {
+        setUploadingBanner(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   // ----------------------------------------------------
   // Tab Operations
   // ----------------------------------------------------
-  const handleAddTab = () => {
-    const newTabTitle = prompt('Enter New Tab Title (e.g. Admission Guidelines, Amenities):');
+  const handleConfirmAddTab = () => {
     if (!newTabTitle || !newTabTitle.trim()) return;
 
     const newTab = createDefaultTab(newTabTitle.trim());
@@ -405,6 +467,8 @@ const AddPatientGuide = ({ mode = 'add' }) => {
       tabs: [...prev.tabs, newTab]
     }));
     setActiveTabIdx(guideData.tabs.length);
+    setNewTabTitle('');
+    setIsAddingTab(false);
   };
 
   const handleUpdateTab = (tabIdx, updates) => {
@@ -725,7 +789,7 @@ const AddPatientGuide = ({ mode = 'add' }) => {
             />
           </div>
 
-          <div className="md:col-span-2 space-y-1">
+          <div className="md:col-span-3 space-y-1">
             <label className="font-bold text-slate-700">Short Summary / Description</label>
             <textarea
               rows="2"
@@ -736,15 +800,67 @@ const AddPatientGuide = ({ mode = 'add' }) => {
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="font-bold text-slate-700">Banner Image URL (Optional)</label>
-            <input
-              type="text"
-              placeholder="https://images.unsplash.com/..."
-              value={guideData.bannerImage}
-              onChange={(e) => handleFieldChange('bannerImage', e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-slate-800 outline-none focus:border-amber-500 font-medium"
-            />
+          {/* Guide Banner Image Upload & Preview */}
+          <div className="md:col-span-3 space-y-2 pt-3 border-t border-slate-100">
+            <label className="font-bold text-slate-600 text-xs flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-sm text-amber-600">image</span>
+              <span>Guide Banner / Header Image (Optional)</span>
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center bg-slate-50/70 p-3 rounded-lg border border-slate-200/80">
+              <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-white h-24 flex items-center justify-center shadow-2xs">
+                {guideData.bannerImage ? (
+                  <img
+                    src={guideData.bannerImage}
+                    alt="Guide Banner"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-2 text-slate-400">
+                    <span className="material-symbols-outlined text-2xl text-slate-300">wallpaper</span>
+                    <p className="text-[10px] font-medium">No Banner Image</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="sm:col-span-2 space-y-2">
+                <div className="flex gap-2 items-center">
+                  <label className={`flex-1 flex items-center justify-center gap-2 border border-dashed rounded-lg px-3 py-2 cursor-pointer font-bold text-xs transition-all ${
+                    uploadingBanner ? 'bg-amber-50 border-amber-300 text-amber-700' : 'bg-white border-amber-300 text-amber-800 hover:bg-amber-50 shadow-2xs'
+                  }`}>
+                    <span className="material-symbols-outlined text-sm">
+                      {uploadingBanner ? 'sync' : 'cloud_upload'}
+                    </span>
+                    <span>{uploadingBanner ? 'Uploading...' : 'Upload Banner Image'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => processImageUpload(e.target.files?.[0])}
+                      disabled={uploadingBanner}
+                    />
+                  </label>
+
+                  {guideData.bannerImage && (
+                    <button
+                      type="button"
+                      onClick={() => handleFieldChange('bannerImage', '')}
+                      className="px-3 py-2 text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-lg font-bold border border-rose-200 cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  className="w-full bg-white border border-slate-200 px-3 py-1.5 rounded-lg outline-none font-medium text-[11px] text-slate-600 focus:border-amber-500"
+                  placeholder="Image URL (Auto-filled on upload or paste direct URL)..."
+                  value={guideData.bannerImage}
+                  onChange={(e) => handleFieldChange('bannerImage', e.target.value)}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -759,15 +875,61 @@ const AddPatientGuide = ({ mode = 'add' }) => {
             </div>
             <p className="text-xs text-slate-500 mt-0.5">Manage tabs and nested sections inside this guide.</p>
           </div>
-          <button
-            type="button"
-            onClick={handleAddTab}
-            className="flex items-center gap-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors w-fit"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-            <span>Add New Tab</span>
-          </button>
+          {!isAddingTab && (
+            <button
+              type="button"
+              onClick={() => { setIsAddingTab(true); setNewTabTitle(''); }}
+              className="flex items-center gap-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors w-fit"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              <span>Add New Tab</span>
+            </button>
+          )}
         </div>
+
+        {/* Inline Add Tab UI */}
+        {isAddingTab && (
+          <div className="flex flex-wrap items-center gap-2 bg-blue-50/70 p-3 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900">
+              <span className="material-symbols-outlined text-sm text-blue-600">add_circle</span>
+              <span>New Tab:</span>
+            </div>
+            <input
+              type="text"
+              autoFocus
+              value={newTabTitle}
+              onChange={(e) => setNewTabTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleConfirmAddTab();
+                } else if (e.key === 'Escape') {
+                  setIsAddingTab(false);
+                  setNewTabTitle('');
+                }
+              }}
+              placeholder="Enter tab title (e.g. Admission Guidelines, Amenities)..."
+              className="px-3 py-1.5 rounded-lg border border-blue-300 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[260px] flex-1"
+            />
+            <button
+              type="button"
+              onClick={handleConfirmAddTab}
+              disabled={!newTabTitle.trim()}
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-sm">check</span>
+              <span>Add Tab</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => { setIsAddingTab(false); setNewTabTitle(''); }}
+              className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-600 rounded-lg text-xs font-bold transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-sm">close</span>
+              <span>Cancel</span>
+            </button>
+          </div>
+        )}
 
         {/* Horizontal Tab Switcher */}
         <div className="flex gap-2 overflow-x-auto pb-2 border-b border-slate-200">

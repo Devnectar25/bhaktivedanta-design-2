@@ -448,40 +448,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       const allSections = spiritualCareData.sections || defaultSpiritualSections;
       targetSection = allSections.find(s =>
         s.id === normalized ||
+        s.slug === normalized ||
         (s.title && s.title.toLowerCase() === normalized) ||
         (s.title && s.title.toLowerCase().includes(normalized)) ||
         (s.title && normalized.includes(s.title.toLowerCase()))
       );
     }
 
-    if (!targetSection) {
-      const title = typeof sectionOrName === 'string' ? sectionOrName : 'Spiritual Care';
-      targetSection = {
-        id: `spiritual-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-        title,
-        name: title,
-        category: 'Spiritual Care',
-        categoryName: 'Spiritual Care',
-        isSpiritualCare: true,
-        layout: 'flexible',
-        blocks: []
-      };
-    }
-
-    const payload = {
-      ...targetSection,
-      name: targetSection.title || targetSection.name || 'Spiritual Care',
-      title: targetSection.title || targetSection.name || 'Spiritual Care',
-      category: 'Spiritual Care',
-      categoryName: 'Spiritual Care',
-      isSpiritualCare: true
-    };
-
-    if (onSelectSpeciality) {
-      onSelectSpeciality(payload, 'Spiritual Care');
-    } else if (onSelectPatientGuide) {
-      onSelectPatientGuide(payload, 'Spiritual Care');
-    }
+    const title = typeof sectionOrName === 'string' ? sectionOrName : targetSection?.title || targetSection?.name || 'Spiritual Care';
+    const slug = targetSection?.slug || targetSection?.id || createSlug(title);
+    navigate(`/spiritual-care/${slug}`);
   };
 
   const toggleMobileDropdown = (name) => {

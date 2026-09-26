@@ -405,6 +405,26 @@ export default function DetailPage({ module = 'specialities' }) {
       {/* 1. Hero Section (Banner on Top + Text Section Below — Careers Style) */}
       <section className="detail-hero-section">
         <div className="detail-container">
+          {/* Centered Page Title + Right-aligned Share Button */}
+          <div className="detail-header-section">
+            <h1 className="detail-page-title">{itemTitle}</h1>
+            <button
+              type="button"
+              className="detail-share-btn"
+              onClick={handleShare}
+              title="Share this page"
+              aria-label="Share"
+            >
+              <Share2 size={18} />
+            </button>
+          </div>
+
+          {shareFeedback && (
+            <div className="detail-share-toast">
+              Page link copied to clipboard!
+            </div>
+          )}
+
           {/* Top Banner Image Frame */}
           <div className="detail-banner-frame">
             {bannerImage ? (
@@ -432,75 +452,6 @@ export default function DetailPage({ module = 'specialities' }) {
               <span className="detail-fallback-badge">{displayCategory}</span>
               <h2 className="detail-fallback-title">{itemTitle}</h2>
             </div>
-          </div>
-
-          {/* Text Section (Below image — separate, Careers page style) */}
-          <div className="detail-header-card">
-            {/* Top Bar: Breadcrumb + Share Button */}
-            <div className="detail-header-top-row">
-              <div className="detail-crumbs-row">
-                <Link to="/" className="dtl-crumb-link">Home</Link>
-                <span className="dtl-crumb-sep">&gt;</span>
-                <Link to={moduleRootPath} className="dtl-crumb-link">{moduleDisplayName}</Link>
-                {categoryName && (
-                  <>
-                    <span className="dtl-crumb-sep">&gt;</span>
-                    <span className="dtl-crumb-text">{categoryName}</span>
-                  </>
-                )}
-                <span className="dtl-crumb-sep">&gt;</span>
-                <span className="dtl-crumb-current">{itemTitle}</span>
-              </div>
-
-              <button
-                type="button"
-                className="detail-share-btn"
-                onClick={handleShare}
-                title="Share this page"
-                aria-label="Share"
-              >
-                <Share2 size={18} />
-              </button>
-            </div>
-
-            {shareFeedback && (
-              <div className="detail-share-toast">
-                Page link copied to clipboard!
-              </div>
-            )}
-
-            {/* Category Eyebrow */}
-            <div className="detail-category-eyebrow">
-              {displayCategory.toUpperCase()}
-            </div>
-
-            {/* Title + CTA Row */}
-            <div className="detail-title-cta-row">
-              <h1 className="detail-main-title">{itemTitle}</h1>
-              {ctaLabel === 'Book Appointment' ? (
-                <a
-                  href="https://his.bhaktivedantahospital.com/EHR/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="detail-cta-btn"
-                >
-                  <Calendar size={16} />
-                  <span>{ctaLabel}</span>
-                </a>
-              ) : (
-                <Link to="/contact" className="detail-cta-btn">
-                  <Calendar size={16} />
-                  <span>{ctaLabel}</span>
-                </Link>
-              )}
-            </div>
-
-            {/* Short Description */}
-            {shortDescription && (
-              <p className="detail-short-description">
-                {shortDescription}
-              </p>
-            )}
           </div>
         </div>
       </section>

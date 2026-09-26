@@ -5,7 +5,8 @@ import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState } from '../../data/defaultSpiritualCare';
 
 export default function ProgramDetailPage() {
-  const { slug } = useParams();
+  const { slug, id } = useParams();
+  const routeParam = slug || id;
   const navigate = useNavigate();
   const [programmes, setProgrammes] = useState(defaultSpiritualCareState.programmes);
 
@@ -27,8 +28,8 @@ export default function ProgramDetailPage() {
     };
   }, []);
 
-  const prog = programmes.find(p => p.slug === slug || p.id === slug) ||
-    defaultSpiritualCareState.programmes.find(p => p.slug === slug || p.id === slug);
+  const prog = programmes.find(p => p.slug === routeParam || p.id === routeParam) ||
+    defaultSpiritualCareState.programmes.find(p => p.slug === routeParam || p.id === routeParam);
 
   const detailPage = prog?.detailPage || {
     title: prog?.title || 'Educational Programme',

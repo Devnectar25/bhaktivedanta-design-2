@@ -14,6 +14,13 @@ export default function SpiritualServicesManager() {
   // New bullet item temporary states
   const [newSupportItem, setNewSupportItem] = useState({ text: '', note: '' });
   const [newCounselItem, setNewCounselItem] = useState({ text: '', note: '' });
+  const [newAcronymItem, setNewAcronymItem] = useState({ letter: '', word: '', description: '' });
+
+  // Inline edit states for individual items
+  const [editingSupportId, setEditingSupportId] = useState(null);
+  const [editingSupportForm, setEditingSupportForm] = useState({ text: '', note: '' });
+  const [editingCounselId, setEditingCounselId] = useState(null);
+  const [editingCounselForm, setEditingCounselForm] = useState({ text: '', note: '' });
 
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
 
@@ -56,7 +63,7 @@ export default function SpiritualServicesManager() {
     }
   };
 
-  // Acronym update helper
+  // Acronym helper functions
   const handleAcronymChange = (index, field, val) => {
     const updated = [...(data.overview?.acronymItems || [])];
     updated[index] = { ...updated[index], [field]: val };
@@ -69,7 +76,52 @@ export default function SpiritualServicesManager() {
     }));
   };
 
-  // Add Support Item
+  const handleAddAcronymItem = () => {
+    if (!newAcronymItem.word.trim()) return;
+    const letter = newAcronymItem.letter.trim() || newAcronymItem.word.trim().charAt(0).toUpperCase();
+    const newItem = {
+      letter,
+      word: newAcronymItem.word.trim(),
+      description: newAcronymItem.description.trim()
+    };
+    setData(prev => ({
+      ...prev,
+      overview: {
+        ...prev.overview,
+        acronymItems: [...(prev.overview?.acronymItems || []), newItem]
+      }
+    }));
+    setNewAcronymItem({ letter: '', word: '', description: '' });
+  };
+
+  const handleDeleteAcronymItem = (index) => {
+    const updated = (data.overview?.acronymItems || []).filter((_, idx) => idx !== index);
+    setData(prev => ({
+      ...prev,
+      overview: {
+        ...prev.overview,
+        acronymItems: updated
+      }
+    }));
+  };
+
+  const handleMoveAcronymItem = (index, direction) => {
+    const items = [...(data.overview?.acronymItems || [])];
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= items.length) return;
+    const temp = items[index];
+    items[index] = items[targetIdx];
+    items[targetIdx] = temp;
+    setData(prev => ({
+      ...prev,
+      overview: {
+        ...prev.overview,
+        acronymItems: items
+      }
+    }));
+  };
+
+  // Patient Support helpers
   const handleAddSupportItem = () => {
     if (!newSupportItem.text.trim()) return;
     const newItem = {
@@ -88,7 +140,47 @@ export default function SpiritualServicesManager() {
     setNewSupportItem({ text: '', note: '' });
   };
 
-  // Delete Support Item
+  const handleStartEditSupport = (item) => {
+    setEditingSupportId(item.id);
+    setEditingSupportForm({ text: item.text || '', note: item.note || '' });
+  };
+
+  const handleSaveEditSupport = (id) => {
+    if (!editingSupportForm.text.trim()) return;
+    setData(prev => ({
+      ...prev,
+      servicesOffered: {
+        ...prev.servicesOffered,
+        patientSupport: (prev.servicesOffered?.patientSupport || []).map(item =>
+          item.id === id ? { ...item, text: editingSupportForm.text.trim(), note: editingSupportForm.note.trim() } : item
+        )
+      }
+    }));
+    setEditingSupportId(null);
+    setEditingSupportForm({ text: '', note: '' });
+  };
+
+  const handleCancelEditSupport = () => {
+    setEditingSupportId(null);
+    setEditingSupportForm({ text: '', note: '' });
+  };
+
+  const handleMoveSupportItem = (index, direction) => {
+    const list = [...(data.servicesOffered?.patientSupport || [])];
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= list.length) return;
+    const temp = list[index];
+    list[index] = list[targetIdx];
+    list[targetIdx] = temp;
+    setData(prev => ({
+      ...prev,
+      servicesOffered: {
+        ...prev.servicesOffered,
+        patientSupport: list
+      }
+    }));
+  };
+
   const handleDeleteSupportItem = (id) => {
     setData(prev => ({
       ...prev,
@@ -97,9 +189,12 @@ export default function SpiritualServicesManager() {
         patientSupport: (prev.servicesOffered?.patientSupport || []).filter(item => item.id !== id)
       }
     }));
+    if (editingSupportId === id) {
+      setEditingSupportId(null);
+    }
   };
 
-  // Add Counselling Item
+  // Counselling helpers
   const handleAddCounselItem = () => {
     if (!newCounselItem.text.trim()) return;
     const newItem = {
@@ -118,7 +213,47 @@ export default function SpiritualServicesManager() {
     setNewCounselItem({ text: '', note: '' });
   };
 
-  // Delete Counselling Item
+  const handleStartEditCounsel = (item) => {
+    setEditingCounselId(item.id);
+    setEditingCounselForm({ text: item.text || '', note: item.note || '' });
+  };
+
+  const handleSaveEditCounsel = (id) => {
+    if (!editingCounselForm.text.trim()) return;
+    setData(prev => ({
+      ...prev,
+      servicesOffered: {
+        ...prev.servicesOffered,
+        counselling: (prev.servicesOffered?.counselling || []).map(item =>
+          item.id === id ? { ...item, text: editingCounselForm.text.trim(), note: editingCounselForm.note.trim() } : item
+        )
+      }
+    }));
+    setEditingCounselId(null);
+    setEditingCounselForm({ text: '', note: '' });
+  };
+
+  const handleCancelEditCounsel = () => {
+    setEditingCounselId(null);
+    setEditingCounselForm({ text: '', note: '' });
+  };
+
+  const handleMoveCounselItem = (index, direction) => {
+    const list = [...(data.servicesOffered?.counselling || [])];
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= list.length) return;
+    const temp = list[index];
+    list[index] = list[targetIdx];
+    list[targetIdx] = temp;
+    setData(prev => ({
+      ...prev,
+      servicesOffered: {
+        ...prev.servicesOffered,
+        counselling: list
+      }
+    }));
+  };
+
   const handleDeleteCounselItem = (id) => {
     setData(prev => ({
       ...prev,
@@ -127,6 +262,9 @@ export default function SpiritualServicesManager() {
         counselling: (prev.servicesOffered?.counselling || []).filter(item => item.id !== id)
       }
     }));
+    if (editingCounselId === id) {
+      setEditingCounselId(null);
+    }
   };
 
   return (
@@ -255,27 +393,42 @@ export default function SpiritualServicesManager() {
 
           {/* MATCH Acronym Items Editor */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
-            <div>
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                <span className="material-symbols-outlined text-orange-500">spellcheck</span>
-                MATCH Acronym Breakdown Items
-              </h3>
-              <p className="text-xs text-slate-500 mt-1">Configure each letter, core value keyword, and clinical description:</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-orange-500">spellcheck</span>
+                  MATCH Acronym Breakdown Items
+                  <span className="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-bold">
+                    {(data.overview?.acronymItems || []).length} Values
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">Configure each letter, core value keyword, and clinical description:</p>
+              </div>
             </div>
 
             <div className="space-y-3">
               {(data.overview?.acronymItems || []).map((item, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-4">
+                <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col md:flex-row items-start md:items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-[#132A4C] text-white flex items-center justify-center font-serif font-bold text-xl shrink-0 shadow-sm">
-                    {item.letter}
+                    {item.letter || (item.word ? item.word.charAt(0).toUpperCase() : '?')}
                   </div>
-                  <div className="w-full md:w-48 shrink-0">
+                  <div className="w-16 shrink-0">
+                    <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Letter</label>
+                    <input
+                      type="text"
+                      maxLength={3}
+                      value={item.letter || ''}
+                      onChange={(e) => handleAcronymChange(idx, 'letter', e.target.value.toUpperCase())}
+                      className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-center text-slate-800 bg-white uppercase outline-none focus:border-orange-500"
+                    />
+                  </div>
+                  <div className="w-full md:w-44 shrink-0">
                     <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Value Keyword</label>
                     <input
                       type="text"
                       value={item.word || ''}
                       onChange={(e) => handleAcronymChange(idx, 'word', e.target.value)}
-                      className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-800 bg-white"
+                      className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-800 bg-white outline-none focus:border-orange-500"
                     />
                   </div>
                   <div className="flex-1 w-full">
@@ -284,11 +437,98 @@ export default function SpiritualServicesManager() {
                       type="text"
                       value={item.description || ''}
                       onChange={(e) => handleAcronymChange(idx, 'description', e.target.value)}
-                      className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 bg-white"
+                      className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 bg-white outline-none focus:border-orange-500"
                     />
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0 self-end md:self-center mt-2 md:mt-0">
+                    <button
+                      type="button"
+                      onClick={() => handleMoveAcronymItem(idx, -1)}
+                      disabled={idx === 0}
+                      className="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                      title="Move Up"
+                    >
+                      <span className="material-symbols-outlined text-sm">arrow_upward</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMoveAcronymItem(idx, 1)}
+                      disabled={idx === (data.overview?.acronymItems?.length || 0) - 1}
+                      className="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                      title="Move Down"
+                    >
+                      <span className="material-symbols-outlined text-sm">arrow_downward</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteAcronymItem(idx)}
+                      className="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-red-50 hover:border-red-200 hover:text-red-600 flex items-center justify-center text-slate-400 transition-colors"
+                      title="Delete Item"
+                    >
+                      <span className="material-symbols-outlined text-sm">delete</span>
+                    </button>
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Add New Acronym Item */}
+            <div className="p-4 bg-orange-50/50 border border-dashed border-orange-300 rounded-xl space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-orange-950">
+                <span className="material-symbols-outlined text-sm text-orange-600">add_circle</span>
+                <span>Add New Acronym Value Item</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Letter</label>
+                  <input
+                    type="text"
+                    maxLength={3}
+                    placeholder="e.g. M"
+                    value={newAcronymItem.letter}
+                    onChange={(e) => setNewAcronymItem(p => ({ ...p, letter: e.target.value.toUpperCase() }))}
+                    className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-center text-slate-800 bg-white uppercase outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div className="sm:col-span-4">
+                  <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Value Keyword</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Mercy"
+                    value={newAcronymItem.word}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setNewAcronymItem(p => ({
+                        ...p,
+                        word: val,
+                        letter: p.letter || (val.trim() ? val.trim().charAt(0).toUpperCase() : '')
+                      }));
+                    }}
+                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 bg-white outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div className="sm:col-span-4">
+                  <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Description / Meaning</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Compassionate bedside care..."
+                    value={newAcronymItem.description}
+                    onChange={(e) => setNewAcronymItem(p => ({ ...p, description: e.target.value }))}
+                    className="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 bg-white outline-none focus:border-orange-500"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <button
+                    type="button"
+                    onClick={handleAddAcronymItem}
+                    disabled={!newAcronymItem.word.trim()}
+                    className="w-full bg-[#132A4C] hover:bg-[#1e3a8a] text-white py-1.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-40 flex items-center justify-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-sm">add</span>
+                    <span>Add Item</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -299,37 +539,120 @@ export default function SpiritualServicesManager() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Column 1: Patient Support Services */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
-                <span className="material-symbols-outlined text-lg">volunteer_activism</span>
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-lg">volunteer_activism</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800">Patient Support Services</h3>
+                  <span className="text-xs text-slate-500">Inpatient care, bedside rounds, and prayers</span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-800">Patient Support Services</h3>
-                <span className="text-xs text-slate-500">Inpatient care, bedside rounds, and prayers</span>
-              </div>
+              <span className="text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
+                {(data.servicesOffered?.patientSupport || []).length} Items
+              </span>
             </div>
 
             {/* List */}
-            <div className="space-y-2.5 flex-1 max-h-[460px] overflow-y-auto pr-1">
-              {(data.servicesOffered?.patientSupport || []).map((item, idx) => (
-                <div key={item.id || idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2.5">
-                    <span className="material-symbols-outlined text-orange-500 text-base mt-0.5">check_circle</span>
-                    <div>
-                      <span className="text-xs font-semibold text-slate-800 block">{item.text}</span>
-                      {item.note && <span className="text-[11px] text-slate-500 block mt-0.5">{item.note}</span>}
+            <div className="space-y-2.5 flex-1 max-h-[500px] overflow-y-auto hide-scrollbar pr-1">
+              {(data.servicesOffered?.patientSupport || []).map((item, idx) => {
+                const isEditing = editingSupportId === item.id;
+                if (isEditing) {
+                  return (
+                    <div key={item.id || idx} className="p-3.5 bg-blue-50/50 border-2 border-blue-400 rounded-xl space-y-2.5 shadow-xs animate-fade-in">
+                      <div>
+                        <label className="block text-[10px] font-bold text-blue-900 uppercase mb-0.5">Service Title</label>
+                        <input
+                          type="text"
+                          autoFocus
+                          value={editingSupportForm.text}
+                          onChange={(e) => setEditingSupportForm(p => ({ ...p, text: e.target.value }))}
+                          placeholder="Service Title..."
+                          className="w-full border border-blue-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-blue-500/20"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-blue-900 uppercase mb-0.5">Note / Scope / Timing (optional)</label>
+                        <input
+                          type="text"
+                          value={editingSupportForm.note}
+                          onChange={(e) => setEditingSupportForm(p => ({ ...p, note: e.target.value }))}
+                          placeholder="Note or timing..."
+                          className="w-full border border-blue-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-600 bg-white outline-none focus:ring-2 focus:ring-blue-500/20"
+                        />
+                      </div>
+                      <div className="flex items-center justify-end gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEditSupport(item.id)}
+                          disabled={!editingSupportForm.text.trim()}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 disabled:opacity-40"
+                        >
+                          <span className="material-symbols-outlined text-sm">check</span>
+                          <span>Save</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelEditSupport}
+                          className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined text-sm">close</span>
+                          <span>Cancel</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={item.id || idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start justify-between gap-3 hover:border-slate-300 transition-colors">
+                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-blue-600 text-base mt-0.5 shrink-0">check_circle</span>
+                      <div className="min-w-0">
+                        <span className="text-xs font-semibold text-slate-800 block break-words">{item.text}</span>
+                        {item.note && <span className="text-[11px] text-slate-500 block mt-0.5 break-words">{item.note}</span>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0 self-center">
+                      <button
+                        type="button"
+                        onClick={() => handleStartEditSupport(item)}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 flex items-center justify-center text-slate-500 transition-colors"
+                        title="Edit Item"
+                      >
+                        <span className="material-symbols-outlined text-xs">edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveSupportItem(idx, -1)}
+                        disabled={idx === 0}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                        title="Move Up"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_upward</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveSupportItem(idx, 1)}
+                        disabled={idx === (data.servicesOffered?.patientSupport?.length || 0) - 1}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                        title="Move Down"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_downward</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteSupportItem(item.id)}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-red-50 hover:border-red-200 hover:text-red-600 flex items-center justify-center text-slate-400 transition-colors"
+                        title="Delete Item"
+                      >
+                        <span className="material-symbols-outlined text-xs">delete</span>
+                      </button>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteSupportItem(item.id)}
-                    className="text-slate-400 hover:text-red-500 p-1 transition-colors"
-                    title="Delete Item"
-                  >
-                    <span className="material-symbols-outlined text-sm">delete</span>
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Add New Item */}
@@ -351,7 +674,8 @@ export default function SpiritualServicesManager() {
               <button
                 type="button"
                 onClick={handleAddSupportItem}
-                className="w-full bg-[#132A4C] text-white py-1.5 rounded-lg text-xs font-bold hover:bg-[#1e3a8a] transition-colors flex items-center justify-center gap-1.5"
+                disabled={!newSupportItem.text.trim()}
+                className="w-full bg-[#132A4C] text-white py-1.5 rounded-lg text-xs font-bold hover:bg-[#1e3a8a] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">add</span>
                 Add Support Service Item
@@ -361,37 +685,120 @@ export default function SpiritualServicesManager() {
 
           {/* Column 2: Counselling Services */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4 flex flex-col">
-            <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-              <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-700 flex items-center justify-center">
-                <span className="material-symbols-outlined text-lg">psychology</span>
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-700 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-lg">psychology</span>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800">Counselling Services</h3>
+                  <span className="text-xs text-slate-500">Individual, family, and bereavement solace</span>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-800">Counselling Services</h3>
-                <span className="text-xs text-slate-500">Individual, family, and bereavement solace</span>
-              </div>
+              <span className="text-xs bg-orange-50 text-orange-700 font-bold px-2.5 py-0.5 rounded-full">
+                {(data.servicesOffered?.counselling || []).length} Items
+              </span>
             </div>
 
             {/* List */}
-            <div className="space-y-2.5 flex-1 max-h-[460px] overflow-y-auto pr-1">
-              {(data.servicesOffered?.counselling || []).map((item, idx) => (
-                <div key={item.id || idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-2.5">
-                    <span className="material-symbols-outlined text-orange-500 text-base mt-0.5">check_circle</span>
-                    <div>
-                      <span className="text-xs font-semibold text-slate-800 block">{item.text}</span>
-                      {item.note && <span className="text-[11px] text-slate-500 block mt-0.5">{item.note}</span>}
+            <div className="space-y-2.5 flex-1 max-h-[500px] overflow-y-auto hide-scrollbar pr-1">
+              {(data.servicesOffered?.counselling || []).map((item, idx) => {
+                const isEditing = editingCounselId === item.id;
+                if (isEditing) {
+                  return (
+                    <div key={item.id || idx} className="p-3.5 bg-orange-50/50 border-2 border-orange-400 rounded-xl space-y-2.5 shadow-xs animate-fade-in">
+                      <div>
+                        <label className="block text-[10px] font-bold text-orange-950 uppercase mb-0.5">Counselling Topic</label>
+                        <input
+                          type="text"
+                          autoFocus
+                          value={editingCounselForm.text}
+                          onChange={(e) => setEditingCounselForm(p => ({ ...p, text: e.target.value }))}
+                          placeholder="Counselling Topic..."
+                          className="w-full border border-orange-300 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-800 bg-white outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-orange-950 uppercase mb-0.5">Note / Scope (optional)</label>
+                        <input
+                          type="text"
+                          value={editingCounselForm.note}
+                          onChange={(e) => setEditingCounselForm(p => ({ ...p, note: e.target.value }))}
+                          placeholder="Note or scope..."
+                          className="w-full border border-orange-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-600 bg-white outline-none focus:ring-2 focus:ring-orange-500/20"
+                        />
+                      </div>
+                      <div className="flex items-center justify-end gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveEditCounsel(item.id)}
+                          disabled={!editingCounselForm.text.trim()}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1 disabled:opacity-40"
+                        >
+                          <span className="material-symbols-outlined text-sm">check</span>
+                          <span>Save</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelEditCounsel}
+                          className="bg-white hover:bg-slate-100 border border-slate-300 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined text-sm">close</span>
+                          <span>Cancel</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={item.id || idx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start justify-between gap-3 hover:border-slate-300 transition-colors">
+                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                      <span className="material-symbols-outlined text-orange-500 text-base mt-0.5 shrink-0">check_circle</span>
+                      <div className="min-w-0">
+                        <span className="text-xs font-semibold text-slate-800 block break-words">{item.text}</span>
+                        {item.note && <span className="text-[11px] text-slate-500 block mt-0.5 break-words">{item.note}</span>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0 self-center">
+                      <button
+                        type="button"
+                        onClick={() => handleStartEditCounsel(item)}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 flex items-center justify-center text-slate-500 transition-colors"
+                        title="Edit Item"
+                      >
+                        <span className="material-symbols-outlined text-xs">edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveCounselItem(idx, -1)}
+                        disabled={idx === 0}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                        title="Move Up"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_upward</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveCounselItem(idx, 1)}
+                        disabled={idx === (data.servicesOffered?.counselling?.length || 0) - 1}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-slate-100 flex items-center justify-center text-slate-600 disabled:opacity-30 transition-colors"
+                        title="Move Down"
+                      >
+                        <span className="material-symbols-outlined text-xs">arrow_downward</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCounselItem(item.id)}
+                        className="w-6 h-6 rounded border border-slate-200 bg-white hover:bg-red-50 hover:border-red-200 hover:text-red-600 flex items-center justify-center text-slate-400 transition-colors"
+                        title="Delete Item"
+                      >
+                        <span className="material-symbols-outlined text-xs">delete</span>
+                      </button>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCounselItem(item.id)}
-                    className="text-slate-400 hover:text-red-500 p-1 transition-colors"
-                    title="Delete Item"
-                  >
-                    <span className="material-symbols-outlined text-sm">delete</span>
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Add New Item */}
@@ -413,7 +820,8 @@ export default function SpiritualServicesManager() {
               <button
                 type="button"
                 onClick={handleAddCounselItem}
-                className="w-full bg-[#132A4C] text-white py-1.5 rounded-lg text-xs font-bold hover:bg-[#1e3a8a] transition-colors flex items-center justify-center gap-1.5"
+                disabled={!newCounselItem.text.trim()}
+                className="w-full bg-[#132A4C] text-white py-1.5 rounded-lg text-xs font-bold hover:bg-[#1e3a8a] transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
                 <span className="material-symbols-outlined text-sm">add</span>
                 Add Counselling Service Item
