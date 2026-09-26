@@ -15,7 +15,6 @@ export default function FloatingActions() {
     }
   ]);
   const [inputVal, setInputVal] = useState('');
-  const [unreadBadge, setUnreadBadge] = useState(true);
   const messagesEndRef = useRef(null);
 
   // Fetch live settings and listen to updates
@@ -56,9 +55,6 @@ export default function FloatingActions() {
 
   const toggleChat = () => {
     setIsChatOpen((prev) => !prev);
-    if (!isChatOpen) {
-      setUnreadBadge(false);
-    }
   };
 
   const cleanWhatsapp = (settings.contactWhatsapp || '8400146262').replace(/[^0-9]/g, '');
@@ -197,7 +193,6 @@ export default function FloatingActions() {
             className="floating-action-btn chatbot-float-btn"
             aria-label="Open Hospital Assistant"
           >
-            {unreadBadge && <span className="chatbot-badge">Hi!</span>}
             <img 
               src="/chatbot-avatar.png" 
               alt="Bhaktivedanta Care Assistant" 

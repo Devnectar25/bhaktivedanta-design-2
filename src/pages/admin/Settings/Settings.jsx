@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getHospitalSettings, updateHospitalSettings, defaultHospitalSettings } from '../../../utils/api';
+import HeroBanners from '../HeroBanners/HeroBanners';
 
 const Settings = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'general';
   const [formData, setFormData] = useState(defaultHospitalSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -141,22 +145,84 @@ const Settings = () => {
           </nav>
           <h2 className="text-2xl font-bold text-slate-800">Admin Portal Settings</h2>
           <p className="text-sm text-slate-500 font-medium">
-            Manage hospital footer contact info, emergency telephone numbers, and administrative parameters.
+            Manage hospital branding, contact parameters, emergency hotline, and homepage hero background banners.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowResetConfirm(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
-            title="Reset to factory defaults"
-          >
-            <span className="material-symbols-outlined text-[16px]">restart_alt</span>
-            <span>Reset Defaults</span>
-          </button>
+          {activeTab !== 'hero-banners' && activeTab !== 'heroBanners' && (
+            <button
+              type="button"
+              onClick={() => setShowResetConfirm(true)}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              title="Reset to factory defaults"
+            >
+              <span className="material-symbols-outlined text-[16px]">restart_alt</span>
+              <span>Reset Defaults</span>
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Settings Section Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+        <button
+          type="button"
+          onClick={() => setSearchParams({ tab: 'general' })}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all ${
+            activeTab !== 'hero-banners' && activeTab !== 'heroBanners'
+              ? 'bg-[#1e3a8a] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[18px]">domain</span>
+          <span>General Hospital Information</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setSearchParams({ tab: 'hero-banners' })}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all ${
+            activeTab === 'hero-banners' || activeTab === 'heroBanners'
+              ? 'bg-[#1e3a8a] text-white shadow-sm'
+              : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[18px]">wallpaper</span>
+          <span>Hero Background Banners</span>
+          <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-400 text-slate-950 font-extrabold ml-1">
+            Max 10
+          </span>
+        </button>
+      </div>
+
+      {/* Tab 2: Hero Background Banners */}
+      {(activeTab === 'hero-banners' || activeTab === 'heroBanners') ? (
+        <div className="pt-2">
+          <HeroBanners embedded={true} />
+        </div>
+      ) : (
+        <>
+          {/* Quick link highlight banner */}
+          <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-xl p-4 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-2xl text-amber-400">wallpaper</span>
+              </div>
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400">Homepage Background Slider</h4>
+                <p className="text-xs text-blue-100">Upload up to 10 high-resolution background images, reorder slides, and preview auto-rotation.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSearchParams({ tab: 'hero-banners' })}
+              className="self-start sm:self-auto px-4 py-2 bg-[#fea619] hover:bg-amber-500 text-slate-950 font-bold text-xs rounded-lg transition-colors shadow flex items-center gap-1.5"
+            >
+              <span>Manage Hero Banners</span>
+              <span className="material-symbols-outlined text-xs">arrow_forward</span>
+            </button>
+          </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 1. GENERAL HOSPITAL BRANDING */}
@@ -429,6 +495,8 @@ const Settings = () => {
           </div>
         </div>
       </form>
+      </>
+      )}
     </div>
   );
 };

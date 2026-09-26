@@ -33,7 +33,7 @@ const menuStructure = [
   {
     name: 'Services',
     type: 'services-mega-menu',
-    to: '#services'
+    to: '/services'
   },
   {
     name: 'Patients Corner',
@@ -53,10 +53,10 @@ const menuStructure = [
       {
         title: 'Consultations',
         links: [
-          { name: 'Find A Doctor', href: '#doctors' },
+          { name: 'Find A Doctor', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true },
           { name: 'Book Appointment', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true },
-          { name: 'Online Consultation', href: '#patients' },
-          { name: 'Video Consultation', href: '#patients' },
+          { name: 'Online Consultation', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true },
+          { name: 'Video Consultation', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true },
           { name: 'Patient Report', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true }
         ]
       },
@@ -544,37 +544,59 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
               {menuStructure.map((menuItem) => {
                 if (menuItem.type === 'mega-menu') {
                   const categoriesList = specialitiesData.categories?.filter(c => c.status) || [];
-                  const currentCat = categoriesList.find(c => c.id === activeMegaCategory);
+                  const currentCat = categoriesList.find(c => c.id === activeMegaCategory) || categoriesList[0];
                   const catSpecs = currentCat
                     ? (specialitiesData.specialities?.filter(s => s.categoryId === currentCat.id && s.status) || [])
                     : [];
                   const columns = splitIntoColumns(catSpecs, catSpecs.length > 8 ? 3 : 2);
+                  const firstSpecSlug = catSpecs[0]?.slug || (catSpecs[0]?.name ? createSlug(catSpecs[0].name) : 'centres-of-excellence');
 
                   return (
                     <div
                       key={menuItem.name}
-                      className="nav-item-dropdown-container specialities-nav-item"
-                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      className={`nav-item-dropdown-container specialities-nav-item ${openNavDropdown === menuItem.name ? 'is-open' : ''}`}
+                      onMouseEnter={() => {
+                        setOpenNavDropdown(menuItem.name);
+                        if (!activeMegaCategory && categoriesList.length > 0) {
+                          setActiveMegaCategory(categoriesList[0].id);
+                        }
+                      }}
                       onMouseLeave={() => {
                         setOpenNavDropdown(null);
                         setActiveMegaCategory(null);
                       }}
                     >
-                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                      <Link
+                        to={`/specialities/${firstSpecSlug}`}
+                        className="nav-dropdown-trigger"
+                        onClick={() => {
+                          setOpenNavDropdown(null);
+                          setActiveMegaCategory(null);
+                        }}
+                      >
                         {menuItem.name}
-                      </a>
+                      </Link>
 
                       <div className={`specialities-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
                         {/* FIRST VIEW: Category menu list */}
                         <div className="specialities-category-menu">
                           {categoriesList.map(cat => {
-                            const isActive = activeMegaCategory === cat.id;
+                            const isActive = (activeMegaCategory || categoriesList[0]?.id) === cat.id;
+                            const thisCatSpecs = specialitiesData.specialities?.filter(s => s.categoryId === cat.id && s.status) || [];
+                            const thisFirstSlug = thisCatSpecs[0]?.slug || (thisCatSpecs[0]?.name ? createSlug(thisCatSpecs[0].name) : '');
                             return (
                               <div
                                 key={cat.id}
                                 className={`specialities-category-item ${isActive ? 'active' : ''}`}
                                 onMouseEnter={() => setActiveMegaCategory(cat.id)}
-                                onClick={() => setActiveMegaCategory(cat.id)}
+                                onClick={() => {
+                                  setActiveMegaCategory(cat.id);
+                                  if (isActive && thisFirstSlug) {
+                                    navigate(`/specialities/${thisFirstSlug}`);
+                                    setActiveMegaCategory(null);
+                                    setOpenNavDropdown(null);
+                                  }
+                                }}
                               >
                                 <span className="category-item-text">{cat.name}</span>
                                 <span className="material-symbols-outlined category-item-arrow">
@@ -589,29 +611,44 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                         {currentCat && (
                           <div className="specialities-subpanel animate-flyout-fade" key={currentCat.id}>
                             <div className="specialities-subpanel-header">
-                              <h3 className="specialities-subpanel-title">{currentCat.name}</h3>
+                              <h3
+                                className="specialities-subpanel-title clickable-title"
+                                title="Click to view this category"
+                                onClick={() => {
+                                  if (firstSpecSlug) {
+                                    navigate(`/specialities/${firstSpecSlug}`);
+                                    setActiveMegaCategory(null);
+                                    setOpenNavDropdown(null);
+                                  }
+                                }}
+                              >
+                                {currentCat.name}
+                              </h3>
                               <span className="specialities-subpanel-badge">{catSpecs.length} Specialities</span>
                             </div>
                             {catSpecs.length > 0 ? (
                               <div className={`specialities-grid ${catSpecs.length > 8 ? 'grid-3-col' : 'grid-2-col'}`}>
                                 {columns.map((colItems, colIdx) => (
                                   <ul key={colIdx} className="specialities-subpanel-list">
-                                    {colItems.map((s, itemIdx) => (
-                                      <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
-                                        <button
-                                          className="speciality-link-btn"
-                                          onClick={() => {
-                                            const slug = s.slug || createSlug(s.name);
-                                            navigate(`/specialities/${slug}`);
-                                            setActiveMegaCategory(null);
-                                            setOpenNavDropdown(null);
-                                          }}
-                                        >
-                                          <span className="link-btn-bullet"></span>
-                                          <span className="link-btn-text">{s.name}</span>
-                                        </button>
-                                      </li>
-                                    ))}
+                                    {colItems.map((s) => {
+                                      const specSlug = s.slug || createSlug(s.name);
+                                      return (
+                                        <li key={s.id} className="speciality-item-wrapper">
+                                          <Link
+                                            to={`/specialities/${specSlug}`}
+                                            className="speciality-link-btn"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setActiveMegaCategory(null);
+                                              setOpenNavDropdown(null);
+                                            }}
+                                          >
+                                            <span className="link-btn-bullet"></span>
+                                            <span className="link-btn-text">{s.name}</span>
+                                          </Link>
+                                        </li>
+                                      );
+                                    })}
                                   </ul>
                                 ))}
                               </div>
@@ -629,37 +666,59 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'services-mega-menu') {
                   const categoriesList = servicesData.categories?.filter(c => c.status) || [];
-                  const currentCat = categoriesList.find(c => c.id === activeServiceCategory);
+                  const currentCat = categoriesList.find(c => c.id === activeServiceCategory) || categoriesList[0];
                   const catServices = currentCat
                     ? (servicesData.services?.filter(s => s.categoryId === currentCat.id && s.status) || [])
                     : [];
                   const columns = splitIntoColumns(catServices, catServices.length > 8 ? 3 : 2);
+                  const firstServiceSlug = catServices[0]?.slug || (catServices[0]?.name ? createSlug(catServices[0].name) : 'services');
 
                   return (
                     <div
                       key={menuItem.name}
-                      className="nav-item-dropdown-container services-nav-item"
-                      onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
+                      className={`nav-item-dropdown-container services-nav-item ${openNavDropdown === menuItem.name ? 'is-open' : ''}`}
+                      onMouseEnter={() => {
+                        setOpenNavDropdown(menuItem.name);
+                        if (!activeServiceCategory && categoriesList.length > 0) {
+                          setActiveServiceCategory(categoriesList[0].id);
+                        }
+                      }}
                       onMouseLeave={() => {
                         setOpenNavDropdown(null);
                         setActiveServiceCategory(null);
                       }}
                     >
-                      <a href={menuItem.to} className="nav-dropdown-trigger">
+                      <Link
+                        to="/services"
+                        className="nav-dropdown-trigger"
+                        onClick={() => {
+                          setOpenNavDropdown(null);
+                          setActiveServiceCategory(null);
+                        }}
+                      >
                         {menuItem.name}
-                      </a>
+                      </Link>
 
                       <div className={`services-flyout-wrapper ${currentCat ? 'has-subpanel' : ''}`}>
                         {/* FIRST VIEW: Category menu list */}
                         <div className="services-category-menu">
                           {categoriesList.map(cat => {
-                            const isActive = activeServiceCategory === cat.id;
+                            const isActive = (activeServiceCategory || categoriesList[0]?.id) === cat.id;
+                            const thisCatServices = servicesData.services?.filter(s => s.categoryId === cat.id && s.status) || [];
+                            const thisFirstSlug = thisCatServices[0]?.slug || (thisCatServices[0]?.name ? createSlug(thisCatServices[0].name) : '');
                             return (
                               <div
                                 key={cat.id}
                                 className={`services-category-item ${isActive ? 'active' : ''}`}
                                 onMouseEnter={() => setActiveServiceCategory(cat.id)}
-                                onClick={() => setActiveServiceCategory(cat.id)}
+                                onClick={() => {
+                                  setActiveServiceCategory(cat.id);
+                                  if (isActive && thisFirstSlug) {
+                                    navigate(`/services/${thisFirstSlug}`);
+                                    setActiveServiceCategory(null);
+                                    setOpenNavDropdown(null);
+                                  }
+                                }}
                               >
                                 <span className="category-item-text">{cat.name}</span>
                                 <span className="material-symbols-outlined category-item-arrow">
@@ -674,29 +733,44 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                         {currentCat && (
                           <div className="services-subpanel animate-flyout-fade" key={currentCat.id}>
                             <div className="services-subpanel-header">
-                              <h3 className="services-subpanel-title">{currentCat.name}</h3>
+                              <h3
+                                className="services-subpanel-title clickable-title"
+                                title="Click to view this category"
+                                onClick={() => {
+                                  if (firstServiceSlug) {
+                                    navigate(`/services/${firstServiceSlug}`);
+                                    setActiveServiceCategory(null);
+                                    setOpenNavDropdown(null);
+                                  }
+                                }}
+                              >
+                                {currentCat.name}
+                              </h3>
                               <span className="services-subpanel-badge">{catServices.length} Services</span>
                             </div>
                             {catServices.length > 0 ? (
                               <div className={`services-grid ${catServices.length > 8 ? 'grid-3-col' : 'grid-2-col'}`}>
                                 {columns.map((colItems, colIdx) => (
                                   <ul key={colIdx} className="services-subpanel-list">
-                                    {colItems.map((s, itemIdx) => (
-                                      <li key={s.id} style={{ animationDelay: `${itemIdx * 0.02}s` }} className="animate-item-pop">
-                                        <button
-                                          className="speciality-link-btn"
-                                          onClick={() => {
-                                            const slug = s.slug || createSlug(s.name);
-                                            navigate(`/services/${slug}`);
-                                            setActiveServiceCategory(null);
-                                            setOpenNavDropdown(null);
-                                          }}
-                                        >
-                                          <span className="link-btn-bullet"></span>
-                                          <span className="link-btn-text">{s.name}</span>
-                                        </button>
-                                      </li>
-                                    ))}
+                                    {colItems.map((s) => {
+                                      const serviceSlug = s.slug || createSlug(s.name);
+                                      return (
+                                        <li key={s.id} className="speciality-item-wrapper">
+                                          <Link
+                                            to={`/services/${serviceSlug}`}
+                                            className="speciality-link-btn"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              setActiveServiceCategory(null);
+                                              setOpenNavDropdown(null);
+                                            }}
+                                          >
+                                            <span className="link-btn-bullet"></span>
+                                            <span className="link-btn-text">{s.name}</span>
+                                          </Link>
+                                        </li>
+                                      );
+                                    })}
                                   </ul>
                                 ))}
                               </div>
@@ -733,7 +807,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   return (
                     <div
                       key={menuItem.name}
-                      className="nav-item-dropdown-container patients-nav-item"
+                      className={`nav-item-dropdown-container patients-nav-item ${openNavDropdown === menuItem.name ? 'is-open' : ''}`}
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
@@ -772,9 +846,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                               )}
                               <ul className="patients-column-list">
                                 {col.links.map((link, lIdx) => {
+                                  const isConsultationsCol = col.title === 'Consultations';
                                   const isAppointment = link.name === 'Book Appointment';
                                   const isPatientReport = link.name === 'Patient Report' || link.name === 'Patients Report';
-                                  const isExternalEHR = isAppointment || isPatientReport || link.isExternal;
+                                  const isExternalEHR = isConsultationsCol || isAppointment || isPatientReport || link.isExternal;
                                   const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
                                   const isPatientGuide = menuItem.name === 'Patients Corner' && !isExternalEHR && !isHashLink;
 
@@ -1084,17 +1159,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
                                   {catSpecs.map(spec => (
-                                    <button
+                                    <Link
                                       key={spec.id}
+                                      to={`/specialities/${spec.slug || createSlug(spec.name)}`}
                                       className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        const slug = spec.slug || createSlug(spec.name);
-                                        navigate(`/specialities/${slug}`);
-                                        handleMobileLinkClick();
-                                      }}
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {spec.name}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -1130,17 +1202,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                 <span className="mobile-sub-category-title">{cat.name}</span>
                                 <div className="mobile-sub-links">
                                   {catServices.map(service => (
-                                    <button
+                                    <Link
                                       key={service.id}
+                                      to={`/services/${service.slug || createSlug(service.name)}`}
                                       className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        const slug = service.slug || createSlug(service.name);
-                                        navigate(`/services/${slug}`);
-                                        handleMobileLinkClick();
-                                      }}
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {service.name}
-                                    </button>
+                                    </Link>
                                   ))}
                                 </div>
                               </div>
@@ -1197,9 +1266,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                             )}
                             <div className="mobile-sub-links">
                               {col.links.map((link, lIdx) => {
+                                const isConsultationsCol = col.title === 'Consultations';
                                 const isAppointment = link.name === 'Book Appointment';
                                 const isPatientReport = link.name === 'Patient Report' || link.name === 'Patients Report';
-                                const isExternalEHR = isAppointment || isPatientReport || link.isExternal;
+                                const isExternalEHR = isConsultationsCol || isAppointment || isPatientReport || link.isExternal;
                                 const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
                                 const isPatientGuide = menuItem.name === 'Patients Corner' && !isExternalEHR && !isHashLink;
 

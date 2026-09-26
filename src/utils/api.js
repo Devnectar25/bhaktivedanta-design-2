@@ -716,6 +716,66 @@ export const deleteFaq = (id) =>
     return updated;
   });
 
+// =============================================================
+// Hero Banners & Backgrounds Database API
+// =============================================================
+export const HERO_BANNERS_STORAGE_KEY = 'bhaktivedanta_hero_banners_cache';
+
+export const defaultHeroBanners = [
+  {
+    id: 'hero-banner-1',
+    imageUrl: '/hero_new.jpg',
+    title: 'Compassionate Care with Advanced Technology',
+    subtitle: 'Where expert healing wisdom meets modern medical excellence.',
+    order: 1,
+    isActive: true,
+    createdAt: new Date().toISOString()
+  }
+];
+
+export const getHeroBanners = (fallback = defaultHeroBanners) =>
+  apiGet('/hero-banners', HERO_BANNERS_STORAGE_KEY, fallback);
+
+export const createHeroBanner = (bannerData) =>
+  apiMutation('/hero-banners', 'POST', bannerData, HERO_BANNERS_STORAGE_KEY, (oldData, newBanner) => {
+    const updated = [...(Array.isArray(oldData) ? oldData : []), newBanner];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hero_banners_updated'));
+    return updated;
+  });
+
+export const bulkCreateHeroBanners = (bannersList) =>
+  apiMutation('/hero-banners/bulk', 'POST', bannersList, HERO_BANNERS_STORAGE_KEY, (oldData, res) => {
+    const updated = res?.banners || (Array.isArray(res) ? res : [...(Array.isArray(oldData) ? oldData : []), ...(Array.isArray(bannersList) ? bannersList : [])]);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hero_banners_updated'));
+    return updated;
+  });
+
+export const updateHeroBanners = (bannersList) =>
+  apiMutation('/hero-banners', 'PUT', bannersList, HERO_BANNERS_STORAGE_KEY, () => {
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hero_banners_updated'));
+    return bannersList;
+  });
+
+export const updateHeroBanner = (id, bannerData) =>
+  apiMutation(`/hero-banners/${id}`, 'PUT', bannerData, HERO_BANNERS_STORAGE_KEY, (oldData, updatedBanner) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).map(b => (b.id === id ? { ...b, ...updatedBanner } : b));
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hero_banners_updated'));
+    return updated;
+  });
+
+export const deleteHeroBanner = (id) =>
+  apiMutation(`/hero-banners/${id}`, 'DELETE', null, HERO_BANNERS_STORAGE_KEY, (oldData) => {
+    const updated = (Array.isArray(oldData) ? oldData : []).filter(b => b.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    window.dispatchEvent(new Event('hero_banners_updated'));
+    return updated;
+  });
+
+
 
 
 

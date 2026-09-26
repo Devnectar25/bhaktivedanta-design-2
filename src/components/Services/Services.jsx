@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { getServicesState } from '../../utils/api';
+import { createSlug } from '../../pages/DetailPage/DetailPage';
 import './Services.css';
 
 // Default line icons for known services if custom image is not present
@@ -82,10 +84,14 @@ const Services = ({ onSelectService }) => {
     ? activeServices
     : activeServices.filter(s => s.categoryId === activeCategory);
 
+  const navigate = useNavigate();
   const handleCardClick = (srv) => {
     if (onSelectService) {
       const catName = categoriesMap[srv.categoryId] || 'Healthcare Services';
       onSelectService(srv, catName);
+    } else {
+      const slug = srv.slug || createSlug(srv.name) || srv.id;
+      navigate(`/services/${slug}`);
     }
   };
 

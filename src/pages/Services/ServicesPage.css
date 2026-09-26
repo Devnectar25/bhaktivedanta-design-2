@@ -1,0 +1,52 @@
+/* ServicesPage.css — Dedicated Full-Page View for Hospital Services & Facilities */
+
+.services-page-root {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.services-page-banner {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 0;
+}
+
+.services-page-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.services-page-breadcrumbs a {
+  color: #1e3a8a;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.services-page-breadcrumbs a:hover {
+  color: #ea580c;
+  text-decoration: underline;
+}
+
+.services-page-breadcrumbs .crumb-sep {
+  color: #cbd5e1;
+}
+
+.services-page-breadcrumbs .crumb-current {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.services-page-body {
+  flex: 1;
+}
+
+.services-page-body .services-section {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
