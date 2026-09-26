@@ -119,7 +119,7 @@ const Dashboard = () => {
       {/* External Portals Quick Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <a 
-          href="https://www.bhaktivedantahospital.com"
+          href="https://his.bhaktivedantahospital.com/EHR/"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gradient-to-r from-blue-900 to-indigo-900 p-6 rounded-xl shadow-md text-white flex items-center justify-between hover:opacity-95 transition-opacity"
@@ -135,7 +135,7 @@ const Dashboard = () => {
         </a>
 
         <a 
-          href="https://www.bhaktivedantahospital.com"
+          href="https://his.bhaktivedantahospital.com/EHR/"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gradient-to-r from-slate-800 to-slate-900 p-6 rounded-xl shadow-md text-white flex items-center justify-between hover:opacity-95 transition-opacity"

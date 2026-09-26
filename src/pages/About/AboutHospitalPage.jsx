@@ -974,12 +974,15 @@ const AboutHospitalPage = () => {
               Book a consultation or visit Bhaktivedanta Hospital &amp; Research Institute in Mira Road.
             </p>
           </div>
-          <button
-            onClick={() => setIsAppointmentModalOpen(true)}
+          <a
+            href="https://his.bhaktivedantahospital.com/EHR/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="about-cta-btn"
+            style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Book Appointment
-          </button>
+          </a>
         </section>
       </main>
 

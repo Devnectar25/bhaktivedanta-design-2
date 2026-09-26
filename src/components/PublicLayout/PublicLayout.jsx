@@ -5,6 +5,7 @@ import Navbar from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
 import ServiceDetailModal from '../ServiceDetailModal';
 import AppointmentModal from '../AppointmentModal/AppointmentModal';
+import FloatingActions from '../FloatingActions/FloatingActions';
 import { getServicesState } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import './PublicLayout.css';
@@ -70,7 +71,7 @@ export default function PublicLayout({ children }) {
   };
 
   const handleOpenAppointmentModal = () => {
-    setIsAppointmentModalOpen(true);
+    window.open('https://his.bhaktivedantahospital.com/EHR/', '_blank', 'noopener,noreferrer');
   };
 
   const handleCloseDetailModal = () => {
@@ -90,6 +91,7 @@ export default function PublicLayout({ children }) {
         onOpenAppointment={handleOpenAppointmentModal}
       />
       <ScrollToTop />
+      <FloatingActions />
 
       <main className={`public-main-content ${isHomePage ? 'home-main-content' : ''}`}>
         {children || <Outlet />}

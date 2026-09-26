@@ -477,10 +477,22 @@ export default function DetailPage({ module = 'specialities' }) {
             {/* Title + CTA Row */}
             <div className="detail-title-cta-row">
               <h1 className="detail-main-title">{itemTitle}</h1>
-              <Link to="/contact" className="detail-cta-btn">
-                <Calendar size={16} />
-                <span>{ctaLabel}</span>
-              </Link>
+              {ctaLabel === 'Book Appointment' ? (
+                <a
+                  href="https://his.bhaktivedantahospital.com/EHR/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="detail-cta-btn"
+                >
+                  <Calendar size={16} />
+                  <span>{ctaLabel}</span>
+                </a>
+              ) : (
+                <Link to="/contact" className="detail-cta-btn">
+                  <Calendar size={16} />
+                  <span>{ctaLabel}</span>
+                </Link>
+              )}
             </div>
 
             {/* Short Description */}

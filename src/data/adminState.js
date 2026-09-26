@@ -1,6 +1,3 @@
-import defaultDoctors from './defaultDoctors.json';
-
-
 // Default data for appointments
 const defaultAppointments = [
   {
@@ -173,7 +170,7 @@ import {
 } from '../utils/api.js';
 
 // Named exporters for initial states using API connection
-export const initialDoctors = () => getDoctors(defaultDoctors);
+export const initialDoctors = () => getDoctors([]);
 export const saveDoctors = (data) => saveDoctorsList(data);
 
 export const initialAppointments = () => getAppointments(defaultAppointments);

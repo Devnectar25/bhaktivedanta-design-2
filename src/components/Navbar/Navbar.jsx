@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
-import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres } from '../../utils/api';
+import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres, getHospitalSettings, defaultHospitalSettings } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
 import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
 import { createSlug } from '../../pages/DetailPage/DetailPage';
-import SearchModal from '../SearchModal/SearchModal';
+import NavSearch from './NavSearch';
 
 // Helper function to dynamically split items evenly into N columns so all items are included without overflow/omission
 const splitIntoColumns = (items, numCols) => {
@@ -54,10 +54,10 @@ const menuStructure = [
         title: 'Consultations',
         links: [
           { name: 'Find A Doctor', href: '#doctors' },
-          { name: 'Book Appointment', href: '#contact' },
+          { name: 'Book Appointment', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true },
           { name: 'Online Consultation', href: '#patients' },
           { name: 'Video Consultation', href: '#patients' },
-          { name: 'Patient Report', href: '#patients' }
+          { name: 'Patient Report', href: 'https://his.bhaktivedantahospital.com/EHR/', isExternal: true }
         ]
       },
       {
@@ -132,7 +132,7 @@ const menuStructure = [
     to: '/careers'
   },
   {
-    name: 'About us',
+    name: 'About Us',
     type: 'dropdown',
     to: '/about-us/about-hospital',
     links: [
@@ -205,7 +205,6 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   };
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [specialitiesData, setSpecialitiesData] = useState(defaultSpecialitiesState);
   const [activeMegaCategory, setActiveMegaCategory] = useState(null);
 
@@ -217,6 +216,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   const [aboutHospitalOpen, setAboutHospitalOpen] = useState(true);
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
   const [associateCentresListState, setAssociateCentresListState] = useState([]);
+  const [hospitalSettings, setHospitalSettings] = useState(defaultHospitalSettings);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
 
@@ -226,18 +226,6 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Global shortcut to toggle search modal (Ctrl+K / Cmd+K)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setIsSearchOpen(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -347,6 +335,16 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       });
     };
 
+    const fetchHospitalSettings = () => {
+      getHospitalSettings().then(res => {
+        if (res && typeof res === 'object') {
+          setHospitalSettings(prev => ({ ...prev, ...res }));
+        }
+      }).catch(err => {
+        console.warn('Navbar could not load live hospital settings:', err);
+      });
+    };
+
     // Initial fetch on mount
     fetchSpecialities();
     fetchServices();
@@ -354,6 +352,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     fetchSpiritualCare();
     fetchEducationPrograms();
     fetchAssociateCentres();
+    fetchHospitalSettings();
 
     const handleSync = (e) => {
       if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
@@ -374,16 +373,21 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       if (!e || !e.key || e.key === 'bhaktivedanta_associate_centres_cache') {
         fetchAssociateCentres();
       }
+      if (!e || !e.key || e.key === 'bhaktivedanta_hospital_settings_cache') {
+        fetchHospitalSettings();
+      }
     };
 
     window.addEventListener('storage', handleSync);
     window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('hospital_settings_updated', handleSync);
     window.addEventListener('associate_centres_updated', handleSync);
     window.addEventListener('focus', handleSync);
 
     return () => {
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('hospital_settings_updated', handleSync);
       window.removeEventListener('associate_centres_updated', handleSync);
       window.removeEventListener('focus', handleSync);
     };
@@ -503,21 +507,19 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             <img src="/logo.png" alt="Bhaktivedanta Hospital" className="logo-text" />
           </Link>
 
-          <div className="emergency-badge">
-            <span className="emergency-label">For Emergency & Appointments</span>
-            <span className="emergency-number">079 6900 2222</span>
-          </div>
+          <a 
+            href={`tel:${String(hospitalSettings.emergencyPhone || '079 6900 2222').replace(/\s+/g, '')}`}
+            className="emergency-badge"
+            style={{ textDecoration: 'none' }}
+            title="Call Emergency & Appointments"
+          >
+            <span className="emergency-label">{hospitalSettings.emergencyLabel || 'For Emergency & Appointments'}</span>
+            <span className="emergency-number">{hospitalSettings.emergencyPhone || '079 6900 2222'}</span>
+          </a>
 
           <div className="top-right-section">
             <EmblemLogo />
-            <button
-              className="search-icon-btn"
-              aria-label="Search website"
-              title="Search website (Ctrl + K)"
-              onClick={() => setIsSearchOpen(true)}
-            >
-              <span className="material-symbols-outlined">search</span>
-            </button>
+            <NavSearch isScrolled={isSolid} />
             <Link to="/contact" className="contact-us-link">Contact Us</Link>
           </div>
         </div>
@@ -534,14 +536,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             </Link>
 
             <div className="mobile-header-actions">
-              <button
-                className="search-icon-btn mobile-search-btn"
-                aria-label="Search website"
-                title="Search website"
-                onClick={() => setIsSearchOpen(true)}
-              >
-                <span className="material-symbols-outlined">search</span>
-              </button>
+              <NavSearch isScrolled={isSolid} />
 
               <button
                 className={`mobile-toggle-btn ${mobileMenuOpen ? 'active' : ''}`}
@@ -802,8 +797,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                               <ul className="patients-column-list">
                                 {col.links.map((link, lIdx) => {
                                   const isAppointment = link.name === 'Book Appointment';
+                                  const isPatientReport = link.name === 'Patient Report' || link.name === 'Patients Report';
+                                  const isExternalEHR = isAppointment || isPatientReport || link.isExternal;
                                   const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
-                                  const isPatientGuide = menuItem.name === 'Patients Corner' && !isAppointment && !isHashLink;
+                                  const isPatientGuide = menuItem.name === 'Patients Corner' && !isExternalEHR && !isHashLink;
 
                                   return (
                                     <li key={lIdx} className="patients-column-item">
@@ -816,19 +813,17 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                           {menuItem.name !== 'Education & Medical Research' && <span className="link-btn-bullet"></span>}
                                           <span className="link-text">{link.name}</span>
                                         </Link>
-                                      ) : isAppointment ? (
-                                        <button
-                                          type="button"
+                                      ) : isExternalEHR ? (
+                                        <a
+                                          href="https://his.bhaktivedantahospital.com/EHR/"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
                                           className="patients-column-link"
-                                          onClick={() => {
-                                            onOpenAppointment();
-                                            setOpenNavDropdown(null);
-                                          }}
-                                          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                          onClick={() => setOpenNavDropdown(null)}
                                         >
                                           <span className="link-btn-bullet"></span>
                                           <span className="link-text">{link.name}</span>
-                                        </button>
+                                        </a>
                                       ) : isPatientGuide ? (
                                         <button
                                           type="button"
@@ -886,11 +881,11 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                           to={menuItem.to}
                           className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
                           onClick={(e) => {
+                            setOpenNavDropdown(null);
                             if (isSpiritualCare) {
                               e.preventDefault();
                               const firstSec = spiritualSections[0];
                               handleSpiritualCareClick(firstSec || 'Spiritual care Services');
-                              setOpenNavDropdown(null);
                             }
                           }}
                         >
@@ -1046,11 +1041,21 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             </div>
 
             <div className="nav-appointment-action">
-              <button type="button" onClick={onOpenAppointment} className="btn-book-appointment">
+              <a
+                href="https://his.bhaktivedantahospital.com/EHR/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-book-appointment"
+              >
                 Book Appointment
-              </button>
+              </a>
               <div className="appointment-dropdown-menu">
-                <a href={resolveNavHref('#patients')} className="appointment-dropdown-btn">
+                <a
+                  href="https://his.bhaktivedantahospital.com/EHR/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="appointment-dropdown-btn"
+                >
                   <span className="material-symbols-outlined">assignment</span>
                   <span>Patients Report</span>
                 </a>
@@ -1217,8 +1222,10 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                             <div className="mobile-sub-links">
                               {col.links.map((link, lIdx) => {
                                 const isAppointment = link.name === 'Book Appointment';
+                                const isPatientReport = link.name === 'Patient Report' || link.name === 'Patients Report';
+                                const isExternalEHR = isAppointment || isPatientReport || link.isExternal;
                                 const isHashLink = link.href === '#doctors' || link.href === '#testimonials';
-                                const isPatientGuide = menuItem.name === 'Patients Corner' && !isAppointment && !isHashLink;
+                                const isPatientGuide = menuItem.name === 'Patients Corner' && !isExternalEHR && !isHashLink;
 
                                 if (link.to) {
                                   return (
@@ -1233,18 +1240,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                   );
                                 }
 
-                                if (isAppointment) {
+                                if (isExternalEHR) {
                                   return (
-                                    <button
+                                    <a
                                       key={lIdx}
-                                      className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        onOpenAppointment();
-                                        handleMobileLinkClick();
-                                      }}
+                                      href="https://his.bhaktivedantahospital.com/EHR/"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {link.name}
-                                    </button>
+                                    </a>
                                   );
                                 }
 
@@ -1314,7 +1321,13 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                               return (
                                 <div key={lIdx} className="mobile-nested-subgroup py-1">
                                   <div className="mobile-sub-link-a font-bold text-slate-800 flex items-center justify-between">
-                                    <span>{link.name}</span>
+                                    <Link
+                                      to={link.href}
+                                      onClick={handleMobileLinkClick}
+                                      style={{ color: 'inherit', textDecoration: 'none', flex: 1 }}
+                                    >
+                                      {link.name}
+                                    </Link>
                                     <span className="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
                                   </div>
                                   <div className="pl-3 flex flex-col gap-1 border-l-2 border-orange-300 ml-2 my-1">
@@ -1404,30 +1417,31 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                 >
                   Contact Us
                 </Link>
-                <button
-                  type="button"
+                <a
+                  href="https://his.bhaktivedantahospital.com/EHR/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn-book-appointment-mobile"
-                  onClick={() => {
-                    onOpenAppointment();
-                    handleMobileLinkClick();
-                  }}
+                  onClick={handleMobileLinkClick}
+                  style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
                 >
                   Book Appointment
-                </button>
+                </a>
                 <div className="mobile-drawer-emergency">
-                  <span className="emergency-label">For Emergency & Appointments</span>
-                  <span className="emergency-number">079 6900 2222</span>
+                  <span className="emergency-label">{hospitalSettings.emergencyLabel || 'For Emergency & Appointments'}</span>
+                  <a
+                    href={`tel:${String(hospitalSettings.emergencyPhone || '079 6900 2222').replace(/\s+/g, '')}`}
+                    className="emergency-number"
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    {hospitalSettings.emergencyPhone || '079 6900 2222'}
+                  </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
     </header>
   );
 };

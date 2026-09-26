@@ -29,6 +29,7 @@ import OurSpiritualAdvisorsPage from './pages/About/OurSpiritualAdvisorsPage';
 import ContactPage from './pages/Contact/ContactPage';
 import TestimonialsPage from './pages/Testimonials/TestimonialsPage';
 import AssociateCentreDetailPage from './pages/AssociateCentres/AssociateCentreDetailPage';
+import FaqsPage from './pages/Faqs/FaqsPage';
 
 // Admin Layout & Pages
 import AdminLayout from './components/admin/AdminLayout/AdminLayout';
@@ -59,6 +60,7 @@ import AdminAboutUs from './pages/admin/AboutUs/AboutUs';
 import StatutoryCompliances from './pages/admin/StatutoryCompliances/StatutoryCompliances';
 import PatientFeedback from './pages/admin/Feedback/PatientFeedback';
 import FeedbackPage from './pages/Feedback/FeedbackPage';
+import AdminFaqs from './pages/admin/Faqs/Faqs';
 
 // Admin Forms
 import AddDoctor from './pages/admin/Doctors/AddDoctor';
@@ -146,8 +148,10 @@ function App() {
 
           <Route path="/careers" element={<CareersPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/contact-us" element={<Navigate to="/contact" replace />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/testimonials" element={<TestimonialsPage />} />
+          <Route path="/faqs" element={<FaqsPage />} />
         </Route>
 
         {/* Education & Medical Research Dedicated Routes */}
@@ -207,6 +211,7 @@ function App() {
           <Route path="about-us" element={<AdminAboutUs />} />
           <Route path="new-developments" element={<Navigate to="/admin/about-us?tab=newDevelopments" replace />} />
           <Route path="statutory-compliances" element={<StatutoryCompliances />} />
+          <Route path="faqs" element={<AdminFaqs />} />
           <Route path="settings" element={<Settings />} />
 
           {/* Forms */}
