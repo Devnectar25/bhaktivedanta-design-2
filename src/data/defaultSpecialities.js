@@ -23,12 +23,23 @@ export function ensureStandardTabs(spec) {
       }
     }
 
+    const standardIds = ['t1', 't2', 't3', 't4', 't5'];
+    const standardTitles = ['Overview', 'Why Choose Us', 'Technology & Infrastructure', 'Services', 'Our Experts'];
+    const customTabs = spec.tabs.filter(t => !standardIds.includes(t.id) && !standardTitles.includes(t.title));
+
     spec.tabs = [
       { id: 't1', title: 'Overview', content: overviewContent, images: currentOverview?.images || [] },
       { id: 't2', title: 'Why Choose Us', content: (spec.tabs.find(t => t.title === 'Why Choose Us' || t.id === 't2')?.content) || standardTabs[1].content, images: (spec.tabs.find(t => t.title === 'Why Choose Us' || t.id === 't2')?.images) || [] },
       { id: 't3', title: 'Technology & Infrastructure', content: (spec.tabs.find(t => t.title === 'Technology & Infrastructure' || t.id === 't3')?.content) || standardTabs[2].content, images: (spec.tabs.find(t => t.title === 'Technology & Infrastructure' || t.id === 't3')?.images) || [] },
       { id: 't4', title: 'Services', content: (spec.tabs.find(t => t.title === 'Services' || t.id === 't4')?.content) || standardTabs[3].content, images: (spec.tabs.find(t => t.title === 'Services' || t.id === 't4')?.images) || [] },
-      { id: 't5', title: 'Our Experts', content: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.content) || standardTabs[4].content, images: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.images) || [] }
+      { id: 't5', title: 'Our Experts', content: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.content) || standardTabs[4].content, images: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.images) || [] },
+      ...customTabs.map(t => ({
+        id: t.id || `custom-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        title: t.title || 'Custom Section',
+        content: t.content || '',
+        images: t.images || [],
+        isCustom: true
+      }))
     ];
   }
 }

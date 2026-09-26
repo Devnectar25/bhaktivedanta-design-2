@@ -225,6 +225,27 @@ const AddSpeciality = () => {
     setTabs(updatedTabs);
   };
 
+  const handleUpdateTabTitle = (idx, newTitle) => {
+    const updatedTabs = [...tabs];
+    updatedTabs[idx] = { ...updatedTabs[idx], title: newTitle };
+    setTabs(updatedTabs);
+  };
+
+  const handleAddCustomTab = () => {
+    const customCount = (tabs || []).filter(t => t.isCustom || !['t1', 't2', 't3', 't4', 't5'].includes(t.id)).length;
+    const newTab = {
+      id: `custom-${Date.now()}`,
+      title: `Custom Section ${customCount + 1}`,
+      content: '<p></p>',
+      isCustom: true
+    };
+    setTabs(prev => [...(prev || []), newTab]);
+  };
+
+  const handleDeleteCustomTab = (idx) => {
+    setTabs(prev => (prev || []).filter((_, i) => i !== idx));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -483,13 +504,29 @@ const AddSpeciality = () => {
         {/* Specialities Tabbed Editor */}
         {tabs.length > 0 && (
           <section className="bg-white rounded-xl border border-slate-200/80 p-5 space-y-4">
-            <h3 className="font-bold text-sm text-[#1e3a8a] border-b border-slate-100 pb-2 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-lg">tab</span>
-              <span>Configure Department Tabs</span>
-            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-sm text-[#1e3a8a] flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-lg">tab</span>
+                  <span>Configure Department Tabs &amp; Sections</span>
+                </h3>
+                <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                  Manage standard department sections or add dynamic custom sections.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleAddCustomTab}
+                className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-xs"
+              >
+                <span className="material-symbols-outlined text-sm">add_circle</span>
+                <span>+ Add Custom Section</span>
+              </button>
+            </div>
 
-            <div className="space-y-4 pt-2">
+            <div className="space-y-6 pt-1">
               {tabs.map((tab, idx) => {
+                const isCustom = tab.isCustom || !['t1', 't2', 't3', 't4', 't5'].includes(tab.id);
                 const tabTitle = tab.title || 'Tab';
                 const lowerTitle = tabTitle.toLowerCase();
                 const getTabIcon = () => {
@@ -497,20 +534,60 @@ const AddSpeciality = () => {
                   if (tab.id === 't2' || lowerTitle.includes('why choose')) return 'verified';
                   if (tab.id === 't3' || lowerTitle.includes('technology') || lowerTitle.includes('infrastructure')) return 'biotech';
                   if (tab.id === 't4' || lowerTitle.includes('services')) return 'medical_services';
-                  return 'groups';
+                  if (tab.id === 't5' || lowerTitle.includes('our experts')) return 'groups';
+                  return 'extension';
                 };
 
                 return (
                   <div key={tab.id || idx} className="space-y-3 border-b border-slate-100 pb-5 last:border-b-0 last:pb-0">
-                    <div className="flex items-center justify-between">
-                      <label className="font-bold text-[#1e3a8a] uppercase flex items-center gap-1.5 text-xs">
-                        <span className="material-symbols-outlined text-sm text-blue-600">{getTabIcon()}</span>
-                        <span>{tabTitle} Description &amp; Details</span>
-                        <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">
-                          Live Rich-Text Editor
-                        </span>
-                      </label>
-                    </div>
+                    {/* Header / Title line */}
+                    {isCustom ? (
+                      <div className="bg-amber-50/60 p-3 rounded-xl border border-amber-200/70 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                          <div className="flex-1 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-base text-amber-600">extension</span>
+                            <div className="flex-1 space-y-1">
+                              <label className="block text-[10px] font-bold uppercase text-amber-900 tracking-wider">
+                                Custom Section Title *
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full bg-white border border-amber-300 focus:border-amber-500 px-3 py-1.5 rounded-lg outline-none font-bold text-xs text-slate-800 shadow-xs"
+                                placeholder="e.g. Research & Publications, Patient Stories..."
+                                value={tab.title || ''}
+                                onChange={(e) => handleUpdateTabTitle(idx, e.target.value)}
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 self-end sm:self-center">
+                            <span className="bg-amber-100/80 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-200">
+                              Custom Section
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCustomTab(idx)}
+                              className="flex items-center gap-1 px-3 py-1.5 text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-lg font-bold transition-all border border-rose-200 shadow-xs"
+                              title="Delete this custom section"
+                            >
+                              <span className="material-symbols-outlined text-sm">delete</span>
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <label className="font-bold text-[#1e3a8a] uppercase flex items-center gap-1.5 text-xs">
+                          <span className="material-symbols-outlined text-sm text-blue-600">{getTabIcon()}</span>
+                          <span>{tabTitle} Description &amp; Details</span>
+                          <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">
+                            Standard Section
+                          </span>
+                        </label>
+                      </div>
+                    )}
 
                     <RichTextEditor
                       value={tab.content}
@@ -566,6 +643,17 @@ const AddSpeciality = () => {
                   </div>
                 );
               })}
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAddCustomTab}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition-all shadow-xs"
+                >
+                  <span className="material-symbols-outlined text-base">add_circle</span>
+                  <span>+ Add Custom Section</span>
+                </button>
+              </div>
             </div>
           </section>
         )}

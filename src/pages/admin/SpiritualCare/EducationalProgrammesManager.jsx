@@ -21,6 +21,7 @@ export default function EducationalProgrammesManager() {
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, targetId: null, title: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +33,80 @@ export default function EducationalProgrammesManager() {
   }, []);
 
   const currentProg = programmes.find(p => p.id === selectedProgId) || programmes[0];
+
+  const handleAddProgramme = () => {
+    const timestamp = Date.now();
+    const newId = `prog-${timestamp}`;
+    const newProg = {
+      id: newId,
+      slug: `programme-${timestamp.toString().slice(-4)}`,
+      title: 'New Educational Programme',
+      badge: 'Educational',
+      duration: 'Weekly Batches',
+      description: 'Comprehensive educational initiative conducted by healthcare experts and spiritual educators.',
+      image: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=80',
+      destinationType: 'detail_page',
+      enabled: true,
+      detailPage: {
+        title: 'New Educational Programme',
+        subtitle: 'Value-based educational and holistic wellness initiative.',
+        category: 'Educational Programmes',
+        bannerImage: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=1200&q=80',
+        blocks: [
+          {
+            id: `b_${timestamp}_1`,
+            type: 'paragraph',
+            title: 'About This Programme',
+            content: '<p>Enter detailed curriculum, objectives, and schedule information for this educational programme.</p>'
+          }
+        ]
+      }
+    };
+
+    setProgrammes(prev => [...prev, newProg]);
+    setSelectedProgId(newId);
+  };
+
+  const handleDeleteProgRequest = (prog, e) => {
+    if (e) e.stopPropagation();
+    setDeleteModal({
+      isOpen: true,
+      targetId: prog.id,
+      title: prog.title || 'Educational Programme'
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.targetId) return;
+    const targetId = deleteModal.targetId;
+    const updated = programmes.filter(p => p.id !== targetId);
+    setProgrammes(updated);
+    setDeleteModal({ isOpen: false, targetId: null, title: '' });
+
+    if (selectedProgId === targetId) {
+      setSelectedProgId(updated.length > 0 ? updated[0].id : null);
+    }
+
+    try {
+      const fullState = await getSpiritualCareState(defaultSpiritualCareState);
+      const updatedFullState = {
+        ...fullState,
+        programmes: updated
+      };
+      await saveSpiritualCareState(updatedFullState);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+    } catch (err) {
+      setAlertModal({
+        isOpen: true,
+        title: 'Delete Failed',
+        message: err.message || 'Unable to delete programme from database.',
+        type: 'error'
+      });
+    }
+  };
 
   const handleUpdateCurrentProg = (updater) => {
     setProgrammes(prev => prev.map(p => {
@@ -223,50 +298,73 @@ export default function EducationalProgrammesManager() {
 
       {/* Main 2-Column Split: Program Selector + Program Editor */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: List of 6 Program Cards (4 Cols) */}
-        <div className="lg:col-span-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-2.5">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider px-2 block mb-1">
-            Programmes (6)
-          </span>
+        {/* Left Column: List of Program Cards (4 Cols) */}
+        <div className="lg:col-span-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+          <div className="flex items-center justify-between px-1 pb-1 border-b border-slate-100">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+              Programmes ({programmes.length})
+            </span>
+            <button
+              type="button"
+              onClick={handleAddProgramme}
+              className="flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-white bg-orange-50 hover:bg-orange-600 border border-orange-200 hover:border-orange-600 px-2.5 py-1 rounded-lg transition-all"
+              title="Add New Programme"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              <span>Add Programme</span>
+            </button>
+          </div>
 
-          {programmes.map((prog) => {
-            const isSelected = prog.id === selectedProgId;
-            const isExistingGarbha = prog.id === 'garbha-samskar' || prog.destinationType === 'existing';
+          <div className="space-y-2.5 max-h-[620px] overflow-y-auto hide-scrollbar pr-0.5">
+            {programmes.map((prog) => {
+              const isSelected = prog.id === selectedProgId;
+              const isExistingGarbha = prog.id === 'garbha-samskar' || prog.destinationType === 'existing';
 
-            return (
-              <div
-                key={prog.id}
-                onClick={() => setSelectedProgId(prog.id)}
-                className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${
-                  isSelected
-                    ? 'border-orange-500 bg-orange-50/40 shadow-xs'
-                    : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
-                }`}
-              >
-                <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-slate-200 border border-slate-300/60">
-                  <img src={prog.image} alt={prog.title} className="w-full height-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-slate-800 truncate block">{prog.title}</span>
+              return (
+                <div
+                  key={prog.id}
+                  onClick={() => setSelectedProgId(prog.id)}
+                  className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${
+                    isSelected
+                      ? 'border-orange-500 bg-orange-50/40 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
+                  }`}
+                >
+                  <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-slate-200 border border-slate-300/60">
+                    <img src={prog.image} alt={prog.title} className="w-full height-full object-cover" />
                   </div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">
-                      {prog.badge || 'Program'}
-                    </span>
-                    {isExistingGarbha && (
-                      <span className="text-[10px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
-                        Services Module
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-slate-800 truncate block">{prog.title}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] font-semibold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">
+                        {prog.badge || 'Program'}
                       </span>
-                    )}
+                      {isExistingGarbha && (
+                        <span className="text-[10px] font-medium text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                          Services Module
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteProgRequest(prog, e)}
+                      className="w-7 h-7 rounded-lg border border-transparent hover:border-red-200 bg-transparent hover:bg-red-50 text-slate-400 hover:text-red-600 flex items-center justify-center transition-colors"
+                      title={`Delete ${prog.title || 'programme'}`}
+                    >
+                      <span className="material-symbols-outlined text-base">delete</span>
+                    </button>
+                    <span className="material-symbols-outlined text-slate-400 text-sm">
+                      {isSelected ? 'chevron_right' : ''}
+                    </span>
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-slate-400 text-sm">
-                  {isSelected ? 'chevron_right' : ''}
-                </span>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Right Column: Active Program Card Editor & Block Builder (8 Cols) */}
@@ -279,7 +377,18 @@ export default function EducationalProgrammesManager() {
                   <span className="material-symbols-outlined text-orange-500">edit_note</span>
                   Card Configuration: {currentProg.title}
                 </h3>
-                <span className="text-xs text-slate-400 font-mono">ID: {currentProg.id}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 font-mono">ID: {currentProg.id}</span>
+                  <button
+                    type="button"
+                    onClick={(e) => handleDeleteProgRequest(currentProg, e)}
+                    className="flex items-center gap-1 text-xs font-bold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 px-2.5 py-1 rounded-lg transition-all"
+                    title="Delete this programme"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete</span>
+                    <span>Delete</span>
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -288,8 +397,32 @@ export default function EducationalProgrammesManager() {
                   <input
                     type="text"
                     value={currentProg.title || ''}
-                    onChange={(e) => handleUpdateCurrentProg({ title: e.target.value })}
+                    onChange={(e) => {
+                      const newTitle = e.target.value;
+                      handleUpdateCurrentProg(p => {
+                        const autoSlug = !p.slug || p.slug.startsWith('programme-') || p.slug === p.id;
+                        const updatedSlug = autoSlug && newTitle.trim()
+                          ? newTitle.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                          : p.slug;
+                        return {
+                          ...p,
+                          title: newTitle,
+                          slug: updatedSlug || p.slug,
+                          detailPage: p.detailPage ? { ...p.detailPage, title: newTitle } : p.detailPage
+                        };
+                      });
+                    }}
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">URL Slug</label>
+                  <input
+                    type="text"
+                    value={currentProg.slug || ''}
+                    onChange={(e) => handleUpdateCurrentProg({ slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-') })}
+                    placeholder="programme-slug"
+                    className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none font-mono text-[11px]"
                   />
                 </div>
                 <div>
@@ -310,12 +443,19 @@ export default function EducationalProgrammesManager() {
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none"
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label className="block text-xs font-bold text-slate-700 mb-1">Card Image URL</label>
                   <input
                     type="text"
                     value={currentProg.image || ''}
-                    onChange={(e) => handleUpdateCurrentProg({ image: e.target.value })}
+                    onChange={(e) => {
+                      const newImg = e.target.value;
+                      handleUpdateCurrentProg(p => ({
+                        ...p,
+                        image: newImg,
+                        detailPage: p.detailPage ? { ...p.detailPage, bannerImage: newImg } : p.detailPage
+                      }));
+                    }}
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none font-mono text-[11px]"
                   />
                 </div>
@@ -690,7 +830,41 @@ export default function EducationalProgrammesManager() {
             )}
           </div>
         )}
+
+        {!currentProg && (
+          <div className="lg:col-span-8 bg-white p-12 rounded-2xl border border-slate-200/80 shadow-sm text-center space-y-4">
+            <div className="w-16 h-16 bg-orange-50 text-orange-600 rounded-2xl mx-auto flex items-center justify-center">
+              <span className="material-symbols-outlined text-3xl">school</span>
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-800">No Programmes Available</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                No educational programmes found. Create a new programme to begin adding curriculum highlights and detail blocks.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddProgramme}
+              className="inline-flex items-center gap-1.5 bg-[#132A4C] hover:bg-[#1e3a8a] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              <span>Create New Programme</span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        title="Delete Programme?"
+        message={`Are you sure you want to delete "${deleteModal.title}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteModal({ isOpen: false, targetId: null, title: '' })}
+        onClose={() => setDeleteModal({ isOpen: false, targetId: null, title: '' })}
+      />
 
       <AlertModal
         isOpen={alertModal.isOpen}

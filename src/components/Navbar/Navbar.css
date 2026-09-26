@@ -246,6 +246,8 @@
   align-items: center;
   transition: color 0.2s ease;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .navbar-header.scrolled .nav-dropdown-trigger,
@@ -637,6 +639,8 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-left: 4px solid transparent;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .specialities-category-item:hover,
@@ -870,6 +874,8 @@
   border-bottom: 2px solid #f8fafc;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Education & Medical Research Specific Mega Menu (Matching Screenshot 1) */
@@ -956,6 +962,8 @@
   white-space: normal;
   width: 100%;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .patients-column-link .link-btn-bullet,
@@ -1001,6 +1009,8 @@
   word-break: normal;
   overflow-wrap: break-word;
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .link-btn-bullet,
