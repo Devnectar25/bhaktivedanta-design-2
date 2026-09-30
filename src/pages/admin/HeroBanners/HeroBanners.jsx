@@ -10,7 +10,8 @@ import {
   bulkCreateHeroBanners,
   updateHeroBanners,
   deleteHeroBanner,
-  defaultHeroBanners
+  defaultHeroBanners,
+  uploadImageToSupabaseBucket
 } from '../../../utils/api';
 import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
@@ -156,13 +157,21 @@ export default function HeroBanners({ embedded = false }) {
 
     try {
       for (let i = 0; i < validFiles.length; i++) {
-        setUploadProgress(`Processing & optimizing image ${i + 1} of ${validFiles.length}...`);
+        setUploadProgress(`Optimizing & uploading image ${i + 1} of ${validFiles.length} to Supabase Bucket...`);
         const { dataUrl, fileName } = await processImageFile(validFiles[i]);
+
+        // Upload directly to Supabase storage bucket 'hero-banners'
+        let publicUrl = dataUrl;
+        try {
+          publicUrl = await uploadImageToSupabaseBucket(dataUrl, fileName, 'hero-banners');
+        } catch (uploadErr) {
+          console.warn('Supabase storage upload fallback to dataUrl:', uploadErr);
+        }
 
         const cleanTitle = fileName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
         newBannerItems.push({
           id: `hero-banner-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
-          imageUrl: dataUrl,
+          imageUrl: publicUrl,
           title: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
           subtitle: 'Bhaktivedanta Hospital & Research Institute',
           order: currentMaxOrder + i + 1,

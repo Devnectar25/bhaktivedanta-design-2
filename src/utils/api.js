@@ -808,6 +808,28 @@ export const updateHeroBanner = (id, bannerData) =>
     return updated;
   });
 
+/**
+ * Upload an image (base64 string) to a Supabase Storage Bucket and return the public URL.
+ */
+export const uploadImageToSupabaseBucket = async (base64Data, fileName = 'image.jpg', bucketName = 'hero-banners', folderName = '') => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64Data, fileName, bucketName, folderName })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Failed to upload image to Supabase');
+    }
+    const data = await res.json();
+    return data.url;
+  } catch (err) {
+    console.error('[uploadImageToSupabaseBucket Error]:', err);
+    throw err;
+  }
+};
+
 export const deleteHeroBanner = (id) =>
   apiMutation(`/hero-banners/${id}`, 'DELETE', null, HERO_BANNERS_STORAGE_KEY, (oldData) => {
     const updated = (Array.isArray(oldData) ? oldData : []).filter(b => b.id !== id);
