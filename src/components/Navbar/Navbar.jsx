@@ -65,8 +65,8 @@ const menuStructure = [
         title: 'Quick Links',
         links: [
           { name: 'Feedback', to: '/feedback' },
-          { name: 'Announcements', href: '#patients' },
-          { name: 'Blogs', href: '#patients' },
+          { name: 'Announcements', to: '/events' },
+          { name: 'Blogs', to: '/blogs' },
           { name: 'OPD Schedule', href: '#patients' },
           { name: 'Health Checkup', href: '#patients' }
         ]
@@ -76,7 +76,7 @@ const menuStructure = [
   {
     name: 'Spiritual care',
     type: 'dropdown',
-    to: '#spiritual-care',
+    to: '/spiritual-care/spiritual-care-services',
     links: [
       { name: 'Spiritual care Services', href: '#spiritual-care-services' },
       { name: 'Educational Programmes', href: '#educational-programmes' },
@@ -409,7 +409,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     };
   }, []);
 
-  const handlePatientGuideClick = (linkName) => {
+  const getPatientGuideSlug = (linkName) => {
     const normalizedName = (linkName || '').toLowerCase().trim();
     const guides = patientCornerData.guides || defaultPatientCornerState.guides || [];
 
@@ -425,32 +425,15 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
         (normalizedName.includes('empanelled') && (gSlug.includes('insurance') || gSlug.includes('empanelled') || gTitle.includes('insurance') || gTitle.includes('tpa'))) ||
         (normalizedName.includes('visitor') && (gSlug.includes('visitor') || gTitle.includes('visitor') || gTitle.includes('icu'))) ||
         (normalizedName.includes('right') && (gSlug.includes('right') || gTitle.includes('right'))) ||
-        (normalizedName.includes('international') && (gSlug.includes('intl') || gSlug.includes('international') || gTitle.includes('international'))) ||
-        (normalizedName.includes('consultation') && (gSlug.includes('consultation') || gTitle.includes('consultation'))) ||
-        (normalizedName.includes('report') && (gSlug.includes('report') || gTitle.includes('report'))) ||
-        (normalizedName.includes('schedule') && (gSlug.includes('schedule') || gTitle.includes('schedule') || gTitle.includes('opd'))) ||
-        (normalizedName.includes('checkup') && (gSlug.includes('checkup') || gTitle.includes('checkup') || gTitle.includes('package')))
+        (normalizedName.includes('international') && (gSlug.includes('intl') || gSlug.includes('international') || gTitle.includes('international')))
       );
     });
 
-    const targetGuide = foundGuide || {
-      id: `guide-${normalizedName.replace(/[^a-z0-9]+/g, '-')}`,
-      title: linkName,
-      name: linkName,
-      category: 'Patients Corner',
-      categoryName: 'Patients Corner',
-      tabs: [
-        {
-          id: 't1',
-          title: 'Overview',
-          type: 'rich_text',
-          enabled: true,
-          content: `<p>Welcome to Bhaktivedanta Hospital & Research Institute — ${linkName}. Please contact our helpdesk or admission counter for further details.</p>`
-        }
-      ]
-    };
+    return foundGuide?.slug || createSlug(linkName);
+  };
 
-    const slug = foundGuide?.slug || targetGuide.slug || createSlug(linkName);
+  const handlePatientGuideClick = (linkName) => {
+    const slug = getPatientGuideSlug(linkName);
     navigate(`/patients-corner/${slug}`);
   };
 
@@ -472,7 +455,12 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     }
 
     const title = typeof sectionOrName === 'string' ? sectionOrName : targetSection?.title || targetSection?.name || 'Spiritual Care';
-    const slug = targetSection?.slug || targetSection?.id || createSlug(title);
+    let slug = targetSection?.slug || targetSection?.id || createSlug(title);
+
+    if (slug === 'publications-paper-presentations' || slug === 'publications-and-paper-presentations') {
+      slug = 'publications';
+    }
+
     navigate(`/spiritual-care/${slug}`);
   };
 
@@ -892,18 +880,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                                           <span className="link-text">{link.name}</span>
                                         </a>
                                       ) : isPatientGuide ? (
-                                        <button
-                                          type="button"
+                                        <Link
+                                          to={`/patients-corner/${getPatientGuideSlug(link.name)}`}
                                           className="patients-column-link"
-                                          onClick={() => {
-                                            handlePatientGuideClick(link.name);
-                                            setOpenNavDropdown(null);
-                                          }}
-                                          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                          onClick={() => setOpenNavDropdown(null)}
                                         >
                                           <span className="link-btn-bullet"></span>
                                           <span className="link-text">{link.name}</span>
-                                        </button>
+                                        </Link>
                                       ) : (
                                         <a href={link.href} className="patients-column-link">
                                           <span className="link-btn-bullet"></span>
@@ -945,25 +929,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   return (
                     <div
                       key={menuItem.name}
-                      className={`nav-item-dropdown-container ${isAboutUs ? 'about-us-nav-item' : ''} ${isAssociateCentre ? 'associate-nav-item' : ''} ${isDropdownActive ? 'is-open' : ''}`}
+                      className={`nav-item-dropdown-container ${isAboutUs || isSpiritualCare ? 'about-us-nav-item' : ''} ${isAssociateCentre ? 'associate-nav-item' : ''} ${isDropdownActive ? 'is-open' : ''}`}
                       onMouseEnter={() => setOpenNavDropdown(menuItem.name)}
                       onMouseLeave={() => setOpenNavDropdown(null)}
                     >
                       {menuItem.to && menuItem.to.startsWith('/') ? (
                         <Link
                           to={menuItem.to}
-                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
-                          onClick={(e) => {
+                          className={`nav-dropdown-trigger ${isAboutUs || isSpiritualCare ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
+                          onClick={() => {
                             setOpenNavDropdown(null);
-                            if (isSpiritualCare) {
-                              e.preventDefault();
-                              const firstSec = spiritualSections[0];
-                              handleSpiritualCareClick(firstSec || 'Spiritual care Services');
-                            }
                           }}
                         >
                           <span>{menuItem.name}</span>
-                          {(isAboutUs || isAssociateCentre) && (
+                          {(isAboutUs || isAssociateCentre || isSpiritualCare) && (
                             <span className="material-symbols-outlined nav-dropdown-arrow">
                               expand_more
                             </span>
@@ -972,7 +951,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       ) : (
                         <a
                           href={menuItem.to}
-                          className={`nav-dropdown-trigger ${isAboutUs ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
+                          className={`nav-dropdown-trigger ${isAboutUs || isSpiritualCare ? 'about-us-trigger' : ''} ${isAssociateCentre ? 'associate-trigger' : ''} ${isDropdownActive ? 'trigger-active' : ''}`}
                           onClick={(e) => {
                             if (isSpiritualCare) {
                               e.preventDefault();
@@ -983,7 +962,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                           }}
                         >
                           <span>{menuItem.name}</span>
-                          {(isAboutUs || isAssociateCentre) && (
+                          {(isAboutUs || isAssociateCentre || isSpiritualCare) && (
                             <span className="material-symbols-outlined nav-dropdown-arrow">
                               expand_more
                             </span>
@@ -1057,18 +1036,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                             return (
                               <li key={lIdx} className="patients-column-item">
                                 {isSpiritualCare ? (
-                                  <button
-                                    type="button"
+                                  <Link
+                                    to={
+                                      link.section?.id === 'publications' || link.href === '#publications'
+                                        ? '/spiritual-care/publications'
+                                        : link.href && link.href.startsWith('/spiritual-care')
+                                          ? link.href
+                                          : `/spiritual-care/${link.section?.slug || link.section?.id || (link.href ? link.href.replace('#', '') : createSlug(link.name))}`
+                                    }
                                     className="patients-column-link"
-                                    onClick={() => {
-                                      handleSpiritualCareClick(link.section || link.name);
-                                      setOpenNavDropdown(null);
-                                    }}
-                                    style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', font: 'inherit', textAlign: 'left' }}
+                                    onClick={() => setOpenNavDropdown(null)}
                                   >
                                     <span className="link-btn-bullet"></span>
                                     <span className="link-text">{link.name}</span>
-                                  </button>
+                                  </Link>
                                 ) : link.href && link.href.startsWith('/') ? (
                                   <Link
                                     to={link.href}
@@ -1325,16 +1306,14 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                                 if (isPatientGuide) {
                                   return (
-                                    <button
+                                    <Link
                                       key={lIdx}
-                                      className="mobile-sub-link-btn"
-                                      onClick={() => {
-                                        handlePatientGuideClick(link.name);
-                                        handleMobileLinkClick();
-                                      }}
+                                      to={`/patients-corner/${getPatientGuideSlug(link.name)}`}
+                                      className="mobile-sub-link-a"
+                                      onClick={handleMobileLinkClick}
                                     >
                                       {link.name}
-                                    </button>
+                                    </Link>
                                   );
                                 }
 
@@ -1422,16 +1401,20 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                             }
 
                             return isSpiritualCare ? (
-                              <button
+                              <Link
                                 key={lIdx}
-                                className="mobile-sub-link-btn"
-                                onClick={() => {
-                                  handleSpiritualCareClick(link.section || link.name);
-                                  handleMobileLinkClick();
-                                }}
+                                to={
+                                  link.section?.id === 'publications' || link.href === '#publications'
+                                    ? '/spiritual-care/publications'
+                                    : link.href && link.href.startsWith('/spiritual-care')
+                                      ? link.href
+                                      : `/spiritual-care/${link.section?.slug || link.section?.id || (link.href ? link.href.replace('#', '') : createSlug(link.name))}`
+                                }
+                                className="mobile-sub-link-a"
+                                onClick={handleMobileLinkClick}
                               >
                                 {link.name}
-                              </button>
+                              </Link>
                             ) : link.href && link.href.startsWith('/') ? (
                               <Link
                                 key={lIdx}

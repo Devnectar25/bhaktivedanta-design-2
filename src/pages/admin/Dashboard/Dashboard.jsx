@@ -3,218 +3,475 @@ import { useNavigate, Link } from 'react-router-dom';
 import { 
   initialDoctors, 
   initialEvents, 
-  initialTestimonials, 
   initialNews, 
-  initialGallery 
+  initialGallery,
+  initialQueries
 } from '../../../data/adminState';
+import { 
+  getQueries,
+  getAppErrors,
+  getSpecialitiesState,
+  getServicesState,
+  getSpiritualCareState,
+  getHeroBanners
+} from '../../../utils/api';
 import { defaultSpecialitiesState } from '../../../data/defaultSpecialities';
-import { getSpecialitiesState } from '../../../utils/api';
+import { defaultServicesState } from '../../../data/defaultServices';
+import { defaultSpiritualCareState, defaultSpiritualSections } from '../../../data/defaultSpiritualCare';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // Load actual state lengths
+  // Dynamic API Counts & Data Lists
+  const [loading, setLoading] = useState(true);
   const [doctorsCount, setDoctorsCount] = useState(0);
-  const [eventsCount, setEventsCount] = useState(0);
-  const [testimonialsCount, setTestimonialsCount] = useState(0);
-  const [newsCount, setNewsCount] = useState(0);
-  const [galleryCount, setGalleryCount] = useState(0);
   const [specialitiesCount, setSpecialitiesCount] = useState(0);
+  const [servicesCount, setServicesCount] = useState(0);
+  const [queriesCount, setQueriesCount] = useState(0);
+  const [pendingQueriesCount, setPendingQueriesCount] = useState(0);
+  const [errorsCount, setErrorsCount] = useState(0);
+  const [criticalErrorsCount, setCriticalErrorsCount] = useState(0);
+  const [spiritualSectionsCount, setSpiritualSectionsCount] = useState(0);
+  const [newsCount, setNewsCount] = useState(0);
+  const [eventsCount, setEventsCount] = useState(0);
+  const [bannersCount, setBannersCount] = useState(0);
+
+  // Recent Items lists
+  const [recentQueries, setRecentQueries] = useState([]);
+  const [recentErrors, setRecentErrors] = useState([]);
+
+  const loadDashboardData = async () => {
+    setLoading(true);
+    try {
+      const defaultQ = await initialQueries();
+      
+      const [
+        docs,
+        evts,
+        nws,
+        gal,
+        specsState,
+        servsState,
+        spirState,
+        queriesData,
+        errorsData,
+        bannersData
+      ] = await Promise.all([
+        initialDoctors().catch(() => []),
+        initialEvents().catch(() => []),
+        initialNews().catch(() => []),
+        initialGallery().catch(() => []),
+        getSpecialitiesState(defaultSpecialitiesState).catch(() => defaultSpecialitiesState),
+        getServicesState(defaultServicesState).catch(() => defaultServicesState),
+        getSpiritualCareState(defaultSpiritualCareState).catch(() => defaultSpiritualCareState),
+        getQueries(defaultQ).catch(() => defaultQ),
+        getAppErrors([]).catch(() => []),
+        getHeroBanners([]).catch(() => [])
+      ]);
+
+      // Counts
+      setDoctorsCount(Array.isArray(docs) ? docs.length : 0);
+      setEventsCount(Array.isArray(evts) ? evts.length : 0);
+      setNewsCount(Array.isArray(nws) ? nws.length : 0);
+      
+      const specsList = specsState?.specialities || defaultSpecialitiesState.specialities || [];
+      setSpecialitiesCount(specsList.length);
+
+      const servsList = servsState?.categories || defaultServicesState.categories || [];
+      const totalServices = servsList.reduce((acc, cat) => acc + (cat.services?.length || 0), 0);
+      setServicesCount(totalServices || servsList.length);
+
+      const spirList = spirState?.sections || defaultSpiritualSections || [];
+      setSpiritualSectionsCount(spirList.length);
+
+      const qList = Array.isArray(queriesData) ? queriesData : [];
+      setQueriesCount(qList.length);
+      setPendingQueriesCount(qList.filter(q => q.status === 'Pending').length);
+      setRecentQueries(qList.slice(0, 5));
+
+      const errList = Array.isArray(errorsData) ? errorsData : [];
+      setErrorsCount(errList.length);
+      setCriticalErrorsCount(errList.filter(e => e.level === 'Critical').length);
+      setRecentErrors(errList.slice(0, 4));
+
+      setBannersCount(Array.isArray(bannersData) ? bannersData.length : 0);
+    } catch (err) {
+      console.error('Error loading dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    Promise.all([
-      initialDoctors(),
-      initialEvents(),
-      initialTestimonials(),
-      initialNews(),
-      initialGallery(),
-      getSpecialitiesState(defaultSpecialitiesState)
-    ]).then(([docs, evts, tests, nws, gal, specsState]) => {
-      setDoctorsCount(docs.length);
-      setEventsCount(evts.length);
-      setTestimonialsCount(tests.length);
-      setNewsCount(nws.length);
-      setGalleryCount(gal.length);
-      if (specsState && specsState.specialities) {
-        setSpecialitiesCount(specsState.specialities.length);
-      } else {
-        setSpecialitiesCount(defaultSpecialitiesState.specialities.length);
-      }
-    }).catch(err => {
-      console.error('Error loading dashboard stats:', err);
-    });
+    loadDashboardData();
+    window.addEventListener('admin_data_updated', loadDashboardData);
+    return () => window.removeEventListener('admin_data_updated', loadDashboardData);
   }, []);
 
-  const [systemLogs] = useState([
-    {
-      dateTime: '24 Jun, 10:24 AM',
-      action: "Updated Dr. Kshama Shah's availability",
-      user: 'Admin. Rajesh',
-      userImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDTBA4LrDYeKBfibOaNGGYbilb9Fb8I5YV2R3DdMGndMP8xLcxSKgCxZ512fDAHESzr5YzJrYJ2KrBuZmpmNd17ZnadDIn0hIH65nIVEkqTRuGg4paTiGNfnTzXDLgYFWLMhaCgfjmMLixMqNEtlw00g17Mmgao7n4-oCjaaB5JqwCzpFW7e7jtbXVw4jwhKYbz3aumMZ9hzWS_2WyGnJ9sktoesMXutYAHqW99s58GZkkBme6YzP5i3KllRazvqEgLjjgmHdB0zeA',
-      status: 'Success'
-    },
-    {
-      dateTime: '24 Jun, 09:15 AM',
-      action: 'Added "Cardiac Wellness" Speciality',
-      user: 'Admin. Sneha',
-      userImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCqH_SwvrfMu907W25LQYSlf9K53vJpZDvk_tAY80FcAt4Sq5jjrVveVrTjRq--EA6WcZQCEjnHnqV9WpHB4rzyFNCG3JFyiTljqOUbXNar0alBZr8DladMa2lztVZExnQPi8j_3tR9OpRcYl3NFHNbNIC5hDSwOB-q6KCQfJLvjnZLjWLG-ct3zVM0VAJ6R649qc-NmV4EyXARU1HOwj4zuocRVivcZRsMZw4s3dR8VtC0dgbi3eQVgzZ9zxqIdes3uvm_-ORW87A',
-      status: 'Success'
-    },
-    {
-      dateTime: '23 Jun, 05:45 PM',
-      action: 'Gallery bulk upload (24 items)',
-      user: 'Admin. Amit',
-      userImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5lo0M9TBxsSuVJ8Or4QNwK3PCBKHT2PQ9EInNalIvAQrIngHwrz_FcXQe4hn_vZthqwZLVdWfuho5YBB0l-JOBNGKtV37gNmcRtXfw4SCunUCxxLRSne9k-YqSaBctZhpKtRClADeJla1cnsNvrdgxgmCVoGSnuTd2f-1Pt2qxhVV-4aAqjI32fhgUkJAJfnPts4x2Ns5Pr5H-QH3ZF2srEWIPl19fg1o9YKqGFn417t2fcpmF95JQg7onQJRy7T2uPQ0nLrXqaY',
-      status: 'Processing'
-    }
-  ]);
-
   return (
-    <div className="space-y-6">
-      {/* KPI Cards Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-5 rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-slate-200/50 hover:-translate-y-0.5 transition-all">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-blue-50 rounded-lg text-[#1e3a8a]">
-              <span className="material-symbols-outlined font-fill">group</span>
-            </div>
-            <span className="text-amber-800 bg-amber-100 px-2 py-0.5 rounded text-[10px] font-bold">165 Live</span>
+    <div className="space-y-4 font-sans text-slate-800">
+      {/* Top Banner / Welcome Bar */}
+      <div className="bg-gradient-to-r from-[#1e3a8a] via-[#172554] to-[#0f172a] text-white p-5 rounded-2xl shadow-md border border-slate-700/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 border border-orange-500/30 px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Hospital Operations Control Panel</span>
           </div>
-          <p className="text-slate-400 text-xs uppercase tracking-wide font-semibold">Total Doctors</p>
-          <h3 className="mt-1 font-bold text-2xl text-slate-800">{doctorsCount}</h3>
+          <h1 className="text-xl font-bold font-serif">Bhaktivedanta Hospital Management</h1>
+          <p className="text-xs text-blue-100/80 mt-0.5">
+            Live overview of hospital clinical services, patient enquiries, medical staff, and system performance.
+          </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-slate-200/50 hover:-translate-y-0.5 transition-all">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-indigo-50 rounded-lg text-indigo-600">
-              <span className="material-symbols-outlined font-fill">star</span>
-            </div>
-            <span className="text-amber-800 bg-amber-100 px-2 py-0.5 rounded text-[10px] font-bold">Live</span>
-          </div>
-          <p className="text-slate-400 text-xs uppercase tracking-wide font-semibold">Specialities</p>
-          <h3 className="mt-1 font-bold text-2xl text-slate-800">{specialitiesCount}</h3>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/admin/add-doctor"
+            className="flex items-center gap-1.5 bg-[#fea619] hover:bg-amber-500 text-slate-900 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+          >
+            <span className="material-symbols-outlined text-base">person_add</span>
+            <span>Add Doctor</span>
+          </Link>
+          <Link
+            to="/admin/add-service"
+            className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all"
+          >
+            <span className="material-symbols-outlined text-base">add_task</span>
+            <span>Add Service</span>
+          </Link>
         </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-slate-200/50 hover:-translate-y-0.5 transition-all">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-sky-50 rounded-lg text-sky-600">
-              <span className="material-symbols-outlined font-fill">newspaper</span>
-            </div>
-          </div>
-          <p className="text-slate-400 text-xs uppercase tracking-wide font-semibold">Total News</p>
-          <h3 className="mt-1 font-bold text-2xl text-slate-800">{newsCount}</h3>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-slate-200/50 hover:-translate-y-0.5 transition-all">
-          <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-orange-50 rounded-lg text-orange-500">
-              <span className="material-symbols-outlined font-fill">event</span>
-            </div>
-          </div>
-          <p className="text-slate-400 text-xs uppercase tracking-wide font-semibold">Total Events</p>
-          <h3 className="mt-1 font-bold text-2xl text-slate-800">{eventsCount}</h3>
-        </div>
-      </section>
-
-      {/* External Portals Quick Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <a 
-          href="https://his.bhaktivedantahospital.com/EHR/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-gradient-to-r from-blue-900 to-indigo-900 p-6 rounded-xl shadow-md text-white flex items-center justify-between hover:opacity-95 transition-opacity"
-        >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-amber-400">calendar_month</span>
-              <h4 className="text-lg font-bold">Book Appointment Portal</h4>
-            </div>
-            <p className="text-xs text-blue-200">Patient appointments and scheduling are managed on the official external portal.</p>
-          </div>
-          <span className="material-symbols-outlined text-2xl text-amber-400">open_in_new</span>
-        </a>
-
-        <a 
-          href="https://his.bhaktivedantahospital.com/EHR/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-gradient-to-r from-slate-800 to-slate-900 p-6 rounded-xl shadow-md text-white flex items-center justify-between hover:opacity-95 transition-opacity"
-        >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-green-400">analytics</span>
-              <h4 className="text-lg font-bold">Patient Report Portal</h4>
-            </div>
-            <p className="text-xs text-slate-300">Access and download diagnostic lab and patient reports on the external portal.</p>
-          </div>
-          <span className="material-symbols-outlined text-2xl text-green-400">open_in_new</span>
-        </a>
       </div>
 
-      {/* Quick Actions & Recent Activity Logs */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1 bg-slate-50 p-5 rounded-xl border border-slate-200/60">
-          <h4 className="text-xs font-bold text-[#1e3a8a] uppercase tracking-widest mb-4">Quick Actions</h4>
-          <div className="flex flex-col gap-2">
-            <Link to="/admin/add-doctor" className="flex items-center gap-3 bg-[#fea619] hover:bg-amber-500 hover:shadow text-slate-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">person_add</span>
-              <span>Add New Doctor</span>
-            </Link>
-            <Link to="/admin/add-service" className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-              <span className="material-symbols-outlined text-amber-500 text-[18px]">add_task</span>
-              <span>Create Service</span>
-            </Link>
-            <Link to="/admin/add-news" className="flex items-center gap-3 bg-[#fea619] hover:bg-amber-500 hover:shadow text-slate-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">post_add</span>
-              <span>Publish News</span>
-            </Link>
-            <Link to="/admin/add-event" className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-              <span className="material-symbols-outlined text-red-500 text-[18px]">event_note</span>
-              <span>Setup Event</span>
-            </Link>
-            <Link to="/admin/add-gallery-media" className="flex items-center gap-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-lg text-xs font-bold transition-all shadow-sm">
-              <span className="material-symbols-outlined text-slate-500 text-[18px]">cloud_upload</span>
-              <span>Upload to Gallery</span>
+      {/* 6 KPI Cards Grid */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
+        {/* Doctors Card */}
+        <Link 
+          to="/admin/doctors"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-blue-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-blue-50 text-[#1e3a8a] flex items-center justify-center group-hover:bg-[#1e3a8a] group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">group</span>
+            </div>
+            <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+              Live
+            </span>
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Medical Staff</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{doctorsCount}</h3>
+            <span className="text-[11px] font-semibold text-blue-600 group-hover:underline">Doctors →</span>
+          </div>
+        </Link>
+
+        {/* Specialities Card */}
+        <Link 
+          to="/admin/specialities"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">stethoscope</span>
+            </div>
+            <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+              Active
+            </span>
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Specialities</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{specialitiesCount}</h3>
+            <span className="text-[11px] font-semibold text-indigo-600 group-hover:underline">Manage →</span>
+          </div>
+        </Link>
+
+        {/* Services Card */}
+        <Link 
+          to="/admin/services"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-amber-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">medical_services</span>
+            </div>
+            <span className="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+              Services
+            </span>
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hospital Services</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{servicesCount}</h3>
+            <span className="text-[11px] font-semibold text-amber-600 group-hover:underline">Manage →</span>
+          </div>
+        </Link>
+
+        {/* Patient Enquiries Card */}
+        <Link 
+          to="/admin/queries"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-orange-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">question_answer</span>
+            </div>
+            {pendingQueriesCount > 0 ? (
+              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-md text-[10px] font-bold animate-pulse">
+                {pendingQueriesCount} Pending
+              </span>
+            ) : (
+              <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                Up to date
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Patient Queries</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{queriesCount}</h3>
+            <span className="text-[11px] font-semibold text-orange-600 group-hover:underline">View Queries →</span>
+          </div>
+        </Link>
+
+        {/* System Error Logs Card */}
+        <Link 
+          to="/admin/app-errors"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-red-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">bug_report</span>
+            </div>
+            {criticalErrorsCount > 0 ? (
+              <span className="bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded-md text-[10px] font-bold animate-pulse">
+                {criticalErrorsCount} Critical
+              </span>
+            ) : (
+              <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                Healthy
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">App Error Logs</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{errorsCount}</h3>
+            <span className="text-[11px] font-semibold text-red-600 group-hover:underline">Inspect Logs →</span>
+          </div>
+        </Link>
+
+        {/* Spiritual Care Sections Card */}
+        <Link 
+          to="/admin/spiritual-care"
+          className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm hover:border-teal-300 hover:shadow-md transition-all group"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-colors">
+              <span className="material-symbols-outlined text-xl font-fill">spa</span>
+            </div>
+            <span className="bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+              Modular
+            </span>
+          </div>
+          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Spiritual Care</p>
+          <div className="flex items-baseline justify-between mt-1">
+            <h3 className="text-xl font-bold text-slate-800">{spiritualSectionsCount}</h3>
+            <span className="text-[11px] font-semibold text-teal-600 group-hover:underline">Manage →</span>
+          </div>
+        </Link>
+      </section>
+
+      {/* Main Content Grid: Enquiries Table & System Logs */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Left 7 Cols: Recent Patient Queries */}
+        <div className="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200/80 p-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#1e3a8a] text-lg">forum</span>
+                <h3 className="font-bold text-sm text-slate-800">Recent Patient Enquiries</h3>
+              </div>
+              <Link 
+                to="/admin/queries" 
+                className="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1"
+              >
+                <span>View All ({queriesCount})</span>
+                <span className="material-symbols-outlined text-xs">arrow_forward</span>
+              </Link>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="text-slate-400 font-bold uppercase tracking-wider text-[10px] bg-slate-50 border-b border-slate-100">
+                    <th className="px-3 py-2 w-[80px]">ID</th>
+                    <th className="px-3 py-2 min-w-[130px]">Patient Name</th>
+                    <th className="px-3 py-2 min-w-[160px]">Subject</th>
+                    <th className="px-3 py-2 w-[100px]">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {recentQueries.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="px-3 py-6 text-center text-slate-400 font-medium">
+                        No patient enquiries recorded yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    recentQueries.map((q) => (
+                      <tr key={q.id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="px-3 py-2 font-mono text-[11px] font-bold text-[#1e3a8a]">
+                          {q.id}
+                        </td>
+                        <td className="px-3 py-2 font-bold text-slate-800">
+                          {q.name}
+                        </td>
+                        <td className="px-3 py-2 text-slate-600 truncate max-w-[180px]" title={q.subject}>
+                          {q.subject}
+                        </td>
+                        <td className="px-3 py-2">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            q.status === 'Resolved' 
+                              ? 'bg-green-50 text-green-700 border border-green-200' 
+                              : q.status === 'In Progress'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-blue-50 text-blue-700 border border-blue-200'
+                          }`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            {q.status || 'Pending'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Showing recent {recentQueries.length} of {queriesCount} queries</span>
+            <Link to="/admin/add-query" className="text-amber-600 font-bold hover:underline flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">add_circle</span>
+              Add Manual Entry
             </Link>
           </div>
         </div>
 
-        <div className="lg:col-span-3 bg-white p-5 rounded-xl shadow-[4px_4px_15px_rgba(30,58,138,0.04)] border border-slate-200/50">
-          <div className="flex justify-between items-center mb-4">
-            <h4 className="text-base font-bold text-[#1e3a8a]">System Log</h4>
-            <span className="text-xs text-[#d97706] font-semibold">Live System Logs</span>
+        {/* Right 5 Cols: System Health & Recent Error Logs */}
+        <div className="lg:col-span-5 bg-white rounded-xl shadow-sm border border-slate-200/80 p-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-red-600 text-lg">health_metrics</span>
+                <h3 className="font-bold text-sm text-slate-800">System Diagnostics &amp; Health</h3>
+              </div>
+              <Link 
+                to="/admin/app-errors" 
+                className="text-xs font-bold text-red-600 hover:text-red-800 hover:underline flex items-center gap-1"
+              >
+                <span>Log Console ({errorsCount})</span>
+                <span className="material-symbols-outlined text-xs">arrow_forward</span>
+              </Link>
+            </div>
+
+            {/* Server Status Pill */}
+            <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-200/60 mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span className="text-xs font-bold text-slate-700">API Server (Express / Port 5000)</span>
+              </div>
+              <span className="text-[10px] font-mono font-bold text-green-700 bg-green-100 border border-green-200 px-2 py-0.5 rounded">
+                ONLINE
+              </span>
+            </div>
+
+            {/* Recent Errors List */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Recent Error Exceptions</h4>
+              {recentErrors.length === 0 ? (
+                <div className="p-3 bg-green-50/60 border border-green-100 rounded-lg text-center text-xs text-green-700 font-semibold">
+                  No system errors reported. API endpoints are functioning cleanly!
+                </div>
+              ) : (
+                recentErrors.map((err) => (
+                  <div key={err.id} className="p-2.5 bg-slate-50 rounded-lg border border-slate-200/60 flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                          err.level === 'Critical' ? 'bg-red-100 text-red-700 border border-red-200' :
+                          err.level === 'Error' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {err.level}
+                        </span>
+                        <span className="font-bold text-xs text-slate-800 truncate">{err.source}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 truncate" title={err.message}>{err.message}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-400 shrink-0">{err.status || 'Logged'}</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-          <div className="overflow-x-auto border border-slate-200/80 rounded-xl">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr className="text-slate-500 font-bold uppercase tracking-wider">
-                  <th className="px-4 py-3">Date &amp; Time</th>
-                  <th className="px-4 py-3">Action</th>
-                  <th className="px-4 py-3">Admin User</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
-                {systemLogs.map((log, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-4 py-3 font-medium whitespace-nowrap">{log.dateTime}</td>
-                    <td className="px-4 py-3">{log.action}</td>
-                    <td className="px-4 py-3 flex items-center gap-2">
-                      <img alt={log.user} className="w-5 h-5 rounded-full object-cover border border-slate-100" src={log.userImg} />
-                      <span className="font-semibold">{log.user}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        log.status === 'Success' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-amber-50 text-amber-600 border border-amber-100'
-                      }`}>
-                        {log.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+          <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Critical Exceptions: <strong className="text-red-600">{criticalErrorsCount}</strong></span>
+            <Link to="/admin/app-errors" className="text-blue-600 font-bold hover:underline">
+              Inspect Full Error Log →
+            </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Quick Administrative Operations Bar */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+        <h3 className="text-xs font-bold text-[#1e3a8a] uppercase tracking-wider mb-3">
+          Quick Management Actions
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <Link 
+            to="/admin/add-doctor"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-amber-400 bg-slate-50 hover:bg-amber-50/40 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-amber-600 text-lg">person_add</span>
+            <span className="text-xs font-bold text-slate-700">Add Doctor</span>
+          </Link>
+
+          <Link 
+            to="/admin/add-service"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-blue-400 bg-slate-50 hover:bg-blue-50/40 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-blue-600 text-lg">add_task</span>
+            <span className="text-xs font-bold text-slate-700">Create Service</span>
+          </Link>
+
+          <Link 
+            to="/admin/add-speciality"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-indigo-400 bg-slate-50 hover:bg-indigo-50/40 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-indigo-600 text-lg">domain_add</span>
+            <span className="text-xs font-bold text-slate-700">Add Speciality</span>
+          </Link>
+
+          <Link 
+            to="/admin/hero-banners"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-orange-400 bg-slate-50 hover:bg-orange-50/40 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-orange-600 text-lg">collections</span>
+            <span className="text-xs font-bold text-slate-700">Hero Banners ({bannersCount})</span>
+          </Link>
+
+          <Link 
+            to="/admin/add-news"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-sky-400 bg-slate-50 hover:bg-sky-50/40 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-sky-600 text-lg">post_add</span>
+            <span className="text-xs font-bold text-slate-700">Publish News ({newsCount})</span>
+          </Link>
+
+          <Link 
+            to="/admin/settings"
+            className="p-2.5 rounded-lg border border-slate-200/70 hover:border-slate-400 bg-slate-50 hover:bg-slate-100 flex items-center gap-2 transition-all"
+          >
+            <span className="material-symbols-outlined text-slate-600 text-lg">settings</span>
+            <span className="text-xs font-bold text-slate-700">Hospital Settings</span>
+          </Link>
         </div>
       </div>
     </div>

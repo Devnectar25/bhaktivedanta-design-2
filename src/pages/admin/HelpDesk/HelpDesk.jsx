@@ -234,17 +234,17 @@ const HelpDesk = () => {
       </div>
 
       {/* Tickets Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase">
-            <tr>
-              <th className="px-4 py-3">Ticket ID</th>
-              <th className="px-4 py-3">Requester</th>
-              <th className="px-4 py-3">Subject &amp; Category</th>
-              <th className="px-4 py-3">Priority</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Logged Date</th>
-              <th className="px-4 py-3 text-right">Actions</th>
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-x-auto w-full">
+        <table className="w-full min-w-[1020px] text-left border-collapse text-xs">
+          <thead className="bg-slate-50 border-b border-slate-200">
+            <tr className="text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+              <th className="px-4 py-3.5 whitespace-nowrap w-[110px]">Ticket ID</th>
+              <th className="px-4 py-3.5 w-[200px] min-w-[170px]">Requester</th>
+              <th className="px-4 py-3.5 min-w-[320px]">Subject &amp; Category</th>
+              <th className="px-4 py-3.5 whitespace-nowrap w-[100px]">Priority</th>
+              <th className="px-4 py-3.5 whitespace-nowrap w-[110px]">Status</th>
+              <th className="px-4 py-3.5 whitespace-nowrap w-[120px]">Logged Date</th>
+              <th className="px-4 py-3.5 text-right whitespace-nowrap w-[140px] min-w-[130px]">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -256,53 +256,61 @@ const HelpDesk = () => {
               </tr>
             ) : (
               filteredTickets.map((t) => (
-                <tr key={t.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-4 py-3 font-bold text-[#1e3a8a]">{t.ticketNo || t.id || 'N/A'}</td>
-                  <td className="px-4 py-3">
-                    <div className="font-bold text-slate-800">{t.requesterName || t.submittedBy || 'Anonymous'}</div>
-                    <div className="text-[11px] text-slate-400">{t.requesterEmail || t.submittedEmail || 'No Email'}</div>
+                <tr key={t.id} className="hover:bg-slate-50/60 transition-colors">
+                  <td className="px-4 py-3.5 font-bold font-mono text-[#1e3a8a] text-xs whitespace-nowrap align-top">
+                    {t.ticketNo || t.id || 'N/A'}
                   </td>
-                  <td className="px-4 py-3 max-w-xs">
-                    <div className="font-bold text-slate-800 truncate">{t.subject || t.ticketSubject || 'No Subject'}</div>
-                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                      {t.category || 'General Support'}
-                    </span>
+                  <td className="px-4 py-3.5 align-top">
+                    <div className="font-bold text-slate-800 text-xs">{t.requesterName || t.submittedBy || 'Anonymous'}</div>
+                    <div className="text-[11px] text-slate-600 font-medium mt-0.5 break-all select-all">{t.requesterEmail || t.submittedEmail || 'No Email'}</div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                      t.priority === 'Urgent' ? 'bg-red-100 text-red-700 border border-red-200' :
-                      t.priority === 'High' ? 'bg-amber-100 text-amber-800 border border-amber-200' :
+                  <td className="px-4 py-3.5 align-top">
+                    <div className="flex flex-col space-y-1">
+                      <div className="font-bold text-slate-800 text-xs leading-snug break-words">{t.subject || t.ticketSubject || 'No Subject'}</div>
+                      <span className="bg-slate-100 border border-slate-200/90 text-slate-600 rounded-full w-fit px-2.5 py-0.5 text-[10px] font-bold">
+                        {t.category || 'General Support'}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3.5 whitespace-nowrap align-top">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                      t.priority === 'Urgent' ? 'bg-red-50 text-red-700 border border-red-200' :
+                      t.priority === 'High' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
                       'bg-blue-50 text-blue-700 border border-blue-100'
                     }`}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
                       {t.priority || 'Medium'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  <td className="px-4 py-3.5 whitespace-nowrap align-top">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                       t.status === 'Resolved' ? 'bg-green-50 text-green-700 border border-green-200' :
                       t.status === 'In Progress' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' :
                       'bg-amber-50 text-amber-700 border border-amber-200'
                     }`}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
                       {t.status || 'Pending'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-400 font-medium">{t.created || (t.created_at ? new Date(t.created_at).toLocaleDateString() : 'N/A')}</td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex justify-end gap-1.5">
+                  <td className="px-4 py-3.5 text-slate-600 font-medium whitespace-nowrap align-top text-xs">
+                    {t.created || (t.created_at ? new Date(t.created_at).toLocaleDateString() : 'N/A')}
+                  </td>
+                  <td className="px-4 py-3.5 text-right whitespace-nowrap align-top">
+                    <div className="flex justify-end items-center gap-1.5 pr-0.5">
                       <button 
                         onClick={() => {
                           setSelectedTicket(t);
                           setResponseText(t.response || '');
                           setNewStatus(t.status || 'In Progress');
                         }}
-                        className="px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold border border-blue-100 transition-all text-xs flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold border border-blue-200 transition-all text-xs flex items-center gap-1 active:scale-95 shadow-xs"
                       >
                         <span className="material-symbols-outlined text-[14px]">support_agent</span>
                         Respond
                       </button>
                       <button 
                         onClick={() => handleDelete(t.id)}
-                        className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
+                        className="w-7 h-7 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 flex items-center justify-center transition-all active:scale-95 shadow-xs"
                         title="Delete Ticket"
                       >
                         <span className="material-symbols-outlined text-[16px]">delete</span>

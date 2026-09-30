@@ -158,11 +158,11 @@ const AdminLayout = () => {
   }, []);
 
   return (
-    <div className="admin-layout-wrapper text-on-surface font-sans antialiased min-h-screen bg-background">
+    <div className="admin-layout-wrapper text-on-surface font-sans antialiased h-screen overflow-hidden bg-background">
       <AdminSidebar />
-      <div className="flex flex-col min-h-screen ml-[280px]">
+      <div className="flex flex-col h-full ml-[280px]">
         <AdminHeader title="Admin Panel" />
-        <main className="flex-1 px-8 pb-8 pt-24 bg-background overflow-x-hidden">
+        <main className="flex-1 px-8 pb-6 pt-[86px] bg-background overflow-y-auto">
           <div className="w-full">
             <ErrorBoundary>
               <Outlet />
