@@ -5,7 +5,7 @@ const associateCentresData = {
   'swami-shraddhanand-hospital': {
     slug: 'swami-shraddhanand-hospital',
     title: 'Swami Shraddhanand Hospital',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690445752450.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/swami-shraddhanand-hospital.png',
     address: 'Nirmal Village, Nirmal Road, Vasai (W), Dist. Palghar - 401 304, Maharashtra, India.',
     phone: '+91 70456 94147 / +91 82918 18030',
     highlights: [
@@ -40,7 +40,7 @@ const associateCentresData = {
   'sheth-pb-doshi-hospital': {
     slug: 'sheth-pb-doshi-hospital',
     title: 'Sheth P. V. Doshi Hospital',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690719504180.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/sheth-pb-doshi-hospital.png',
     address: 'Poonam Nagar, Shanti Park, Mira Road (E), Thane - 401 107, Maharashtra, India.',
     phone: '+91 22 6230 3300/3301, 28102964',
     highlights: [
@@ -71,7 +71,7 @@ const associateCentresData = {
   'primary-health-care-centre-pophran': {
     slug: 'primary-health-care-centre-pophran',
     title: 'Primary Health Care Centre – Pophran',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/1669072859413.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/primary-health-care-centre-pophran.png',
     address: 'Pophran, Tarapur, District Palghar, Maharashtra 401504, India',
     phone: '+91 70456 94147 / +91 82918 18030',
     highlights: [
@@ -99,7 +99,7 @@ const associateCentresData = {
   'hamrapur-healthcare-centre': {
     slug: 'hamrapur-healthcare-centre',
     title: 'Hamrapur Healthcare Centre',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690729886567.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/hamrapur-healthcare-centre.png',
     address: 'Hamrapur, Near Zilla Parishad School, Village - Hamrapur, Tal. Wada, Dist. Palghar, Maharashtra 421303, India',
     phone: '+91 88796 61759',
     highlights: [
@@ -128,7 +128,7 @@ const associateCentresData = {
   'ambiste-healthcare-centre': {
     slug: 'ambiste-healthcare-centre',
     title: 'Ambiste Healthcare Centre',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690731216664.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/ambiste-healthcare-centre.png',
     address: 'Ambiste, District Palghar, Maharashtra 401602.',
     phone: '+91 70453 09993',
     highlights: [
@@ -156,7 +156,7 @@ const associateCentresData = {
   'bhaktivedanta-polyclinic': {
     slug: 'bhaktivedanta-polyclinic',
     title: 'Bhaktivedanta Polyclinic',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/1669073289656.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/bhaktivedanta-polyclinic.png',
     address: 'A/5, Sector 5, Shanti Nagar, Opp. Water Tank, Mira Road (E), Thane 401 107, Maharashtra, India.',
     phone: '+91 70459 61366',
     highlights: [
@@ -184,7 +184,7 @@ const associateCentresData = {
   'bhaktivedanta-hospital-vrindavan': {
     slug: 'bhaktivedanta-hospital-vrindavan',
     title: 'Bhaktivedanta Hospital – Vrindavan',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690733802319.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/bhaktivedanta-hospital-vrindavan.png',
     address: 'Parikrama Marg, Near Baraha Ghat, Vrindavan, Mathura 281 121, Uttar Pradesh, India.',
     phone: '+91 56564 58881',
     highlights: [
@@ -212,7 +212,7 @@ const associateCentresData = {
   'bhaktivedanta-eye-hospital-barsana': {
     slug: 'bhaktivedanta-eye-hospital-barsana',
     title: 'Bhaktivedanta Eye Hospital – Barsana',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690734795799.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/bhaktivedanta-eye-hospital-barsana.png',
     address: 'Barsana, District Mathura, Uttar Pradesh 281405.',
     phone: '+91 89583 43333',
     highlights: [
@@ -240,7 +240,7 @@ const associateCentresData = {
   'saksham-community-health-centre-dhuktan': {
     slug: 'saksham-community-health-centre-dhuktan',
     title: 'Saksham Community Health Centre – Dhuktan',
-    bannerImg: 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690736177579.png',
+    bannerImg: 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/saksham-community-health-centre-dhuktan.png',
     address: 'Dhuktan, Palghar, Maharashtra, India.',
     phone: '+91 93592 71935',
     highlights: [

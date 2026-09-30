@@ -23,6 +23,24 @@ import Swal from 'sweetalert2';
 import './EducationSectionPage.css';
 import './DnbProgramPage.css';
 
+const SUPABASE_DOCTORS_BUCKET_URL = 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges';
+
+const getFacultyImageUrl = (faculty) => {
+  if (!faculty) return '';
+  if (faculty.image && faculty.image.includes('supabase.co')) {
+    return faculty.image;
+  }
+  const cleanName = (faculty.name || '').trim();
+  const nameMap = {
+    'Dr. Ajay Shankhe': 'Dr. Ajay Shankhe.png',
+    'Dr. Ajay Sankhe': 'Dr. Ajay Sankhe.png',
+    'Dr. Suraj Prakash Bhagde': 'Dr. Suraj Prakash Bhagde.png',
+    'Dr. Suraj Bhagde': 'Dr. Suraj Bhagde.png'
+  };
+  const fileName = nameMap[cleanName] || `${cleanName}.png`;
+  return `${SUPABASE_DOCTORS_BUCKET_URL}/${encodeURIComponent(fileName)}`;
+};
+
 const DnbProgramPage = () => {
   const location = useLocation();
   const [programData, setProgramData] = useState(dnbProgramData);
@@ -219,80 +237,7 @@ const DnbProgramPage = () => {
 
   return (
     <div className="dnb-page-wrapper">
-      {/* Education Navigation Tabs */}
-      <div className="edu-nav-tabs-bar">
-        <div className="edu-nav-tabs-container">
-          <Link
-            to="/education/dnb-program"
-            className="edu-nav-tab active"
-          >
-            DNB Program
-          </Link>
-          <Link
-            to="/education/nursing-program"
-            className="edu-nav-tab"
-          >
-            Nursing Program
-          </Link>
-          <Link
-            to="/education/cme"
-            className="edu-nav-tab"
-          >
-            CME
-          </Link>
-          <Link
-            to="/education/cne"
-            className="edu-nav-tab"
-          >
-            CNE
-          </Link>
-          <Link
-            to="/education/spiritual-care-course"
-            className="edu-nav-tab"
-          >
-            Spiritual Care Course
-          </Link>
-          <Link
-            to="/education/clinical-research-course"
-            className="edu-nav-tab"
-          >
-            Clinical Research Course
-          </Link>
-          <Link
-            to="/education/clinical-trials"
-            className="edu-nav-tab"
-          >
-            Clinical Trials
-          </Link>
-          <Link
-            to="/education/ethics-committee"
-            className="edu-nav-tab"
-          >
-            Ethics Committee
-          </Link>
-          <Link
-            to="/education/publications"
-            className="edu-nav-tab"
-          >
-            Publications
-          </Link>
-          <Link
-            to="/education/government-accreditation"
-            className="edu-nav-tab"
-          >
-            Government Accreditation
-          </Link>
-          {allCustomPrograms.map((p) => (
-            <Link
-              key={p.id || p.slug}
-              to={p.slug?.startsWith('/') ? p.slug : `/education/${p.slug || p.id}`}
-              className="edu-nav-tab"
-            >
-              {p.title || p.name}
-            </Link>
-          ))}
-        </div>
-      </div>
+
 
       {shareFeedback && <div className="dnb-share-toast">Page link copied to clipboard!</div>}
 
@@ -443,11 +388,17 @@ const DnbProgramPage = () => {
                                 <div key={fIdx} className="dnb-faculty-card">
                                   <div className="dnb-faculty-img-col">
                                     <img
-                                      src={f.image}
+                                      src={getFacultyImageUrl(f)}
                                       alt={f.name}
                                       className="dnb-faculty-img"
                                       onError={(e) => {
-                                        e.target.style.display = 'none';
+                                        const cleanName = (f.name || '').trim();
+                                        const fallbackUrl = `${SUPABASE_DOCTORS_BUCKET_URL}/${encodeURIComponent(cleanName + '.png')}`;
+                                        if (e.target.src !== fallbackUrl) {
+                                          e.target.src = fallbackUrl;
+                                        } else {
+                                          e.target.style.display = 'none';
+                                        }
                                       }}
                                     />
                                   </div>

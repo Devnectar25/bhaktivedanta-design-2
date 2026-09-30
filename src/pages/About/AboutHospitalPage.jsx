@@ -22,7 +22,6 @@ import {
   Trophy,
   Newspaper
 } from 'lucide-react';
-import AppointmentModal from '../../components/AppointmentModal/AppointmentModal';
 import { getAboutUsState } from '../../utils/api';
 import { defaultAboutUsData } from '../../data/aboutUsData';
 import './AboutHospitalPage.css';
@@ -106,7 +105,6 @@ const AboutHospitalPage = () => {
   const [activeSection, setActiveSection] = useState('about');
   const [eventsSubTab, setEventsSubTab] = useState('events'); // 'events' | 'news'
   const [shareFeedback, setShareFeedback] = useState(false);
-  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
 
   // Card Read More / Read Less toggles
   const [expandedVision, setExpandedVision] = useState(false);
@@ -167,7 +165,7 @@ const AboutHospitalPage = () => {
       navigator.share({
         title: `${TAB_TITLES[activeSection] || 'About Us'} | Bhaktivedanta Hospital`,
         url: window.location.href
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(window.location.href);
       setShareFeedback(true);
@@ -190,87 +188,7 @@ const AboutHospitalPage = () => {
     <div className="about-page-wrapper">
       {shareFeedback && <div className="about-share-toast">Page link copied to clipboard!</div>}
 
-      {/* Horizontal Sub-Navigation Tabs Bar */}
-      <div className="about-nav-tabs-bar">
-        <div className="about-nav-tabs-container">
-          <button
-            type="button"
-            onClick={() => handleTabClick('about')}
-            className={`about-nav-tab ${activeSection === 'about' ? 'active' : ''}`}
-          >
-            About Hospital
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('vision-mission')}
-            className={`about-nav-tab ${activeSection === 'vision-mission' ? 'active' : ''}`}
-          >
-            Vision, Mission &amp; Values
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('awards')}
-            className={`about-nav-tab ${activeSection === 'awards' ? 'active' : ''}`}
-          >
-            Awards &amp; Accreditation
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('events')}
-            className={`about-nav-tab ${activeSection === 'events' ? 'active' : ''}`}
-          >
-            Events &amp; News
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('history')}
-            className={`about-nav-tab ${activeSection === 'history' ? 'active' : ''}`}
-          >
-            History of Hospital
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('chairman')}
-            className={`about-nav-tab ${activeSection === 'chairman' ? 'active' : ''}`}
-          >
-            Chairman's Message
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('inspiration')}
-            className={`about-nav-tab ${activeSection === 'inspiration' ? 'active' : ''}`}
-          >
-            Our Inspiration
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabClick('logo')}
-            className={`about-nav-tab ${activeSection === 'logo' ? 'active' : ''}`}
-          >
-            Hospital Logo
-          </button>
-          {(aboutData.customSections || []).map((sec) => {
-            const secKey = sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`;
-            return (
-              <button
-                key={sec.id}
-                type="button"
-                onClick={() => handleTabClick(secKey)}
-                className={`about-nav-tab ${activeSection === secKey ? 'active' : ''}`}
-              >
-                {sec.title}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            onClick={() => handleTabClick('all')}
-            className={`about-nav-tab ${activeSection === 'all' ? 'active' : ''}`}
-          >
-            View All
-          </button>
-        </div>
-      </div>
+
 
       <main className="about-main-container">
         {/* SECTION 1: ABOUT HOSPITAL (Active on 'about' or 'all') */}
@@ -678,11 +596,10 @@ const AboutHospitalPage = () => {
                           setHistoryPage(pageNum);
                           document.getElementById('history')?.scrollIntoView({ behavior: 'smooth' });
                         }}
-                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
-                          historyPage === pageNum
+                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${historyPage === pageNum
                             ? 'bg-orange-600 text-white shadow-sm'
                             : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                        }`}
+                          }`}
                       >
                         {pageNum}
                       </button>
@@ -873,8 +790,11 @@ const AboutHospitalPage = () => {
 
         {/* CUSTOM SECTIONS RENDERING */}
         {(aboutData.customSections || []).map((sec) => {
-          const secKey = sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`;
-          if (activeSection !== secKey && activeSection !== 'all') return null;
+          const secKey = (sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`).toLowerCase();
+          const activeSec = (activeSection || '').toLowerCase();
+          const titleSlug = (sec.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          const matches = activeSec === 'all' || activeSec === secKey || activeSec === (sec.id || '').toLowerCase() || activeSec === titleSlug;
+          if (!matches) return null;
 
           return (
             <section key={sec.id} id={secKey} className="about-section-block">
@@ -974,19 +894,14 @@ const AboutHospitalPage = () => {
               Book a consultation or visit Bhaktivedanta Hospital &amp; Research Institute in Mira Road.
             </p>
           </div>
-          <a
-            href="https://his.bhaktivedantahospital.com/EHR/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setIsAppointmentModalOpen(true)}
             className="about-cta-btn"
-            style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
           >
             Book Appointment
-          </a>
+          </button>
         </section>
       </main>
-
-      <AppointmentModal isOpen={isAppointmentModalOpen} onClose={() => setIsAppointmentModalOpen(false)} />
     </div>
   );
 };

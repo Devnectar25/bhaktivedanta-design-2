@@ -618,13 +618,33 @@
 .associate-dropdown-menu {
   width: max-content;
   min-width: 380px;
-  max-width: 440px;
+  max-width: 480px;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: #ffffff;
   border-radius: 0 0 6px 6px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-top: 3px solid #f58634 !important;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
   padding: 12px 14px 14px 14px;
+}
+
+.associate-dropdown-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.associate-dropdown-menu::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.associate-dropdown-menu::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.associate-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .associate-dropdown-menu .patients-column-item {

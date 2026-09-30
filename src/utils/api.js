@@ -27,7 +27,7 @@ export async function checkServerHealth() {
 export async function apiGet(path, localStorageKey, fallbackData) {
   try {
     const res = await fetch(`${API_BASE_URL}${path}`, {
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(12000),
       cache: 'no-store',
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -400,19 +400,19 @@ export const reorderPatientCornerTabs = (guideId, tabIds) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/reorder`, 'PUT', { tabIds }, 'bhaktivedanta_patient_corner_state');
 
 // Section helpers for Patients Corner
-export const addPatientCornerSection = (guideId, tabId, sectionData) => 
+export const addPatientCornerSection = (guideId, tabId, sectionData) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections`, 'POST', sectionData, 'bhaktivedanta_patient_corner_state');
 
-export const updatePatientCornerSection = (guideId, tabId, sectionId, sectionData) => 
+export const updatePatientCornerSection = (guideId, tabId, sectionId, sectionData) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}`, 'PUT', sectionData, 'bhaktivedanta_patient_corner_state');
 
-export const deletePatientCornerSection = (guideId, tabId, sectionId) => 
+export const deletePatientCornerSection = (guideId, tabId, sectionId) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state');
 
-export const reorderPatientCornerSections = (guideId, tabId, sectionIds) => 
+export const reorderPatientCornerSections = (guideId, tabId, sectionIds) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/reorder`, 'PUT', { sectionIds }, 'bhaktivedanta_patient_corner_state');
 
-export const togglePatientCornerSection = (guideId, tabId, sectionId, enabled) => 
+export const togglePatientCornerSection = (guideId, tabId, sectionId, enabled) =>
   apiMutation(`/patient-corner/guides/${guideId}/tabs/${tabId}/sections/${sectionId}/status`, 'PATCH', { enabled }, 'bhaktivedanta_patient_corner_state');
 
 // ==========================================
@@ -420,39 +420,39 @@ export const togglePatientCornerSection = (guideId, tabId, sectionId, enabled) =
 // ==========================================
 
 // Job Openings
-export const getCareerJobs = (fallback) => 
+export const getCareerJobs = (fallback) =>
   apiGet('/careers/jobs', 'bhaktivedanta_career_jobs', fallback);
 
-export const addCareerJob = (job, fallbackList) => 
+export const addCareerJob = (job, fallbackList) =>
   apiMutation('/careers/jobs', 'POST', job, 'bhaktivedanta_career_jobs', (list = [], newJob) => {
     return [newJob, ...list];
   });
 
-export const updateCareerJob = (id, job, fallbackList) => 
+export const updateCareerJob = (id, job, fallbackList) =>
   apiMutation(`/careers/jobs/${id}`, 'PUT', job, 'bhaktivedanta_career_jobs', (list = [], updated) => {
     return list.map(item => item.id === id ? { ...item, ...updated } : item);
   });
 
-export const deleteCareerJob = (id, fallbackList) => 
+export const deleteCareerJob = (id, fallbackList) =>
   apiMutation(`/careers/jobs/${id}`, 'DELETE', null, 'bhaktivedanta_career_jobs', (list = []) => {
     return list.filter(item => item.id !== id);
   });
 
 // Candidate Applications
-export const getCareerApplications = (fallback) => 
+export const getCareerApplications = (fallback) =>
   apiGet('/careers/applications', 'bhaktivedanta_career_applications', fallback);
 
-export const submitCareerApplication = (appData, fallbackList) => 
+export const submitCareerApplication = (appData, fallbackList) =>
   apiMutation('/careers/applications', 'POST', appData, 'bhaktivedanta_career_applications', (list = [], newApp) => {
     return [newApp, ...list];
   });
 
-export const updateCareerApplication = (id, appData, fallbackList) => 
+export const updateCareerApplication = (id, appData, fallbackList) =>
   apiMutation(`/careers/applications/${id}`, 'PUT', appData, 'bhaktivedanta_career_applications', (list = [], updated) => {
     return list.map(item => item.id === id ? { ...item, ...updated } : item);
   });
 
-export const deleteCareerApplication = (id, fallbackList) => 
+export const deleteCareerApplication = (id, fallbackList) =>
   apiMutation(`/careers/applications/${id}`, 'DELETE', null, 'bhaktivedanta_career_applications', (list = []) => {
     return list.filter(item => item.id !== id);
   });
@@ -461,51 +461,51 @@ export const deleteCareerApplication = (id, fallbackList) =>
 // Education & Medical Research (DNB) API
 // ==========================================
 
-export const getEducationResearchState = (fallback) => 
+export const getEducationResearchState = (fallback) =>
   apiGet('/education-research', 'bhaktivedanta_education_research_state', fallback);
 
-export const saveEducationResearchState = (stateData) => 
+export const saveEducationResearchState = (stateData) =>
   apiMutation('/education-research', 'PUT', stateData, 'bhaktivedanta_education_research_state', () => {
     // Notify all open tabs/components
     window.dispatchEvent(new Event('admin_data_updated'));
     return stateData;
   });
 
-export const getDnbInquiries = (fallback = []) => 
+export const getDnbInquiries = (fallback = []) =>
   apiGet('/education-research/inquiries', 'bhaktivedanta_dnb_inquiries', fallback);
 
-export const submitDnbInquiry = (inquiry, fallbackList = []) => 
+export const submitDnbInquiry = (inquiry, fallbackList = []) =>
   apiMutation('/education-research/inquiries', 'POST', inquiry, 'bhaktivedanta_dnb_inquiries', (list = [], newInq) => {
     const updated = [newInq, ...(Array.isArray(list) ? list : [])];
     window.dispatchEvent(new Event('admin_data_updated'));
     return updated;
   });
 
-export const updateDnbInquiry = (id, updates, fallbackList = []) => 
+export const updateDnbInquiry = (id, updates, fallbackList = []) =>
   apiMutation(`/education-research/inquiries/${id}`, 'PUT', updates, 'bhaktivedanta_dnb_inquiries', (list = [], updatedItem) => {
     const updated = (Array.isArray(list) ? list : []).map(i => i.id === id ? { ...i, ...updatedItem } : i);
     window.dispatchEvent(new Event('admin_data_updated'));
     return updated;
   });
 
-export const deleteDnbInquiry = (id, fallbackList = []) => 
+export const deleteDnbInquiry = (id, fallbackList = []) =>
   apiMutation(`/education-research/inquiries/${id}`, 'DELETE', null, 'bhaktivedanta_dnb_inquiries', (list = []) => {
     const updated = (Array.isArray(list) ? list : []).filter(i => i.id !== id);
     window.dispatchEvent(new Event('admin_data_updated'));
     return updated;
   });
 
-export const getEducationPrograms = (fallback = []) => 
+export const getEducationPrograms = (fallback = []) =>
   apiGet('/education-research/programs', 'bhaktivedanta_education_custom_programs', fallback);
 
-export const createEducationProgram = (programData) => 
+export const createEducationProgram = (programData) =>
   apiMutation('/education-research/programs', 'POST', programData, 'bhaktivedanta_education_custom_programs', (list = [], newProg) => {
     const updated = [newProg, ...(Array.isArray(list) ? list : [])];
     window.dispatchEvent(new Event('admin_data_updated'));
     return updated;
   });
 
-export const deleteEducationProgram = (id) => 
+export const deleteEducationProgram = (id) =>
   apiMutation(`/education-research/programs/${id}`, 'DELETE', null, 'bhaktivedanta_education_custom_programs', (list = []) => {
     const updated = (Array.isArray(list) ? list : []).filter(p => p.id !== id && p.slug !== id);
     window.dispatchEvent(new Event('admin_data_updated'));
@@ -513,45 +513,34 @@ export const deleteEducationProgram = (id) =>
   });
 
 // Spiritual Care State
-export const getSpiritualCareState = (fallback) => 
+export const getSpiritualCareState = (fallback) =>
   apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
 
-export const saveSpiritualCareState = (state) => 
+export const saveSpiritualCareState = (state) =>
   apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
 
-// ── About Us State (Pure Local Storage - No Database Flow) ─────────────────
+// ── About Us State & Database Flow ──────────────────────────────────────────
 
 const ABOUT_US_STORAGE_KEY = 'bhaktivedanta_about_us_state';
 
-/** GET About Us state from local storage or fallback defaults (no database) */
-export const getAboutUsState = (fallback) => {
-  try {
-    const local = localStorage.getItem(ABOUT_US_STORAGE_KEY);
-    if (local && local !== 'undefined' && local !== 'null') {
-      const parsed = JSON.parse(local);
-      if (parsed && (parsed.aboutHospital || parsed.visionMissionValues)) {
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.warn('[AboutUs] LocalStorage read error:', err);
-  }
-  return fallback;
-};
+/** GET About Us state from live backend database with localStorage & JSON fallback */
+export const getAboutUsState = (fallback) =>
+  apiGet('/about-us', ABOUT_US_STORAGE_KEY, fallback);
 
-/** SAVE About Us state to local storage (no database) */
+/** SAVE About Us state fallback */
 export const saveAboutUsState = (state) => {
   try {
     localStorage.setItem(ABOUT_US_STORAGE_KEY, JSON.stringify(state));
-    window.dispatchEvent(new Event('storage'));
-    window.dispatchEvent(new Event('admin_data_updated'));
+    if (state && Array.isArray(state.customSections)) {
+      apiMutation('/about-us', 'PUT', { customSections: state.customSections }).catch(() => { });
+    }
   } catch (err) {
     console.warn('[AboutUs] LocalStorage save error:', err);
   }
   return state;
 };
 
-/** Reset About Us state in local storage (no database) */
+/** Reset About Us state in local storage */
 export const resetAboutUsState = (fallback) => {
   try {
     localStorage.removeItem(ABOUT_US_STORAGE_KEY);
@@ -563,8 +552,60 @@ export const resetAboutUsState = (fallback) => {
   return fallback;
 };
 
-/** Section helper stubs for local operation */
-export const getAboutUsSections = async () => [];
+/** Upload image to Supabase hospital_about_us bucket */
+export const uploadAboutUsImage = async (base64, fileName, folder = 'general') => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/about-us/upload`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ base64, fileName, folder })
+    });
+    if (!res.ok) throw new Error('Failed to upload image');
+    return await res.json();
+  } catch (err) {
+    console.error('[AboutUs Upload Error]:', err);
+    throw err;
+  }
+};
+
+/** DATABASE CRUD HELPERS FOR THE ABOUT US TABLES */
+export const getAboutHistory = () => apiGet('/about-us/history', 'bv_about_history', []);
+export const createAboutHistory = (data) => apiMutation('/about-us/history', 'POST', data);
+export const updateAboutHistory = (id, data) => apiMutation(`/about-us/history/${id}`, 'PUT', data);
+export const deleteAboutHistory = (id) => apiMutation(`/about-us/history/${id}`, 'DELETE', null);
+
+export const getAboutLogo = () => apiGet('/about-us/logo', 'bv_about_logo', {});
+export const updateAboutLogo = (data) => apiMutation('/about-us/logo', 'PUT', data);
+
+export const getAboutAwards = () => apiGet('/about-us/awards', 'bv_about_awards', []);
+export const createAboutAward = (data) => apiMutation('/about-us/awards', 'POST', data);
+export const updateAboutAward = (id, data) => apiMutation(`/about-us/awards/${id}`, 'PUT', data);
+export const deleteAboutAward = (id) => apiMutation(`/about-us/awards/${id}`, 'DELETE', null);
+
+export const getAboutEvents = () => apiGet('/about-us/events', 'bv_about_events', []);
+export const createAboutEvent = (data) => apiMutation('/about-us/events', 'POST', data);
+export const updateAboutEvent = (id, data) => apiMutation(`/about-us/events/${id}`, 'PUT', data);
+export const deleteAboutEvent = (id) => apiMutation(`/about-us/events/${id}`, 'DELETE', null);
+
+export const getAboutManagement = () => apiGet('/about-us/management', 'bv_about_management', []);
+export const createAboutManagement = (data) => apiMutation('/about-us/management', 'POST', data);
+export const updateAboutManagement = (id, data) => apiMutation(`/about-us/management/${id}`, 'PUT', data);
+export const deleteAboutManagement = (id) => apiMutation(`/about-us/management/${id}`, 'DELETE', null);
+
+export const getAboutDevelopments = () => apiGet('/about-us/developments', 'bv_about_developments', []);
+export const createAboutDevelopment = (data) => apiMutation('/about-us/developments', 'POST', data);
+export const updateAboutDevelopment = (id, data) => apiMutation(`/about-us/developments/${id}`, 'PUT', data);
+export const deleteAboutDevelopment = (id) => apiMutation(`/about-us/developments/${id}`, 'DELETE', null);
+
+export const getAboutSpiritualAdvisors = () => apiGet('/about-us/spiritual-advisors', 'bv_about_spiritual_advisors', []);
+export const createAboutSpiritualAdvisor = (data) => apiMutation('/about-us/spiritual-advisors', 'POST', data);
+export const updateAboutSpiritualAdvisor = (id, data) => apiMutation(`/about-us/spiritual-advisors/${id}`, 'PUT', data);
+export const deleteAboutSpiritualAdvisor = (id) => apiMutation(`/about-us/spiritual-advisors/${id}`, 'DELETE', null);
+
+export const getAboutCustomSections = () => apiGet('/about-us/custom-sections', 'bv_about_custom_sections', []);
+export const createAboutCustomSection = (data) => apiMutation('/about-us/custom-sections', 'POST', data);
+export const updateAboutCustomSection = (id, data) => apiMutation(`/about-us/custom-sections/${id}`, 'PUT', data);
+export const deleteAboutCustomSection = (id) => apiMutation(`/about-us/custom-sections/${id}`, 'DELETE', null);
 
 // Statutory Compliances State & PDF Upload
 export const getStatutoryCompliancesState = (fallback) =>
@@ -774,7 +815,6 @@ export const deleteHeroBanner = (id) =>
     window.dispatchEvent(new Event('hero_banners_updated'));
     return updated;
   });
-
 
 
 
