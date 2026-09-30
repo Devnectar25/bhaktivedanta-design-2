@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
-import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres, getHospitalSettings, defaultHospitalSettings } from '../../utils/api';
+import { getSpecialitiesState, getServicesState, getPatientCornerState, getEducationPrograms, getEducationResearchState, getAssociateCentres, getHospitalSettings, defaultHospitalSettings, getAboutUsState } from '../../utils/api';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
 import { defaultPatientCornerState, ensureStandardPatientCornerTabs } from '../../data/defaultPatientCorner';
 import { getSpiritualCareState } from '../../utils/api';
 import { defaultSpiritualCareState, defaultSpiritualSections, ensureStandardSpiritualSections } from '../../data/defaultSpiritualCare';
+import { defaultAboutUsData } from '../../data/aboutUsData';
 import { createSlug } from '../../pages/DetailPage/DetailPage';
 import NavSearch from './NavSearch';
 
@@ -217,6 +218,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
   const [openNavDropdown, setOpenNavDropdown] = useState(null);
   const [associateCentresListState, setAssociateCentresListState] = useState([]);
   const [hospitalSettings, setHospitalSettings] = useState(defaultHospitalSettings);
+  const [aboutUsDataState, setAboutUsDataState] = useState(defaultAboutUsData);
 
   const isDropdownOpen = Boolean(openNavDropdown || activeMegaCategory || activeServiceCategory);
 
@@ -336,12 +338,22 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     };
 
     const fetchHospitalSettings = () => {
-      getHospitalSettings().then(res => {
+      getHospitalSettings(defaultHospitalSettings).then(res => {
         if (res && typeof res === 'object') {
           setHospitalSettings(prev => ({ ...prev, ...res }));
         }
       }).catch(err => {
-        console.warn('Navbar could not load live hospital settings:', err);
+        console.warn('Navbar could not load hospital settings:', err);
+      });
+    };
+
+    const fetchAboutUs = () => {
+      getAboutUsState(defaultAboutUsData).then(res => {
+        if (res && typeof res === 'object') {
+          setAboutUsDataState(res);
+        }
+      }).catch(err => {
+        console.warn('Navbar could not load About Us data:', err);
       });
     };
 
@@ -353,6 +365,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
     fetchEducationPrograms();
     fetchAssociateCentres();
     fetchHospitalSettings();
+    fetchAboutUs();
 
     const handleSync = (e) => {
       if (!e || !e.key || e.key === 'bhaktivedanta_specialities_state') {
@@ -375,6 +388,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
       }
       if (!e || !e.key || e.key === 'bhaktivedanta_hospital_settings_cache') {
         fetchHospitalSettings();
+      }
+      if (!e || !e.key || e.key === 'bhaktivedanta_about_us_state' || e.key === 'hospital_about_us_data') {
+        fetchAboutUs();
       }
     };
 
@@ -483,7 +499,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
             <img src="/logo.png" alt="Bhaktivedanta Hospital" className="logo-text" />
           </Link>
 
-          <a 
+          <a
             href={`tel:${String(hospitalSettings.emergencyPhone || '079 6900 2222').replace(/\s+/g, '')}`}
             className="emergency-badge"
             style={{ textDecoration: 'none' }}
@@ -790,18 +806,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
                     ? [
-                        {
-                          ...menuItem.columns[0],
-                          links: [
-                            ...menuItem.columns[0].links,
-                            ...customEducationPrograms.map(p => ({
-                              name: p.title,
-                              to: `/education/${p.slug || p.id}`
-                            }))
-                          ]
-                        },
-                        menuItem.columns[1]
-                      ]
+                      {
+                        ...menuItem.columns[0],
+                        links: [
+                          ...menuItem.columns[0].links,
+                          ...customEducationPrograms.map(p => ({
+                            name: p.title,
+                            to: `/education/${p.slug || p.id}`
+                          }))
+                        ]
+                      },
+                      menuItem.columns[1]
+                    ]
                     : menuItem.columns;
 
                   return (
@@ -914,11 +930,17 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
                     .filter(s => s.enabled !== false)
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const customSectionsLinks = (aboutUsDataState?.customSections || []).map(sec => ({
+                    name: sec.title,
+                    href: `/about-us/about-hospital#${sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`}`
+                  }));
                   const effectiveLinks = isSpiritualCare
                     ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
                     : isAssociateCentre && associateCentresListState.length > 0
                       ? associateCentresListState.map(c => ({ name: c.title || c.name, href: `/our-associate-centre/${c.slug}` }))
-                      : menuItem.links;
+                      : isAboutUs
+                        ? [...menuItem.links, ...customSectionsLinks]
+                        : menuItem.links;
 
                   return (
                     <div
@@ -1225,18 +1247,18 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
                     ? [
-                        {
-                          ...menuItem.columns[0],
-                          links: [
-                            ...menuItem.columns[0].links,
-                            ...customEducationPrograms.map(p => ({
-                              name: p.title,
-                              to: `/education/${p.slug || p.id}`
-                            }))
-                          ]
-                        },
-                        menuItem.columns[1]
-                      ]
+                      {
+                        ...menuItem.columns[0],
+                        links: [
+                          ...menuItem.columns[0].links,
+                          ...customEducationPrograms.map(p => ({
+                            name: p.title,
+                            to: `/education/${p.slug || p.id}`
+                          }))
+                        ]
+                      },
+                      menuItem.columns[1]
+                    ]
                     : menuItem.columns;
 
                   return (
@@ -1337,16 +1359,23 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'dropdown') {
                   const isOpen = activeMobileDropdown === menuItem.name;
+                  const isAboutUs = menuItem.name.toLowerCase().includes('about');
                   const isAssociateCentre = menuItem.name.toLowerCase().includes('associate');
                   const isSpiritualCare = menuItem.name.toLowerCase().includes('spiritual');
                   const spiritualSections = (spiritualCareData.sections || defaultSpiritualSections)
                     .filter(s => s.enabled !== false)
                     .sort((a, b) => (a.order || 0) - (b.order || 0));
+                  const customSectionsLinks = (aboutUsDataState?.customSections || []).map(sec => ({
+                    name: sec.title,
+                    href: `/about-us/about-hospital#${sec.id?.startsWith('custom_') ? sec.id : `custom_${sec.id}`}`
+                  }));
                   const effectiveLinks = isSpiritualCare
                     ? spiritualSections.map(s => ({ name: s.title, href: `#${s.id}`, section: s }))
                     : isAssociateCentre && associateCentresListState.length > 0
                       ? associateCentresListState.map(c => ({ name: c.title || c.name, href: `/our-associate-centre/${c.slug}` }))
-                      : menuItem.links;
+                      : isAboutUs
+                        ? [...menuItem.links, ...customSectionsLinks]
+                        : menuItem.links;
 
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">

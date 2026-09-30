@@ -12,7 +12,7 @@ function normalizeCentre(raw) {
     slug: raw.slug,
     title: raw.title || raw.name || '',
     centreType: raw.centreType || raw.centre_type || '',
-    bannerImg: raw.bannerImg || raw.banner_img || 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690445752450.png',
+    bannerImg: raw.bannerImg || raw.banner_img || 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/swami-shraddhanand-hospital.png',
     address: raw.address || '',
     phone: raw.phone || '',
     highlights: Array.isArray(raw.highlights)
@@ -215,7 +215,7 @@ export default function AssociateCentreDetailPage() {
               display: 'block'
             }}
             onError={(e) => {
-              e.currentTarget.src = 'https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/banner/16690445752450.png';
+              e.currentTarget.src = 'https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/hospital_associates/swami-shraddhanand-hospital.png';
             }}
           />
         </div>

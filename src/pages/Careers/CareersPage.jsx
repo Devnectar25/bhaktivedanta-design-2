@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Share2, CheckCircle2, Upload, AlertCircle, Briefcase, FileText, X, 
   Search, MapPin, Clock, GraduationCap, Users, ArrowRight, ChevronDown, 
-  ChevronUp, Sparkles, Building2, Mail, Check
+  ChevronUp, Sparkles, Building2, Mail, Check, Calendar
 } from 'lucide-react';
 import { getCareerJobs, submitCareerApplication } from '../../utils/api';
 import { defaultCareerJobs } from '../../data/careersData';
@@ -505,131 +505,144 @@ const CareersPage = () => {
                     const posNum = job.positions || '01';
 
                     return (
-                      <div key={job.id} className="job-card-modern">
-                        {/* Top Tags */}
-                        <div>
-                          <div className="job-card-top-tags">
-                            <span className={`job-category-tag ${themeClass}`}>
-                              {job.category || 'Hospital Opening'}
-                            </span>
-                            <div className="job-positions-pill">
-                              <Users size={14} />
-                              <span>{posNum} {parseInt(posNum, 10) > 1 ? 'Positions' : 'Position'} Open</span>
-                            </div>
+                      <div key={job.id} className={`job-card-row ${themeClass} ${isExpanded ? 'is-expanded' : ''}`}>
+                        {/* Left category accent stripe */}
+                        <div className={`job-row-accent-bar ${themeClass}`} />
+
+                        {/* Main Horizontal Content */}
+                        <div className="job-row-main">
+                          {/* Role Icon Avatar */}
+                          <div className={`job-row-icon-avatar ${themeClass}`}>
+                            {getCategoryIcon(job.category)}
                           </div>
 
-                          {/* Job Title */}
-                          <h3 className="job-card-title">{job.title}</h3>
-
-                          {/* Meta: Department & Location */}
-                          <div className="job-card-meta">
-                            {job.department && (
-                              <div className="job-meta-item">
-                                <Building2 size={15} style={{ color: '#ea580c' }} />
-                                <span>{job.department}</span>
+                          {/* Role Info & Title */}
+                          <div className="job-row-content">
+                            <div className="job-row-header-meta">
+                              <span className={`job-category-tag ${themeClass}`}>
+                                {job.category || 'Hospital Opening'}
+                              </span>
+                              <div className="job-positions-pill">
+                                <span className="job-pulse-dot" />
+                                <span>{posNum} {parseInt(posNum, 10) > 1 ? 'Positions' : 'Position'} Open</span>
                               </div>
-                            )}
-                            <div className="job-meta-item">
-                              <MapPin size={15} style={{ color: '#0284c7' }} />
-                              <span>{job.location || 'Mira Road, Mumbai'}</span>
-                            </div>
-                            <div className="job-meta-item">
-                              <Briefcase size={15} style={{ color: '#16a34a' }} />
-                              <span>{job.type || 'Full Time'}</span>
-                            </div>
-                          </div>
-
-                          {/* Key Credentials Strip: Qualification & Experience */}
-                          <div className="job-credentials-box">
-                            <div className="job-credential-item">
-                              <GraduationCap className="job-credential-icon" size={18} />
-                              <div>
-                                <span className="job-credential-label">Required Qualification</span>
-                                <span className="job-credential-value">{job.qualification || 'Relevant degree / diploma'}</span>
-                              </div>
+                              <span className="job-ref-tag">Ref: {job.id}</span>
                             </div>
 
-                            <div className="job-credential-item">
-                              <Clock className="job-credential-icon" size={18} />
-                              <div>
-                                <span className="job-credential-label">Experience</span>
-                                <span className="job-credential-value">{job.experience || 'As per hospital requirements'}</span>
-                              </div>
-                            </div>
-                          </div>
+                            <h3 className="job-row-title">{job.title}</h3>
 
-                          {/* Short Description */}
-                          {job.description && (
-                            <p className="job-description-text">
-                              {job.description}
-                            </p>
-                          )}
-
-                          {/* Expandable Key Responsibilities */}
-                          {Array.isArray(job.responsibilities) && job.responsibilities.length > 0 && (
-                            <div>
-                              <button 
-                                className="job-expand-btn"
-                                onClick={() => toggleExpandJob(job.id)}
-                              >
-                                {isExpanded ? (
-                                  <>
-                                    <span>Hide Key Responsibilities</span>
-                                    <ChevronUp size={15} />
-                                  </>
-                                ) : (
-                                  <>
-                                    <span>View Key Responsibilities & Requirements</span>
-                                    <ChevronDown size={15} />
-                                  </>
-                                )}
-                              </button>
-
-                              {isExpanded && (
-                                <div className="job-responsibilities-drawer">
-                                  <div className="job-responsibilities-title">Core Responsibilities:</div>
-                                  <ul className="job-responsibilities-list">
-                                    {job.responsibilities.map((resp, idx) => (
-                                      <li key={idx}>
-                                        <Check className="responsibility-bullet-icon" size={14} />
-                                        <span>{resp}</span>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
+                            <div className="job-row-meta-chips">
+                              {job.department && (
+                                <span className="job-meta-chip chip-dept">
+                                  <Building2 size={13} />
+                                  <span>{job.department}</span>
+                                </span>
+                              )}
+                              <span className="job-meta-chip chip-location">
+                                <MapPin size={13} />
+                                <span>{job.location || 'Mira Road, Mumbai'}</span>
+                              </span>
+                              <span className="job-meta-chip chip-type">
+                                <Briefcase size={13} />
+                                <span>{job.type || 'Full Time'}</span>
+                              </span>
+                              {job.postedDate && (
+                                <span className="job-meta-chip chip-date">
+                                  <Calendar size={13} />
+                                  <span>{job.postedDate}</span>
+                                </span>
                               )}
                             </div>
-                          )}
-                        </div>
-
-                        {/* Action Footer */}
-                        <div className="job-card-footer">
-                          <div className="job-ref-info">
-                            <span>Ref: {job.id}</span>
-                            {job.postedDate && (
-                              <span> &bull; Posted {job.postedDate}</span>
-                            )}
                           </div>
 
-                          <div className="job-actions-group">
+                          {/* Quick Requirements Summary (Inline Badges) */}
+                          <div className="job-row-requirements">
+                            <div className="job-req-badge" title={job.qualification}>
+                              <GraduationCap size={16} className="req-icon-qualification" />
+                              <div className="req-text-wrap">
+                                <span className="req-label">Qualification</span>
+                                <span className="req-val">{job.qualification || 'Relevant Degree'}</span>
+                              </div>
+                            </div>
+                            <div className="job-req-badge" title={job.experience}>
+                              <Clock size={16} className="req-icon-experience" />
+                              <div className="req-text-wrap">
+                                <span className="req-label">Experience</span>
+                                <span className="req-val">{job.experience || 'As per hospital norms'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Actions Column */}
+                          <div className="job-row-actions">
+                            <button
+                              className="btn-row-details"
+                              onClick={() => toggleExpandJob(job.id)}
+                              aria-expanded={isExpanded}
+                            >
+                              <span>{isExpanded ? 'Less' : 'Details'}</span>
+                              {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                            </button>
+
                             <button 
                               className="btn-card-share"
                               onClick={(e) => handleShareJob(job, e)}
                               title="Share this job opening"
                               aria-label="Share Job"
                             >
-                              <Share2 size={16} />
+                              <Share2 size={15} />
                             </button>
 
                             <button 
                               className="btn-card-apply"
                               onClick={() => openApplyModal(job)}
                             >
-                              <span>Apply</span>
-                              <ArrowRight size={15} />
+                              <span>Apply Now</span>
+                              <ArrowRight size={15} className="btn-apply-arrow" />
                             </button>
                           </div>
                         </div>
+
+                        {/* Expandable Details Drawer */}
+                        {isExpanded && (
+                          <div className="job-row-expanded-drawer">
+                            {job.description && (
+                              <div className="job-drawer-section">
+                                <h4 className="job-drawer-subtitle">Role Overview</h4>
+                                <p className="job-drawer-desc">{job.description}</p>
+                              </div>
+                            )}
+
+                            {Array.isArray(job.responsibilities) && job.responsibilities.length > 0 && (
+                              <div className="job-drawer-section">
+                                <h4 className="job-drawer-subtitle">Key Responsibilities & Requirements</h4>
+                                <ul className="job-responsibilities-list">
+                                  {job.responsibilities.map((resp, idx) => (
+                                    <li key={idx}>
+                                      <span className="responsibility-bullet-circle">
+                                        <Check size={11} />
+                                      </span>
+                                      <span>{resp}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            <div className="job-drawer-footer">
+                              <span className="job-drawer-note">
+                                Reference Code: <strong>{job.id}</strong> &bull; Posted on {job.postedDate || 'Recent'}
+                              </span>
+                              <button 
+                                className="btn-card-apply btn-apply-sm"
+                                onClick={() => openApplyModal(job)}
+                              >
+                                <span>Apply for this Role</span>
+                                <ArrowRight size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

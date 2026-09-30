@@ -57,28 +57,28 @@ export const dnbProgramData = {
           "designation": "HOD of Internal Medicine & Senior Consultant Internal Medicine",
           "qualification": "MD (Internal Medicine)",
           "experience": "32 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684020335156.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Dhaval%20Dalal.png"
         },
         {
           "name": "Dr. Suraj Purushotthaman",
           "designation": "Consultant Physician & Intensivist",
           "qualification": "MD (General Medicine)",
           "experience": "12 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684020608010.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Suraj%20Purushotthaman.png"
         },
         {
           "name": "Dr. Ajay Shankhe",
           "designation": "Director & Senior Consultant",
           "qualification": "MD (Medicine), DNB",
           "experience": "30 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16923328479408.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Ajay%20Shankhe.png"
         },
         {
           "name": "Dr. Nikhil Raut",
           "designation": "Consultant Pulmonologist & Critical Care Specialist",
           "qualification": "DNB (Respiratory Diseases), FCCP",
           "experience": "14 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684021079177.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Nikhil%20Raut.png"
         }
       ],
       "academicSchedule": [
@@ -125,21 +125,21 @@ export const dnbProgramData = {
           "designation": "Director of Hospital, Pediatrician & Neonatologist",
           "qualification": "MD (Pediatrics)",
           "experience": "34 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16779476303741.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Ajay%20Sankhe.png"
         },
         {
           "name": "Dr. Girish Patel",
           "designation": "Senior Consultant Pediatrician & Neonatologist",
           "qualification": "MD (Pediatrics), DNB",
           "experience": "22 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16779476415699.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Girish%20Patel.png"
         },
         {
           "name": "Dr. Mayur Agarwal",
           "designation": "Consultant Pediatric Intensivist",
           "qualification": "MD, Fellowship in PICU",
           "experience": "11 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16779476625691.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Mayur%20Agarwal.png"
         }
       ],
       "academicSchedule": [
@@ -182,14 +182,14 @@ export const dnbProgramData = {
           "designation": "HOD & Senior Consultant Eye Care",
           "qualification": "MBBS, MS (Ophthalmology)",
           "experience": "24 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684949258105.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Suraj%20Prakash%20Bhagde.png"
         },
         {
           "name": "Dr. S. K. Narang",
           "designation": "Senior Consultant Vitreo-Retina & Cataract",
           "qualification": "MS, DNB, FICO",
           "experience": "20 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684949707082.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20S.%20K.%20Narang.png"
         }
       ],
       "academicSchedule": [
@@ -232,14 +232,14 @@ export const dnbProgramData = {
           "designation": "Senior Consultant Obstetrician & Gynecologist",
           "qualification": "MD, DGO, FCPS",
           "experience": "30 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684030714837.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Veena%20Sankhe.png"
         },
         {
           "name": "Dr. Sujata Dalal",
           "designation": "Consultant Laparoscopic Surgeon & Gynecologist",
           "qualification": "MS (OBGYN), Fellowship in Endoscopy",
           "experience": "22 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684021843703.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Sujata%20Dalal.png"
         }
       ],
       "academicSchedule": [
@@ -282,14 +282,14 @@ export const dnbProgramData = {
           "designation": "Director & Senior Consultant Urologist",
           "qualification": "MS, M.Ch (Urology), DNB",
           "experience": "28 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684021592797.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Shirish%20Yande.png"
         },
         {
           "name": "Dr. Samit Doshi",
           "designation": "Consultant Endourologist & Andrologist",
           "qualification": "DNB (Urology)",
           "experience": "8 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/gallery/Samit Doshi.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Samit%20Doshi.png"
         }
       ],
       "academicSchedule": [
@@ -332,14 +332,14 @@ export const dnbProgramData = {
           "designation": "HOD & Senior Consultant Anaesthesiologist",
           "qualification": "MD (Anaesthesia), DA",
           "experience": "25 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684021338506.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Nilesh%20Patel.png"
         },
         {
           "name": "Dr. Pratibha Dalal",
           "designation": "Senior Consultant Neuro & Onco Anaesthetist",
           "qualification": "MD (Anaesthesiology)",
           "experience": "22 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16684021843703.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Pratibha%20Dalal.png"
         }
       ],
       "academicSchedule": [
@@ -382,14 +382,14 @@ export const dnbProgramData = {
           "designation": "HOD & Senior Consultant Radiologist",
           "qualification": "MD (Radio Diagnosis)",
           "experience": "26 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/1677947650714.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Rajesh%20Sharma.png"
         },
         {
           "name": "Dr. Snehal Vaidya",
           "designation": "Consultant Radiologist & Cross-Sectional Imaging Specialist",
           "qualification": "DNB (Radio Diagnosis)",
           "experience": "14 years+",
-          "image": "https://pub-a3f5d293f21c42ebb873059f3d9e05a3.r2.dev/upload/experts/16779476842063.png"
+          "image": "https://ohaokdfkdafgpwccauos.supabase.co/storage/v1/object/public/Doctors_Imeges/Dr.%20Snehal%20Vaidya.png"
         }
       ],
       "academicSchedule": [
