@@ -4,6 +4,37 @@ import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
 import AlertModal from '../../../components/admin/AlertModal/AlertModal';
 import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
 
+const uploadSpiritualCareImage = async (file, itemName = 'spiritual-publication') => {
+  if (!file) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        const res = await fetch('http://localhost:5000/api/spiritual-care/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemName,
+            fileName: file.name,
+            base64Data
+          })
+        });
+        const data = await res.json();
+        if (data && data.url) {
+          resolve(data.url);
+        } else {
+          resolve(base64Data);
+        }
+      } catch (err) {
+        console.warn('Upload fallback to local base64:', err);
+        resolve(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function PublicationsManager() {
   const [publications, setPublications] = useState(defaultSpiritualCareState.publications);
   const [searchTerm, setSearchTerm] = useState('');
@@ -313,11 +344,31 @@ export default function PublicationsManager() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block font-bold text-slate-700 mb-1">Thumbnail Image URL</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-slate-700">Thumbnail Image URL</label>
+                    <label className="text-[11px] font-bold text-orange-600 hover:text-orange-700 cursor-pointer flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                      <span>Upload Thumbnail</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const url = await uploadSpiritualCareImage(file, editingPaper.title || 'publication');
+                          if (url) {
+                            setEditingPaper(p => ({ ...p, thumbnail: url }));
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
                   <input
                     type="text"
                     value={editingPaper.thumbnail || ''}
                     onChange={(e) => setEditingPaper(p => ({ ...p, thumbnail: e.target.value }))}
+                    placeholder="https://..."
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono outline-none"
                   />
                 </div>

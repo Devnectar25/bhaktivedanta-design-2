@@ -1,4 +1,5 @@
 import React from 'react';
+import { AccordionItemRenderer } from '../SectionRenderer/SectionRenderer';
 import './RichTextRenderer.css';
 
 /**
@@ -100,7 +101,8 @@ const renderTextWithMarks = (textNode, key) => {
  * Render an Image block
  */
 const renderImageBlock = (node, index) => {
-  const url = node.url || node.attrs?.url || node.attrs?.src || '';
+  const rawUrl = node.url || node.attrs?.url || node.attrs?.src || '';
+  const url = normalizeImageUrl(rawUrl);
   const caption = node.caption || node.attrs?.caption || '';
   const rawLayout = node.layout || node.attrs?.layout;
   const rawWidth = node.width || node.attrs?.width;
@@ -391,6 +393,362 @@ const renderNode = (node, index) => {
   }
 };
 
+export const LEGACY_IMAGE_BASE_URL = 'https://www.bhaktivedantahospital.com';
+
+/**
+ * Normalize an image URL:
+ * - Preserves absolute URLs (http://, https://, data:, blob:).
+ * - Normalizes root-relative legacy paths (e.g. starting with `/images/` or `images/` or `/`)
+ *   against the verified legacy base origin.
+ */
+export const normalizeImageUrl = (src) => {
+  if (!src || typeof src !== 'string') return src;
+  const trimmed = src.trim();
+  if (
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('data:') ||
+    trimmed.startsWith('blob:')
+  ) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('/images/')) {
+    return `${LEGACY_IMAGE_BASE_URL}${trimmed}`;
+  }
+  if (trimmed.startsWith('images/')) {
+    return `${LEGACY_IMAGE_BASE_URL}/${trimmed}`;
+  }
+  if (trimmed.startsWith('/')) {
+    return `${LEGACY_IMAGE_BASE_URL}${trimmed}`;
+  }
+  return trimmed;
+};
+
+/**
+ * Normalizes all <img> elements inside a DOM container
+ */
+export const normalizeImageElements = (containerEl) => {
+  if (!containerEl) return;
+  const imgElements = containerEl.querySelectorAll('img');
+  imgElements.forEach((img) => {
+    const src = img.getAttribute('src');
+    if (src) {
+      const normalized = normalizeImageUrl(src);
+      if (normalized !== src) {
+        img.setAttribute('src', normalized);
+      }
+    }
+  });
+};
+
+/**
+ * Helper to generically remove empty <li> elements when their effective text/content is whitespace-only.
+ * Preserves <li> items containing media, widgets, inputs, or images.
+ */
+export const cleanEmptyListItems = (containerEl) => {
+  if (!containerEl) return;
+  const listItems = containerEl.querySelectorAll('li');
+  listItems.forEach((li) => {
+    // Retain list items that have media, inputs, or interactive elements
+    const hasMedia = li.querySelector(
+      'img, svg, iframe, video, audio, canvas, object, embed, input, select, textarea, button'
+    );
+    if (hasMedia) return;
+
+    // Check effective text content (stripping spaces, &nbsp;, zero-width characters)
+    const effectiveText = (li.textContent || '').replace(/[\s\u00A0\u200B\uFEFF]+/g, '');
+    if (effectiveText.length === 0) {
+      li.remove();
+    }
+  });
+};
+
+/**
+ * Identify if a DOM element represents an accordion item across legacy patterns.
+ */
+export const isAccordionItem = (node) => {
+  if (!node || node.nodeType !== 1 /* ELEMENT_NODE */) return false;
+  const tagName = node.tagName.toLowerCase();
+  if (tagName === 'details') return true;
+
+  const classList = node.classList;
+  if (
+    classList.contains('toggle') ||
+    classList.contains('accordion-item') ||
+    classList.contains('custom-accordion-item')
+  ) {
+    return true;
+  }
+
+  // Generic heuristic for custom containers with header + content
+  const hasHeader = Boolean(
+    node.querySelector(
+      '.toggle-title, .toggle-header, .accordion-header, .accordion-title, .custom-accordion-header, button.accordion-button, .accordion-button, label'
+    )
+  );
+  const hasContent = Boolean(
+    node.querySelector(
+      '.toggle-content, .accordion-content, .accordion-body, .custom-accordion-content, .card-body, .accordion-collapse, .content'
+    )
+  );
+
+  if (hasHeader && hasContent) {
+    // Ensure this node is an individual item, not the parent container of multiple items
+    const nestedItems = node.querySelectorAll('.toggle, .accordion-item, .custom-accordion-item, details');
+    if (nestedItems.length === 0) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
+ * Extract title and body HTML from an accordion element.
+ */
+export const extractAccordionItem = (node) => {
+  if (!node || node.nodeType !== 1) return null;
+  const tagName = node.tagName.toLowerCase();
+
+  // 1. HTML5 details element
+  if (tagName === 'details') {
+    const summaryEl = node.querySelector('summary');
+    const title = summaryEl ? summaryEl.textContent.trim() : 'Details';
+    const clone = node.cloneNode(true);
+    const cloneSummary = clone.querySelector('summary');
+    if (cloneSummary) cloneSummary.remove();
+    normalizeImageElements(clone);
+    cleanEmptyListItems(clone);
+    const bodyHtml = clone.innerHTML.trim();
+    if (!title && !bodyHtml) return null;
+    return {
+      title: title || 'Details',
+      content: bodyHtml
+    };
+  }
+
+  // 2. Title Extraction
+  const titleSelectors = [
+    '.toggle-title',
+    'button.accordion-button',
+    '.accordion-button',
+    '.accordion-title',
+    '.custom-accordion-header',
+    '.accordion-header',
+    '.toggle-header',
+    'label',
+    'h1, h2, h3, h4, h5, h6'
+  ];
+
+  let titleEl = null;
+  for (const sel of titleSelectors) {
+    const found = node.querySelector(sel);
+    if (found) {
+      titleEl = found;
+      break;
+    }
+  }
+
+  let title = '';
+  if (titleEl) {
+    const clone = titleEl.cloneNode(true);
+    clone.querySelectorAll('.toggle-icon, .accordion-icon, .accord-icon, i, svg, input, [aria-hidden="true"]').forEach((i) => i.remove());
+    title = clone.textContent.trim().replace(/^[\s+−\-–—]+\s*/, '').trim();
+  }
+
+  // 3. Content Extraction
+  const contentSelectors = [
+    '.toggle-content',
+    '.accordion-body',
+    '.custom-accordion-content',
+    '.card-body',
+    '.accordion-content',
+    '.accordion-collapse',
+    '.content'
+  ];
+
+  let contentEl = null;
+  for (const sel of contentSelectors) {
+    const found = node.querySelector(sel);
+    if (found) {
+      contentEl = found;
+      break;
+    }
+  }
+
+  let bodyHtml = '';
+  if (contentEl) {
+    // If contentEl is .accordion-collapse or has an inner body container, pick the inner target
+    const innerBody = contentEl.querySelector('.card-body, .accordion-body, .accordion-content, .toggle-content');
+    const target = innerBody || contentEl;
+    const clone = target.cloneNode(true);
+    clone.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach((el) => el.remove());
+    normalizeImageElements(clone);
+    cleanEmptyListItems(clone);
+    bodyHtml = clone.innerHTML.trim();
+  } else {
+    // Fallback: clone item and exclude title, headers, inputs, icons
+    const clone = node.cloneNode(true);
+    if (titleEl) {
+      clone.querySelectorAll(titleSelectors.join(', ')).forEach((el) => el.remove());
+    }
+    clone.querySelectorAll('input[type="checkbox"], input[type="radio"], .toggle-icon, .accordion-icon, .accord-icon').forEach((el) => el.remove());
+    normalizeImageElements(clone);
+    cleanEmptyListItems(clone);
+    bodyHtml = clone.innerHTML.trim();
+  }
+
+  // Prevent rendering orphaned/broken empty items
+  if (!title && !bodyHtml) {
+    return null;
+  }
+
+  return {
+    title: title || 'Details',
+    content: bodyHtml
+  };
+};
+
+/**
+ * Extract photo gallery categories and images from legacy nanogallery containers.
+ */
+export const extractNanoGallery = (containerEl) => {
+  const nanoEl = containerEl.id === 'nanogallery2' ? containerEl : (containerEl.querySelector('#nanogallery2') || containerEl);
+  const links = Array.from(nanoEl.querySelectorAll('a'));
+  const categories = [];
+  let currentCategory = null;
+
+  links.forEach((a) => {
+    const href = (a.getAttribute('href') || '').trim();
+    const text = (a.textContent || '').trim();
+
+    if (text && (!href || href === '#' || href === 'javascript:void(0)')) {
+      currentCategory = {
+        title: text,
+        images: []
+      };
+      categories.push(currentCategory);
+    } else if (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/') || href.endsWith('.jpg') || href.endsWith('.png') || href.endsWith('.jpeg'))) {
+      const fullUrl = normalizeImageUrl(href);
+      if (!currentCategory) {
+        currentCategory = {
+          title: 'Photo Gallery',
+          images: []
+        };
+        categories.push(currentCategory);
+      }
+      currentCategory.images.push(fullUrl);
+    }
+  });
+
+  return categories.filter((c) => c.images.length > 0 || c.title);
+};
+
+/**
+ * Convert HTML DOM tree into React elements, transforming legacy accordions
+ * (.toggle, .accordion-item, .custom-accordion-item, <details>, etc.)
+ * into interactive AccordionItemRenderer components while preserving all other rich text.
+ */
+const domNodeToReact = (node, key) => {
+  if (!node) return null;
+
+  // 1. Text node
+  if (node.nodeType === 3 /* Node.TEXT_NODE */) {
+    return node.textContent;
+  }
+
+  // 2. Element node
+  if (node.nodeType === 1 /* Node.ELEMENT_NODE */) {
+    const tagName = node.tagName.toLowerCase();
+    const classList = node.classList;
+
+    // Remove legacy mobile-only tab headers or accord-title
+    if (classList.contains('phshow') || classList.contains('accord-title')) {
+      return null;
+    }
+
+    // Remove empty divider lines
+    if (classList.contains('line2') && !node.textContent.trim()) {
+      return null;
+    }
+
+    // Check if this element is a nanogallery or pc_gal container
+    if (node.id === 'nanogallery2' || classList.contains('pc_gal') || node.querySelector('#nanogallery2')) {
+      const galleryCats = extractNanoGallery(node);
+      if (galleryCats.length > 0) {
+        return (
+          <div key={key} className="nanogallery-root">
+            {galleryCats.map((cat, catIdx) => (
+              <div key={catIdx} className="nanogallery-category-section">
+                {cat.title && <h3 className="nanogallery-category-title">{cat.title}</h3>}
+                <div className="nanogallery-grid">
+                  {cat.images.map((imgUrl, imgIdx) => (
+                    <div key={imgIdx} className="nanogallery-item">
+                      <a href={imgUrl} target="_blank" rel="noopener noreferrer" className="nanogallery-link">
+                        <img src={imgUrl} alt={`${cat.title || 'Facility'} ${imgIdx + 1}`} loading="lazy" className="nanogallery-img" />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      }
+    }
+
+    // Check if this element is an Accordion / Toggle item
+    if (isAccordionItem(node)) {
+      const itemData = extractAccordionItem(node);
+      if (!itemData) return null;
+
+      return (
+        <AccordionItemRenderer
+          key={key}
+          item={{
+            id: node.id || `acc-${key}`,
+            title: itemData.title,
+            content: itemData.content
+          }}
+        />
+      );
+    }
+
+    // Check if this element contains any accordion descendant
+    const hasNestedAccordion = Boolean(
+      node.querySelector('.toggle, details, .accordion-item, .custom-accordion-item, label, .accordion-button') ||
+      classList.contains('accordion') ||
+      classList.contains('neuro-section')
+    );
+
+    if (hasNestedAccordion) {
+      // Render container and recursively process children
+      const children = Array.from(node.childNodes)
+        .map((child, idx) => domNodeToReact(child, `${key}_${idx}`))
+        .filter(Boolean);
+
+      const props = { key };
+      if (node.id) props.id = node.id;
+      if (node.className) props.className = node.className;
+
+      return React.createElement(tagName, props, children);
+    }
+
+    // If NO accordion inside this element, normalize images, clean empty li's and render intact outerHTML
+    normalizeImageElements(node);
+    cleanEmptyListItems(node);
+    return (
+      <div
+        key={key}
+        style={{ display: 'contents' }}
+        dangerouslySetInnerHTML={{ __html: node.outerHTML }}
+      />
+    );
+  }
+
+  return null;
+};
+
 /**
  * Reusable TipTap Rich Text Renderer
  * Accepts TipTap JSON doc object, Block Array, or fallback HTML string.
@@ -436,6 +794,42 @@ const RichTextRenderer = ({ content, className = '' }) => {
       }
     }
 
+    // If string contains accordion markup, legacy markers, lists, OR img elements
+    const hasAccordionMarkup =
+      /(?:class=["'][^"']*\b(?:toggle|accordion-item|custom-accordion-item|accordion|neuro-section)\b|<details\b|<summary\b)/i.test(
+        content
+      );
+    const hasLegacyOrListOrImgMarkup =
+      /class=["'][^"']*(?:phshow|accord-title|line2|pc_gal)/i.test(content) ||
+      /id=["']nanogallery2["']/i.test(content) ||
+      /<li\b|<img\b/i.test(content);
+
+    if ((hasAccordionMarkup || hasLegacyOrListOrImgMarkup) && typeof window !== 'undefined' && typeof DOMParser !== 'undefined') {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, 'text/html');
+
+        doc.querySelectorAll('.phshow, .accord-title').forEach((el) => el.remove());
+        doc.querySelectorAll('.line2').forEach((el) => {
+          if (!el.textContent.trim()) el.remove();
+        });
+        normalizeImageElements(doc.body);
+        cleanEmptyListItems(doc.body);
+
+        const elements = Array.from(doc.body.childNodes)
+          .map((child, idx) => domNodeToReact(child, `root_${idx}`))
+          .filter(Boolean);
+
+        return (
+          <div className={`rich-text-renderer-root ${className}`}>
+            {elements}
+          </div>
+        );
+      } catch (e) {
+        console.warn('Error parsing HTML accordions / images:', e);
+      }
+    }
+
     return (
       <div
         className={`rich-text-renderer-root ${className}`}
@@ -448,3 +842,6 @@ const RichTextRenderer = ({ content, className = '' }) => {
 };
 
 export default RichTextRenderer;
+
+
+

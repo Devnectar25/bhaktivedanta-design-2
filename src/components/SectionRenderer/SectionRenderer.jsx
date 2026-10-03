@@ -144,7 +144,7 @@ export function LogoGridSection({ section, logos: directLogos }) {
 /* ------------------------------------------------------------------ */
 /* 2b. Single Accordion Item Renderer                                 */
 /* ------------------------------------------------------------------ */
-function AccordionItemRenderer({ item, defaultOpen = false }) {
+export function AccordionItemRenderer({ item, defaultOpen = false }) {
   const [isOpen, setIsOpen] = useState(defaultOpen || item.defaultOpen === true);
   if (item.enabled === false) return null;
 

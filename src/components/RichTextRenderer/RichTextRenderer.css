@@ -337,3 +337,293 @@
   line-height: 1.5;
   font-family: 'Inter', sans-serif;
 }
+
+/* --------------------------------------------------------------------------
+   4. Legacy Rich HTML Grid & Multi-Column Layout Support
+   Scoped strictly under .rich-text-renderer-root to avoid any global pollution
+   -------------------------------------------------------------------------- */
+.rich-text-renderer-root .row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin-right: -15px !important;
+  margin-left: -15px !important;
+  box-sizing: border-box !important;
+  align-items: flex-start;
+}
+
+.rich-text-renderer-root .row.gutter-20 {
+  margin-right: -10px !important;
+  margin-left: -10px !important;
+}
+
+.rich-text-renderer-root .row > * {
+  box-sizing: border-box !important;
+  padding-right: 15px !important;
+  padding-left: 15px !important;
+}
+
+.rich-text-renderer-root .row.gutter-20 > * {
+  padding-right: 10px !important;
+  padding-left: 10px !important;
+}
+
+.rich-text-renderer-root .col-lg-6,
+.rich-text-renderer-root .col-md-6 {
+  flex: 0 0 50% !important;
+  max-width: 50% !important;
+  width: 50% !important;
+  box-sizing: border-box !important;
+}
+
+.rich-text-renderer-root .col-lg-7 {
+  flex: 0 0 58.333333% !important;
+  max-width: 58.333333% !important;
+  width: 58.333333% !important;
+  box-sizing: border-box !important;
+}
+
+.rich-text-renderer-root .col-lg-5,
+.rich-text-renderer-root .col-5 {
+  flex: 0 0 41.666667% !important;
+  max-width: 41.666667% !important;
+  width: 41.666667% !important;
+  box-sizing: border-box !important;
+}
+
+.rich-text-renderer-root .col-md-4 {
+  flex: 0 0 33.333333% !important;
+  max-width: 33.333333% !important;
+  width: 33.333333% !important;
+  box-sizing: border-box !important;
+}
+
+.rich-text-renderer-root .col-md-10 {
+  flex: 0 0 83.333333% !important;
+  max-width: 83.333333% !important;
+  width: 83.333333% !important;
+  box-sizing: border-box !important;
+}
+
+.rich-text-renderer-root .col-lg-12,
+.rich-text-renderer-root .col-md-12,
+.rich-text-renderer-root .col-12 {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Clearfix and Spacing Utilities */
+.rich-text-renderer-root .clear {
+  clear: both !important;
+  width: 100% !important;
+}
+
+.rich-text-renderer-root .abttitle {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1.55rem !important;
+  font-weight: 700 !important;
+  color: #132A4C !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.35 !important;
+}
+
+.rich-text-renderer-root .text-color-second {
+  color: #E8792B !important;
+}
+
+.rich-text-renderer-root .prim-font {
+  color: #132A4C !important;
+}
+
+/* Legacy Image styling within grid columns */
+.rich-text-renderer-root .fgpage-imgbgr,
+.rich-text-renderer-root .fgpage-imgbg {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.rich-text-renderer-root img.amb_imgr,
+.rich-text-renderer-root img.amb_img,
+.rich-text-renderer-root .fgpage-imgbgr img,
+.rich-text-renderer-root .fgpage-imgbg img {
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 440px !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  display: inline-block !important;
+  box-shadow: 0 4px 20px -2px rgba(19, 42, 76, 0.08) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+/* Eye Care Service Grid */
+.rich-text-renderer-root .eye-care-service-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 16px !important;
+  margin: 1.5rem 0 !important;
+}
+
+.rich-text-renderer-root .eye-care-service-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 18px 14px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.rich-text-renderer-root .eye-care-service-card img {
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain !important;
+}
+
+.rich-text-renderer-root .eye-care-service-card h3 {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #132A4C !important;
+  margin: 0 !important;
+}
+
+/* Responsive breakpoint for stacking on tablets & mobile */
+@media (max-width: 991px) {
+  .rich-text-renderer-root .col-lg-6,
+  .rich-text-renderer-root .col-lg-7,
+  .rich-text-renderer-root .col-lg-5,
+  .rich-text-renderer-root .col-5,
+  .rich-text-renderer-root .col-md-6,
+  .rich-text-renderer-root .col-md-4,
+  .rich-text-renderer-root .col-md-10 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .rich-text-renderer-root .col-lg-6.mt-5,
+  .rich-text-renderer-root .col-md-6.mt-5,
+  .rich-text-renderer-root .fgpage-imgbgr,
+  .rich-text-renderer-root .fgpage-imgbg {
+    margin-top: 1.25rem !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Legacy Image Galleries & Photo Grid Support (.grid, .nanogallery-root)
+   -------------------------------------------------------------------------- */
+.rich-text-renderer-root .grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 16px !important;
+  margin: 1.5rem 0 2rem !important;
+}
+
+.rich-text-renderer-root .grid-sizer {
+  display: none !important;
+}
+
+.rich-text-renderer-root .grid-item {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.rich-text-renderer-root .grid-item a {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 2px 10px rgba(19, 42, 76, 0.06) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.rich-text-renderer-root .grid-item a:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(19, 42, 76, 0.12) !important;
+}
+
+.rich-text-renderer-root .grid-item img {
+  width: 100% !important;
+  height: 180px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 12px !important;
+}
+
+/* NanoGallery2 Category Sections & Grids */
+.rich-text-renderer-root .nanogallery-root {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2.25rem !important;
+  margin: 1.5rem 0 2.5rem !important;
+}
+
+.rich-text-renderer-root .nanogallery-category-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+.rich-text-renderer-root .nanogallery-category-title {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #132A4C !important;
+  margin: 0 !important;
+  padding-bottom: 0.5rem !important;
+  border-bottom: 2px solid #E8792B !important;
+  display: inline-block !important;
+  align-self: flex-start !important;
+}
+
+.rich-text-renderer-root .nanogallery-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.rich-text-renderer-root .nanogallery-item {
+  width: 100% !important;
+}
+
+.rich-text-renderer-root .nanogallery-link {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  box-shadow: 0 2px 10px rgba(19, 42, 76, 0.06) !important;
+  background-color: #f8fafc !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.rich-text-renderer-root .nanogallery-link:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(19, 42, 76, 0.12) !important;
+}
+
+.rich-text-renderer-root .nanogallery-img {
+  width: 100% !important;
+  height: 170px !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 12px !important;
+  transition: transform 0.3s ease !important;
+}
+
+.rich-text-renderer-root .nanogallery-link:hover .nanogallery-img {
+  transform: scale(1.04) !important;
+}
+
+

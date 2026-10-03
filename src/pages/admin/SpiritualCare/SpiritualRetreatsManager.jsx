@@ -4,6 +4,37 @@ import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
 import AlertModal from '../../../components/admin/AlertModal/AlertModal';
 
+const uploadSpiritualCareImage = async (file, itemName = 'spiritual-retreat') => {
+  if (!file) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        const res = await fetch('http://localhost:5000/api/spiritual-care/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemName,
+            fileName: file.name,
+            base64Data
+          })
+        });
+        const data = await res.json();
+        if (data && data.url) {
+          resolve(data.url);
+        } else {
+          resolve(base64Data);
+        }
+      } catch (err) {
+        console.warn('Upload fallback to local base64:', err);
+        resolve(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function SpiritualRetreatsManager() {
   const [retreats, setRetreats] = useState(defaultSpiritualCareState.retreats);
   const [activeSubTab, setActiveSubTab] = useState('bimonthly'); // 'bimonthly' | 'annual' | 'contact'
@@ -221,8 +252,25 @@ export default function SpiritualRetreatsManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(retreats.bimonthly?.activities || []).map((act, idx) => (
                 <div key={act.id || idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 relative">
-                  <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-200 border border-slate-300">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-slate-200 border border-slate-300 relative group">
                     <img src={act.image} alt={act.title} className="w-full h-full object-cover" />
+                    <label className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-[10px] font-bold">
+                      <span className="material-symbols-outlined text-base">cloud_upload</span>
+                      <span>Change</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const url = await uploadSpiritualCareImage(file, act.title || 'retreat-activity');
+                          if (url) {
+                            handleUpdateActivity(act.id, 'image', url);
+                          }
+                        }}
+                      />
+                    </label>
                   </div>
                   <div className="flex-1 space-y-1.5 min-w-0">
                     <div className="flex items-center justify-between">
@@ -278,13 +326,31 @@ export default function SpiritualRetreatsManager() {
                   onChange={(e) => setNewActivity(p => ({ ...p, tag: e.target.value }))}
                   className="border border-slate-300 rounded-lg px-3 py-1.5 text-xs bg-white"
                 />
-                <input
-                  type="text"
-                  placeholder="Image URL"
-                  value={newActivity.image}
-                  onChange={(e) => setNewActivity(p => ({ ...p, image: e.target.value }))}
-                  className="border border-slate-300 rounded-lg px-3 py-1.5 text-xs bg-white font-mono"
-                />
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="text"
+                    placeholder="Image URL"
+                    value={newActivity.image}
+                    onChange={(e) => setNewActivity(p => ({ ...p, image: e.target.value }))}
+                    className="border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white font-mono flex-1 min-w-0"
+                  />
+                  <label className="shrink-0 bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1.5 rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const url = await uploadSpiritualCareImage(file, newActivity.title || 'retreat-activity');
+                        if (url) {
+                          setNewActivity(p => ({ ...p, image: url }));
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
                 <div className="sm:col-span-3">
                   <input
                     type="text"
@@ -331,6 +397,7 @@ export default function SpiritualRetreatsManager() {
             <RichTextEditor
               content={retreats.annual?.intro || ''}
               onChange={(html) => setRetreats(p => ({ ...p, annual: { ...p.annual, intro: html } }))}
+              uploadEndpoint="http://localhost:5000/api/spiritual-care/upload"
             />
           </div>
         </div>

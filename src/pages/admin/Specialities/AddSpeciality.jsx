@@ -5,13 +5,14 @@ import { getSpecialitiesState, saveSpecialitiesState } from '../../../utils/api'
 import { initialDoctors } from '../../../data/adminState';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
 import AlertModal from '../../../components/admin/AlertModal/AlertModal';
+import { showSuccessAlert } from '../../../utils/swal';
 
 const getInitialCreateTabs = (specName) => [
-  { id: 't1', title: 'Overview', content: `<p>Welcome to the ${specName || 'new'} department. We provide comprehensive care and support tailored to each patient's needs.</p>` },
-  { id: 't2', title: 'Why Choose Us', content: `<p>Our ${specName || 'new'} department stands out for its experienced professionals, modern equipment, and dedicated compassionate care.</p>` },
-  { id: 't3', title: 'Technology & Infrastructure', content: `<p>We utilize advanced diagnostics and treatment facilities to deliver high-quality, precise clinical results in ${specName || 'this speciality'}.</p>` },
-  { id: 't4', title: 'Services', content: `<p>We offer a wide range of inpatient and outpatient services to cater to diverse medical requirements.</p>` },
-  { id: 't5', title: 'Our Experts', content: `<p>Meet our leading specialist physicians and support staff who work together to ensure your well-being.</p>` }
+  { id: 't1', title: 'Overview', type: 'rich_text', content: `<p>Welcome to the ${specName || 'new'} department. We provide comprehensive care and support tailored to each patient's needs.</p>` },
+  { id: 't2', title: 'Why Choose Us', type: 'rich_text', content: `<p>Our ${specName || 'new'} department stands out for its experienced professionals, modern equipment, and dedicated compassionate care.</p>` },
+  { id: 't3', title: 'Technology & Infrastructure', type: 'rich_text', content: `<p>We utilize advanced diagnostics and treatment facilities to deliver high-quality, precise clinical results in ${specName || 'this speciality'}.</p>` },
+  { id: 't4', title: 'Services', type: 'rich_text', content: `<p>We offer a wide range of inpatient and outpatient services to cater to diverse medical requirements.</p>` },
+  { id: 't5', title: 'Our Experts', type: 'specialists', content: `<p>Meet our leading specialist physicians and support staff who work together to ensure your well-being.</p>`, cards: [], items: [] }
 ];
 
 const AddSpeciality = () => {
@@ -30,6 +31,7 @@ const AddSpeciality = () => {
   const [status, setStatus] = useState(true);
   const [adminId, setAdminId] = useState('ADM-001');
   const [adminName, setAdminName] = useState('Super Administrator');
+  const [saving, setSaving] = useState(false);
 
   // Custom Alert / Error Dialog State
   const [alertModal, setAlertModal] = useState({
@@ -57,19 +59,22 @@ const AddSpeciality = () => {
   // Tabs structure state
   const [tabs, setTabs] = useState([]);
 
-  // Doctors selection states
+  // Doctors directory state
   const [doctorsList, setDoctorsList] = useState([]);
-  const [selectedDocId, setSelectedDocId] = useState('');
-  const [expertDesignation, setExpertDesignation] = useState('');
 
   const [state, setState] = useState(defaultSpecialitiesState);
 
   useEffect(() => {
-    initialDoctors().then(docs => {
-      setDoctorsList(docs || []);
-    });
+    let isMounted = true;
 
-    getSpecialitiesState(defaultSpecialitiesState).then(res => {
+    Promise.all([
+      initialDoctors(),
+      getSpecialitiesState(defaultSpecialitiesState)
+    ]).then(([docs, res]) => {
+      if (!isMounted) return;
+      const loadedDocs = docs || [];
+      setDoctorsList(loadedDocs);
+
       if (res && res.specialities) {
         res.specialities.forEach(ensureStandardTabs);
       }
@@ -86,16 +91,119 @@ const AddSpeciality = () => {
           setStatus(match.status !== false);
           setAdminId(match.adminId || 'ADM-001');
           setAdminName(match.adminName || 'Super Administrator');
-          const plainTabs = (match.tabs || []).map(t => ({
-            ...t,
-            content: t.content || ''
-          }));
+
+          const plainTabs = (match.tabs || []).map((t, idx) => {
+            const isExpertTab =
+              t.id === 't5' ||
+              (t.title || '').toLowerCase().includes('expert') ||
+              (t.title || '').toLowerCase().includes('specialist') ||
+              (t.title || '').toLowerCase().includes('doctor') ||
+              t.type === 'specialists' ||
+              t.type === 'cards';
+
+            const rawCards = t.cards || t.items || t.specialists || t.experts || [];
+            let cards = [];
+            const seenIds = new Set();
+
+            if (Array.isArray(rawCards) && rawCards.length > 0) {
+              rawCards.forEach((c, cIdx) => {
+                if (!c) return;
+                const docId = c.doctorId || c.id;
+                const dedupKey = docId || (c.name ? c.name.toLowerCase().trim() : `card_${cIdx}`);
+                if (seenIds.has(dedupKey)) return;
+                seenIds.add(dedupKey);
+
+                const matchedDoc = loadedDocs.find(
+                  d => String(d.id) === String(docId) ||
+                    (d.name && c.name && d.name.toLowerCase().trim() === c.name.toLowerCase().trim())
+                );
+
+                cards.push({
+                  id: c.id || docId || `card_${Date.now()}_${cIdx}`,
+                  doctorId: docId || matchedDoc?.id || '',
+                  name: c.name || c.doctorName || c.title || matchedDoc?.name || '',
+                  designation: c.designation || c.role || c.subSpeciality || matchedDoc?.subSpeciality || matchedDoc?.speciality || matchedDoc?.department || '',
+                  qualifications: c.qualifications || c.qualification || matchedDoc?.qualifications || '',
+                  qualification: c.qualifications || c.qualification || matchedDoc?.qualifications || '',
+                  experience: c.experience || matchedDoc?.experience || '',
+                  image: c.image || c.photo || c.imageUrl || matchedDoc?.image || matchedDoc?.photo || '',
+                  photo: c.photo || c.image || c.imageUrl || matchedDoc?.image || matchedDoc?.photo || '',
+                  department: c.department || matchedDoc?.department || ''
+                });
+              });
+            } else if (isExpertTab && typeof t.content === 'string' && t.content.trim()) {
+              // Extract legacy HTML/text doctors if rawCards was empty
+              if (typeof window !== 'undefined' && typeof DOMParser !== 'undefined') {
+                try {
+                  const parser = new DOMParser();
+                  const docHtml = parser.parseFromString(t.content, 'text/html');
+                  const pElements = Array.from(docHtml.querySelectorAll('p, li'));
+                  pElements.forEach((p, pIdx) => {
+                    const text = p.textContent?.trim() || '';
+                    if (!text || text.startsWith('Meet our leading') || text.startsWith('Welcome to')) return;
+
+                    const strong = p.querySelector('strong, b');
+                    let docName = '';
+                    let docDes = '';
+                    if (strong && strong.textContent) {
+                      docName = strong.textContent.trim();
+                      docDes = text.replace(docName, '').replace(/^[\s\-–—:]+/, '').trim();
+                    } else if (text.includes(' - ') || text.includes(' – ')) {
+                      const parts = text.split(/[\-–—]/);
+                      docName = (parts[0] || '').trim();
+                      docDes = (parts.slice(1).join(' - ') || '').trim();
+                    } else if (text.toLowerCase().startsWith('dr.') || text.toLowerCase().startsWith('dr ')) {
+                      docName = text;
+                    }
+
+                    if (docName && (docName.toLowerCase().startsWith('dr') || loadedDocs.some(d => d.name && d.name.toLowerCase() === docName.toLowerCase()))) {
+                      const matchedDoc = loadedDocs.find(
+                        d => d.name && (d.name.toLowerCase().trim() === docName.toLowerCase().trim() || docName.toLowerCase().includes(d.name.toLowerCase().trim()))
+                      );
+                      const dedupKey = matchedDoc?.id || docName.toLowerCase().trim();
+                      if (!seenIds.has(dedupKey)) {
+                        seenIds.add(dedupKey);
+                        cards.push({
+                          id: matchedDoc?.id || `card_legacy_${Date.now()}_${pIdx}`,
+                          doctorId: matchedDoc?.id || '',
+                          name: matchedDoc?.name || docName,
+                          designation: docDes || matchedDoc?.subSpeciality || matchedDoc?.speciality || matchedDoc?.department || '',
+                          qualifications: matchedDoc?.qualifications || docDes || '',
+                          qualification: matchedDoc?.qualifications || docDes || '',
+                          image: matchedDoc?.image || matchedDoc?.photo || '',
+                          photo: matchedDoc?.photo || matchedDoc?.image || '',
+                          experience: matchedDoc?.experience || '',
+                          department: matchedDoc?.department || ''
+                        });
+                      }
+                    }
+                  });
+                } catch (e) {
+                  console.warn('Error parsing legacy doctor content in AddSpeciality:', e);
+                }
+              }
+            }
+
+            return {
+              ...t,
+              id: t.id || `t${idx + 1}`,
+              title: t.title || `Tab ${idx + 1}`,
+              type: isExpertTab ? 'specialists' : (t.type || 'rich_text'),
+              content: t.content || '',
+              cards: cards,
+              items: cards
+            };
+          });
           setTabs(plainTabs);
         }
       } else {
         setTabs(getInitialCreateTabs(''));
       }
     });
+
+    return () => {
+      isMounted = false;
+    };
   }, [editId]);
 
   const handleCategoryChange = (val) => {
@@ -136,7 +244,6 @@ const AddSpeciality = () => {
         if (data.success && data.url) {
           setBannerImage(data.url);
           setUploadSuccess(true);
-          console.log('Image uploaded successfully to Supabase:', data.url);
         } else {
           showAlert({
             title: 'Upload Failed',
@@ -158,40 +265,132 @@ const AddSpeciality = () => {
     }
   };
 
-  const handleAddDoctorToTab = (tabIdx) => {
-    if (!selectedDocId) return;
-    const doc = doctorsList.find(d => d.id === selectedDocId);
-    if (!doc) return;
+  // Image Upload processor for Doctor Cards (reusing services upload pattern)
+  const processImageUpload = (file, onSuccess) => {
+    if (!file) return;
 
-    const des = expertDesignation.trim() || doc.qualifications || 'Specialist';
-    const targetTab = tabs[tabIdx];
-    const currentContent = targetTab?.content;
-
-    // Append clean HTML for expert
-    const expertHtml = `<p><strong>${doc.name}</strong> - ${des}</p>`;
-    let updatedContent;
-    if (typeof currentContent === 'string') {
-      updatedContent = currentContent ? `${currentContent}${expertHtml}` : expertHtml;
-    } else if (typeof currentContent === 'object' && currentContent !== null) {
-      const newParagraphNode = {
-        type: 'paragraph',
-        content: [
-          { type: 'text', marks: [{ type: 'bold' }], text: doc.name },
-          { type: 'text', text: ` - ${des}` }
-        ]
-      };
-      updatedContent = {
-        ...currentContent,
-        content: [...(currentContent.content || []), newParagraphNode]
-      };
-    } else {
-      updatedContent = expertHtml;
+    if (file.size > 10 * 1024 * 1024) {
+      showAlert({
+        title: 'File Size Exceeded',
+        message: 'The selected image exceeds the 10MB limit. Please choose a smaller image file.',
+        type: 'warning'
+      });
+      return;
     }
 
-    handleUpdateTabContent(tabIdx, updatedContent);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        const res = await fetch('http://localhost:5000/api/specialities/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            specialityName: name || 'speciality',
+            fileName: file.name,
+            base64Data
+          })
+        });
 
-    setSelectedDocId('');
-    setExpertDesignation('');
+        const data = await res.json();
+        if (data.success && data.url) {
+          onSuccess(data.url);
+        } else {
+          onSuccess(base64Data);
+        }
+      } catch (err) {
+        onSuccess(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ----------------------------------------------------
+  // STRUCTURED SPECIALIST DOCTOR CARD HANDLERS
+  // ----------------------------------------------------
+
+  const handleAddCard = (tabIdx) => {
+    const tab = tabs[tabIdx];
+    const cards = tab.cards || tab.items || [];
+    const newCard = {
+      id: `card_${Date.now()}_${cards.length + 1}`,
+      doctorId: '',
+      name: '',
+      designation: '',
+      qualifications: '',
+      qualification: '',
+      image: '',
+      photo: ''
+    };
+    const updatedCards = [...cards, newCard];
+    const updatedTabs = [...tabs];
+    updatedTabs[tabIdx] = {
+      ...updatedTabs[tabIdx],
+      cards: updatedCards,
+      items: updatedCards
+    };
+    setTabs(updatedTabs);
+  };
+
+  const handlePickDoctorForCard = (tabIdx, cardIdx, docId) => {
+    if (!docId) return;
+    const doc = doctorsList.find(d => String(d.id) === String(docId));
+    if (!doc) return;
+    const tab = tabs[tabIdx];
+    const cards = [...(tab.cards || tab.items || [])];
+    const currentCard = cards[cardIdx] || {};
+    cards[cardIdx] = {
+      ...currentCard,
+      id: currentCard.id || doc.id || `card_${Date.now()}_${cardIdx + 1}`,
+      doctorId: doc.id,
+      name: doc.name || currentCard.name || '',
+      designation: doc.speciality || doc.department || doc.subSpeciality || doc.designation || doc.role || currentCard.designation || 'Specialist',
+      qualifications: doc.qualifications || doc.qualification || currentCard.qualifications || '',
+      qualification: doc.qualifications || doc.qualification || currentCard.qualification || '',
+      image: doc.image || doc.photo || doc.imageUrl || currentCard.image || '',
+      photo: doc.image || doc.photo || doc.imageUrl || currentCard.photo || '',
+      department: doc.department || currentCard.department || '',
+      experience: doc.experience || currentCard.experience || ''
+    };
+    const updatedTabs = [...tabs];
+    updatedTabs[tabIdx] = {
+      ...updatedTabs[tabIdx],
+      cards,
+      items: cards
+    };
+    setTabs(updatedTabs);
+  };
+
+  const handleUpdateCard = (tabIdx, cardIdx, updatedFields) => {
+    const tab = tabs[tabIdx];
+    const cards = [...(tab.cards || tab.items || [])];
+    cards[cardIdx] = {
+      ...cards[cardIdx],
+      ...updatedFields,
+      ...(updatedFields.image !== undefined && { photo: updatedFields.image }),
+      ...(updatedFields.photo !== undefined && { image: updatedFields.photo }),
+      ...(updatedFields.qualifications !== undefined && { qualification: updatedFields.qualifications }),
+      ...(updatedFields.qualification !== undefined && { qualifications: updatedFields.qualification })
+    };
+    const updatedTabs = [...tabs];
+    updatedTabs[tabIdx] = {
+      ...updatedTabs[tabIdx],
+      cards,
+      items: cards
+    };
+    setTabs(updatedTabs);
+  };
+
+  const handleDeleteCard = (tabIdx, cardIdx) => {
+    const tab = tabs[tabIdx];
+    const cards = (tab.cards || tab.items || []).filter((_, idx) => idx !== cardIdx);
+    const updatedTabs = [...tabs];
+    updatedTabs[tabIdx] = {
+      ...updatedTabs[tabIdx],
+      cards,
+      items: cards
+    };
+    setTabs(updatedTabs);
   };
 
   const handleNameChange = (newName) => {
@@ -236,6 +435,7 @@ const AddSpeciality = () => {
     const newTab = {
       id: `custom-${Date.now()}`,
       title: `Custom Section ${customCount + 1}`,
+      type: 'rich_text',
       content: '<p></p>',
       isCustom: true
     };
@@ -268,12 +468,50 @@ const AddSpeciality = () => {
     }
 
     const now = new Date().toISOString();
+
+    const preparedTabs = tabs.map((t, idx) => {
+      const isExpertTab =
+        t.id === 't5' ||
+        (t.title || '').toLowerCase().includes('expert') ||
+        (t.title || '').toLowerCase().includes('specialist') ||
+        (t.title || '').toLowerCase().includes('doctor') ||
+        t.type === 'specialists' ||
+        t.type === 'cards';
+
+      if (isExpertTab) {
+        const rawCards = t.cards || t.items || [];
+        const structuredCards = rawCards.map((c, cIdx) => ({
+          id: c.id || c.doctorId || `doc_${Date.now()}_${cIdx}`,
+          doctorId: c.doctorId || c.id || '',
+          name: c.name || '',
+          designation: c.designation || c.role || '',
+          qualifications: c.qualifications || c.qualification || '',
+          qualification: c.qualifications || c.qualification || '',
+          role: c.designation || c.role || '',
+          experience: c.experience || '',
+          image: c.image || c.photo || '',
+          photo: c.photo || c.image || '',
+          department: c.department || ''
+        }));
+
+        return {
+          ...t,
+          type: 'specialists',
+          content: t.content || '',
+          cards: structuredCards,
+          items: structuredCards
+        };
+      }
+
+      return {
+        ...t,
+        type: t.type || 'rich_text',
+        content: t.content || ''
+      };
+    });
+
     let updatedSpecs;
     if (editId) {
-      const htmlTabs = tabs.map(t => ({
-        ...t,
-        content: t.content || ''
-      }));
       updatedSpecs = state.specialities.map(s => {
         if (s.id === editId) {
           const updated = {
@@ -288,7 +526,7 @@ const AddSpeciality = () => {
             adminId: adminId.trim() || 'ADM-001',
             adminName: adminName.trim() || 'Super Administrator',
             updatedAt: now,
-            tabs: htmlTabs.length > 0 ? htmlTabs : s.tabs
+            tabs: preparedTabs.length > 0 ? preparedTabs : s.tabs
           };
           ensureStandardTabs(updated);
           return updated;
@@ -296,10 +534,6 @@ const AddSpeciality = () => {
         return s;
       });
     } else {
-      const htmlTabs = tabs.map(t => ({
-        ...t,
-        content: t.content || ''
-      }));
       const newSpec = {
         id: `s${Date.now()}`,
         categoryId,
@@ -313,21 +547,28 @@ const AddSpeciality = () => {
         adminName: adminName.trim() || 'Super Administrator',
         createdAt: now,
         updatedAt: now,
-        tabs: htmlTabs
+        tabs: preparedTabs
       };
       ensureStandardTabs(newSpec);
       updatedSpecs = [...(state?.specialities || []), newSpec];
     }
 
+    setSaving(true);
     const newState = { ...(state || defaultSpecialitiesState), specialities: updatedSpecs };
     saveSpecialitiesState(newState)
-      .then(() => {
+      .then(async () => {
         window.dispatchEvent(new Event('admin_data_updated'));
         window.dispatchEvent(new Event('storage'));
+        setSaving(false);
+        await showSuccessAlert(
+          editId ? 'Speciality Updated!' : 'Speciality Created!',
+          `Speciality "${name}" has been saved successfully.`
+        );
         navigate('/admin/specialities');
       })
       .catch((err) => {
         console.error('Error saving speciality:', err);
+        setSaving(false);
         showAlert({
           title: 'Save Error',
           message: err.message || 'Failed to save speciality.',
@@ -420,7 +661,7 @@ const AddSpeciality = () => {
               />
             </div>
 
-            {/* Speciality Image Upload (Stored in Supabase Bucket under Speciality Name) */}
+            {/* Speciality Image Upload */}
             <div className="sm:col-span-2 space-y-2 pt-3 border-t border-slate-100">
               <div className="flex items-center justify-between">
                 <label className="font-bold text-slate-600 uppercase text-xs flex items-center gap-1.5">
@@ -529,12 +770,20 @@ const AddSpeciality = () => {
                 const isCustom = tab.isCustom || !['t1', 't2', 't3', 't4', 't5'].includes(tab.id);
                 const tabTitle = tab.title || 'Tab';
                 const lowerTitle = tabTitle.toLowerCase();
+                const isExpertTab =
+                  tab.id === 't5' ||
+                  lowerTitle.includes('expert') ||
+                  lowerTitle.includes('specialist') ||
+                  lowerTitle.includes('doctor') ||
+                  tab.type === 'specialists' ||
+                  tab.type === 'cards';
+
                 const getTabIcon = () => {
                   if (tab.id === 't1' || lowerTitle === 'overview') return 'article';
                   if (tab.id === 't2' || lowerTitle.includes('why choose')) return 'verified';
                   if (tab.id === 't3' || lowerTitle.includes('technology') || lowerTitle.includes('infrastructure')) return 'biotech';
                   if (tab.id === 't4' || lowerTitle.includes('services')) return 'medical_services';
-                  if (tab.id === 't5' || lowerTitle.includes('our experts')) return 'groups';
+                  if (isExpertTab) return 'person_pin';
                   return 'extension';
                 };
 
@@ -581,7 +830,7 @@ const AddSpeciality = () => {
                       <div className="flex items-center justify-between">
                         <label className="font-bold text-[#1e3a8a] uppercase flex items-center gap-1.5 text-xs">
                           <span className="material-symbols-outlined text-sm text-blue-600">{getTabIcon()}</span>
-                          <span>{tabTitle} Description &amp; Details</span>
+                          <span>{tabTitle} {isExpertTab ? 'Management' : 'Description & Details'}</span>
                           <span className="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-200">
                             Standard Section
                           </span>
@@ -589,54 +838,109 @@ const AddSpeciality = () => {
                       </div>
                     )}
 
-                    <RichTextEditor
-                      value={tab.content}
-                      onChange={(newHtml) => handleUpdateTabContent(idx, newHtml)}
-                      placeholder={`Write ${lowerTitle} content here... Use Bold (Ctrl+B) and New Paragraph buttons to format text live.`}
-                      minHeight={tab.id === 't1' ? '220px' : '180px'}
-                    />
-
-                    {/* Doctor selection sub-form for Our Experts tab */}
-                    {(tab.id === 't5' || tab.title === 'Our Experts') && (
-                      <div className="mt-3 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-3 font-sans">
-                        <p className="font-bold text-slate-700 flex items-center gap-1.5 text-xs">
-                          <span className="material-symbols-outlined text-base text-[#1e3a8a]">person_add</span>
-                          <span>Insert Doctor from Directory into Experts Content</span>
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <div className="flex-1">
-                            <select
-                              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium cursor-pointer text-xs"
-                              value={selectedDocId}
-                              onChange={(e) => setSelectedDocId(e.target.value)}
-                            >
-                              <option value="">-- Select Doctor --</option>
-                              {doctorsList.map(d => (
-                                <option key={d.id} value={d.id}>{d.name} ({d.department})</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="flex-1">
-                            <input
-                              type="text"
-                              className="w-full bg-white border border-slate-200 focus:border-slate-300 px-3 py-2 rounded-lg outline-none font-medium text-xs"
-                              placeholder="Designation/Qualifications (e.g. Senior Consultant)"
-                              value={expertDesignation}
-                              onChange={(e) => setExpertDesignation(e.target.value)}
-                            />
-                          </div>
-
+                    {/* Standard Rich Text Editor for non-expert tabs */}
+                    {!isExpertTab ? (
+                      <RichTextEditor
+                        value={tab.content}
+                        onChange={(newHtml) => handleUpdateTabContent(idx, newHtml)}
+                        placeholder={`Write ${lowerTitle} content here... Use Bold (Ctrl+B) and New Paragraph buttons to format text live.`}
+                        minHeight={tab.id === 't1' ? '220px' : '180px'}
+                      />
+                    ) : (
+                      /* Structured Repeatable Specialist Doctor Cards matching Services implementation */
+                      <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-200/80 font-sans">
+                        <div className="flex items-center justify-between">
+                          <label className="font-bold text-slate-700 text-xs flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-sm text-emerald-600">person_pin</span>
+                            <span>Specialist Doctor Cards ({tab.cards?.length || tab.items?.length || 0})</span>
+                          </label>
                           <button
                             type="button"
-                            onClick={() => handleAddDoctorToTab(idx)}
-                            disabled={!selectedDocId}
-                            className="bg-[#1e3a8a] text-white hover:bg-blue-800 disabled:bg-slate-300 disabled:cursor-not-allowed px-4 py-2 rounded-lg font-bold transition-all flex items-center justify-center gap-1.5 text-xs shadow-xs"
+                            onClick={() => handleAddCard(idx)}
+                            className="px-2.5 py-1 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded flex items-center gap-1 transition-all"
                           >
                             <span className="material-symbols-outlined text-sm">add</span>
-                            <span>Add to Content</span>
+                            <span>Add Specialist</span>
                           </button>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {(tab.cards || tab.items || []).map((card, cardIdx) => (
+                            <div key={card.id || cardIdx} className="p-3 bg-white border border-slate-200 rounded-lg space-y-2 shadow-2xs">
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 flex-1 flex-wrap">
+                                  {doctorsList.length > 0 && (
+                                    <select
+                                      onChange={(e) => handlePickDoctorForCard(idx, cardIdx, e.target.value)}
+                                      className="text-[11px] bg-emerald-50 text-emerald-800 font-bold border border-emerald-200 px-2 py-1 rounded outline-none cursor-pointer"
+                                      value={card.doctorId || ""}
+                                    >
+                                      <option value="" disabled>Quick Pick Staff Doctor...</option>
+                                      {doctorsList.map(d => (
+                                        <option key={d.id} value={d.id}>{d.name} ({d.speciality || d.department || 'Specialist'})</option>
+                                      ))}
+                                    </select>
+                                  )}
+
+                                  <input
+                                    type="text"
+                                    value={card.name || ''}
+                                    onChange={(e) => handleUpdateCard(idx, cardIdx, { name: e.target.value })}
+                                    placeholder="Doctor Name *"
+                                    className="font-bold text-xs bg-white border border-slate-200 px-2.5 py-1 rounded flex-1 outline-none min-w-[140px]"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={card.designation || card.role || ''}
+                                    onChange={(e) => handleUpdateCard(idx, cardIdx, { designation: e.target.value, role: e.target.value })}
+                                    placeholder="Designation / Role"
+                                    className="text-xs bg-white border border-slate-200 px-2.5 py-1 rounded flex-1 outline-none min-w-[140px]"
+                                  />
+                                  <input
+                                    type="text"
+                                    value={card.qualifications || card.qualification || ''}
+                                    onChange={(e) => handleUpdateCard(idx, cardIdx, { qualifications: e.target.value, qualification: e.target.value })}
+                                    placeholder="Qualifications (e.g. MBBS, MD)"
+                                    className="text-xs bg-white border border-slate-200 px-2.5 py-1 rounded w-36 outline-none"
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteCard(idx, cardIdx)}
+                                  className="text-rose-500 hover:text-rose-700 p-1"
+                                  title="Remove Specialist"
+                                >
+                                  <span className="material-symbols-outlined text-base">close</span>
+                                </button>
+                              </div>
+
+                              <div className="flex gap-2 items-center">
+                                <label className="flex items-center gap-1 border border-dashed rounded px-2.5 py-1 cursor-pointer font-bold text-[11px] bg-white text-emerald-700 hover:bg-emerald-50 border-emerald-300">
+                                  <span className="material-symbols-outlined text-xs">upload</span>
+                                  <span>Photo</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => processImageUpload(e.target.files?.[0], (url) => handleUpdateCard(idx, cardIdx, { image: url, photo: url }))}
+                                  />
+                                </label>
+                                <input
+                                  type="text"
+                                  value={card.image || card.photo || ''}
+                                  onChange={(e) => handleUpdateCard(idx, cardIdx, { image: e.target.value, photo: e.target.value })}
+                                  placeholder="Photo URL (Auto-filled on upload)..."
+                                  className="text-[11px] bg-white border border-slate-200 px-2 py-1 rounded flex-1 outline-none text-slate-600"
+                                />
+                              </div>
+                            </div>
+                          ))}
+
+                          {(tab.cards || tab.items || []).length === 0 && (
+                            <div className="text-center py-5 bg-white border border-dashed border-slate-200 rounded-lg text-slate-400 text-xs">
+                              No specialists added yet. Click "+ Add Specialist" to add doctor cards.
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -685,10 +989,11 @@ const AddSpeciality = () => {
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-8 py-2.5 bg-[#fea619] hover:bg-amber-500 text-slate-900 rounded-lg font-bold transition-all shadow-sm flex items-center justify-center gap-2 text-sm"
+              disabled={saving}
+              className="w-full sm:w-auto px-8 py-2.5 bg-[#fea619] hover:bg-amber-500 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 rounded-lg font-bold transition-all shadow-sm flex items-center justify-center gap-2 text-sm"
             >
-              <span className="material-symbols-outlined text-lg">check_circle</span>
-              <span>{editId ? 'Save Changes' : 'Create Speciality'}</span>
+              <span className="material-symbols-outlined text-lg">{saving ? 'hourglass_top' : 'check_circle'}</span>
+              <span>{saving ? 'Saving...' : (editId ? 'Save Changes' : 'Create Speciality')}</span>
             </button>
           </div>
         </div>

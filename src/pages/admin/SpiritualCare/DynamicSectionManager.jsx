@@ -495,6 +495,7 @@ export default function DynamicSectionManager({ section, onUpdateSection, onDele
                         value={block.content || ''}
                         onChange={(html) => handleUpdateBlock(block.id, { content: html })}
                         placeholder="Write detailed paragraph content..."
+                        uploadEndpoint="http://localhost:5000/api/spiritual-care/upload"
                       />
                     </div>
                   )}

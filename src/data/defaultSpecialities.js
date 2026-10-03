@@ -1,48 +1,38 @@
 export function ensureStandardTabs(spec) {
+  if (!spec) return;
+
   const standardTabs = [
-    { id: 't1', title: 'Overview', content: `<p>Welcome to the ${spec.name} department. We provide comprehensive care and support tailored to each patient's needs.</p>`, images: [] },
-    { id: 't2', title: 'Why Choose Us', content: `<p>Our ${spec.name} department stands out for its experienced professionals, modern equipment, and dedicated compassionate care.</p>`, images: [] },
-    { id: 't3', title: 'Technology & Infrastructure', content: `<p>We utilize advanced diagnostics and treatment facilities to deliver high-quality, precise clinical results in ${spec.name}.</p>`, images: [] },
-    { id: 't4', title: 'Services', content: `<p>We offer a wide range of inpatient and outpatient services under ${spec.name} to cater to diverse medical requirements.</p>`, images: [] },
-    { id: 't5', title: 'Our Experts', content: `<p>Meet our leading specialist physicians and support staff who work together to ensure your well-being.</p>`, images: [] }
+    { id: 't1', title: 'Overview', type: 'rich_text', content: `<p>Welcome to the ${spec.name || 'speciality'} department. We provide comprehensive care and support tailored to each patient's needs.</p>`, images: [] },
+    { id: 't2', title: 'Why Choose Us', type: 'rich_text', content: `<p>Our ${spec.name || 'speciality'} department stands out for its experienced professionals, modern equipment, and dedicated compassionate care.</p>`, images: [] },
+    { id: 't3', title: 'Technology & Infrastructure', type: 'rich_text', content: `<p>We utilize advanced diagnostics and treatment facilities to deliver high-quality, precise clinical results in ${spec.name || 'this speciality'}.</p>`, images: [] },
+    { id: 't4', title: 'Services', type: 'rich_text', content: `<p>We offer a wide range of inpatient and outpatient services under ${spec.name || 'this speciality'} to cater to diverse medical requirements.</p>`, images: [] },
+    { id: 't5', title: 'Our Experts', type: 'specialists', content: `<p>Meet our leading specialist physicians and support staff who work together to ensure your well-being.</p>`, items: [], cards: [], images: [] }
   ];
 
-  if (!spec.tabs || spec.tabs.length === 0) {
+  if (!spec.tabs || !Array.isArray(spec.tabs) || spec.tabs.length === 0) {
     spec.tabs = standardTabs;
-  } else {
-    const currentOverview = spec.tabs.find(t => t.title === 'Overview' || t.id === 't1');
-    let overviewContent = `<p>Welcome to the ${spec.name} department. We provide comprehensive care and support tailored to each patient's needs.</p>`;
-
-    if (currentOverview) {
-      if (currentOverview.content) {
-        overviewContent = currentOverview.content;
-      } else if (currentOverview.blocks && currentOverview.blocks[0]) {
-        overviewContent = `<p>${currentOverview.blocks[0].content}</p>`;
-      } else if (spec.shortDescription) {
-        overviewContent = `<p>${spec.shortDescription}</p>`;
-      }
-    }
-
-    const standardIds = ['t1', 't2', 't3', 't4', 't5'];
-    const standardTitles = ['Overview', 'Why Choose Us', 'Technology & Infrastructure', 'Services', 'Our Experts'];
-    const customTabs = spec.tabs.filter(t => !standardIds.includes(t.id) && !standardTitles.includes(t.title));
-
-    spec.tabs = [
-      { id: 't1', title: 'Overview', content: overviewContent, images: currentOverview?.images || [] },
-      { id: 't2', title: 'Why Choose Us', content: (spec.tabs.find(t => t.title === 'Why Choose Us' || t.id === 't2')?.content) || standardTabs[1].content, images: (spec.tabs.find(t => t.title === 'Why Choose Us' || t.id === 't2')?.images) || [] },
-      { id: 't3', title: 'Technology & Infrastructure', content: (spec.tabs.find(t => t.title === 'Technology & Infrastructure' || t.id === 't3')?.content) || standardTabs[2].content, images: (spec.tabs.find(t => t.title === 'Technology & Infrastructure' || t.id === 't3')?.images) || [] },
-      { id: 't4', title: 'Services', content: (spec.tabs.find(t => t.title === 'Services' || t.id === 't4')?.content) || standardTabs[3].content, images: (spec.tabs.find(t => t.title === 'Services' || t.id === 't4')?.images) || [] },
-      { id: 't5', title: 'Our Experts', content: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.content) || standardTabs[4].content, images: (spec.tabs.find(t => t.title === 'Our Experts' || t.id === 't5')?.images) || [] },
-      ...customTabs.map(t => ({
-        id: t.id || `custom-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-        title: t.title || 'Custom Section',
-        content: t.content || '',
-        images: t.images || [],
-        isCustom: true
-      }))
-    ];
+    return;
   }
+
+  // Preserve exact backend tab order, IDs, titles, types, items, cards, and custom flags
+  spec.tabs = spec.tabs.map((tab, idx) => {
+    if (!tab) return null;
+    const title = tab.title || tab.label || (tab.id === 't1' ? 'Overview' : `Tab ${idx + 1}`);
+    return {
+      ...tab,
+      id: tab.id || `t${idx + 1}`,
+      title,
+      label: title,
+      content: tab.content !== undefined ? tab.content : '',
+      images: Array.isArray(tab.images) ? tab.images : [],
+      items: Array.isArray(tab.items) ? tab.items : (Array.isArray(tab.cards) ? tab.cards : []),
+      cards: Array.isArray(tab.cards) ? tab.cards : (Array.isArray(tab.items) ? tab.items : []),
+      type: tab.type || (title.toLowerCase().includes('expert') || title.toLowerCase().includes('doctor') ? 'specialists' : 'rich_text'),
+      isCustom: tab.isCustom !== undefined ? tab.isCustom : (!['t1', 't2', 't3', 't4', 't5'].includes(tab.id))
+    };
+  }).filter(Boolean);
 }
+
 
 export const defaultSpecialitiesState = {
   view: 'listing',

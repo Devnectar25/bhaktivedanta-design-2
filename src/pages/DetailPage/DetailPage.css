@@ -521,3 +521,36 @@
     padding: 8px 14px;
   }
 }
+
+/* ==========================================================================
+   Our Experts / Specialists Cards Styling
+   ========================================================================== */
+.doctor-expert-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+.doctor-expert-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(19, 42, 76, 0.08), 0 8px 10px -6px rgba(19, 42, 76, 0.04) !important;
+  border-color: #CBD5E1 !important;
+}
+
+.btn-expert-book-appointment:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.35) !important;
+}
+
+.btn-expert-book-appointment:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  .specialists-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .doctor-expert-card {
+    padding: 16px !important;
+  }
+}
