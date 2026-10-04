@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
     X,
     ClipboardList,
@@ -28,7 +28,7 @@ import ContactInfoBlock from "./ContactInfoBlock/ContactInfoBlock";
 import PublicationCard from "./PublicationCard/PublicationCard";
 import ProgramCard from "./ProgramCard/ProgramCard";
 import FlexibleDetailPage from "./FlexibleDetailPage/FlexibleDetailPage";
-import { getSpiritualCareState, getServicesState } from "../utils/api";
+import { getSpiritualCareState, getServicesState, getDoctors } from "../utils/api";
 import { defaultSpiritualCareState } from "../data/defaultSpiritualCare";
 import { defaultServicesState, ensureStandardServiceTabs } from "../data/defaultServices";
 
@@ -283,129 +283,349 @@ export function HighlightsRenderer({ items = [] }) {
         </div>
     );
 }
-
 /* ------------------------------------------------------------------ */
 /*  Renderer: Specialists & Cards (Doctor Profiles or Amenity Badges)  */
 /* ------------------------------------------------------------------ */
-export function SpecialistsRenderer({ items = [] }) {
-    if (!items || items.length === 0) {
+export function SpecialistsRenderer({ items = [], content = "" }) {
+    const [doctorsList, setDoctorsList] = useState([]);
+
+    useEffect(() => {
+        let isMounted = true;
+        getDoctors([]).then((docs) => {
+            if (isMounted && Array.isArray(docs)) {
+                setDoctorsList(docs);
+            }
+        }).catch((err) => console.warn("Could not load doctors in SpecialistsRenderer:", err));
+        return () => { isMounted = false; };
+    }, []);
+
+    // Helper to normalize name for backward-compatibility fuzzy matching
+    const normalizeKey = (str = "") => {
+        return str
+            .toLowerCase()
+            .replace(/[\r\n\s]+/g, " ")
+            .replace(/^(dr\.?|ms\.?|mr\.?|prof\.?|\s+)+/gi, "")
+            .replace(/[^a-z0-9]/g, "");
+    };
+
+    // Extract any doctors from HTML content if items array is empty
+    const resolvedItems = useMemo(() => {
+        let combined = Array.isArray(items) && items.length > 0 ? [...items] : [];
+
+        // If items array is empty but we have HTML content, parse doctor lines
+        if (combined.length === 0 && typeof content === "string" && content.trim()) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(content, "text/html");
+            const paragraphs = Array.from(doc.querySelectorAll("p, li, div"));
+
+            paragraphs.forEach((p) => {
+                const text = p.textContent?.trim() || "";
+                const strong = p.querySelector("strong, b")?.textContent?.trim();
+
+                if (strong && (strong.toLowerCase().startsWith("dr") || strong.toLowerCase().includes("dr."))) {
+                    let docName = strong;
+                    let rest = text.replace(strong, "").replace(/^[\s-–—:]+/, "").trim();
+                    combined.push({
+                        name: docName,
+                        qualification: rest,
+                        role: rest,
+                    });
+                } else if (text.toLowerCase().startsWith("dr.") || text.toLowerCase().startsWith("dr ")) {
+                    const parts = text.split(/[-–—:]/);
+                    const docName = parts[0]?.trim();
+                    const rest = parts.slice(1).join("-").trim();
+                    if (docName) {
+                        combined.push({
+                            name: docName,
+                            qualification: rest,
+                            role: rest,
+                        });
+                    }
+                }
+            });
+        }
+
+        // Enrich each item with full Doctor Directory data
+        return combined.map((item) => {
+            const itemDocId = item.doctorId || item.id;
+            let dirDoc = null;
+
+            // 1. Primary: Match by doctorId if available
+            if (itemDocId && doctorsList.length > 0) {
+                dirDoc = doctorsList.find((d) => String(d.id) === String(itemDocId));
+            }
+
+            // 2. Backward compatibility fallback: Match by name if ID was not present or not found
+            if (!dirDoc && item.name && doctorsList.length > 0) {
+                const itemKey = normalizeKey(item.name);
+                dirDoc = doctorsList.find((d) => normalizeKey(d.name) === itemKey);
+            }
+
+            // Clean experience format
+            let experience = dirDoc?.experience || item.experience || item.exp || "";
+            if (experience && !experience.toLowerCase().includes("year") && !isNaN(Number(experience))) {
+                experience = `${experience}+ Years Experience`;
+            } else if (experience && !experience.toLowerCase().includes("experience") && !experience.toLowerCase().includes("year")) {
+                experience = `${experience} Experience`;
+            }
+
+            const docPhoto = dirDoc?.image || item.photo || item.image || "";
+
+            return {
+                id: dirDoc?.id || itemDocId || item.name,
+                name: dirDoc?.name || item.name || item.title || "Specialist Doctor",
+                qualification: item.qualification || item.qualifications || dirDoc?.qualifications || item.description || "",
+                department: dirDoc?.department || item.department || "",
+                subSpeciality: item.role || item.designation || dirDoc?.subSpeciality || dirDoc?.department || "",
+                experience,
+                photo: docPhoto,
+                icon: item.icon || "",
+            };
+        });
+    }, [items, content, doctorsList]);
+
+    // Check if there is introductory text in content to display above the cards
+    const introHtml = useMemo(() => {
+        if (typeof content !== "string" || !content.trim()) return null;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, "text/html");
+        const paragraphs = Array.from(doc.querySelectorAll("p"));
+        const introPs = paragraphs.filter((p) => {
+            const strong = p.querySelector("strong, b")?.textContent?.trim();
+            const text = p.textContent?.trim() || "";
+            const isDoc =
+                (strong && (strong.toLowerCase().startsWith("dr") || strong.toLowerCase().includes("dr."))) ||
+                text.toLowerCase().startsWith("dr.") ||
+                text.toLowerCase().startsWith("dr ");
+            return !isDoc;
+        });
+        if (introPs.length > 0) {
+            return introPs.map((p) => p.outerHTML).join("");
+        }
+        return null;
+    }, [content]);
+
+    if (resolvedItems.length === 0 && !introHtml) {
         return (
             <p style={{ fontFamily: "'Work Sans', sans-serif", fontSize: 15, color: tokens.muted }}>
-                Details available on request.
+                Our specialist doctors directory will be updated shortly.
             </p>
         );
     }
 
     return (
-        <div
-            style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: 16,
-            }}
-        >
-            {items.map((s, i) => {
-                const title = s.name || s.title || "Specialist";
-                const subtitle = s.role || s.tag || "";
-                const description = s.qualification || s.description || "";
-                const photo = s.photo || s.image || "";
-                const icon = s.icon || "";
+        <div className="specialists-container" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {introHtml && (
+                <div
+                    className="specialists-intro-text"
+                    style={{
+                        fontFamily: "'Work Sans', sans-serif",
+                        fontSize: 15,
+                        color: tokens.ink,
+                        lineHeight: 1.6,
+                        marginBottom: 4,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: introHtml }}
+                />
+            )}
 
-                return (
-                    <div
-                        key={i}
-                        style={{
-                            display: "flex",
-                            gap: 18,
-                            border: `1px solid ${tokens.border}`,
-                            borderRadius: 14,
-                            padding: 20,
-                            alignItems: "center",
-                            background: tokens.ivory,
-                        }}
-                    >
+            <div
+                className="specialists-cards-grid"
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                    gap: 20,
+                }}
+            >
+                {resolvedItems.map((s, i) => {
+                    const title = s.name;
+                    const qualifications = s.qualification;
+                    const subSpeciality = s.subSpeciality;
+                    const experience = s.experience;
+                    const photo = s.photo;
+                    const icon = s.icon;
+
+                    return (
                         <div
+                            key={s.id || i}
+                            className="doctor-expert-card"
                             style={{
-                                width: 72,
-                                height: 72,
-                                borderRadius: photo ? "50%" : 12,
-                                overflow: "hidden",
-                                background: tokens.panel,
-                                flexShrink: 0,
                                 display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                border: `2px solid ${tokens.border}`,
-                                color: tokens.navy,
+                                flexDirection: "column",
+                                border: `1px solid ${tokens.border}`,
+                                borderRadius: 16,
+                                padding: 22,
+                                background: tokens.ivory,
+                                boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+                                transition: "all 0.25s ease",
+                                position: "relative",
+                                justifyContent: "space-between",
+                                gap: 16,
                             }}
                         >
-                            {photo ? (
-                                <img
-                                    src={photo}
-                                    alt={title}
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                />
-                            ) : icon ? (
-                                <span className="material-symbols-outlined" style={{ fontSize: 30, color: tokens.orange }}>
-                                    {icon}
-                                </span>
-                            ) : (
+                            <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
+                                {/* Doctor Photo */}
                                 <div
                                     style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: "50%",
+                                        overflow: "hidden",
+                                        background: tokens.panel,
+                                        flexShrink: 0,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        width: "100%",
-                                        height: "100%",
-                                        color: tokens.navyLight,
+                                        border: `2.5px solid ${tokens.orange}`,
+                                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                     }}
                                 >
-                                    <User size={32} />
+                                    {photo ? (
+                                        <img
+                                            src={photo}
+                                            alt={title}
+                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = "/doctor1.png";
+                                            }}
+                                        />
+                                    ) : icon ? (
+                                        <span className="material-symbols-outlined" style={{ fontSize: 36, color: tokens.orange }}>
+                                            {icon}
+                                        </span>
+                                    ) : (
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                width: "100%",
+                                                height: "100%",
+                                                color: tokens.navyLight,
+                                            }}
+                                        >
+                                            <User size={36} />
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 160 }}>
-                            <h4
+
+                                {/* Doctor Info Header */}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h4
+                                        style={{
+                                            fontFamily: "'Fraunces', serif",
+                                            fontWeight: 600,
+                                            fontSize: 18,
+                                            color: tokens.navy,
+                                            margin: "0 0 4px",
+                                            lineHeight: 1.3,
+                                        }}
+                                    >
+                                        {title}
+                                    </h4>
+
+                                    {subSpeciality && (
+                                        <p
+                                            style={{
+                                                fontFamily: "'Work Sans', sans-serif",
+                                                fontSize: 12.5,
+                                                color: tokens.orange,
+                                                fontWeight: 600,
+                                                margin: "0 0 6px",
+                                                lineHeight: 1.3,
+                                            }}
+                                        >
+                                            {subSpeciality}
+                                        </p>
+                                    )}
+
+                                    {qualifications && (
+                                        <p
+                                            style={{
+                                                fontFamily: "'Work Sans', sans-serif",
+                                                fontSize: 13,
+                                                color: tokens.muted,
+                                                margin: 0,
+                                                lineHeight: 1.4,
+                                                fontWeight: 500,
+                                            }}
+                                        >
+                                            {qualifications}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Card Footer: Experience Badge & Book Appointment Button */}
+                            <div
                                 style={{
-                                    fontFamily: "'Fraunces', serif",
-                                    fontWeight: 600,
-                                    fontSize: 17.5,
-                                    color: tokens.navy,
-                                    margin: "0 0 4px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    paddingTop: 14,
+                                    borderTop: `1px solid ${tokens.border}`,
+                                    gap: 12,
+                                    flexWrap: "wrap",
                                 }}
                             >
-                                {title}
-                            </h4>
-                            {subtitle && (
-                                <p
+                                {experience ? (
+                                    <div
+                                        style={{
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: 5,
+                                            background: "#F0FDF4",
+                                            border: "1px solid #BBF7D0",
+                                            color: "#166534",
+                                            borderRadius: 20,
+                                            padding: "4px 10px",
+                                            fontSize: 12,
+                                            fontWeight: 600,
+                                            fontFamily: "'Work Sans', sans-serif",
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: 15, color: "#16a34a" }}>
+                                            history_edu
+                                        </span>
+                                        <span>{experience}</span>
+                                    </div>
+                                ) : (
+                                    <div />
+                                )}
+
+                                <a
+                                    href="https://his.bhaktivedantahospital.com/EHR/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-expert-book-appointment"
                                     style={{
-                                        fontFamily: "'Work Sans', sans-serif",
-                                        fontSize: 13,
-                                        color: tokens.orange,
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: 6,
+                                        background: "linear-gradient(135deg, #1e3a8a 0%, #132A4C 100%)",
+                                        color: "#FFFFFF",
+                                        padding: "7px 14px",
+                                        borderRadius: 8,
+                                        fontSize: 12.5,
                                         fontWeight: 600,
-                                        margin: "0 0 4px",
-                                    }}
-                                >
-                                    {subtitle}
-                                </p>
-                            )}
-                            {description && (
-                                <p
-                                    style={{
                                         fontFamily: "'Work Sans', sans-serif",
-                                        fontSize: 13.5,
-                                        color: tokens.muted,
-                                        margin: 0,
-                                        lineHeight: 1.5,
+                                        textDecoration: "none",
+                                        boxShadow: "0 2px 6px rgba(19, 42, 76, 0.2)",
+                                        transition: "all 0.2s ease",
+                                        marginLeft: "auto",
                                     }}
                                 >
-                                    {description}
-                                </p>
-                            )}
+                                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                                        calendar_month
+                                    </span>
+                                    <span>Book Appointment</span>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
         </div>
     );
 }
@@ -1414,7 +1634,7 @@ export function TabContentRenderer({ tab }) {
             return <HighlightsRenderer items={tab.items} />;
         case "specialists":
         case "cards":
-            return <SpecialistsRenderer items={tab.items || tab.cards} />;
+            return <SpecialistsRenderer items={tab.items || tab.cards} content={tab.content} />;
         case "testimonials":
             return <TestimonialsRenderer items={tab.items || tab.testimonials} />;
         case "gallery":
@@ -1585,7 +1805,7 @@ export function normalizeServiceData(rawService, defaultCatName = "Healthcare Se
             type = "rich_text";
         } else if (type === "list" || type === "bullets" || type === "points" || type === "checklist") {
             type = "highlights";
-        } else if (type === "cards" || type === "doctors") {
+        } else if (type === "cards" || type === "doctors" || type === "specialists") {
             type = "specialists";
         } else if (type === "steps" || type === "process" || type === "workflow") {
             type = "steps";
@@ -1599,7 +1819,12 @@ export function normalizeServiceData(rawService, defaultCatName = "Healthcare Se
             type = "logo_grid";
         }
 
-        // If tab has doc content or content without items, ensure it's rich_text
+        // If tab title explicitly refers to experts/specialists/doctors, ensure specialists type
+        if (titleLower.includes("expert") || titleLower.includes("specialist") || titleLower.includes("doctor")) {
+            type = "specialists";
+        }
+
+        // If tab has doc content or content without items, ensure it's rich_text (unless it's specialists)
         if (!type && t.content && (typeof t.content === 'object' || typeof t.content === 'string') && (!t.steps || t.steps.length === 0) && (!t.items || t.items.length === 0)) {
             type = "rich_text";
         }
@@ -1624,7 +1849,7 @@ export function normalizeServiceData(rawService, defaultCatName = "Healthcare Se
                 type = "steps";
             } else if (titleLower.includes("highlight") || titleLower.includes("key point") || titleLower.includes("feature") || titleLower.includes("checklist") || titleLower.includes("right") || titleLower.includes("rule")) {
                 type = "highlights";
-            } else if (titleLower.includes("specialist") || titleLower.includes("doctor") || titleLower.includes("team") || titleLower.includes("card") || titleLower.includes("amenit")) {
+            } else if (titleLower.includes("specialist") || titleLower.includes("doctor") || titleLower.includes("team") || titleLower.includes("card") || titleLower.includes("amenit") || titleLower.includes("expert")) {
                 type = "specialists";
             } else if (titleLower.includes("testimonial") || titleLower.includes("review") || titleLower.includes("story")) {
                 type = "testimonials";
@@ -1653,16 +1878,24 @@ export function normalizeServiceData(rawService, defaultCatName = "Healthcare Se
         }
 
         if (type === "specialists") {
-            const items = (t.cards || t.items || t.specialists || []).map((c) => ({
+            const rawItems = t.items || t.cards || t.specialists || [];
+            const items = rawItems.map((c) => ({
+                id: c.id || c.doctorId || "",
+                doctorId: c.doctorId || c.id || "",
                 name: c.name || c.doctorName || c.title || "Specialist",
                 title: c.title || c.name || "Specialist",
-                role: c.role || c.designation || c.tag || "",
+                role: c.role || c.designation || c.tag || c.subSpeciality || "",
                 qualification: c.qualification || c.qualifications || c.description || "",
+                qualifications: c.qualifications || c.qualification || "",
                 description: c.description || c.qualification || "",
+                experience: c.experience || c.exp || "",
                 photo: c.photo || c.image || c.avatar || c.imageUrl || "",
+                image: c.image || c.photo || c.avatar || c.imageUrl || "",
+                department: c.department || "",
+                subSpeciality: c.subSpeciality || c.role || c.designation || "",
                 icon: c.icon || "",
             }));
-            return { id: t.id, label, type, items, sections: [] };
+            return { id: t.id, label, type, items, cards: items, content: t.content || "", sections: [] };
         }
 
         if (type === "testimonials") {

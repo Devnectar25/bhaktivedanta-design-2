@@ -387,6 +387,7 @@ export default function SpiritualServicesManager() {
               <RichTextEditor
                 content={data.overview?.content || ''}
                 onChange={(html) => setData(p => ({ ...p, overview: { ...p.overview, content: html } }))}
+                uploadEndpoint="http://localhost:5000/api/spiritual-care/upload"
               />
             </div>
           </div>

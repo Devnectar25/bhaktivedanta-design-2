@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useEditor, EditorContent, ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Node, mergeAttributes } from '@tiptap/core';
-import { resolveIconName, getEmbedVideoUrl } from '../../RichTextRenderer/RichTextRenderer';
+import { resolveIconName, getEmbedVideoUrl, normalizeImageUrl } from '../../RichTextRenderer/RichTextRenderer';
 import './RichTextEditor.css';
 
 export const BADGE_ICONS_LIST = [
@@ -18,13 +18,63 @@ export const BADGE_ICONS_LIST = [
   { key: 'check_circle', icon: 'check_circle', label: 'Quality Verified' },
 ];
 
+export const uploadMediaFileHelper = async (file, isVideo = false, endpoint = 'http://localhost:5000/api/services/upload') => {
+  if (!file) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        const targetEndpoint = endpoint || 'http://localhost:5000/api/services/upload';
+        let res = await fetch(targetEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemName: 'rich-media',
+            serviceName: 'rich-media',
+            fileName: file.name,
+            base64Data
+          })
+        });
+
+        if (!res.ok && !endpoint) {
+          res = await fetch('http://localhost:5000/api/services/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              serviceName: 'rich-media',
+              fileName: file.name,
+              base64Data
+            })
+          });
+        }
+
+        const data = await res.json();
+        if (data && data.url) {
+          resolve(data.url);
+        } else {
+          resolve(base64Data);
+        }
+      } catch (err) {
+        console.warn('Upload fallback to local base64:', err);
+        resolve(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 /**
  * 1. TipTap Image Block Node View
  */
-const ImageNodeView = ({ node, deleteNode }) => {
-  const { url, caption, layout = 'full', width = 100 } = node.attrs;
-  const isFloated = layout === 'left' || layout === 'right';
+const ImageNodeView = ({ node, updateAttributes, deleteNode }) => {
+  const { url = '', caption = '', layout = 'full', width = 100 } = node.attrs;
+  const resolvedUrl = normalizeImageUrl(url);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
+  const isFloated = layout === 'left' || layout === 'right';
   const nodeStyle = isFloated
     ? {
         width: `${width}%`,
@@ -32,37 +82,180 @@ const ImageNodeView = ({ node, deleteNode }) => {
         float: layout,
         marginRight: layout === 'left' ? '16px' : '0',
         marginLeft: layout === 'right' ? '16px' : '0',
-        marginBottom: '10px'
+        marginBottom: '12px'
       }
     : {
         width: '100%',
-        clear: 'both'
+        clear: 'both',
+        marginBottom: '14px'
       };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const newUrl = await uploadMediaFileHelper(file, false);
+      if (newUrl) updateAttributes({ url: newUrl });
+    } catch (err) {
+      console.error('Image upload failed:', err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <NodeViewWrapper
       className={`rich-editor-custom-node rich-editor-image-node rich-editor-image-${layout}`}
       style={nodeStyle}
     >
-      <div className="rich-editor-node-card group">
-        <div className="rich-editor-image-preview-wrap">
-          <img src={url} alt={caption || 'Preview'} className="rich-editor-image-img" />
-          <div className="rich-editor-image-badge-tag">
+      <div className="rich-editor-node-card group border border-slate-200 bg-white rounded-xl shadow-xs overflow-hidden transition-all hover:border-blue-300 hover:shadow-sm">
+        {/* Node Control Toolbar */}
+        <div className="rich-editor-node-toolbar flex items-center justify-between px-2.5 py-1.5 bg-slate-50 border-b border-slate-200 text-xs gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1 font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200/60 text-[11px]">
+            <span className="material-symbols-outlined text-xs">image</span>
             <span>{layout === 'full' ? 'Full Width' : `Float ${layout.toUpperCase()} (${width}%)`}</span>
           </div>
-          <button
-            type="button"
-            onClick={deleteNode}
-            className="rich-editor-node-delete-btn"
-            title="Remove image block"
-          >
-            <span className="material-symbols-outlined text-sm">delete</span>
-          </button>
+
+          {/* Quick Layout Selectors */}
+          <div className="flex items-center gap-0.5 bg-white border border-slate-200 rounded p-0.5">
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'full', width: 100 })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'full' ? 'bg-blue-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Full Width (100%)"
+            >
+              <span className="material-symbols-outlined text-sm">view_stream</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'left', width: width === 100 ? 40 : width })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'left' ? 'bg-blue-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Float Left (Text wraps right)"
+            >
+              <span className="material-symbols-outlined text-sm">align_horizontal_left</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'right', width: width === 100 ? 40 : width })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'right' ? 'bg-blue-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Float Right (Text wraps left)"
+            >
+              <span className="material-symbols-outlined text-sm">align_horizontal_right</span>
+            </button>
+          </div>
+
+          {/* Quick Width Presets */}
+          {isFloated && (
+            <div className="flex items-center gap-0.5 bg-white border border-slate-200 rounded p-0.5">
+              {[25, 33, 40, 50, 60].map(pct => (
+                <button
+                  key={pct}
+                  type="button"
+                  onClick={() => updateAttributes({ width: pct })}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors ${width === pct ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+                >
+                  {pct}%
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Edit Details & Delete */}
+          <div className="flex items-center gap-1 ml-auto">
+            <button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              className={`px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1 border transition-colors ${isEditing ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'}`}
+              title="Edit Image Settings"
+            >
+              <span className="material-symbols-outlined text-xs">edit</span>
+              <span>{isEditing ? 'Done' : 'Edit'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={deleteNode}
+              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+              title="Remove image block"
+            >
+              <span className="material-symbols-outlined text-sm">delete</span>
+            </button>
+          </div>
         </div>
+
+        {/* Image Preview Wrap */}
+        <div className="rich-editor-image-preview-wrap relative bg-slate-900 flex items-center justify-center">
+          <img src={resolvedUrl} alt={caption || 'Preview'} className="rich-editor-image-img max-h-60 w-full object-cover" />
+        </div>
+
         {caption && (
-          <div className="rich-editor-node-caption">
-            <span className="material-symbols-outlined text-xs mr-1 text-slate-400">subtitles</span>
+          <div className="rich-editor-node-caption text-xs text-slate-500 italic px-3 py-1.5 bg-slate-50 border-t border-slate-100 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-xs text-slate-400">subtitles</span>
             <span className="truncate">{caption}</span>
+          </div>
+        )}
+
+        {/* Inline Edit Drawer */}
+        {isEditing && (
+          <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-2.5 text-xs">
+            <div>
+              <label className="font-bold text-slate-700 block mb-1">Image URL / Replace</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => updateAttributes({ url: e.target.value })}
+                  placeholder="https://..."
+                  className="flex-1 text-xs bg-white border border-slate-200 rounded px-2.5 py-1.5 outline-none focus:border-blue-500 font-medium text-slate-800"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded font-semibold flex items-center gap-1 text-xs whitespace-nowrap"
+                >
+                  <span className="material-symbols-outlined text-xs">{isUploading ? 'sync' : 'upload'}</span>
+                  <span>{isUploading ? 'Uploading...' : 'Upload'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="font-bold text-slate-700 block mb-1">Caption</label>
+              <input
+                type="text"
+                value={caption}
+                onChange={(e) => updateAttributes({ caption: e.target.value })}
+                placeholder="Image caption..."
+                className="w-full text-xs bg-white border border-slate-200 rounded px-2.5 py-1.5 outline-none focus:border-blue-500 font-medium text-slate-800"
+              />
+            </div>
+
+            {isFloated && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700">Custom Width ({width}%)</label>
+                  <span className="text-blue-600 font-bold font-mono">{width}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="20"
+                  max="80"
+                  step="5"
+                  value={width}
+                  onChange={(e) => updateAttributes({ width: Number(e.target.value) })}
+                  className="w-full h-1.5 bg-slate-200 rounded appearance-none cursor-pointer accent-blue-600"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -95,13 +288,40 @@ const ImageBlockNode = Node.create({
         })
       },
       {
+        tag: 'figure.rich-renderer-image-wrap',
+        getAttrs: dom => {
+          const img = dom.querySelector('img');
+          const figcaption = dom.querySelector('figcaption');
+          const layout = dom.classList.contains('rich-renderer-image-left') ? 'left' : (dom.classList.contains('rich-renderer-image-right') ? 'right' : 'full');
+          const widthStr = dom.style?.width || dom.style?.maxWidth;
+          const width = widthStr ? parseInt(widthStr, 10) : (layout === 'full' ? 100 : 40);
+          return {
+            url: img?.getAttribute('src') || '',
+            caption: figcaption?.textContent || img?.getAttribute('alt') || '',
+            layout,
+            width: width || 100
+          };
+        }
+      },
+      {
         tag: 'img',
-        getAttrs: dom => ({
-          url: dom.getAttribute('src'),
-          caption: dom.getAttribute('alt') || '',
-          layout: dom.getAttribute('data-layout') || 'full',
-          width: Number(dom.getAttribute('data-width')) || 100
-        })
+        getAttrs: dom => {
+          const layout = dom.getAttribute('data-layout') || (dom.style?.float ? dom.style.float : 'full');
+          const widthAttr = dom.getAttribute('data-width') || dom.style?.width;
+          let width = 100;
+          if (widthAttr) {
+            const num = parseInt(widthAttr, 10);
+            if (!isNaN(num) && num > 0) width = num;
+          } else if (layout === 'left' || layout === 'right') {
+            width = 40;
+          }
+          return {
+            url: dom.getAttribute('src') || '',
+            caption: dom.getAttribute('alt') || '',
+            layout: layout === 'left' || layout === 'right' ? layout : 'full',
+            width: width
+          };
+        }
       }
     ];
   },
@@ -125,8 +345,12 @@ const ImageBlockNode = Node.create({
 /**
  * 2. TipTap Video Block Node View
  */
-const VideoNodeView = ({ node, deleteNode }) => {
-  const { url, embedType, badge, layout = 'full', width = 100 } = node.attrs;
+const VideoNodeView = ({ node, updateAttributes, deleteNode }) => {
+  const { url = '', embedType = 'youtube', badge = null, layout = 'full', width = 100 } = node.attrs;
+  const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
   const isIframe = embedType === 'youtube' || url?.includes('youtu') || url?.includes('vimeo');
   const embedUrl = isIframe ? getEmbedVideoUrl(url) : url;
   const isFloated = layout === 'left' || layout === 'right';
@@ -138,26 +362,120 @@ const VideoNodeView = ({ node, deleteNode }) => {
         float: layout,
         marginRight: layout === 'left' ? '16px' : '0',
         marginLeft: layout === 'right' ? '16px' : '0',
-        marginBottom: '10px'
+        marginBottom: '12px'
       }
     : {
         width: '100%',
-        clear: 'both'
+        clear: 'both',
+        marginBottom: '14px'
       };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    try {
+      const newUrl = await uploadMediaFileHelper(file, true);
+      if (newUrl) updateAttributes({ url: newUrl, embedType: 'upload' });
+    } catch (err) {
+      console.error('Video upload failed:', err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleBadgeToggle = (enabled) => {
+    if (enabled) {
+      updateAttributes({ badge: { icon: 'shield-check', text: 'Accredited Care' } });
+    } else {
+      updateAttributes({ badge: null });
+    }
+  };
 
   return (
     <NodeViewWrapper
       className={`rich-editor-custom-node rich-editor-video-node rich-editor-video-${layout}`}
       style={nodeStyle}
     >
-      <div className="rich-editor-node-card group">
-        <div className="rich-editor-video-preview-wrap">
-          <div className="rich-editor-image-badge-tag">
+      <div className="rich-editor-node-card group border border-slate-200 bg-white rounded-xl shadow-xs overflow-hidden transition-all hover:border-rose-300 hover:shadow-sm">
+        {/* Node Control Toolbar */}
+        <div className="rich-editor-node-toolbar flex items-center justify-between px-2.5 py-1.5 bg-slate-50 border-b border-slate-200 text-xs gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1 font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200/60 text-[11px]">
+            <span className="material-symbols-outlined text-xs">smart_display</span>
             <span>{layout === 'full' ? 'Full Width' : `Float ${layout.toUpperCase()} (${width}%)`}</span>
           </div>
 
+          {/* Quick Layout Selectors */}
+          <div className="flex items-center gap-0.5 bg-white border border-slate-200 rounded p-0.5">
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'full', width: 100 })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'full' ? 'bg-rose-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Full Width (100%)"
+            >
+              <span className="material-symbols-outlined text-sm">view_stream</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'left', width: width === 100 ? 40 : width })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'left' ? 'bg-rose-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Float Left (Text wraps right)"
+            >
+              <span className="material-symbols-outlined text-sm">align_horizontal_left</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateAttributes({ layout: 'right', width: width === 100 ? 40 : width })}
+              className={`p-1 rounded text-xs flex items-center transition-colors ${layout === 'right' ? 'bg-rose-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'}`}
+              title="Float Right (Text wraps left)"
+            >
+              <span className="material-symbols-outlined text-sm">align_horizontal_right</span>
+            </button>
+          </div>
+
+          {/* Quick Width Presets */}
+          {isFloated && (
+            <div className="flex items-center gap-0.5 bg-white border border-slate-200 rounded p-0.5">
+              {[25, 33, 40, 50, 60].map(pct => (
+                <button
+                  key={pct}
+                  type="button"
+                  onClick={() => updateAttributes({ width: pct })}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition-colors ${width === pct ? 'bg-rose-600 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
+                >
+                  {pct}%
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Edit Details & Delete */}
+          <div className="flex items-center gap-1 ml-auto">
+            <button
+              type="button"
+              onClick={() => setIsEditing(!isEditing)}
+              className={`px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1 border transition-colors ${isEditing ? 'bg-rose-600 text-white border-rose-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'}`}
+              title="Edit Video Settings"
+            >
+              <span className="material-symbols-outlined text-xs">edit</span>
+              <span>{isEditing ? 'Done' : 'Edit'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={deleteNode}
+              className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors"
+              title="Remove video block"
+            >
+              <span className="material-symbols-outlined text-sm">delete</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Video Preview Wrap */}
+        <div className="rich-editor-video-preview-wrap relative bg-slate-900">
           {badge && (badge.text || badge.icon) && (
-            <div className="rich-editor-video-badge-overlay">
+            <div className="rich-editor-video-badge-overlay z-10">
               <span className="material-symbols-outlined text-xs text-amber-400">
                 {resolveIconName(badge.icon)}
               </span>
@@ -165,28 +483,113 @@ const VideoNodeView = ({ node, deleteNode }) => {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={deleteNode}
-            className="rich-editor-node-delete-btn"
-            title="Remove video block"
-          >
-            <span className="material-symbols-outlined text-sm">delete</span>
-          </button>
-
           {isIframe ? (
-            <div className="rich-editor-video-iframe-aspect">
+            <div className="rich-editor-video-iframe-aspect aspect-video w-full">
               <iframe
                 src={embedUrl}
                 title="Video Preview"
-                className="rich-editor-video-iframe"
+                className="rich-editor-video-iframe w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
               />
             </div>
           ) : (
-            <video src={embedUrl} controls className="rich-editor-video-native-el" />
+            <video src={embedUrl} controls className="rich-editor-video-native-el w-full max-h-60" />
           )}
         </div>
+
+        {/* Inline Edit Drawer */}
+        {isEditing && (
+          <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-2.5 text-xs">
+            <div>
+              <label className="font-bold text-slate-700 block mb-1">YouTube / Vimeo / Video URL</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => {
+                    const newUrl = e.target.value;
+                    const newEmbed = (newUrl.includes('youtu') || newUrl.includes('vimeo')) ? 'youtube' : embedType;
+                    updateAttributes({ url: newUrl, embedType: newEmbed });
+                  }}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="flex-1 text-xs bg-white border border-slate-200 rounded px-2.5 py-1.5 outline-none focus:border-rose-500 font-medium text-slate-800"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded font-semibold flex items-center gap-1 text-xs whitespace-nowrap"
+                >
+                  <span className="material-symbols-outlined text-xs">{isUploading ? 'sync' : 'upload'}</span>
+                  <span>{isUploading ? 'Uploading...' : 'Upload'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Optional Badge */}
+            <div className="pt-1">
+              <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-700 mb-1">
+                <input
+                  type="checkbox"
+                  checked={Boolean(badge)}
+                  onChange={(e) => handleBadgeToggle(e.target.checked)}
+                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 w-3.5 h-3.5"
+                />
+                <span>Overlay Badge Pill</span>
+              </label>
+              {badge && (
+                <div className="grid grid-cols-3 gap-2 mt-1.5">
+                  <div className="col-span-1">
+                    <select
+                      value={badge.icon || 'shield-check'}
+                      onChange={(e) => updateAttributes({ badge: { ...badge, icon: e.target.value } })}
+                      className="w-full text-xs bg-white border border-slate-200 rounded p-1.5 outline-none font-medium text-slate-800"
+                    >
+                      {BADGE_ICONS_LIST.map(bi => (
+                        <option key={bi.key} value={bi.key}>{bi.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-span-2">
+                    <input
+                      type="text"
+                      value={badge.text || ''}
+                      onChange={(e) => updateAttributes({ badge: { ...badge, text: e.target.value } })}
+                      placeholder="Badge text (e.g. Accredited)"
+                      className="w-full text-xs bg-white border border-slate-200 rounded px-2.5 py-1.5 outline-none font-medium text-slate-800"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {isFloated && (
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-slate-700">Custom Width ({width}%)</label>
+                  <span className="text-rose-600 font-bold font-mono">{width}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="20"
+                  max="80"
+                  step="5"
+                  value={width}
+                  onChange={(e) => updateAttributes({ width: Number(e.target.value) })}
+                  className="w-full h-1.5 bg-slate-200 rounded appearance-none cursor-pointer accent-rose-600"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </NodeViewWrapper>
   );
@@ -220,6 +623,60 @@ const VideoBlockNode = Node.create({
             url: dom.getAttribute('data-url'),
             embedType: dom.getAttribute('data-embed-type') || 'youtube',
             badge,
+            layout: dom.getAttribute('data-layout') || 'full',
+            width: Number(dom.getAttribute('data-width')) || 100
+          };
+        }
+      },
+      {
+        tag: 'div.rich-renderer-video-container',
+        getAttrs: dom => {
+          const iframe = dom.querySelector('iframe');
+          const video = dom.querySelector('video');
+          const url = iframe?.getAttribute('src') || video?.getAttribute('src') || '';
+          const layout = dom.classList.contains('rich-renderer-video-left') ? 'left' : (dom.classList.contains('rich-renderer-video-right') ? 'right' : 'full');
+          const widthStr = dom.style?.width || dom.style?.maxWidth;
+          const width = widthStr ? parseInt(widthStr, 10) : (layout === 'full' ? 100 : 40);
+          const badgeEl = dom.querySelector('.rich-renderer-video-badge');
+          let badge = null;
+          if (badgeEl) {
+            badge = {
+              text: badgeEl.querySelector('.rich-renderer-video-badge-text')?.textContent || '',
+              icon: badgeEl.querySelector('.rich-renderer-video-badge-icon')?.textContent || 'shield-check'
+            };
+          }
+          return {
+            url,
+            embedType: (url.includes('youtu') || url.includes('vimeo')) ? 'youtube' : 'upload',
+            badge,
+            layout,
+            width: width || 100
+          };
+        }
+      },
+      {
+        tag: 'iframe',
+        getAttrs: dom => {
+          const src = dom.getAttribute('src') || '';
+          const parentCol = dom.closest ? dom.closest('.col-lg-6, .col-md-6, .col-sm-6, .col-6, [class*="col-"]') : null;
+          const isRightOrCol = Boolean(parentCol);
+          return {
+            url: src,
+            embedType: (src.includes('youtu') || src.includes('vimeo')) ? 'youtube' : 'upload',
+            badge: null,
+            layout: dom.getAttribute('data-layout') || (isRightOrCol ? 'right' : 'full'),
+            width: Number(dom.getAttribute('data-width')) || (isRightOrCol ? 50 : 100)
+          };
+        }
+      },
+      {
+        tag: 'video',
+        getAttrs: dom => {
+          const src = dom.getAttribute('src') || dom.querySelector('source')?.getAttribute('src') || '';
+          return {
+            url: src,
+            embedType: 'upload',
+            badge: null,
             layout: dom.getAttribute('data-layout') || 'full',
             width: Number(dom.getAttribute('data-width')) || 100
           };
@@ -445,10 +902,12 @@ const normalizeValueToDoc = (val) => {
  */
 const RichTextEditor = ({
   value = null,
+  content = null,
   onChange,
   placeholder = 'Write formatted content here...',
   minHeight = '150px',
-  className = ''
+  className = '',
+  uploadEndpoint = 'http://localhost:5000/api/services/upload'
 }) => {
   // Modal states
   const [showImageModal, setShowImageModal] = useState(false);
@@ -476,11 +935,8 @@ const RichTextEditor = ({
   const [badgeIcon, setBadgeIcon] = useState('tent');
   const [badgeText, setBadgeText] = useState('');
 
-  // File input refs
-  const imageFileInputRef = useRef(null);
-  const videoFileInputRef = useRef(null);
-
-  const initialContent = normalizeValueToDoc(value);
+  const activeValue = value !== null && value !== undefined ? value : content;
+  const initialContent = normalizeValueToDoc(activeValue);
 
   const editor = useEditor({
     extensions: [
@@ -514,7 +970,7 @@ const RichTextEditor = ({
   useEffect(() => {
     if (!editor) return;
 
-    if (!value) {
+    if (!activeValue) {
       const currentJson = editor.getJSON();
       if (currentJson.content && currentJson.content.length > 0 && currentJson.content[0].content) {
         editor.commands.setContent({ type: 'doc', content: [{ type: 'paragraph', content: [] }] }, { emitUpdate: false });
@@ -523,15 +979,15 @@ const RichTextEditor = ({
     }
 
     const currentJsonStr = JSON.stringify(editor.getJSON());
-    const normalized = normalizeValueToDoc(value);
+    const normalized = normalizeValueToDoc(activeValue);
     const incomingJsonStr = typeof normalized === 'object' ? JSON.stringify(normalized) : '';
 
     if (incomingJsonStr && incomingJsonStr !== currentJsonStr) {
       editor.commands.setContent(normalized, { emitUpdate: false });
-    } else if (typeof value === 'string' && value !== editor.getHTML()) {
-      editor.commands.setContent(value, { emitUpdate: false });
+    } else if (typeof activeValue === 'string' && activeValue !== editor.getHTML()) {
+      editor.commands.setContent(activeValue, { emitUpdate: false });
     }
-  }, [value, editor]);
+  }, [activeValue, editor]);
 
   const isAnyModalOpen = showImageModal || showVideoModal || showIconBadgeModal;
 
@@ -568,49 +1024,7 @@ const RichTextEditor = ({
 
   // Handle generic media file upload to Supabase / Backend endpoint
   const uploadMediaFile = async (file, isVideo = false) => {
-    if (!file) return null;
-
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Data = reader.result;
-        try {
-          // Try services upload endpoint, fallback to specialities upload
-          let res = await fetch('http://localhost:5000/api/services/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              serviceName: 'rich-media',
-              fileName: file.name,
-              base64Data
-            })
-          });
-
-          if (!res.ok) {
-            res = await fetch('http://localhost:5000/api/specialities/upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                specialityName: 'rich-media',
-                fileName: file.name,
-                base64Data
-              })
-            });
-          }
-
-          const data = await res.json();
-          if (data && data.url) {
-            resolve(data.url);
-          } else {
-            resolve(base64Data);
-          }
-        } catch (err) {
-          console.warn('Upload fallback to local base64:', err);
-          resolve(base64Data);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    return uploadMediaFileHelper(file, isVideo, uploadEndpoint);
   };
 
   // Image Upload Trigger
@@ -1044,7 +1458,7 @@ const RichTextEditor = ({
                       {imageLayout === 'full' ? (
                         <div>
                           <img
-                            src={imageUrl}
+                            src={normalizeImageUrl(imageUrl)}
                             alt="Preview"
                             className="w-full h-32 object-cover rounded-lg border border-slate-200 shadow-xs"
                           />
@@ -1069,7 +1483,7 @@ const RichTextEditor = ({
                             }}
                           >
                             <img
-                              src={imageUrl}
+                              src={normalizeImageUrl(imageUrl)}
                               alt="Preview"
                               className="w-full h-24 object-cover rounded-lg border border-slate-200 shadow-xs"
                             />

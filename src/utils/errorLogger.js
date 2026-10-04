@@ -27,9 +27,6 @@ export async function logException(error, source = 'Client Runtime Exception', l
 
     // Send exception to database table first via API POST request
     await addAppError(errorItem).catch(() => {});
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('admin_data_updated'));
-    }
   } catch (err) {
     console.error('Failed to report application error to database:', err);
   } finally {

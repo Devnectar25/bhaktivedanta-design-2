@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../../data/defaultSpecialities';
 import { getSpecialitiesState, saveSpecialitiesState } from '../../../utils/api';
-import { showErrorAlert } from '../../../utils/swal';
+import { showErrorAlert, showSuccessAlert } from '../../../utils/swal';
 
 const AddCategory = () => {
   const [searchParams] = useSearchParams();
@@ -86,7 +86,13 @@ const AddCategory = () => {
     }
 
     const newState = { ...state, categories: updatedCats };
-    saveSpecialitiesState(newState).then(() => {
+    saveSpecialitiesState(newState).then(async () => {
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+      await showSuccessAlert(
+        editId ? 'Category Updated!' : 'Category Created!',
+        `Category "${name}" has been saved successfully.`
+      );
       navigate('/admin/specialities');
     });
   };

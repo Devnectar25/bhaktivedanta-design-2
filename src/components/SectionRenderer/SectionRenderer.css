@@ -87,6 +87,7 @@
   background: #FFFFFF;
   overflow: hidden;
   transition: all 0.2s ease;
+  margin-bottom: 12px;
 }
 
 .section-accordion-header {

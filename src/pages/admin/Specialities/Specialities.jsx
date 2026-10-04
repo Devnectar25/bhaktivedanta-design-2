@@ -7,6 +7,10 @@ import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
 const Specialities = () => {
   const [state, setState] = useState(defaultSpecialitiesState);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState(() => {
+    const el = document.querySelector('input[placeholder="Type here to search list contents..."]');
+    return el ? el.value : '';
+  });
   const itemsPerPage = 8;
 
   // Custom Delete Confirmation Modal State
@@ -44,26 +48,48 @@ const Specialities = () => {
       fetchSpecialitiesData();
     };
 
+    const handleSearchEvent = (e) => {
+      setSearchTerm(e.detail?.query || '');
+      setCurrentPage(1);
+    };
+
     window.addEventListener('storage', handleSync);
     window.addEventListener('admin_data_updated', handleSync);
+    window.addEventListener('admin_search', handleSearchEvent);
 
     return () => {
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('admin_data_updated', handleSync);
+      window.removeEventListener('admin_search', handleSearchEvent);
     };
   }, []);
 
-  const totalPages = Math.ceil(state.specialities.length / itemsPerPage) || 1;
+  const filteredSpecialities = state.specialities.filter(spec => {
+    if (!searchTerm.trim()) return true;
+    const s = searchTerm.toLowerCase().trim();
+    const cat = state.categories.find(c => c.id === spec.categoryId);
+    const catName = cat ? (cat.name || '').toLowerCase() : '';
+    const specName = (spec.name || '').toLowerCase();
+    return specName.includes(s) || catName.includes(s);
+  });
+
+  const filteredCategories = state.categories.filter(cat => {
+    if (!searchTerm.trim()) return true;
+    const s = searchTerm.toLowerCase().trim();
+    return (cat.name || '').toLowerCase().includes(s);
+  });
+
+  const totalPages = Math.ceil(filteredSpecialities.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedSpecialities = state.specialities.slice(startIndex, endIndex);
+  const paginatedSpecialities = filteredSpecialities.slice(startIndex, endIndex);
 
   // Clamp current page if items shrink
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(Math.max(1, totalPages));
     }
-  }, [state.specialities.length, totalPages, currentPage]);
+  }, [filteredSpecialities.length, totalPages, currentPage]);
 
   const saveState = async (newState) => {
     setState(newState);
@@ -174,70 +200,76 @@ const Specialities = () => {
               <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                 <h3 className="font-bold text-sm text-[#1e3a8a]">Active Speciality Departments</h3>
                 <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                  Total: {state.specialities.length}
+                  Total: {filteredSpecialities.length}
                 </span>
               </div>
 
               <div className="divide-y divide-slate-100">
-                {paginatedSpecialities.map(spec => {
-                  const cat = state.categories.find(c => c.id === spec.categoryId);
-                  const adminTag = spec.adminId ? `${spec.adminId}${spec.adminName ? ` (${spec.adminName})` : ''}` : 'ADM-001 (Super Administrator)';
-                  return (
-                    <div key={spec.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0 overflow-hidden">
-                          <span className="material-symbols-outlined text-xl">{spec.icon || 'star'}</span>
+                {paginatedSpecialities.length === 0 ? (
+                  <div className="p-8 text-center text-slate-500 text-xs">
+                    No specialities found{searchTerm.trim() ? ` matching "${searchTerm}"` : ''}.
+                  </div>
+                ) : (
+                  paginatedSpecialities.map(spec => {
+                    const cat = state.categories.find(c => c.id === spec.categoryId);
+                    const adminTag = spec.adminId ? `${spec.adminId}${spec.adminName ? ` (${spec.adminName})` : ''}` : 'ADM-001 (Super Administrator)';
+                    return (
+                      <div key={spec.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 flex-shrink-0 overflow-hidden">
+                            <span className="material-symbols-outlined text-xl">{spec.icon || 'star'}</span>
+                          </div>
+                          <div>
+                            <p className="font-bold text-slate-800 text-sm leading-snug">{spec.name}</p>
+                            <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                              <span className="text-[10px] text-slate-500 font-semibold">
+                                Category: {cat ? cat.name : 'Unassigned'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-slate-800 text-sm leading-snug">{spec.name}</p>
-                          <div className="flex flex-wrap items-center gap-2 mt-0.5">
-                            <span className="text-[10px] text-slate-500 font-semibold">
-                              Category: {cat ? cat.name : 'Unassigned'}
-                            </span>
+
+                        <div className="flex items-center justify-between sm:justify-end gap-3.5">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${spec.status
+                              ? 'bg-green-50 text-green-600 border border-green-100'
+                              : 'bg-red-50 text-red-600 border border-red-100'
+                            }`}>
+                            {spec.status ? 'Live' : 'Hidden'}
+                          </span>
+
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => handleToggleSpecialityStatus(spec.id)}
+                              className={`w-7 h-7 rounded flex items-center justify-center border transition-all ${spec.status
+                                  ? 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'
+                                  : 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200'
+                                }`}
+                              title={spec.status ? 'Hide Speciality' : 'Show Speciality'}
+                            >
+                              <span className="material-symbols-outlined text-[16px]">
+                                {spec.status ? 'visibility_off' : 'visibility'}
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => navigate(`/admin/add-speciality?edit=${spec.id}`)}
+                              className="w-7 h-7 rounded bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center transition-all"
+                              title="Edit Tabs and Details"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">edit</span>
+                            </button>
+                            <button
+                              onClick={() => openDeleteSpecialityModal(spec)}
+                              className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
+                              title="Delete"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
                           </div>
                         </div>
                       </div>
-
-                      <div className="flex items-center justify-between sm:justify-end gap-3.5">
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${spec.status
-                            ? 'bg-green-50 text-green-600 border border-green-100'
-                            : 'bg-red-50 text-red-600 border border-red-100'
-                          }`}>
-                          {spec.status ? 'Live' : 'Hidden'}
-                        </span>
-
-                        <div className="flex gap-1.5">
-                          <button
-                            onClick={() => handleToggleSpecialityStatus(spec.id)}
-                            className={`w-7 h-7 rounded flex items-center justify-center border transition-all ${spec.status
-                                ? 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'
-                                : 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200'
-                              }`}
-                            title={spec.status ? 'Hide Speciality' : 'Show Speciality'}
-                          >
-                            <span className="material-symbols-outlined text-[16px]">
-                              {spec.status ? 'visibility_off' : 'visibility'}
-                            </span>
-                          </button>
-                          <button
-                            onClick={() => navigate(`/admin/add-speciality?edit=${spec.id}`)}
-                            className="w-7 h-7 rounded bg-slate-50 hover:bg-slate-100 text-slate-500 border border-slate-200 flex items-center justify-center transition-all"
-                            title="Edit Tabs and Details"
-                          >
-                            <span className="material-symbols-outlined text-[16px]">edit</span>
-                          </button>
-                          <button
-                            onClick={() => openDeleteSpecialityModal(spec)}
-                            className="w-7 h-7 rounded bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 flex items-center justify-center transition-all"
-                            title="Delete"
-                          >
-                            <span className="material-symbols-outlined text-[16px]">delete</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -245,7 +277,7 @@ const Specialities = () => {
             {totalPages > 1 && (
               <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                 <p className="text-slate-500 font-medium">
-                  Showing <span className="font-bold text-slate-700">{startIndex + 1}</span> to <span className="font-bold text-slate-700">{Math.min(endIndex, state.specialities.length)}</span> of <span className="font-bold text-slate-700">{state.specialities.length}</span> specialities
+                  Showing <span className="font-bold text-slate-700">{filteredSpecialities.length > 0 ? startIndex + 1 : 0}</span> to <span className="font-bold text-slate-700">{Math.min(endIndex, filteredSpecialities.length)}</span> of <span className="font-bold text-slate-700">{filteredSpecialities.length}</span> specialities
                 </p>
 
                 <div className="flex items-center gap-1.5">
@@ -291,12 +323,17 @@ const Specialities = () => {
             <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <h3 className="font-bold text-sm text-[#1e3a8a]">Speciality Categories</h3>
               <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                Total: {state.categories.length}
+                Total: {filteredCategories.length}
               </span>
             </div>
 
             <div className="divide-y divide-slate-100">
-              {state.categories.map(cat => {
+              {filteredCategories.length === 0 ? (
+                <div className="p-6 text-center text-slate-500 text-xs">
+                  No categories found{searchTerm.trim() ? ` matching "${searchTerm}"` : ''}.
+                </div>
+              ) : (
+                filteredCategories.map(cat => {
                 const count = state.specialities.filter(s => s.categoryId === cat.id).length;
                 return (
                   <div key={cat.id} className="p-4 space-y-2 hover:bg-slate-50/50 transition-colors">
@@ -345,7 +382,7 @@ const Specialities = () => {
                     </div>
                   </div>
                 );
-              })}
+              }))}
             </div>
           </div>
         </div>

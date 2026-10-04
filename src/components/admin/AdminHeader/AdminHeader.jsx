@@ -87,12 +87,14 @@ const AdminHeader = ({ title }) => {
   };
 
   const handleSearch = (e) => {
-    const query = e.target.value.toLowerCase().trim();
+    const rawQuery = e.target.value;
+    const query = rawQuery.toLowerCase().trim();
     const rows = document.querySelectorAll('table tbody tr');
     rows.forEach(row => {
       const text = row.textContent.toLowerCase();
       row.style.display = text.includes(query) ? '' : 'none';
     });
+    window.dispatchEvent(new CustomEvent('admin_search', { detail: { query: rawQuery } }));
   };
 
   const handleMarkAllRead = (e) => {

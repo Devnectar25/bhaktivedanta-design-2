@@ -104,14 +104,17 @@ export default function DetailPage({ module = 'specialities' }) {
         const categories = res?.categories || defaultServicesState.categories || [];
 
         const match = services.find((s) => {
-          const sSlug = s.slug || createSlug(s.name);
+          const sSlugClean = (s.slug || '').replace(/^\/+|\/+$/g, '').toLowerCase().trim();
+          const nameSlug = createSlug(s.name);
           const sNameNorm = (s.name || '').toLowerCase().trim();
           const targetNorm = activeSlug.replace(/-/g, ' ');
           return (
-            sSlug === activeSlug ||
+            sSlugClean === activeSlug ||
+            nameSlug === activeSlug ||
             s.id === activeSlug ||
             sNameNorm === targetNorm ||
-            sNameNorm === activeSlug
+            sNameNorm === activeSlug ||
+            nameSlug.replace(/-/g, ' ') === targetNorm
           );
         });
 

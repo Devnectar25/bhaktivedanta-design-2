@@ -14,11 +14,43 @@ const BLOCK_TYPES = [
   { type: 'topic-card-grid', label: 'Topic Card Grid (Colored Headers)', icon: 'view_module', color: 'amber' }
 ];
 
+const uploadSpiritualCareImage = async (file, itemName = 'educational-programme') => {
+  if (!file) return null;
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        const res = await fetch('http://localhost:5000/api/spiritual-care/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemName,
+            fileName: file.name,
+            base64Data
+          })
+        });
+        const data = await res.json();
+        if (data && data.url) {
+          resolve(data.url);
+        } else {
+          resolve(base64Data);
+        }
+      } catch (err) {
+        console.warn('Upload fallback to local base64:', err);
+        resolve(base64Data);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
 export default function EducationalProgrammesManager() {
   const [programmes, setProgrammes] = useState(defaultSpiritualCareState.programmes);
   const [selectedProgId, setSelectedProgId] = useState(defaultSpiritualCareState.programmes[0]?.id);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isUploadingCardImage, setIsUploadingCardImage] = useState(false);
 
   const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, targetId: null, title: '' });
@@ -444,20 +476,77 @@ export default function EducationalProgrammesManager() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Card Image URL</label>
-                  <input
-                    type="text"
-                    value={currentProg.image || ''}
-                    onChange={(e) => {
-                      const newImg = e.target.value;
-                      handleUpdateCurrentProg(p => ({
-                        ...p,
-                        image: newImg,
-                        detailPage: p.detailPage ? { ...p.detailPage, bannerImage: newImg } : p.detailPage
-                      }));
-                    }}
-                    className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 outline-none font-mono text-[11px]"
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1.5">Programme Card & Banner Image</label>
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-200 border border-slate-300 shrink-0 relative">
+                      {currentProg.image ? (
+                        <img src={currentProg.image} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-400">
+                          <span className="material-symbols-outlined text-2xl">image</span>
+                        </div>
+                      )}
+                      {isUploadingCardImage && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white">
+                          <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-2 w-full">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <label className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          isUploadingCardImage
+                            ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                            : 'bg-orange-500 hover:bg-orange-600 text-white shadow-xs'
+                        }`}>
+                          <span className="material-symbols-outlined text-sm">cloud_upload</span>
+                          <span>{isUploadingCardImage ? 'Uploading to Supabase...' : 'Choose Image File'}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={isUploadingCardImage}
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setIsUploadingCardImage(true);
+                              try {
+                                const url = await uploadSpiritualCareImage(file, currentProg.title || 'programme');
+                                if (url) {
+                                  handleUpdateCurrentProg(p => ({
+                                    ...p,
+                                    image: url,
+                                    detailPage: p.detailPage ? { ...p.detailPage, bannerImage: url } : p.detailPage
+                                  }));
+                                }
+                              } catch (err) {
+                                console.error('Upload error:', err);
+                              } finally {
+                                setIsUploadingCardImage(false);
+                              }
+                            }}
+                          />
+                        </label>
+                        <span className="text-[11px] text-slate-500">Uploads to <code>spiritual-care-images</code> bucket</span>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={currentProg.image || ''}
+                        onChange={(e) => {
+                          const newImg = e.target.value;
+                          handleUpdateCurrentProg(p => ({
+                            ...p,
+                            image: newImg,
+                            detailPage: p.detailPage ? { ...p.detailPage, bannerImage: newImg } : p.detailPage
+                          }));
+                        }}
+                        placeholder="Or enter image URL (https://...)"
+                        className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 bg-white outline-none font-mono text-[11px]"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block text-xs font-bold text-slate-700 mb-1">Card Summary Description</label>
@@ -621,6 +710,7 @@ export default function EducationalProgrammesManager() {
                             <RichTextEditor
                               content={block.content || ''}
                               onChange={(html) => handleUpdateBlock(block.id, { content: html })}
+                              uploadEndpoint="http://localhost:5000/api/spiritual-care/upload"
                             />
                           </div>
                         </div>
@@ -629,11 +719,31 @@ export default function EducationalProgrammesManager() {
                       {block.type === 'image' && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
-                            <label className="block text-[11px] font-bold text-slate-600 mb-0.5">Image URL</label>
+                            <div className="flex items-center justify-between mb-0.5">
+                              <label className="block text-[11px] font-bold text-slate-600">Image URL</label>
+                              <label className="text-[10px] font-bold text-orange-600 hover:text-orange-700 cursor-pointer flex items-center gap-0.5">
+                                <span className="material-symbols-outlined text-xs">cloud_upload</span>
+                                <span>Upload</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+                                    const url = await uploadSpiritualCareImage(file, block.title || 'programme-block');
+                                    if (url) {
+                                      handleUpdateBlock(block.id, { image: url });
+                                    }
+                                  }}
+                                />
+                              </label>
+                            </div>
                             <input
                               type="text"
                               value={block.image || ''}
                               onChange={(e) => handleUpdateBlock(block.id, { image: e.target.value })}
+                              placeholder="https://..."
                               className="w-full border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs bg-white font-mono"
                             />
                           </div>

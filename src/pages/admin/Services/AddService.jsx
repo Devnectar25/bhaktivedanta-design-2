@@ -5,6 +5,7 @@ import { defaultServicesState, ensureStandardServiceTabs } from '../../../data/d
 import { getServicesState, saveServicesState, getServiceById } from '../../../utils/api';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
 import AlertModal from '../../../components/admin/AlertModal/AlertModal';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 // Available Department Tab Types
 export const TAB_TYPES = [
@@ -189,6 +190,61 @@ export const createDefaultTab = (type, customTitle = '') => {
   }
 };
 
+// Helper to extract legacy gallery images from HTML content (nanogallery2 or grid)
+const extractLegacyGalleryImages = (content) => {
+  if (!content || typeof content !== 'string') return [];
+  const images = [];
+
+  if (typeof window !== 'undefined' && typeof DOMParser !== 'undefined') {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(content, 'text/html');
+
+      // 1. Nanogallery2 structure (#nanogallery2 or .pc_gal)
+      const nanoEl = doc.querySelector('#nanogallery2, .pc_gal');
+      if (nanoEl) {
+        const links = Array.from(nanoEl.querySelectorAll('a'));
+        let currentCategory = '';
+        links.forEach((a) => {
+          const href = (a.getAttribute('href') || '').trim();
+          const text = (a.textContent || '').trim();
+          if (text && (!href || href === '#' || href === 'javascript:void(0)')) {
+            currentCategory = text;
+          } else if (href && (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/') || href.includes('.jpg') || href.includes('.png') || href.includes('.jpeg') || href.includes('.webp'))) {
+            images.push({
+              id: `img_${Date.now()}_${images.length}`,
+              url: href,
+              caption: currentCategory || ''
+            });
+          }
+        });
+        if (images.length > 0) return images;
+      }
+
+      // 2. Grid-item or standard <img> elements
+      const imgElements = Array.from(doc.querySelectorAll('.grid-item img, img'));
+      if (imgElements.length > 0) {
+        imgElements.forEach((img, idx) => {
+          const src = (img.getAttribute('src') || '').trim();
+          const alt = (img.getAttribute('alt') || '').trim();
+          if (src && !src.includes('icon') && !src.includes('data:image/svg')) {
+            images.push({
+              id: `img_${Date.now()}_${idx}`,
+              url: src,
+              caption: alt || ''
+            });
+          }
+        });
+        if (images.length > 0) return images;
+      }
+    } catch (err) {
+      console.warn('Error parsing legacy gallery HTML in AddService:', err);
+    }
+  }
+
+  return images;
+};
+
 const AddService = ({ mode }) => {
   const { id: paramId } = useParams();
   const [searchParams] = useSearchParams();
@@ -284,12 +340,59 @@ const AddService = ({ mode }) => {
             if (Array.isArray(incomingTabs) && incomingTabs.length > 0) {
               const loadedTabs = incomingTabs.map((tab, idx) => {
                 let tabType = tab.type || 'rich_text';
+                const titleLower = (tab.title || '').toLowerCase();
+
                 // Map legacy types if any
                 if (tabType === 'overview' || tabType === 'custom') tabType = 'rich_text';
                 if (tabType === 'how_it_works') tabType = 'steps';
-                if (tabType === 'our_experts') tabType = 'cards';
-                if (tabType === 'photo_gallery') tabType = 'gallery';
+                if (
+                  tabType === 'our_experts' ||
+                  tabType === 'specialists' ||
+                  tabType === 'doctors' ||
+                  titleLower.includes('expert') ||
+                  titleLower.includes('specialist')
+                ) {
+                  tabType = 'cards';
+                }
+                if (
+                  tabType === 'photo_gallery' ||
+                  tabType === 'gallery' ||
+                  titleLower.includes('gallery') ||
+                  titleLower.includes('photo')
+                ) {
+                  tabType = 'gallery';
+                }
                 if (tabType === 'why_choose_us') tabType = 'list';
+
+                // 1. Doctors / Specialist cards
+                const rawCards = tab.cards || tab.items || tab.specialists || tab.experts || [];
+                const cards = rawCards.map((c, cIdx) => ({
+                  id: c.id || c.doctorId || `doc_${Date.now()}_${cIdx}`,
+                  name: c.name || c.doctorName || c.title || '',
+                  designation: c.designation || c.role || c.subSpeciality || '',
+                  qualifications: c.qualifications || c.qualification || '',
+                  experience: c.experience || '',
+                  image: c.image || c.photo || c.imageUrl || c.avatar || '',
+                  photo: c.photo || c.image || c.imageUrl || c.avatar || '',
+                  department: c.department || '',
+                  appointmentUrl: c.appointmentUrl || ''
+                }));
+
+                // 2. Gallery images
+                let galleryImages = tab.galleryImages;
+                if (!galleryImages || !Array.isArray(galleryImages) || galleryImages.length === 0) {
+                  if (Array.isArray(tab.images) && tab.images.length > 0) {
+                    galleryImages = tab.images.map((img, i) =>
+                      typeof img === 'string'
+                        ? { id: `img_${i}`, url: img, caption: '' }
+                        : { id: img.id || `img_${i}`, url: img.url || img.image || '', caption: img.caption || '' }
+                    );
+                  } else if (tabType === 'gallery' && tab.content) {
+                    galleryImages = extractLegacyGalleryImages(tab.content);
+                  } else {
+                    galleryImages = [];
+                  }
+                }
 
                 return {
                   id: tab.id || `tab_${Date.now()}_${idx}`,
@@ -299,9 +402,9 @@ const AddService = ({ mode }) => {
                   order: tab.order || idx + 1,
                   collapsed: false,
                   content: tab.content || null,
-                  items: tab.items || tab.points || [],
-                  cards: tab.cards || tab.experts || [],
-                  galleryImages: tab.galleryImages || tab.images?.map((url, i) => ({ id: `img_${i}`, url, caption: '' })) || [],
+                  items: tab.items || tab.points || (tabType === 'cards' ? cards : []),
+                  cards: cards,
+                  galleryImages: galleryImages,
                   steps: tab.steps || [],
                   testimonials: tab.testimonials || tab.items || []
                 };
@@ -370,11 +473,11 @@ const AddService = ({ mode }) => {
     reader.onload = async () => {
       const base64Data = reader.result;
       try {
-        const res = await fetch('http://localhost:5000/api/specialities/upload', {
+        const res = await fetch('http://localhost:5000/api/services/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            specialityName: name || 'service',
+            serviceName: name || 'service',
             fileName: file.name,
             base64Data
           })
@@ -643,11 +746,7 @@ const AddService = ({ mode }) => {
     e.preventDefault();
 
     if (!name.trim()) {
-      showAlert({
-        title: 'Service Name Required',
-        message: 'Please provide a valid service name before saving.',
-        type: 'error'
-      });
+      showErrorAlert('Service Name Required', 'Please provide a valid service name before saving.');
       return;
     }
 
@@ -661,7 +760,7 @@ const AddService = ({ mode }) => {
       order: idx + 1,
       enabled: tab.enabled !== false,
       content: tab.content || null,
-      items: tab.items || [],
+      items: tab.type === 'cards' ? (tab.cards || tab.items || []) : (tab.items || []),
       cards: tab.cards || [],
       galleryImages: tab.galleryImages || [],
       steps: tab.steps || [],
@@ -734,20 +833,29 @@ const AddService = ({ mode }) => {
         ...unifiedServicesState,
         services: updatedUnifiedServices
       };
-      saveServicesState(newUnifiedState).then(() => {
+      saveServicesState(newUnifiedState).then(async () => {
         window.dispatchEvent(new Event('admin_data_updated'));
         window.dispatchEvent(new Event('storage'));
+        await showSuccessAlert(
+          editId ? 'Service Updated!' : 'Service Created!',
+          `Service "${name}" has been successfully saved.`
+        );
         navigate('/admin/services');
-      }).catch(err => {
+      }).catch(async (err) => {
         console.error('Error saving services state:', err);
         window.dispatchEvent(new Event('admin_data_updated'));
         window.dispatchEvent(new Event('storage'));
-        navigate('/admin/services');
+        await showErrorAlert('Save Error', err?.message || 'Failed to save service.');
       });
     } else {
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
-      navigate('/admin/services');
+      showSuccessAlert(
+        editId ? 'Service Updated!' : 'Service Created!',
+        `Service "${name}" has been successfully saved.`
+      ).then(() => {
+        navigate('/admin/services');
+      });
     }
   };
 
