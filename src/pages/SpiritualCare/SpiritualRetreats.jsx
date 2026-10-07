@@ -13,8 +13,9 @@ export default function SpiritualRetreats() {
 
   const fetchState = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.retreats) {
-        setRetreatsData(res.retreats);
+      const data = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (data && data.retreats) {
+        setRetreatsData(data.retreats);
       }
     });
   };
@@ -119,16 +120,6 @@ export default function SpiritualRetreats() {
               </div>
             </div>
 
-            {annual?.highlights && annual.highlights.length > 0 && (
-              <div className="spiritual-narrative-card" style={{ marginBottom: 28 }}>
-                <h3 className="spiritual-card-title">Retreat Highlights & Safety Provisions</h3>
-                <ul style={{ paddingLeft: 20, color: '#334155', lineHeight: 1.8, fontFamily: "'Work Sans', sans-serif" }}>
-                  {annual.highlights.map((pt, pIdx) => (
-                    <li key={pIdx}>{pt}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
             {/* Contact Info Block */}
             <ContactInfoBlock

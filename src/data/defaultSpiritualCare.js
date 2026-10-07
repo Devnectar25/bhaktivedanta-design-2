@@ -419,13 +419,7 @@ export const defaultSpiritualCareState = {
     },
     annual: {
       title: 'The Grand Annual Pilgrimage & Wellness Yatra',
-      intro: '<p>Our flagship 4-day Annual Spiritual Retreat is a transformative spiritual journey held at iconic holy heritage destinations across India (such as Vrindavan, Govardhan, Mayapur, and Jagannath Puri).</p><p>Accompanied by dedicated hospital physicians, nurses, and world-renowned spiritual mentors, hundreds of families participate in uplifting keynote health discourses, holistic yoga sessions, sacred river bathing, devotional music concerts, and soul-enriching community bonding.</p>',
-      highlights: [
-        '24x7 Mobile Medical Care: Full ambulance and geriatric nursing escort accompanying the retreat group at all times.',
-        'Keynote Discourses: Exclusive seminars on mental resilience, conscious leadership, and living a value-driven life.',
-        'Gourmet Sattvic Dining: Hygienic, doctor-approved nutritious pure vegetarian cuisines prepared with love and devotion.',
-        'Senior Citizen Friendly: Wheelchair assistance, special dietary accommodations, and gentle scheduling.'
-      ]
+      intro: '<p>Our flagship 4-day Annual Spiritual Retreat is a transformative spiritual journey held at iconic holy heritage destinations across India (such as Vrindavan, Govardhan, Mayapur, and Jagannath Puri).</p><p>Accompanied by dedicated hospital physicians, nurses, and world-renowned spiritual mentors, hundreds of families participate in uplifting keynote health discourses, holistic yoga sessions, sacred river bathing, devotional music concerts, and soul-enriching community bonding.</p>'
     },
     contact: {
       title: 'Retreat Coordination & Bookings',
@@ -623,48 +617,80 @@ defaultSpiritualCareState.sections = defaultSpiritualSections;
  */
 export function ensureStandardSpiritualSections(state) {
   if (!state || typeof state !== 'object') {
-    return { ...defaultSpiritualCareState };
+    return JSON.parse(JSON.stringify(defaultSpiritualCareState));
   }
 
-  if (!Array.isArray(state.sections) || state.sections.length === 0) {
-    state.sections = JSON.parse(JSON.stringify(defaultSpiritualSections));
+  const s = (state.data && typeof state.data === 'object' && (state.data.services || state.data.sections || state.data.programmes || state.data.retreats))
+    ? state.data
+    : state;
+
+  if (!Array.isArray(s.sections) || s.sections.length === 0) {
+    s.sections = JSON.parse(JSON.stringify(defaultSpiritualSections));
   } else {
     // Ensure all 4 foundational sections exist if omitted
-    const existingIds = new Set(state.sections.map(s => s.id));
+    const existingIds = new Set(s.sections.map(sec => sec.id));
     defaultSpiritualSections.forEach(defSec => {
       if (!existingIds.has(defSec.id)) {
-        state.sections.push(JSON.parse(JSON.stringify(defSec)));
+        s.sections.push(JSON.parse(JSON.stringify(defSec)));
       }
     });
   }
 
   // Ensure sections are sorted by order
-  state.sections.sort((a, b) => (a.order || 0) - (b.order || 0));
+  s.sections.sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  // Sync legacy keys with sections
-  const secServices = state.sections.find(s => s.id === 'spiritual-care-services');
-  if (secServices && state.services) {
-    secServices.overview = state.services.overview || secServices.overview;
-    secServices.servicesOffered = state.services.servicesOffered || secServices.servicesOffered;
-    secServices.contact = state.services.contact || secServices.contact;
+  // Sync keys with sections
+  const secServices = s.sections.find(sec => sec.id === 'spiritual-care-services');
+  if (secServices) {
+    if (s.services) {
+      secServices.hero = s.services.hero || secServices.hero;
+      secServices.overview = s.services.overview || secServices.overview;
+      secServices.servicesOffered = s.services.servicesOffered || secServices.servicesOffered;
+      secServices.contact = s.services.contact || secServices.contact;
+    } else {
+      s.services = {
+        hero: secServices.hero || defaultSpiritualCareState.services.hero,
+        overview: secServices.overview || defaultSpiritualCareState.services.overview,
+        servicesOffered: secServices.servicesOffered || defaultSpiritualCareState.services.servicesOffered,
+        contact: secServices.contact || defaultSpiritualCareState.services.contact
+      };
+    }
   }
 
-  const secProgs = state.sections.find(s => s.id === 'educational-programmes');
-  if (secProgs && Array.isArray(state.programmes)) {
-    secProgs.cards = state.programmes;
+  const secProgs = s.sections.find(sec => sec.id === 'educational-programmes');
+  if (secProgs) {
+    if (Array.isArray(s.programmes) && s.programmes.length > 0) {
+      secProgs.cards = s.programmes;
+    } else if (Array.isArray(secProgs.cards) && secProgs.cards.length > 0) {
+      s.programmes = secProgs.cards;
+    }
   }
 
-  const secRetreats = state.sections.find(s => s.id === 'spiritual-retreats');
-  if (secRetreats && state.retreats) {
-    secRetreats.bimonthly = state.retreats.bimonthly || secRetreats.bimonthly;
-    secRetreats.annual = state.retreats.annual || secRetreats.annual;
-    secRetreats.contact = state.retreats.contact || secRetreats.contact;
+  const secRetreats = s.sections.find(sec => sec.id === 'spiritual-retreats');
+  if (secRetreats) {
+    if (s.retreats) {
+      secRetreats.hero = s.retreats.hero || secRetreats.hero;
+      secRetreats.bimonthly = s.retreats.bimonthly || secRetreats.bimonthly;
+      secRetreats.annual = s.retreats.annual || secRetreats.annual;
+      secRetreats.contact = s.retreats.contact || secRetreats.contact;
+    } else {
+      s.retreats = {
+        hero: secRetreats.hero || defaultSpiritualCareState.retreats.hero,
+        bimonthly: secRetreats.bimonthly || defaultSpiritualCareState.retreats.bimonthly,
+        annual: secRetreats.annual || defaultSpiritualCareState.retreats.annual,
+        contact: secRetreats.contact || defaultSpiritualCareState.retreats.contact
+      };
+    }
   }
 
-  const secPubs = state.sections.find(s => s.id === 'publications');
-  if (secPubs && Array.isArray(state.publications)) {
-    secPubs.items = state.publications;
+  const secPubs = s.sections.find(sec => sec.id === 'publications');
+  if (secPubs) {
+    if (Array.isArray(s.publications) && s.publications.length > 0) {
+      secPubs.items = s.publications;
+    } else if (Array.isArray(secPubs.items) && secPubs.items.length > 0) {
+      s.publications = secPubs.items;
+    }
   }
 
-  return state;
+  return s;
 }

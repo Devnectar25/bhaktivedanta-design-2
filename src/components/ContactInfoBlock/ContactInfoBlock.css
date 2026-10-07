@@ -9,7 +9,7 @@
 }
 
 .contact-info-block.variant-compact {
-  padding: 14px 18px;
+  padding: 0;
   box-shadow: none;
   background: #F8FAFC;
 }
@@ -19,23 +19,24 @@
 }
 
 .contact-info-header {
-  background: #F1F5F9;
+  background: linear-gradient(135deg, #132A4C 0%, #1E3A8A 100%);
   padding: 12px 18px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .contact-info-header-icon {
-  color: #E8792B;
+  color: #FFA94D;
 }
 
+.contact-info-block .contact-info-title,
 .contact-info-title {
   font-family: 'Inter', sans-serif;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #132A4C;
+  color: #FFFFFF !important;
   margin: 0;
 }
 

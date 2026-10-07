@@ -10,7 +10,9 @@ import {
   getSpecialitiesState,
   getServicesState,
   getPatientCornerState,
-  getSpiritualCareState
+  getSpiritualCareState,
+  getBlogs,
+  getNews
 } from '../../utils/api';
 import { defaultSpecialitiesState, ensureStandardTabs } from '../../data/defaultSpecialities';
 import { defaultServicesState, ensureStandardServiceTabs } from '../../data/defaultServices';
@@ -31,10 +33,15 @@ export const createSlug = (text) => {
 };
 
 export default function DetailPage({ module = 'specialities' }) {
-  const { slug, id } = useParams();
-  const activeSlug = (slug || id || '').toLowerCase().trim();
+  const { slug, id, section, sectionSlug } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const pathSlug = pathSegments[pathSegments.length - 1] || '';
+  const effectiveSection = (section || sectionSlug || (pathSegments.length > 2 ? pathSegments[1] : '')).toLowerCase().trim();
+  const rawSlug = slug || id || (pathSlug && !['patients-corner', 'patient-corner', 'specialities', 'services', 'spiritual-care'].includes(pathSlug.toLowerCase()) ? pathSlug : '');
+  const activeSlug = rawSlug.toLowerCase().trim();
 
   const [loading, setLoading] = useState(true);
   const [itemData, setItemData] = useState(null);
@@ -144,6 +151,188 @@ export default function DetailPage({ module = 'specialities' }) {
           setCategoryName('Healthcare Services');
         }
       } else if (effectiveModule === 'patients-corner') {
+        // 1. Patient Corner Blogs Listing: /patients-corner/blogs
+        const isBlogsList = (!effectiveSection && (activeSlug === 'blogs' || activeSlug === 'blog'));
+        if (isBlogsList) {
+          const blogs = await getBlogs([]);
+          const publishedBlogs = (Array.isArray(blogs) ? blogs : []).filter(b =>
+            String(b.status || 'Published').toLowerCase() === 'published'
+          );
+
+          const blogCards = publishedBlogs.map((b) => ({
+            id: b.id || (b.slug ? b.slug : createSlug(b.title)),
+            title: b.title || 'Untitled Blog',
+            description: b.summary || (typeof b.content === 'string' ? b.content.replace(/<[^>]+>/g, '').slice(0, 160) + '...' : ''),
+            image: b.image || 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=800',
+            badge: b.category || 'Health Blog',
+            duration: `${b.readTime || '5 min read'}${b.date ? ` • ${b.date}` : ''}`,
+            route: `/patients-corner/blogs/${b.slug || b.id || createSlug(b.title)}`,
+            to: `/patients-corner/blogs/${b.slug || b.id || createSlug(b.title)}`,
+            ctaText: 'Read Article',
+            detailPage: {
+              title: b.title,
+              subtitle: `By ${b.author || 'Editorial Team'}${b.authorRole ? ` (${b.authorRole})` : ''} • ${b.date || ''} • ${b.readTime || '5 min read'}`,
+              category: b.category || 'Health Blog',
+              bannerImage: '',
+              blocks: [
+                {
+                  id: 'blog-content',
+                  type: 'rich_text',
+                  content: b.content || `<p>${b.summary || ''}</p>`
+                }
+              ]
+            }
+          }));
+
+          const blogsPageData = {
+            id: 'patient-corner-blogs',
+            name: 'Health Blogs & Articles',
+            title: 'Health Blogs & Articles',
+            category: 'Patient Corner',
+            categoryName: 'Patient Corner',
+            shortDescription: 'Stay informed with healthcare insights, medical advice, wellness tips, and patient stories from our expert clinicians.',
+            bannerImage: '',
+            hideBanner: true,
+            layout: 'card-grid',
+            isSpiritualCare: true,
+            cards: blogCards
+          };
+          setItemData(blogsPageData);
+          setCategoryName('Patient Corner');
+          return;
+        }
+
+        // 2. Patient Corner Announcements Listing: /patients-corner/announcements
+        const isAnnouncementsList = (!effectiveSection && (activeSlug === 'announcements' || activeSlug === 'announcement' || activeSlug === 'hospital-announcements'));
+        if (isAnnouncementsList) {
+          const news = await getNews([]);
+          const publishedAnnouncements = (Array.isArray(news) ? news : []).filter(n => {
+            const cat = String(n.category || '').toLowerCase();
+            const status = String(n.status || 'Published').toLowerCase();
+            return (cat === 'announcements' || cat === 'announcement' || cat === 'hospital announcements') &&
+                   (status === 'published' || status === 'active');
+          });
+
+          const announcementCards = publishedAnnouncements.map((n) => ({
+            id: n.id || (n.slug ? n.slug : createSlug(n.title)),
+            title: n.title || 'Untitled Announcement',
+            description: n.summary || (typeof n.content === 'string' ? n.content.replace(/<[^>]+>/g, '').slice(0, 160) + '...' : ''),
+            image: n.image || 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
+            badge: n.category || 'Announcement',
+            duration: `${n.date || ''}${n.readTime ? ` • ${n.readTime}` : ''}`,
+            route: `/patients-corner/announcements/${n.slug || n.id || createSlug(n.title)}`,
+            to: `/patients-corner/announcements/${n.slug || n.id || createSlug(n.title)}`,
+            ctaText: 'View Announcement',
+            detailPage: {
+              title: n.title,
+              subtitle: `By ${n.author || 'Hospital Management'}${n.authorRole ? ` (${n.authorRole})` : ''} • ${n.date || ''}`,
+              category: n.category || 'Announcements',
+              bannerImage: '',
+              blocks: [
+                {
+                  id: 'announcement-content',
+                  type: 'rich_text',
+                  content: n.content || `<p>${n.summary || ''}</p>`
+                }
+              ]
+            }
+          }));
+
+          const announcementsPageData = {
+            id: 'patient-corner-announcements',
+            name: 'Hospital Announcements',
+            title: 'Hospital Announcements',
+            category: 'Patient Corner',
+            categoryName: 'Patient Corner',
+            shortDescription: 'Important announcements, public notices, patient alerts, and administrative updates from Bhaktivedanta Hospital & Research Institute.',
+            bannerImage: '',
+            hideBanner: true,
+            layout: 'card-grid',
+            isSpiritualCare: true,
+            cards: announcementCards
+          };
+          setItemData(announcementsPageData);
+          setCategoryName('Patient Corner');
+          return;
+        }
+
+        // 3. Individual Blog Detail: /patients-corner/blogs/:slug
+        const isBlogDetail = (effectiveSection === 'blogs' || effectiveSection === 'blog');
+        if (isBlogDetail) {
+          const blogs = await getBlogs([]);
+          const targetNorm = activeSlug.replace(/-/g, ' ');
+          const matchedBlog = (Array.isArray(blogs) ? blogs : []).find(b => {
+            const bSlug = (b.slug || createSlug(b.title)).toLowerCase().trim();
+            const bTitleNorm = (b.title || '').toLowerCase().trim();
+            return bSlug === activeSlug || b.id === activeSlug || bTitleNorm === targetNorm || bTitleNorm === activeSlug;
+          });
+
+          if (matchedBlog) {
+            const blogDetailPayload = {
+              id: matchedBlog.id || `blog-${activeSlug}`,
+              title: matchedBlog.title || 'Blog Article',
+              name: matchedBlog.title || 'Blog Article',
+              category: matchedBlog.category || 'Health Blog',
+              categoryName: 'Patient Corner',
+              bannerImage: '',
+              hideBanner: true,
+              shortDescription: matchedBlog.summary || (matchedBlog.author ? `By ${matchedBlog.author}${matchedBlog.authorRole ? ` (${matchedBlog.authorRole})` : ''} • ${matchedBlog.date || ''} • ${matchedBlog.readTime || '5 min read'}` : ''),
+              tabs: [
+                {
+                  id: 'tab-blog-body',
+                  title: 'Article Details',
+                  label: 'Article Details',
+                  type: 'rich_text',
+                  content: matchedBlog.content || `<p>${matchedBlog.summary || ''}</p>`
+                }
+              ]
+            };
+            ensureStandardPatientCornerTabs(blogDetailPayload);
+            setItemData(blogDetailPayload);
+            setCategoryName('Patient Corner');
+            return;
+          }
+        }
+
+        // 4. Individual Announcement Detail: /patients-corner/announcements/:slug
+        const isAnnouncementDetail = (effectiveSection === 'announcements' || effectiveSection === 'announcement');
+        if (isAnnouncementDetail) {
+          const news = await getNews([]);
+          const targetNorm = activeSlug.replace(/-/g, ' ');
+          const matchedNews = (Array.isArray(news) ? news : []).find(n => {
+            const nSlug = (n.slug || createSlug(n.title)).toLowerCase().trim();
+            const nTitleNorm = (n.title || '').toLowerCase().trim();
+            return nSlug === activeSlug || n.id === activeSlug || nTitleNorm === targetNorm || nTitleNorm === activeSlug;
+          });
+
+          if (matchedNews) {
+            const announcementDetailPayload = {
+              id: matchedNews.id || `announcement-${activeSlug}`,
+              title: matchedNews.title || 'Hospital Announcement',
+              name: matchedNews.title || 'Hospital Announcement',
+              category: matchedNews.category || 'Announcements',
+              categoryName: 'Patient Corner',
+              bannerImage: '',
+              hideBanner: true,
+              shortDescription: matchedNews.summary || (matchedNews.author ? `By ${matchedNews.author}${matchedNews.authorRole ? ` (${matchedNews.authorRole})` : ''} • ${matchedNews.date || ''}` : ''),
+              tabs: [
+                {
+                  id: 'tab-announcement-body',
+                  title: 'Announcement Details',
+                  label: 'Announcement Details',
+                  type: 'rich_text',
+                  content: matchedNews.content || `<p>${matchedNews.summary || ''}</p>`
+                }
+              ]
+            };
+            ensureStandardPatientCornerTabs(announcementDetailPayload);
+            setItemData(announcementDetailPayload);
+            setCategoryName('Patient Corner');
+            return;
+          }
+        }
+
+        // 5. Patient Corner Guides (Admission, Empanelled, Rights, Visiting Hours, International, Discharge)
         const res = await getPatientCornerState(defaultPatientCornerState);
         const guides = res?.guides || defaultPatientCornerState.guides || [];
 
@@ -254,7 +443,7 @@ export default function DetailPage({ module = 'specialities' }) {
       window.removeEventListener('storage', handleSync);
       window.removeEventListener('admin_data_updated', handleSync);
     };
-  }, [activeSlug, effectiveModule]);
+  }, [activeSlug, effectiveSection, effectiveModule, location.pathname]);
 
   // Normalize data using the modal's standard normalizer
   const normalized = useMemo(() => {
@@ -306,7 +495,7 @@ export default function DetailPage({ module = 'specialities' }) {
 
   // Data-driven banner image
   const bannerImage = useMemo(() => {
-    if (!itemData) return '';
+    if (!itemData || itemData.hideBanner) return '';
     return (
       itemData.bannerImage ||
       itemData.banner_image ||
@@ -429,33 +618,35 @@ export default function DetailPage({ module = 'specialities' }) {
           )}
 
           {/* Top Banner Image Frame */}
-          <div className="detail-banner-frame">
-            {bannerImage ? (
-              <img
-                src={bannerImage}
-                alt={itemTitle}
-                className="detail-banner-img"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  const fb = e.target.parentElement.querySelector('.detail-banner-fallback');
-                  if (fb) fb.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div
-              className="detail-banner-fallback"
-              style={{ display: bannerImage ? 'none' : 'flex' }}
-            >
-              <div className="detail-fallback-watermark" aria-hidden="true">
-                <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.06)" strokeWidth="12" />
-                  <path d="M100 40 V160 M40 100 H160" stroke="rgba(255,255,255,0.08)" strokeWidth="16" strokeLinecap="round" />
-                </svg>
+          {!itemData?.hideBanner && (
+            <div className="detail-banner-frame">
+              {bannerImage ? (
+                <img
+                  src={bannerImage}
+                  alt={itemTitle}
+                  className="detail-banner-img"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    const fb = e.target.parentElement.querySelector('.detail-banner-fallback');
+                    if (fb) fb.style.display = 'flex';
+                  }}
+                />
+              ) : null}
+              <div
+                className="detail-banner-fallback"
+                style={{ display: bannerImage ? 'none' : 'flex' }}
+              >
+                <div className="detail-fallback-watermark" aria-hidden="true">
+                  <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.06)" strokeWidth="12" />
+                    <path d="M100 40 V160 M40 100 H160" stroke="rgba(255,255,255,0.08)" strokeWidth="16" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <span className="detail-fallback-badge">{displayCategory}</span>
+                <h2 className="detail-fallback-title">{itemTitle}</h2>
               </div>
-              <span className="detail-fallback-badge">{displayCategory}</span>
-              <h2 className="detail-fallback-title">{itemTitle}</h2>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -489,6 +680,39 @@ export default function DetailPage({ module = 'specialities' }) {
         <div className="detail-container">
           <div className="detail-content-card">
             {activeTabObj && <TabContentRenderer tab={activeTabObj} />}
+
+            {/* Back button at the bottom for blog and announcement detail pages */}
+            {(effectiveSection === 'blogs' || effectiveSection === 'blog' || effectiveSection === 'announcements' || effectiveSection === 'announcement') && (
+              <div style={{ marginTop: 36, paddingTop: 20, borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-start' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (effectiveSection === 'blogs' || effectiveSection === 'blog') {
+                      navigate('/patients-corner/blogs');
+                    } else {
+                      navigate('/patients-corner/announcements');
+                    }
+                  }}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '10px 18px',
+                    borderRadius: 10,
+                    background: '#F1F5F9',
+                    border: '1px solid #CBD5E1',
+                    color: '#334155',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Back</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>

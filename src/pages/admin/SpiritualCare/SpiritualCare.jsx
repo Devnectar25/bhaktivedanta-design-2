@@ -175,7 +175,7 @@ export default function SpiritualCare() {
   // Update Dynamic Section
   const handleUpdateDynamicSection = async (updatedSection) => {
     const updatedSections = sections.map(s => s.id === updatedSection.id ? updatedSection : s);
-    const updatedState = { ...state, sections: updatedSections };
+    const updatedState = ensureStandardSpiritualSections({ ...state, sections: updatedSections });
     setState(updatedState);
     await saveSpiritualCareState(updatedState);
     window.dispatchEvent(new Event('admin_data_updated'));
@@ -188,7 +188,7 @@ export default function SpiritualCare() {
     if (!res.isConfirmed) return;
 
     const updatedSections = sections.filter(s => s.id !== sectionId);
-    const updatedState = { ...state, sections: updatedSections };
+    const updatedState = ensureStandardSpiritualSections({ ...state, sections: updatedSections });
     setState(updatedState);
     await saveSpiritualCareState(updatedState);
     window.dispatchEvent(new Event('admin_data_updated'));

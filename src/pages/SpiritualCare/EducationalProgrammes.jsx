@@ -11,8 +11,9 @@ export default function EducationalProgrammes() {
 
   const fetchState = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.programmes && res.programmes.length > 0) {
-        setProgrammes(res.programmes);
+      const data = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (data && Array.isArray(data.programmes)) {
+        setProgrammes(data.programmes);
       }
     });
   };

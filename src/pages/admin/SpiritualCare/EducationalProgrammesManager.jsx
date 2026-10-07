@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getSpiritualCareState, saveSpiritualCareState } from '../../../utils/api';
 import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
-import AlertModal from '../../../components/admin/AlertModal/AlertModal';
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
+import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
 const BLOCK_TYPES = [
   { type: 'heading', label: 'Heading (H2 / H3)', icon: 'title', color: 'blue' },
@@ -52,16 +51,25 @@ export default function EducationalProgrammesManager() {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isUploadingCardImage, setIsUploadingCardImage] = useState(false);
 
-  const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, targetId: null, title: '' });
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchProgrammesData = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.programmes && res.programmes.length > 0) {
-        setProgrammes(res.programmes);
+      const unwrapped = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (unwrapped && Array.isArray(unwrapped.programmes) && unwrapped.programmes.length > 0) {
+        setProgrammes(unwrapped.programmes);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchProgrammesData();
+    window.addEventListener('storage', fetchProgrammesData);
+    window.addEventListener('admin_data_updated', fetchProgrammesData);
+    return () => {
+      window.removeEventListener('storage', fetchProgrammesData);
+      window.removeEventListener('admin_data_updated', fetchProgrammesData);
+    };
   }, []);
 
   const currentProg = programmes.find(p => p.id === selectedProgId) || programmes[0];
@@ -99,21 +107,18 @@ export default function EducationalProgrammesManager() {
     setSelectedProgId(newId);
   };
 
-  const handleDeleteProgRequest = (prog, e) => {
+  const handleDeleteProgRequest = async (prog, e) => {
     if (e) e.stopPropagation();
-    setDeleteModal({
-      isOpen: true,
-      targetId: prog.id,
-      title: prog.title || 'Educational Programme'
-    });
-  };
+    const res = await showConfirmDialog(
+      'Delete Programme?',
+      `Are you sure you want to delete "${prog.title || 'Educational Programme'}"?`,
+      'Delete'
+    );
+    if (!res.isConfirmed) return;
 
-  const handleConfirmDelete = async () => {
-    if (!deleteModal.targetId) return;
-    const targetId = deleteModal.targetId;
+    const targetId = prog.id;
     const updated = programmes.filter(p => p.id !== targetId);
     setProgrammes(updated);
-    setDeleteModal({ isOpen: false, targetId: null, title: '' });
 
     if (selectedProgId === targetId) {
       setSelectedProgId(updated.length > 0 ? updated[0].id : null);
@@ -125,18 +130,25 @@ export default function EducationalProgrammesManager() {
         ...fullState,
         programmes: updated
       };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'educational-programmes' || sec.id === 'programmes') {
+            return {
+              ...sec,
+              cards: updated
+            };
+          }
+          return sec;
+        });
+      }
       await saveSpiritualCareState(updatedFullState);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
+      await showSuccessAlert('Deleted', 'Educational programme deleted successfully.');
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
-      setAlertModal({
-        isOpen: true,
-        title: 'Delete Failed',
-        message: err.message || 'Unable to delete programme from database.',
-        type: 'error'
-      });
+      await showErrorAlert('Delete Failed', err.message || 'Unable to delete programme from database.');
     }
   };
 
@@ -157,26 +169,27 @@ export default function EducationalProgrammesManager() {
         ...fullState,
         programmes
       };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'educational-programmes' || sec.id === 'programmes') {
+            return {
+              ...sec,
+              cards: programmes
+            };
+          }
+          return sec;
+        });
+      }
       await saveSpiritualCareState(updatedFullState);
       setSaving(false);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-      setAlertModal({
-        isOpen: true,
-        title: 'Programmes Saved',
-        message: 'All educational programmes and block content updated successfully.',
-        type: 'success'
-      });
+      await showSuccessAlert('Programmes Saved', 'All educational programmes and block content updated successfully.');
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
       setSaving(false);
-      setAlertModal({
-        isOpen: true,
-        title: 'Save Failed',
-        message: err.message || 'Unable to save programmes. Please try again.',
-        type: 'error'
-      });
+      await showErrorAlert('Save Failed', err.message || 'Unable to save programmes. Please try again.');
     }
   };
 
@@ -964,25 +977,6 @@ export default function EducationalProgrammesManager() {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={deleteModal.isOpen}
-        title="Delete Programme?"
-        message={`Are you sure you want to delete "${deleteModal.title}"?`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={handleConfirmDelete}
-        onCancel={() => setDeleteModal({ isOpen: false, targetId: null, title: '' })}
-        onClose={() => setDeleteModal({ isOpen: false, targetId: null, title: '' })}
-      />
-
-      <AlertModal
-        isOpen={alertModal.isOpen}
-        title={alertModal.title}
-        message={alertModal.message}
-        type={alertModal.type}
-        onClose={() => setAlertModal(p => ({ ...p, isOpen: false }))}
-      />
     </div>
   );
 }

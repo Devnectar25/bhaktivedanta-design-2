@@ -280,6 +280,39 @@ export const deleteBlog = (id) => apiMutation(`/blogs/${id}`, 'DELETE', null, 'b
   return list.filter(item => item.id !== id);
 });
 
+// Patient Corner & Blogs/Announcements image upload to Supabase Storage
+export const uploadPatientCornerImage = async (file, folderName = '') => {
+  if (!file) return null;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64Data = reader.result;
+        const res = await fetch(`${API_BASE_URL}/upload`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fileName: file.name,
+            base64Data,
+            bucketName: 'patient-corner-images',
+            folderName
+          })
+        });
+        const data = await res.json();
+        if (res.ok && data.success && data.url) {
+          resolve(data.url);
+        } else {
+          reject(new Error(data.error || 'Failed to upload image to patient-corner-images bucket'));
+        }
+      } catch (err) {
+        reject(err);
+      }
+    };
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+};
+
 
 // Gallery
 export const getGallery = (fallback) => apiGet('/gallery', 'bhaktivedanta_admin_gallery', fallback);
@@ -378,13 +411,36 @@ export const getPatientCornerGuideById = async (id, fallback) => {
 
 // Guide helpers for Patients Corner
 export const createPatientCornerGuide = (guideData) =>
-  apiMutation('/patient-corner/guides', 'POST', guideData, 'bhaktivedanta_patient_corner_state');
+  apiMutation('/patient-corner/guides', 'POST', guideData, 'bhaktivedanta_patient_corner_state', (oldState, newResult) => {
+    const currentState = (oldState && typeof oldState === 'object' && Array.isArray(oldState.guides))
+      ? oldState
+      : { categories: [], guides: [] };
+    const newGuide = newResult?.guide || newResult || guideData;
+    const guides = [newGuide, ...(currentState.guides || []).filter(g => g.id !== newGuide.id)];
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return { ...currentState, guides };
+  });
 
 export const updatePatientCornerGuide = (id, guideData) =>
-  apiMutation(`/patient-corner/guides/${id}`, 'PUT', guideData, 'bhaktivedanta_patient_corner_state');
+  apiMutation(`/patient-corner/guides/${id}`, 'PUT', guideData, 'bhaktivedanta_patient_corner_state', (oldState, updatedResult) => {
+    const currentState = (oldState && typeof oldState === 'object' && Array.isArray(oldState.guides))
+      ? oldState
+      : { categories: [], guides: [] };
+    const updatedGuide = updatedResult?.guide || updatedResult || guideData;
+    const guides = (currentState.guides || []).map(g => g.id === id ? { ...g, ...updatedGuide } : g);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return { ...currentState, guides };
+  });
 
 export const deletePatientCornerGuide = (id) =>
-  apiMutation(`/patient-corner/guides/${id}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state');
+  apiMutation(`/patient-corner/guides/${id}`, 'DELETE', null, 'bhaktivedanta_patient_corner_state', (oldState) => {
+    const currentState = (oldState && typeof oldState === 'object' && Array.isArray(oldState.guides))
+      ? oldState
+      : { categories: [], guides: [] };
+    const guides = (currentState.guides || []).filter(g => g.id !== id);
+    window.dispatchEvent(new Event('admin_data_updated'));
+    return { ...currentState, guides };
+  });
 
 // Tab helpers for Patients Corner
 export const addPatientCornerTab = (guideId, tabData) =>
@@ -513,11 +569,27 @@ export const deleteEducationProgram = (id) =>
   });
 
 // Spiritual Care State
-export const getSpiritualCareState = (fallback) =>
-  apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
+export const getSpiritualCareState = async (fallback) => {
+  const res = await apiGet('/spiritual-care', 'bhaktivedanta_spiritual_care_state', fallback);
+  const unwrapped = (res && res.data && typeof res.data === 'object' && (res.data.services || res.data.sections || res.data.programmes || res.data.retreats))
+    ? res.data
+    : res;
+  return unwrapped || fallback;
+};
 
-export const saveSpiritualCareState = (state) =>
-  apiMutation('/spiritual-care', 'PUT', state, 'bhaktivedanta_spiritual_care_state', (old, updated) => updated);
+export const saveSpiritualCareState = async (state) => {
+  const payload = (state && state.data && typeof state.data === 'object' && (state.data.services || state.data.sections || state.data.programmes || state.data.retreats))
+    ? state.data
+    : state;
+  const res = await apiMutation('/spiritual-care', 'PUT', payload, 'bhaktivedanta_spiritual_care_state', (old, updated) => {
+    const unwrapped = (updated && updated.data && typeof updated.data === 'object') ? updated.data : updated;
+    return unwrapped || payload;
+  });
+  window.dispatchEvent(new Event('admin_data_updated'));
+  window.dispatchEvent(new Event('storage'));
+  const unwrapped = (res && res.data && typeof res.data === 'object') ? res.data : res;
+  return unwrapped || payload;
+};
 
 // ── About Us State & Database Flow ──────────────────────────────────────────
 

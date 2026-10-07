@@ -124,35 +124,21 @@
 
 /* Acronym Section */
 .spiritual-acronym-section {
-  background: #F8FAFC;
-  border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  padding: 24px 28px;
-  margin: 28px 0;
-}
-
-/* 2-Column Text & Narrative Grid */
-.spiritual-text-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 28px;
-  margin-top: 24px;
-}
-
-.spiritual-narrative-card {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  padding: 26px;
-  box-shadow: 0 4px 14px rgba(19, 42, 76, 0.04);
+  border-top: 4px solid #E8792B;
+  border-radius: 18px;
+  padding: 30px 32px;
+  margin: 32px 0;
+  box-shadow: 0 4px 20px rgba(19, 42, 76, 0.05);
 }
 
-.spiritual-card-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: #132A4C;
-  margin: 0 0 14px;
+.spiritual-contact-wrapper {
+  margin-top: 28px;
+}
+
+.spiritual-services-footer-contact {
+  margin-top: 28px;
 }
 
 /* Two-Column Services Grid */
@@ -270,6 +256,13 @@
   gap: 28px;
 }
 
+/* Publications Grid */
+.spiritual-publications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+  gap: 20px;
+}
+
 /* Retreats Activity Grid */
 .spiritual-retreats-grid {
   display: grid;
@@ -279,6 +272,11 @@
 }
 
 /* Responsive */
+@media (max-width: 640px) {
+  .spiritual-publications-grid {
+    grid-template-columns: 1fr;
+  }
+}
 @media (max-width: 768px) {
   .spiritual-hero-banner {
     padding: 30px 20px;

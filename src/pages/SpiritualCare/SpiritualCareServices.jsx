@@ -13,8 +13,9 @@ export default function SpiritualCareServices() {
 
   const fetchState = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.services) {
-        setServicesData(res.services);
+      const data = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (data && data.services) {
+        setServicesData(data.services);
       }
     });
   };
@@ -91,47 +92,26 @@ export default function SpiritualCareServices() {
               />
             </div>
 
-            <div className="spiritual-text-columns">
-              <div className="spiritual-narrative-card">
-                <h3 className="spiritual-card-title">A Sanctuary of Multi-Faith Compassion</h3>
-                <p className="spiritual-body-text">
-                  Our spiritual counselors respect and honor all faiths, spiritual traditions, and personal beliefs. Whether offering Vedic chants, silent meditation, scripture reading, or simply a listening heart during moments of distress, our team is dedicated to bringing peace and reassurance to every bedside.
-                </p>
-                <p className="spiritual-body-text">
-                  Studies have demonstrated that patients who receive active spiritual care experience reduced pre-operative anxiety, lower pain perception, enhanced coping mechanisms, and improved recovery timelines.
-                </p>
-              </div>
-
-              <div className="spiritual-narrative-card">
-                <h3 className="spiritual-card-title">24x7 Support For Families & Caregivers</h3>
-                <p className="spiritual-body-text">
-                  Hospitalization can be emotionally exhausting for families. Our team provides continuous support to attendants, helping them remain positive, resilient, and peaceful through personalized counseling and pastoral accompaniment.
-                </p>
+            {contact && (
+              <div className="spiritual-contact-wrapper">
                 <ContactInfoBlock
-                  title={contact?.title || 'Spiritual Care Helpline'}
-                  phones={contact?.phones || ['+91 22 2845 6000']}
-                  emergencyPhone={contact?.emergencyPhone || '+91 22 2845 8000'}
-                  days={contact?.days || 'Monday – Sunday (24x7 Available)'}
-                  timings={contact?.timings || 'Bedside rounds: 8:00 AM – 8:00 PM | Emergency Chaplaincy: 24 Hours'}
-                  location={contact?.location || 'Ground Floor, Spiritual Care Central Desk'}
-                  email={contact?.email || 'spiritualcare@bhaktivedantahospital.com'}
-                  note={contact?.note || 'Our pastoral team is on-call 24 hours a day for ICU and emergency support.'}
+                  title={contact.title}
+                  phones={contact.phones}
+                  emergencyPhone={contact.emergencyPhone}
+                  days={contact.days}
+                  timings={contact.timings}
+                  location={contact.location}
+                  email={contact.email}
+                  note={contact.note}
                   variant="compact"
                 />
               </div>
-            </div>
+            )}
           </div>
         )}
 
         {activeTab === 'Services Offered' && (
           <div className="spiritual-services-panel">
-            <div className="spiritual-section-header">
-              <h2 className="spiritual-section-title">Comprehensive Spiritual & Pastoral Offerings</h2>
-              <p className="spiritual-body-text">
-                Explore the diverse supportive and therapeutic spiritual services available across all outpatient and inpatient departments:
-              </p>
-            </div>
-
             {/* 2-Column Bullet List Grid */}
             <div className="spiritual-two-col-grid">
               {/* Column 1: Patient Support Services */}
@@ -185,19 +165,22 @@ export default function SpiritualCareServices() {
               </div>
             </div>
 
-            {/* Contact Information */}
-            <div className="spiritual-services-footer-contact">
-              <ContactInfoBlock
-                title="Book a Spiritual Counseling Session"
-                phones={contact?.phones || ['+91 22 2845 6000']}
-                days={contact?.days || 'Monday – Saturday'}
-                timings={contact?.timings || '9:00 AM – 6:00 PM'}
-                location={contact?.location || 'Spiritual Care Center, 2nd Floor, Wing B'}
-                email={contact?.email || 'counseling@bhaktivedantahospital.com'}
-                note="Inpatients can request a counselor through the bedside nurse call bell anytime."
-                variant="card"
-              />
-            </div>
+            {/* Dynamic Contact Information */}
+            {contact && (
+              <div className="spiritual-services-footer-contact">
+                <ContactInfoBlock
+                  title={contact.title}
+                  phones={contact.phones}
+                  emergencyPhone={contact.emergencyPhone}
+                  days={contact.days}
+                  timings={contact.timings}
+                  location={contact.location}
+                  email={contact.email}
+                  note={contact.note}
+                  variant="card"
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

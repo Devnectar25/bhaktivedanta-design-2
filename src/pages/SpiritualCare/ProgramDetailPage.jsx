@@ -12,8 +12,9 @@ export default function ProgramDetailPage() {
 
   const fetchState = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.programmes) {
-        setProgrammes(res.programmes);
+      const data = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (data && Array.isArray(data.programmes)) {
+        setProgrammes(data.programmes);
       }
     });
   };
@@ -45,19 +46,17 @@ export default function ProgramDetailPage() {
     ]
   };
 
-  const breadcrumbs = [
-    { label: 'Spiritual Care', to: '/spiritual-care/spiritual-care-services' },
-    { label: 'Educational Programmes', to: '/spiritual-care/educational-programmes' },
-    { label: prog?.title || slug }
-  ];
-
   return (
     <FlexibleDetailPage
       title={detailPage.title || prog?.title}
       subtitle={detailPage.subtitle || prog?.description}
       category={detailPage.category || 'Educational Programmes'}
       bannerImage={detailPage.bannerImage || prog?.image}
-      breadcrumbs={breadcrumbs}
+      breadcrumbs={[]}
+      hideTopBack={true}
+      showTopBar={false}
+      showBottomBack={true}
+      bottomBackText="Back to Educational Programmes"
       blocks={detailPage.blocks || []}
       onBack={() => navigate('/spiritual-care/educational-programmes')}
     />

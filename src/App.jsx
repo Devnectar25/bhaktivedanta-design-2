@@ -122,6 +122,10 @@ function App() {
           <Route path="/specialities/:slug" element={<DetailPage module="specialities" />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<DetailPage module="services" />} />
+          <Route path="/patients-corner/blogs" element={<DetailPage module="patients-corner" />} />
+          <Route path="/patients-corner/announcements" element={<DetailPage module="patients-corner" />} />
+          <Route path="/patients-corner/:section/:slug" element={<DetailPage module="patients-corner" />} />
+          <Route path="/patient-corner/:section/:slug" element={<DetailPage module="patients-corner" />} />
           <Route path="/patients-corner/:slug" element={<DetailPage module="patients-corner" />} />
           <Route path="/patient-corner/:slug" element={<DetailPage module="patients-corner" />} />
 

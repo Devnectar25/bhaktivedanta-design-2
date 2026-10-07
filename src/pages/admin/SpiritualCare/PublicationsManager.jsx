@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getSpiritualCareState, saveSpiritualCareState } from '../../../utils/api';
 import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
-import AlertModal from '../../../components/admin/AlertModal/AlertModal';
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
+import { showSuccessAlert, showErrorAlert, showConfirmDialog } from '../../../utils/swal';
 
 const uploadSpiritualCareImage = async (file, itemName = 'spiritual-publication') => {
   if (!file) return null;
@@ -43,16 +42,23 @@ export default function PublicationsManager() {
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Delete modal state
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, targetId: null, title: '' });
-  const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
-
-  useEffect(() => {
+  const fetchPublicationsData = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.publications) {
-        setPublications(res.publications);
+      const unwrapped = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (unwrapped && Array.isArray(unwrapped.publications)) {
+        setPublications(unwrapped.publications);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchPublicationsData();
+    window.addEventListener('storage', fetchPublicationsData);
+    window.addEventListener('admin_data_updated', fetchPublicationsData);
+    return () => {
+      window.removeEventListener('storage', fetchPublicationsData);
+      window.removeEventListener('admin_data_updated', fetchPublicationsData);
+    };
   }, []);
 
   const handleOpenAdd = () => {
@@ -83,12 +89,7 @@ export default function PublicationsManager() {
   const handleSavePaper = async (e) => {
     e.preventDefault();
     if (!editingPaper.title.trim()) {
-      setAlertModal({
-        isOpen: true,
-        title: 'Validation Error',
-        message: 'Please provide a title for the research publication.',
-        type: 'error'
-      });
+      await showErrorAlert('Validation Error', 'Please provide a title for the research publication.');
       return;
     }
 
@@ -109,38 +110,66 @@ export default function PublicationsManager() {
         ...fullState,
         publications: updatedPubs
       };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'publications') {
+            return {
+              ...sec,
+              items: updatedPubs
+            };
+          }
+          return sec;
+        });
+      }
       await saveSpiritualCareState(updatedFullState);
       setSaving(false);
       setIsModalOpen(false);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
+      await showSuccessAlert('Publication Saved', 'Research publication paper updated successfully.');
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
       setSaving(false);
-      setAlertModal({
-        isOpen: true,
-        title: 'Error Saving Paper',
-        message: err.message || 'Could not save the publication paper. Please try again.',
-        type: 'error'
-      });
+      await showErrorAlert('Error Saving Paper', err.message || 'Could not save the publication paper. Please try again.');
     }
   };
 
-  const confirmDelete = async () => {
-    if (!deleteModal.targetId) return;
-    const updated = publications.filter(p => p.id !== deleteModal.targetId);
-    setPublications(updated);
-    setDeleteModal({ isOpen: false, targetId: null, title: '' });
+  const handleDeletePublication = async (paper) => {
+    const res = await showConfirmDialog(
+      'Delete Publication Paper?',
+      `Are you sure you want to permanently delete "${paper.title}"?`,
+      'Delete'
+    );
+    if (!res.isConfirmed) return;
 
-    const fullState = await getSpiritualCareState(defaultSpiritualCareState);
-    const updatedFullState = {
-      ...fullState,
-      publications: updated
-    };
-    await saveSpiritualCareState(updatedFullState);
-    window.dispatchEvent(new Event('admin_data_updated'));
-    window.dispatchEvent(new Event('storage'));
+    const updated = publications.filter(p => p.id !== paper.id);
+    setPublications(updated);
+
+    try {
+      const fullState = await getSpiritualCareState(defaultSpiritualCareState);
+      const updatedFullState = {
+        ...fullState,
+        publications: updated
+      };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'publications') {
+            return {
+              ...sec,
+              items: updated
+            };
+          }
+          return sec;
+        });
+      }
+      await saveSpiritualCareState(updatedFullState);
+      await showSuccessAlert('Deleted', 'Publication paper deleted successfully.');
+      window.dispatchEvent(new Event('admin_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+    } catch (err) {
+      await showErrorAlert('Delete Failed', err.message || 'Unable to delete publication.');
+    }
   };
 
   const filtered = publications.filter(p =>
@@ -239,7 +268,7 @@ export default function PublicationsManager() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setDeleteModal({ isOpen: true, targetId: paper.id, title: paper.title })}
+                      onClick={() => handleDeletePublication(paper)}
                       className="text-red-500 hover:text-red-700 font-bold px-2.5 py-1 rounded-md bg-red-50 hover:bg-red-100 transition-colors text-xs"
                     >
                       Delete
@@ -404,22 +433,6 @@ export default function PublicationsManager() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={deleteModal.isOpen}
-        title="Delete Publication Paper?"
-        message={`Are you sure you want to permanently delete "${deleteModal.title}"?`}
-        onConfirm={confirmDelete}
-        onCancel={() => setDeleteModal({ isOpen: false, targetId: null, title: '' })}
-      />
-
-      <AlertModal
-        isOpen={alertModal.isOpen}
-        title={alertModal.title}
-        message={alertModal.message}
-        type={alertModal.type}
-        onClose={() => setAlertModal(p => ({ ...p, isOpen: false }))}
-      />
     </div>
   );
 }

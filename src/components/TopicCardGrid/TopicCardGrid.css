@@ -21,7 +21,7 @@
 
 .topic-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
@@ -29,8 +29,16 @@
   grid-template-columns: 1fr;
 }
 
+.topic-card-grid.columns-2 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
 .topic-card-grid.columns-3 {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.topic-card-grid.columns-4 {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .topic-card {
@@ -110,6 +118,9 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .topic-bullet-icon {
@@ -139,6 +150,9 @@
 .topic-bullet-text-wrapper {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 .topic-bullet-text {
@@ -147,6 +161,8 @@
   color: #1E293B;
   line-height: 1.5;
   font-weight: 500;
+  white-space: normal;
+  word-break: normal;
 }
 
 .topic-bullet-note {
@@ -155,6 +171,8 @@
   color: #64748B;
   margin-top: 2px;
   line-height: 1.4;
+  white-space: normal;
+  word-break: normal;
 }
 
 .topic-card-empty {
