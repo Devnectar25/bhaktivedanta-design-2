@@ -18,36 +18,24 @@ export const BADGE_ICONS_LIST = [
   { key: 'check_circle', icon: 'check_circle', label: 'Quality Verified' },
 ];
 
-export const uploadMediaFileHelper = async (file, isVideo = false, endpoint = 'http://localhost:5000/api/services/upload') => {
+export const uploadMediaFileHelper = async (file, isVideo = false, endpoint = null, folderName = '') => {
   if (!file) return null;
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = async () => {
       const base64Data = reader.result;
       try {
-        const targetEndpoint = endpoint || 'http://localhost:5000/api/services/upload';
-        let res = await fetch(targetEndpoint, {
+        const targetEndpoint = endpoint || 'http://localhost:5000/api/upload';
+        const res = await fetch(targetEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            itemName: 'rich-media',
-            serviceName: 'rich-media',
             fileName: file.name,
-            base64Data
+            base64Data,
+            bucketName: 'patient-corner-images',
+            folderName: folderName || ''
           })
         });
-
-        if (!res.ok && !endpoint) {
-          res = await fetch('http://localhost:5000/api/services/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              serviceName: 'rich-media',
-              fileName: file.name,
-              base64Data
-            })
-          });
-        }
 
         const data = await res.json();
         if (data && data.url) {
@@ -68,7 +56,7 @@ export const uploadMediaFileHelper = async (file, isVideo = false, endpoint = 'h
  * 1. TipTap Image Block Node View
  */
 const ImageNodeView = ({ node, updateAttributes, deleteNode }) => {
-  const { url = '', caption = '', layout = 'full', width = 100 } = node.attrs;
+  const { url = '', caption = '', layout = 'full', width = 100, uploadFolder = '' } = node.attrs;
   const resolvedUrl = normalizeImageUrl(url);
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -95,7 +83,7 @@ const ImageNodeView = ({ node, updateAttributes, deleteNode }) => {
     if (!file) return;
     setIsUploading(true);
     try {
-      const newUrl = await uploadMediaFileHelper(file, false);
+      const newUrl = await uploadMediaFileHelper(file, false, null, uploadFolder || '');
       if (newUrl) updateAttributes({ url: newUrl });
     } catch (err) {
       console.error('Image upload failed:', err);
@@ -273,7 +261,8 @@ const ImageBlockNode = Node.create({
       url: { default: '' },
       caption: { default: '' },
       layout: { default: 'full' },
-      width: { default: 100 }
+      width: { default: 100 },
+      uploadFolder: { default: '' }
     };
   },
   parseHTML() {
@@ -284,7 +273,8 @@ const ImageBlockNode = Node.create({
           url: dom.getAttribute('data-url'),
           caption: dom.getAttribute('data-caption') || '',
           layout: dom.getAttribute('data-layout') || 'full',
-          width: Number(dom.getAttribute('data-width')) || 100
+          width: Number(dom.getAttribute('data-width')) || 100,
+          uploadFolder: dom.getAttribute('data-upload-folder') || ''
         })
       },
       {
@@ -299,7 +289,8 @@ const ImageBlockNode = Node.create({
             url: img?.getAttribute('src') || '',
             caption: figcaption?.textContent || img?.getAttribute('alt') || '',
             layout,
-            width: width || 100
+            width: width || 100,
+            uploadFolder: img?.getAttribute('data-upload-folder') || ''
           };
         }
       },
@@ -319,7 +310,8 @@ const ImageBlockNode = Node.create({
             url: dom.getAttribute('src') || '',
             caption: dom.getAttribute('alt') || '',
             layout: layout === 'left' || layout === 'right' ? layout : 'full',
-            width: width
+            width: width,
+            uploadFolder: dom.getAttribute('data-upload-folder') || ''
           };
         }
       }
@@ -333,7 +325,8 @@ const ImageBlockNode = Node.create({
         'data-url': HTMLAttributes.url,
         'data-caption': HTMLAttributes.caption,
         'data-layout': HTMLAttributes.layout || 'full',
-        'data-width': HTMLAttributes.width || 100
+        'data-width': HTMLAttributes.width || 100,
+        'data-upload-folder': HTMLAttributes.uploadFolder || ''
       })
     ];
   },
@@ -907,12 +900,17 @@ const RichTextEditor = ({
   placeholder = 'Write formatted content here...',
   minHeight = '150px',
   className = '',
-  uploadEndpoint = 'http://localhost:5000/api/services/upload'
+  uploadEndpoint = 'http://localhost:5000/api/upload',
+  uploadFolder = ''
 }) => {
   // Modal states
   const [showImageModal, setShowImageModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showIconBadgeModal, setShowIconBadgeModal] = useState(false);
+
+  // File Input Refs
+  const imageFileInputRef = useRef(null);
+  const videoFileInputRef = useRef(null);
 
   // Image Modal Form State
   const [imageUrl, setImageUrl] = useState('');
@@ -1024,7 +1022,7 @@ const RichTextEditor = ({
 
   // Handle generic media file upload to Supabase / Backend endpoint
   const uploadMediaFile = async (file, isVideo = false) => {
-    return uploadMediaFileHelper(file, isVideo, uploadEndpoint);
+    return uploadMediaFileHelper(file, isVideo, uploadEndpoint, uploadFolder);
   };
 
   // Image Upload Trigger
@@ -1076,7 +1074,8 @@ const RichTextEditor = ({
         url: imageUrl.trim(),
         caption: imageCaption.trim(),
         layout: finalLayout,
-        width: finalWidth
+        width: finalWidth,
+        uploadFolder: uploadFolder || ''
       }
     }).run();
 

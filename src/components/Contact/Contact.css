@@ -78,14 +78,14 @@
   pointer-events: none;
 }
 
-.contact-info-title {
+.contact-info-card .contact-info-title {
   font-size: 1.5rem;
   font-weight: 800;
   color: #ffffff !important;
   margin-bottom: 0.35rem;
 }
 
-.contact-info-desc {
+.contact-info-card .contact-info-desc {
   font-size: 0.85rem;
   color: #93c5fd !important;
   line-height: 1.5;

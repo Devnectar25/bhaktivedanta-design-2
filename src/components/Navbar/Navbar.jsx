@@ -65,8 +65,8 @@ const menuStructure = [
         title: 'Quick Links',
         links: [
           { name: 'Feedback', to: '/feedback' },
-          { name: 'Announcements', to: '/events' },
-          { name: 'Blogs', to: '/blogs' },
+          { name: 'Announcements', to: '/patients-corner/announcements' },
+          { name: 'Blogs', to: '/patients-corner/blogs' },
           { name: 'OPD Schedule', href: '#patients' },
           { name: 'Health Checkup', href: '#patients' }
         ]
@@ -254,6 +254,7 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
         localStorage.removeItem('bhaktivedanta_specialities_state');
       }
     }
+
 
     const fetchSpecialities = () => {
       getSpecialitiesState(defaultSpecialitiesState).then(res => {
@@ -792,6 +793,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
 
                 if (menuItem.type === 'patients-mega-menu') {
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
+                  const isPatientsCorner = menuItem.name === 'Patients Corner';
+                  const publishedGuides = (patientCornerData?.guides || []).filter(g => g.status === 'Published' || g.status === true);
+
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
                     ? [
                       {
@@ -806,7 +810,19 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       },
                       menuItem.columns[1]
                     ]
-                    : menuItem.columns;
+                    : (isPatientsCorner && publishedGuides.length > 0)
+                      ? [
+                        {
+                          title: menuItem.columns[0]?.title || 'Patient Guide',
+                          links: publishedGuides.map(g => ({
+                            name: g.title || g.name,
+                            to: `/patients-corner/${g.slug || (g.title ? g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : g.id)}`
+                          }))
+                        },
+                        menuItem.columns[1],
+                        menuItem.columns[2]
+                      ].filter(Boolean)
+                      : menuItem.columns;
 
                   return (
                     <div
@@ -1226,6 +1242,9 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                 if (menuItem.type === 'patients-mega-menu') {
                   const isOpen = activeMobileDropdown === menuItem.name;
                   const isEduMenu = menuItem.name === 'Education & Medical Research';
+                  const isPatientsCorner = menuItem.name === 'Patients Corner';
+                  const publishedGuides = (patientCornerData?.guides || []).filter(g => g.status === 'Published' || g.status === true);
+
                   const effectiveColumns = (isEduMenu && customEducationPrograms.length > 0)
                     ? [
                       {
@@ -1240,7 +1259,19 @@ const Navbar = ({ onSelectSpeciality, onSelectPatientGuide, onOpenAppointment, s
                       },
                       menuItem.columns[1]
                     ]
-                    : menuItem.columns;
+                    : (isPatientsCorner && publishedGuides.length > 0)
+                      ? [
+                        {
+                          title: menuItem.columns[0]?.title || 'Patient Guide',
+                          links: publishedGuides.map(g => ({
+                            name: g.title || g.name,
+                            to: `/patients-corner/${g.slug || (g.title ? g.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : g.id)}`
+                          }))
+                        },
+                        menuItem.columns[1],
+                        menuItem.columns[2]
+                      ].filter(Boolean)
+                      : menuItem.columns;
 
                   return (
                     <div key={menuItem.name} className="mobile-accordion-item">

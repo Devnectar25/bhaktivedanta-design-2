@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSpiritualCareState, saveSpiritualCareState } from '../../../utils/api';
 import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
-import AlertModal from '../../../components/admin/AlertModal/AlertModal';
-import ConfirmModal from '../../../components/admin/ConfirmModal/ConfirmModal';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 export default function SpiritualServicesManager() {
   const [data, setData] = useState(defaultSpiritualCareState.services);
@@ -22,14 +21,23 @@ export default function SpiritualServicesManager() {
   const [editingCounselId, setEditingCounselId] = useState(null);
   const [editingCounselForm, setEditingCounselForm] = useState({ text: '', note: '' });
 
-  const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
-
-  useEffect(() => {
+  const fetchServicesData = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.services) {
-        setData(res.services);
+      const unwrapped = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (unwrapped && unwrapped.services) {
+        setData(unwrapped.services);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchServicesData();
+    window.addEventListener('storage', fetchServicesData);
+    window.addEventListener('admin_data_updated', fetchServicesData);
+    return () => {
+      window.removeEventListener('storage', fetchServicesData);
+      window.removeEventListener('admin_data_updated', fetchServicesData);
+    };
   }, []);
 
   const handleSaveAll = async () => {
@@ -40,26 +48,30 @@ export default function SpiritualServicesManager() {
         ...fullState,
         services: data
       };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'spiritual-care-services' || sec.id === 'services') {
+            return {
+              ...sec,
+              hero: data.hero || sec.hero,
+              overview: data.overview || sec.overview,
+              servicesOffered: data.servicesOffered || sec.servicesOffered,
+              contact: data.contact || sec.contact
+            };
+          }
+          return sec;
+        });
+      }
       await saveSpiritualCareState(updatedFullState);
       setSaving(false);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-      setAlertModal({
-        isOpen: true,
-        title: 'Changes Saved',
-        message: 'Spiritual Care Services and values have been updated successfully.',
-        type: 'success'
-      });
+      await showSuccessAlert('Changes Saved', 'Spiritual Care Services and values have been updated successfully.');
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
       setSaving(false);
-      setAlertModal({
-        isOpen: true,
-        title: 'Save Failed',
-        message: err.message || 'Unable to save changes. Please try again.',
-        type: 'error'
-      });
+      await showErrorAlert('Save Failed', err.message || 'Unable to save changes. Please try again.');
     }
   };
 
@@ -403,7 +415,36 @@ export default function SpiritualServicesManager() {
                     {(data.overview?.acronymItems || []).length} Values
                   </span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">Configure each letter, core value keyword, and clinical description:</p>
+                <p className="text-xs text-slate-500 mt-1">Configure section heading, subtitle description, and each letter value:</p>
+              </div>
+            </div>
+
+            {/* Editable Title & Subtitle for Acronym Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50/80 p-4 rounded-xl border border-slate-200/80">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Section Title / Heading
+                </label>
+                <input
+                  type="text"
+                  value={data.overview?.acronymTitle ?? 'Our Core Guiding Values (MATCH)'}
+                  onChange={(e) => setData(p => ({ ...p, overview: { ...p.overview, acronymTitle: e.target.value } }))}
+                  placeholder="e.g. Our Core Guiding Values (MATCH)"
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 bg-white outline-none focus:border-orange-500 transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Section Subtitle / Description
+                </label>
+                <input
+                  type="text"
+                  value={data.overview?.acronymSubtitle ?? 'The foundational pillars that steer our clinical culture, caregiver attitude, and holistic healing environment:'}
+                  onChange={(e) => setData(p => ({ ...p, overview: { ...p.overview, acronymSubtitle: e.target.value } }))}
+                  placeholder="e.g. The foundational pillars that steer our clinical culture..."
+                  className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 bg-white outline-none focus:border-orange-500 transition-colors"
+                />
               </div>
             </div>
 
@@ -917,14 +958,6 @@ export default function SpiritualServicesManager() {
         </div>
       )}
 
-      {/* Alert Modal */}
-      <AlertModal
-        isOpen={alertModal.isOpen}
-        title={alertModal.title}
-        message={alertModal.message}
-        type={alertModal.type}
-        onClose={() => setAlertModal(p => ({ ...p, isOpen: false }))}
-      />
     </div>
   );
 }

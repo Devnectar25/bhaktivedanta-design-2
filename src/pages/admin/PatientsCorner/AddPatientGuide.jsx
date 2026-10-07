@@ -73,31 +73,9 @@ export const createDefaultSection = (type = 'rich_text', customTitle = '') => {
         accordionItems: [
           {
             id: `acc_${Date.now()}_1`,
-            title: 'Corporates',
-            contentType: 'logo_grid',
-            logos: [
-              { id: `logo_${Date.now()}_1`, name: 'Corporate Partner 1', imageUrl: '', order: 1, enabled: true }
-            ],
-            content: '',
-            enabled: true
-          },
-          {
-            id: `acc_${Date.now()}_2`,
-            title: 'Insurance Company',
-            contentType: 'logo_grid',
-            logos: [
-              { id: `logo_${Date.now()}_2`, name: 'Insurance Provider 1', imageUrl: '', order: 1, enabled: true }
-            ],
-            content: '',
-            enabled: true
-          },
-          {
-            id: `acc_${Date.now()}_3`,
-            title: "TPA's (Third Party Administrator)",
-            contentType: 'logo_grid',
-            logos: [
-              { id: `logo_${Date.now()}_3`, name: 'TPA Partner 1', imageUrl: '', order: 1, enabled: true }
-            ],
+            title: 'Section Item 1',
+            contentType: 'rich_text',
+            logos: [],
             content: '',
             enabled: true
           }
@@ -283,7 +261,13 @@ const AddPatientGuide = ({ mode = 'add' }) => {
   // Load Data
   const loadFormData = () => {
     getPatientCornerState(defaultPatientCornerState).then((state) => {
-      const cats = state?.categories || defaultPatientCornerState.categories || [];
+      const cats = (state?.categories && state.categories.length > 0)
+        ? state.categories
+        : (defaultPatientCornerState.categories && defaultPatientCornerState.categories.length > 0 ? defaultPatientCornerState.categories : [
+            { id: 'pc-cat-guide', name: 'Patient Guide', order: 1, max_items: 6 },
+            { id: 'pc-cat-consult', name: 'Consultations', order: 2, max_items: 6 },
+            { id: 'pc-cat-links', name: 'Quick Links', order: 3, max_items: 6 }
+          ]);
       const gList = state?.guides || defaultPatientCornerState.guides || [];
       setCategories(cats);
       setAllGuides(gList);
@@ -362,20 +346,6 @@ const AddPatientGuide = ({ mode = 'add' }) => {
 
   useEffect(() => {
     loadFormData();
-
-    const handleSync = () => {
-      loadFormData();
-    };
-
-    window.addEventListener('storage', handleSync);
-    window.addEventListener('admin_data_updated', handleSync);
-    window.addEventListener('focus', handleSync);
-
-    return () => {
-      window.removeEventListener('storage', handleSync);
-      window.removeEventListener('admin_data_updated', handleSync);
-      window.removeEventListener('focus', handleSync);
-    };
   }, [id, isEdit]);
 
   // Handle Basic Field Updates
@@ -474,6 +444,7 @@ const AddPatientGuide = ({ mode = 'add' }) => {
   const handleUpdateTab = (tabIdx, updates) => {
     setGuideData(prev => {
       const updatedTabs = [...prev.tabs];
+      if (!updatedTabs[tabIdx]) return prev;
       updatedTabs[tabIdx] = { ...updatedTabs[tabIdx], ...updates };
       return { ...prev, tabs: updatedTabs };
     });
@@ -516,28 +487,37 @@ const AddPatientGuide = ({ mode = 'add' }) => {
   // Section Operations
   // ----------------------------------------------------
   const handleAddSection = (tabIdx, type = 'rich_text') => {
-    const currentTab = guideData.tabs[tabIdx];
-    if (!currentTab) return;
-
     const typeConfig = SECTION_TYPES.find(st => st.type === type);
     const defaultName = typeConfig ? `${typeConfig.label}` : 'New Section';
-
     const newSection = createDefaultSection(type, defaultName);
-    const existingSections = Array.isArray(currentTab.sections) ? currentTab.sections : [];
-    newSection.order = existingSections.length + 1;
 
-    handleUpdateTab(tabIdx, {
-      sections: [...existingSections, newSection]
+    setGuideData(prev => {
+      const updatedTabs = [...prev.tabs];
+      const targetTab = updatedTabs[tabIdx];
+      if (!targetTab) return prev;
+      const existingSections = Array.isArray(targetTab.sections) ? targetTab.sections : [];
+      newSection.order = existingSections.length + 1;
+      updatedTabs[tabIdx] = {
+        ...targetTab,
+        sections: [...existingSections, newSection]
+      };
+      return { ...prev, tabs: updatedTabs };
     });
   };
 
   const handleUpdateSection = (tabIdx, sectionIdx, updates) => {
-    const currentTab = guideData.tabs[tabIdx];
-    if (!currentTab || !Array.isArray(currentTab.sections)) return;
-
-    const updatedSections = [...currentTab.sections];
-    updatedSections[sectionIdx] = { ...updatedSections[sectionIdx], ...updates };
-    handleUpdateTab(tabIdx, { sections: updatedSections });
+    setGuideData(prev => {
+      const updatedTabs = [...prev.tabs];
+      const targetTab = updatedTabs[tabIdx];
+      if (!targetTab || !Array.isArray(targetTab.sections) || !targetTab.sections[sectionIdx]) return prev;
+      const updatedSections = [...targetTab.sections];
+      updatedSections[sectionIdx] = { ...updatedSections[sectionIdx], ...updates };
+      updatedTabs[tabIdx] = {
+        ...targetTab,
+        sections: updatedSections
+      };
+      return { ...prev, tabs: updatedTabs };
+    });
   };
 
   const handleDeleteSection = (tabIdx, sectionIdx) => {
@@ -550,29 +530,38 @@ const AddPatientGuide = ({ mode = 'add' }) => {
       itemName: section?.title || `Section ${sectionIdx + 1}`,
       message: 'Are you sure you want to remove this section from the tab?',
       onConfirm: () => {
-        const filtered = currentTab.sections
-          .filter((_, idx) => idx !== sectionIdx)
-          .map((s, idx) => ({ ...s, order: idx + 1 }));
-        handleUpdateTab(tabIdx, { sections: filtered });
+        setGuideData(prev => {
+          const updatedTabs = [...prev.tabs];
+          const targetTab = updatedTabs[tabIdx];
+          if (!targetTab || !Array.isArray(targetTab.sections)) return prev;
+          const filtered = targetTab.sections
+            .filter((_, idx) => idx !== sectionIdx)
+            .map((s, idx) => ({ ...s, order: idx + 1 }));
+          updatedTabs[tabIdx] = { ...targetTab, sections: filtered };
+          return { ...prev, tabs: updatedTabs };
+        });
         setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null, itemName: '' });
       }
     });
   };
 
   const handleMoveSection = (tabIdx, sectionIdx, direction) => {
-    const currentTab = guideData.tabs[tabIdx];
-    if (!currentTab || !Array.isArray(currentTab.sections)) return;
+    setGuideData(prev => {
+      const updatedTabs = [...prev.tabs];
+      const targetTab = updatedTabs[tabIdx];
+      if (!targetTab || !Array.isArray(targetTab.sections)) return prev;
+      const targetIdx = sectionIdx + direction;
+      if (targetIdx < 0 || targetIdx >= targetTab.sections.length) return prev;
 
-    const targetIdx = sectionIdx + direction;
-    if (targetIdx < 0 || targetIdx >= currentTab.sections.length) return;
+      const sectionsCopy = [...targetTab.sections];
+      const temp = sectionsCopy[sectionIdx];
+      sectionsCopy[sectionIdx] = sectionsCopy[targetIdx];
+      sectionsCopy[targetIdx] = temp;
 
-    const sectionsCopy = [...currentTab.sections];
-    const temp = sectionsCopy[sectionIdx];
-    sectionsCopy[sectionIdx] = sectionsCopy[targetIdx];
-    sectionsCopy[targetIdx] = temp;
-
-    const reordered = sectionsCopy.map((s, idx) => ({ ...s, order: idx + 1 }));
-    handleUpdateTab(tabIdx, { sections: reordered });
+      const reordered = sectionsCopy.map((s, idx) => ({ ...s, order: idx + 1 }));
+      updatedTabs[tabIdx] = { ...targetTab, sections: reordered };
+      return { ...prev, tabs: updatedTabs };
+    });
   };
 
   // ----------------------------------------------------
@@ -1248,7 +1237,7 @@ function SectionTypeEditor({ section, onUpdate }) {
       const newItem = {
         id: `acc_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         title: `Accordion Item ${accordionItems.length + 1}`,
-        contentType: 'logo_grid',
+        contentType: 'rich_text',
         logos: [],
         content: '',
         enabled: true
@@ -1301,30 +1290,13 @@ function SectionTypeEditor({ section, onUpdate }) {
         {accordionItems.length === 0 ? (
           <div className="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-5 text-center space-y-3">
             <p className="text-xs text-slate-500">
-              No accordion items defined. Add items like "Corporates", "Insurance Company", or "TPA's".
+              No accordion items defined. Click "Add Accordion Item" above to add your first item.
             </p>
-            <div className="flex justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  onUpdate({
-                    accordionItems: [
-                      { id: `acc_${Date.now()}_1`, title: 'Corporates', contentType: 'logo_grid', logos: [], enabled: true },
-                      { id: `acc_${Date.now()}_2`, title: 'Insurance Company', contentType: 'logo_grid', logos: [], enabled: true },
-                      { id: `acc_${Date.now()}_3`, title: "TPA's (Third Party Administrator)", contentType: 'logo_grid', logos: [], enabled: true }
-                    ]
-                  });
-                }}
-                className="text-xs font-bold bg-[#1e3a8a] text-white px-3 py-1.5 rounded-lg hover:bg-blue-900"
-              >
-                + Initialize Corporate / Insurance / TPA Items
-              </button>
-            </div>
           </div>
         ) : (
           <div className="space-y-3">
             {accordionItems.map((item, idx) => {
-              const contentType = item.contentType || (item.logos?.length > 0 ? 'logo_grid' : 'rich_text');
+              const contentType = item.contentType || 'rich_text';
 
               return (
                 <div
@@ -1341,7 +1313,7 @@ function SectionTypeEditor({ section, onUpdate }) {
                         type="text"
                         value={item.title || ''}
                         onChange={(e) => handleUpdateItem(idx, { title: e.target.value })}
-                        placeholder="Accordion Item Title (e.g. Corporates, Insurance Company)..."
+                        placeholder="Accordion Item Title (e.g. Economy & Day Care, Deluxe Room)..."
                         className="font-bold text-slate-800 text-xs border border-slate-300 rounded px-2 py-1 flex-1 bg-white outline-none focus:border-indigo-500"
                       />
                     </div>
@@ -1349,11 +1321,17 @@ function SectionTypeEditor({ section, onUpdate }) {
                     <div className="flex items-center gap-2">
                       <select
                         value={contentType}
-                        onChange={(e) => handleUpdateItem(idx, { contentType: e.target.value })}
+                        onChange={(e) => {
+                          const newType = e.target.value;
+                          handleUpdateItem(idx, {
+                            contentType: newType,
+                            ...(newType === 'rich_text' ? { logos: [] } : {})
+                          });
+                        }}
                         className="text-[11px] font-bold bg-white border border-slate-300 text-slate-700 rounded px-2 py-1 outline-none"
                       >
-                        <option value="logo_grid">Logo Grid</option>
                         <option value="rich_text">Rich Text</option>
+                        <option value="logo_grid">Logo Grid</option>
                       </select>
 
                       <button

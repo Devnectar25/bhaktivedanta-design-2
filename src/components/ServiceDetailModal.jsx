@@ -1389,8 +1389,8 @@ export function PublicationsModalRenderer() {
                     />
                 </div>
 
-                {/* Publications List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Publications Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(440px, 1fr))', gap: 16 }}>
                     {filteredPubs.length > 0 ? (
                         filteredPubs.map(pub => (
                             <PublicationCard
@@ -1456,28 +1456,6 @@ export function DynamicCardGridRenderer({ tab }) {
         const detailPage = selectedCard.detailPage || {};
         return (
             <div>
-                <button
-                    type="button"
-                    onClick={() => setSelectedCard(null)}
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 8,
-                        padding: '8px 14px',
-                        borderRadius: 8,
-                        background: '#F1F5F9',
-                        border: '1px solid #E2E8F0',
-                        color: '#334155',
-                        fontSize: 13,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        marginBottom: 20
-                    }}
-                >
-                    <ArrowLeft size={16} />
-                    <span>Back to {tab.label || 'Cards'}</span>
-                </button>
-
                 <FlexibleDetailPage
                     title={detailPage.title || selectedCard.title}
                     subtitle={detailPage.subtitle || selectedCard.description}
@@ -1485,8 +1463,37 @@ export function DynamicCardGridRenderer({ tab }) {
                     bannerImage={detailPage.bannerImage || selectedCard.image}
                     blocks={detailPage.blocks || []}
                     onBack={() => setSelectedCard(null)}
+                    hideTopBack={true}
+                    showTopBar={false}
                     showSharePrint={false}
                 />
+
+                <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid #E2E8F0', display: 'flex', justifyContent: 'flex-start' }}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setSelectedCard(null);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            padding: '10px 18px',
+                            borderRadius: 10,
+                            background: '#F1F5F9',
+                            border: '1px solid #CBD5E1',
+                            color: '#334155',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <ArrowLeft size={16} />
+                        <span>Back</span>
+                    </button>
+                </div>
             </div>
         );
     }
@@ -1558,7 +1565,7 @@ export function DynamicListRenderer({ tab }) {
                 />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(440px, 1fr))', gap: 16 }}>
                 {filteredItems.length > 0 ? (
                     filteredItems.map(item => (
                         <PublicationCard

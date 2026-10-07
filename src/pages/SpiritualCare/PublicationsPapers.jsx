@@ -12,8 +12,9 @@ export default function PublicationsPapers() {
 
   const fetchState = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.publications) {
-        setPublications(res.publications);
+      const data = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (data && Array.isArray(data.publications)) {
+        setPublications(data.publications);
       }
     });
   };
@@ -72,8 +73,8 @@ export default function PublicationsPapers() {
         </div>
       </div>
 
-      {/* Vertical Publications List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      {/* Horizontal Publications Grid */}
+      <div className="spiritual-publications-grid">
         {filteredPubs.length > 0 ? (
           filteredPubs.map((pub) => (
             <PublicationCard
@@ -90,7 +91,7 @@ export default function PublicationsPapers() {
             />
           ))
         ) : (
-          <div style={{ padding: '36px', textAlign: 'center', background: '#FFFFFF', borderRadius: 14, border: '1px solid #E2E8F0' }}>
+          <div style={{ gridColumn: '1 / -1', padding: '36px', textAlign: 'center', background: '#FFFFFF', borderRadius: 14, border: '1px solid #E2E8F0' }}>
             <p style={{ color: '#64748B', fontFamily: "'Work Sans', sans-serif" }}>No publications found matching your search.</p>
           </div>
         )}

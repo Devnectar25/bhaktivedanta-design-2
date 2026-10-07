@@ -38,11 +38,19 @@ export default function FlexibleDetailPage({
   blocks = [],
   sidebarBlocks = [],
   onBack,
+  hideTopBack = false,
+  showBottomBack = false,
+  bottomBackText = 'Back',
+  showTopBar,
   showSharePrint = true,
   className = ''
 }) {
   const navigate = useNavigate();
   const [lightboxImg, setLightboxImg] = useState(null);
+
+  const hasTopBar = showTopBar !== undefined 
+    ? showTopBar 
+    : (breadcrumbs.length > 0 || (showSharePrint && breadcrumbs.length > 0) || (onBack && !hideTopBack));
 
   const handlePrint = () => {
     window.print();
@@ -90,7 +98,7 @@ export default function FlexibleDetailPage({
         return (
           <div key={block.id || idx} className="detail-paragraph-block">
             {block.title && <h3 className="detail-block-title">{block.title}</h3>}
-            {typeof block.content === 'string' ? (
+            {block.content ? (
               <RichTextRenderer content={block.content} />
             ) : block.text ? (
               <p className="detail-plain-text">{block.text}</p>
@@ -131,11 +139,12 @@ export default function FlexibleDetailPage({
       case 'bullet_list':
       case 'checklist':
         const items = block.items || block.points || [];
+        const dynamicCols = block.columns || (items.length >= 4 ? 2 : (items.length > 1 ? items.length : 1));
         return (
           <div key={block.id || idx} className="detail-bullet-list-block">
             {block.title && <h3 className="detail-block-title">{block.title}</h3>}
             {block.subtitle && <p className="detail-block-subtitle">{block.subtitle}</p>}
-            <div className={`detail-bullet-grid ${block.columns ? `cols-${block.columns}` : ''}`}>
+            <div className={`detail-bullet-grid ${block.columns ? `cols-${block.columns}` : `cols-${dynamicCols}`}`}>
               {items.map((item, itemIdx) => {
                 const text = typeof item === 'string' ? item : item.text || item.title || '';
                 const note = typeof item === 'object' ? item.note || item.description : '';
@@ -290,54 +299,109 @@ export default function FlexibleDetailPage({
     }
   };
 
+  /**
+   * Group consecutive bullet-list blocks so they automatically arrange horizontally
+   */
+  const groupConsecutiveBulletBlocks = (blockList) => {
+    const grouped = [];
+    let currentGroup = [];
+
+    (blockList || []).forEach((block, idx) => {
+      if (!block || block.enabled === false) return;
+      const blockType = block.type || 'paragraph';
+      const isBullet = blockType === 'bullet-list' || blockType === 'bullet_list' || blockType === 'checklist';
+
+      if (isBullet) {
+        currentGroup.push({ block, idx });
+      } else {
+        if (currentGroup.length > 0) {
+          grouped.push({ type: 'bullet-group', items: currentGroup });
+          currentGroup = [];
+        }
+        grouped.push({ type: 'single', block, idx });
+      }
+    });
+
+    if (currentGroup.length > 0) {
+      grouped.push({ type: 'bullet-group', items: currentGroup });
+    }
+
+    return grouped;
+  };
+
+  const renderGroupedBlocks = (blockList, prefix = 'b') => {
+    const grouped = groupConsecutiveBulletBlocks(blockList);
+    return grouped.map((item, gIdx) => {
+      if (item.type === 'bullet-group') {
+        if (item.items.length === 1) {
+          return renderBlock(item.items[0].block, `${prefix}_${item.items[0].idx}`);
+        }
+        const count = item.items.length;
+        const colClass = count >= 4 ? 'cols-4' : (count === 3 ? 'cols-3' : 'cols-2');
+        return (
+          <div key={`${prefix}_bg_${gIdx}`} className={`detail-bullet-lists-row ${colClass}`}>
+            {item.items.map(({ block, idx }) => (
+              <div key={block.id || idx} className="detail-bullet-list-card-item">
+                {renderBlock(block, `${prefix}_${idx}`)}
+              </div>
+            ))}
+          </div>
+        );
+      }
+      return renderBlock(item.block, `${prefix}_${item.idx}`);
+    });
+  };
+
   return (
     <div className={`flexible-detail-page ${className}`}>
       {/* Breadcrumbs & Actions Header */}
-      <div className="detail-top-bar">
-        <div className="detail-breadcrumbs">
-          {onBack ? (
-            <button type="button" onClick={onBack} className="detail-back-btn">
-              <ArrowLeft size={16} />
-              <span>Back</span>
-            </button>
-          ) : (
-            <span 
-              onClick={() => navigate('/')} 
-              className="detail-crumb-link"
-            >
-              Home
-            </span>
-          )}
+      {hasTopBar && (
+        <div className="detail-top-bar">
+          <div className="detail-breadcrumbs">
+            {onBack && !hideTopBack ? (
+              <button type="button" onClick={onBack} className="detail-back-btn">
+                <ArrowLeft size={16} />
+                <span>Back</span>
+              </button>
+            ) : (
+              <span 
+                onClick={() => navigate('/')} 
+                className="detail-crumb-link"
+              >
+                Home
+              </span>
+            )}
 
-          {breadcrumbs.map((crumb, idx) => (
-            <React.Fragment key={idx}>
-              <ChevronRight size={14} className="detail-crumb-sep" />
-              {crumb.to ? (
-                <span onClick={() => navigate(crumb.to)} className="detail-crumb-link">
-                  {crumb.label}
-                </span>
-              ) : crumb.href ? (
-                <a href={crumb.href} className="detail-crumb-link">{crumb.label}</a>
-              ) : (
-                <span className="detail-crumb-active">{crumb.label}</span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {showSharePrint && (
-          <div className="detail-action-buttons">
-            <button type="button" onClick={handleShare} className="detail-action-btn" title="Share Page">
-              <Share2 size={16} />
-              <span>Share</span>
-            </button>
-            <button type="button" onClick={handlePrint} className="detail-action-btn" title="Print Document">
-              <Printer size={16} />
-              <span>Print</span>
-            </button>
+            {breadcrumbs.map((crumb, idx) => (
+              <React.Fragment key={idx}>
+                <ChevronRight size={14} className="detail-crumb-sep" />
+                {crumb.to ? (
+                  <span onClick={() => navigate(crumb.to)} className="detail-crumb-link">
+                    {crumb.label}
+                  </span>
+                ) : crumb.href ? (
+                  <a href={crumb.href} className="detail-crumb-link">{crumb.label}</a>
+                ) : (
+                  <span className="detail-crumb-active">{crumb.label}</span>
+                )}
+              </React.Fragment>
+            ))}
           </div>
-        )}
-      </div>
+
+          {showSharePrint && (
+            <div className="detail-action-buttons">
+              <button type="button" onClick={handleShare} className="detail-action-btn" title="Share Page">
+                <Share2 size={16} />
+                <span>Share</span>
+              </button>
+              <button type="button" onClick={handlePrint} className="detail-action-btn" title="Print Document">
+                <Printer size={16} />
+                <span>Print</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Page Hero / Banner Header */}
       <div className="detail-hero-header">
@@ -357,18 +421,28 @@ export default function FlexibleDetailPage({
       <div className={`detail-layout-container ${sidebarBlocks.length > 0 ? 'has-sidebar' : ''}`}>
         {/* Main Content Flow */}
         <main className="detail-main-content">
-          {blocks.map((block, idx) => renderBlock(block, idx))}
+          {renderGroupedBlocks(blocks, 'main')}
         </main>
 
         {/* Sidebar (Optional) */}
         {sidebarBlocks.length > 0 && (
           <aside className="detail-sidebar">
             <div className="detail-sidebar-sticky">
-              {sidebarBlocks.map((block, idx) => renderBlock(block, `sb_${idx}`))}
+              {renderGroupedBlocks(sidebarBlocks, 'sb')}
             </div>
           </aside>
         )}
       </div>
+
+      {/* Bottom Back Button */}
+      {(showBottomBack || (onBack && hideTopBack)) && onBack && (
+        <div className="detail-bottom-nav">
+          <button type="button" onClick={onBack} className="detail-back-btn detail-bottom-back-btn">
+            <ArrowLeft size={16} />
+            <span>{bottomBackText}</span>
+          </button>
+        </div>
+      )}
 
       {/* Lightbox Modal */}
       {lightboxImg && (

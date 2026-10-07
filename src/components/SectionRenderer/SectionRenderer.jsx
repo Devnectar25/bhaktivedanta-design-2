@@ -87,18 +87,15 @@ export function FeatureListSection({ section }) {
 /* ------------------------------------------------------------------ */
 export function LogoGridSection({ section, logos: directLogos }) {
   const rawLogos = directLogos || section?.logos || section?.items || [];
+  const dummyNames = ['corporate partner 1', 'partner company 1', 'partner company 2', 'insurance provider 1', 'tpa partner 1'];
   const logos = Array.isArray(rawLogos)
     ? rawLogos
-      .filter(l => l && l.enabled !== false)
+      .filter(l => l && l.enabled !== false && (l.imageUrl || (l.name && l.name.trim() && !dummyNames.includes(l.name.trim().toLowerCase()))))
       .sort((a, b) => (a.order || 0) - (b.order || 0))
     : [];
 
   if (logos.length === 0) {
-    return (
-      <div className="section-empty-msg">
-        No partner logos listed yet.
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -168,9 +165,9 @@ export function AccordionItemRenderer({ item, defaultOpen = false }) {
         <div className="section-accordion-body">
           {item.content && <RichTextRenderer content={item.content} />}
 
-          {item.contentType === 'logo_grid' || logos.length > 0 ? (
+          {item.contentType === 'logo_grid' && logos.length > 0 && (
             <LogoGridSection logos={logos} />
-          ) : null}
+          )}
 
           {Array.isArray(item.items) && item.items.length > 0 && (
             <FeatureListSection section={item} />

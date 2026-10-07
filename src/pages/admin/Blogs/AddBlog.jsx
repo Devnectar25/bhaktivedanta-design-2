@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { getBlogs, getBlogById, addBlog, updateBlog } from '../../../utils/api';
+import { getBlogs, getBlogById, addBlog, updateBlog, uploadPatientCornerImage } from '../../../utils/api';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
 import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
@@ -16,11 +16,19 @@ const CATEGORIES = [
   'Cardiology',
   'Oncology',
   'Pediatrics',
-  'Orthopedics',
-  'Neurology',
+  'Orthopaedics',
+  'Nephrology',
+  'Dermatology',
+  'General Medicine',
   'Spiritual Care',
+  'Dietetics & Nutrition',
+  'Pulmonology',
+  'Ophthalmology',
+  'Haematology',
+  'Clinical Research',
+  'Medical Education',
+  'Psychiatry',
   'Holistic Health',
-  'Emergency Care',
   'General Health'
 ];
 
@@ -28,6 +36,8 @@ const AddBlog = ({ mode = 'add' }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = mode === 'edit' || Boolean(id);
+  const fileInputRef = useRef(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -92,6 +102,25 @@ const AddBlog = ({ mode = 'add' }) => {
       title: val,
       slug: prev.slug === '' || prev.slug === generatedSlug.substring(0, prev.slug.length) ? generatedSlug : prev.slug
     }));
+  };
+
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    try {
+      const uploadedUrl = await uploadPatientCornerImage(file, 'blogs');
+      if (uploadedUrl) {
+        setFormData(prev => ({ ...prev, image: uploadedUrl }));
+        showSuccessAlert('Image Uploaded', 'Cover image uploaded and stored in Supabase Storage.');
+      }
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      showErrorAlert('Upload Error', err.message || 'Failed to upload image. Please try again.');
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSave = async (targetStatus = formData.status) => {
@@ -236,6 +265,7 @@ const AddBlog = ({ mode = 'add' }) => {
                 value={formData.content}
                 onChange={(html) => setFormData(prev => ({ ...prev, content: html }))}
                 placeholder="Write your article here..."
+                uploadFolder="blogs"
               />
             </div>
           </div>
@@ -341,32 +371,71 @@ const AddBlog = ({ mode = 'add' }) => {
 
           {/* Featured Image Section */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
-            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">Featured Cover Image</h3>
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-2">
+              Featured Cover Image
+            </h3>
 
-            <div>
-              <label className="block text-[11px] font-bold text-slate-600 mb-1">Image URL</label>
-              <input 
-                type="text"
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 px-3 py-1.5 text-xs rounded-xl outline-none text-slate-700 font-mono"
-                placeholder="https://images.unsplash.com/..."
-                value={formData.image}
-                onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
-              />
-            </div>
-
-            {formData.image && (
-              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-100 aspect-video">
-                <img 
-                  src={formData.image} 
-                  alt="Cover Preview" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800'; }}
-                />
-                <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium rounded-md">
-                  Cover Preview
-                </span>
+            <div className="grid grid-cols-1 gap-3 bg-slate-50/70 p-3 rounded-xl border border-slate-200/80">
+              {/* Image Preview Box */}
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white h-36 flex items-center justify-center shadow-2xs">
+                {formData.image ? (
+                  <img 
+                    src={formData.image} 
+                    alt="Cover Preview" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=800'; }}
+                  />
+                ) : (
+                  <div className="text-center p-3 text-slate-400">
+                    <span className="material-symbols-outlined text-3xl text-slate-300">image</span>
+                    <p className="text-[11px] font-medium mt-0.5">No Cover Image Uploaded</p>
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Upload Controls & URL Input */}
+              <div className="space-y-2">
+                <div className="flex gap-2 items-center">
+                  <label className={`flex-1 flex items-center justify-center gap-2 border border-dashed rounded-lg px-3 py-2 cursor-pointer font-bold text-xs transition-all ${
+                    uploadingImage ? 'bg-amber-50 border-amber-300 text-amber-700' : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-2xs'
+                  }`}>
+                    <span className="material-symbols-outlined text-sm">
+                      {uploadingImage ? 'sync' : 'cloud_upload'}
+                    </span>
+                    <span>{uploadingImage ? 'Uploading to Supabase...' : 'Upload Cover Image'}</span>
+                    <input 
+                      type="file"
+                      ref={fileInputRef}
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageFileChange}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+
+                  {formData.image && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, image: '' }))}
+                      className="px-3 py-2 text-xs text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 rounded-lg font-bold border border-rose-200 transition-colors cursor-pointer"
+                      title="Remove Image"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <input 
+                    type="text"
+                    className="w-full bg-white border border-slate-200 focus:border-blue-500 px-3 py-1.5 text-xs rounded-lg outline-none text-slate-700 font-mono"
+                    placeholder="Image URL (Auto-filled on upload or paste custom URL)"
+                    value={formData.image}
+                    onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
 
             <div>
               <p className="text-[11px] font-bold text-slate-500 mb-1.5">Or Choose Sample Image:</p>
@@ -376,7 +445,7 @@ const AddBlog = ({ mode = 'add' }) => {
                     key={idx}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, image: sample.url }))}
-                    className="text-[10px] font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 p-1.5 rounded-lg truncate text-left transition-colors"
+                    className="text-[10px] font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 p-1.5 rounded-lg truncate text-left transition-colors cursor-pointer"
                   >
                     {sample.label}
                   </button>

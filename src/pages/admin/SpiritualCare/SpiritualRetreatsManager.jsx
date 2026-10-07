@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSpiritualCareState, saveSpiritualCareState } from '../../../utils/api';
 import { defaultSpiritualCareState } from '../../../data/defaultSpiritualCare';
 import RichTextEditor from '../../../components/admin/RichTextEditor/RichTextEditor';
-import AlertModal from '../../../components/admin/AlertModal/AlertModal';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 
 const uploadSpiritualCareImage = async (file, itemName = 'spiritual-retreat') => {
   if (!file) return null;
@@ -41,8 +41,6 @@ export default function SpiritualRetreatsManager() {
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  const [alertModal, setAlertModal] = useState({ isOpen: false, title: '', message: '', type: 'success' });
-
   // New activity form
   const [newActivity, setNewActivity] = useState({
     title: '',
@@ -51,12 +49,23 @@ export default function SpiritualRetreatsManager() {
     image: 'https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=80'
   });
 
-  useEffect(() => {
+  const fetchRetreatsData = () => {
     getSpiritualCareState(defaultSpiritualCareState).then(res => {
-      if (res && res.retreats) {
-        setRetreats(res.retreats);
+      const unwrapped = (res && res.data && typeof res.data === 'object') ? res.data : res;
+      if (unwrapped && unwrapped.retreats) {
+        setRetreats(unwrapped.retreats);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchRetreatsData();
+    window.addEventListener('storage', fetchRetreatsData);
+    window.addEventListener('admin_data_updated', fetchRetreatsData);
+    return () => {
+      window.removeEventListener('storage', fetchRetreatsData);
+      window.removeEventListener('admin_data_updated', fetchRetreatsData);
+    };
   }, []);
 
   const handleSaveAll = async () => {
@@ -67,26 +76,30 @@ export default function SpiritualRetreatsManager() {
         ...fullState,
         retreats
       };
+      if (Array.isArray(updatedFullState.sections)) {
+        updatedFullState.sections = updatedFullState.sections.map(sec => {
+          if (sec.id === 'spiritual-retreats' || sec.id === 'retreats') {
+            return {
+              ...sec,
+              hero: retreats.hero || sec.hero,
+              bimonthly: retreats.bimonthly || sec.bimonthly,
+              annual: retreats.annual || sec.annual,
+              contact: retreats.contact || sec.contact
+            };
+          }
+          return sec;
+        });
+      }
       await saveSpiritualCareState(updatedFullState);
       setSaving(false);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
-      setAlertModal({
-        isOpen: true,
-        title: 'Retreats Content Saved',
-        message: 'Bi-monthly and Annual retreats content updated successfully.',
-        type: 'success'
-      });
+      await showSuccessAlert('Retreats Content Saved', 'Bi-monthly and Annual retreats content updated successfully.');
       window.dispatchEvent(new Event('admin_data_updated'));
       window.dispatchEvent(new Event('storage'));
     } catch (err) {
       setSaving(false);
-      setAlertModal({
-        isOpen: true,
-        title: 'Save Failed',
-        message: err.message || 'Unable to save retreats data.',
-        type: 'error'
-      });
+      await showErrorAlert('Save Failed', err.message || 'Unable to save retreats data.');
     }
   };
 
@@ -482,13 +495,6 @@ export default function SpiritualRetreatsManager() {
         </div>
       )}
 
-      <AlertModal
-        isOpen={alertModal.isOpen}
-        title={alertModal.title}
-        message={alertModal.message}
-        type={alertModal.type}
-        onClose={() => setAlertModal(p => ({ ...p, isOpen: false }))}
-      />
     </div>
   );
 }

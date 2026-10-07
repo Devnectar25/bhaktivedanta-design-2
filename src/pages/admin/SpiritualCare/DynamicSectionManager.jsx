@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { showErrorAlert } from '../../../utils/swal';
+import { showSuccessAlert, showErrorAlert } from '../../../utils/swal';
 import { 
   Plus, 
   Trash2, 
@@ -42,14 +42,13 @@ export default function DynamicSectionManager({ section, onUpdateSection, onDele
     }
   }, [section.id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    onUpdateSection(secData);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 2500);
-    }, 400);
+    await onUpdateSection(secData);
+    setIsSaving(false);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
+    await showSuccessAlert('Section Saved', `"${secData.title || 'Section'}" content updated successfully.`);
   };
 
   /* ---------------- Tabs Layout Helpers ---------------- */
