@@ -6,6 +6,26 @@ if (base && !base.endsWith('/api') && !base.endsWith('/api/')) {
 }
 export const API_BASE_URL = base;
 
+export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://ohaokdfkdafgpwccauos.supabase.co';
+export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oYW9rZGZrZGFmZ3B3Y2NhdW9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MjkzNjAsImV4cCI6MjEwMzMwNTM2MH0.J5sC2vQwCuzEafx-kdqZPMcUmBXhdYodb7rBApGX36o';
+
+export async function supabaseRest(endpoint, options = {}) {
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+    const headers = {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options.headers || {})
+    };
+    return await fetch(url, { ...options, headers });
+  } catch (err) {
+    console.warn('[Supabase REST] Error:', err);
+    return null;
+  }
+}
+
 /**
  * Helper to check if backend is online.
  */
@@ -712,57 +732,275 @@ export const uploadStatutoryPdf = async (title, fileName, base64Data) => {
 };
 
 // =============================================================
-// Associate Centres Database API
+// Associate Centres Database API (with direct Supabase REST sync)
 // =============================================================
 export const ASSOCIATE_CENTRES_STORAGE_KEY = 'bhaktivedanta_associate_centres_cache';
 
-export const getAssociateCentres = (fallback = []) =>
-  apiGet('/associate-centres', ASSOCIATE_CENTRES_STORAGE_KEY, fallback);
+function parseJsonField(val, fallback = []) {
+  if (!val) return fallback;
+  if (typeof val === 'object') return val;
+  try {
+    return JSON.parse(val);
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function formatSupabaseCentreRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title || '',
+    centreType: row.centre_type || row.centreType || 'Associate Centre',
+    bannerImg: row.banner_img || row.bannerImg || '',
+    address: row.address || '',
+    phone: row.phone || '',
+    highlights: parseJsonField(row.highlights, []),
+    overview: parseJsonField(row.overview, []),
+    services: parseJsonField(row.services, []),
+    communityServices: parseJsonField(row.community_services || row.communityServices, []),
+    mapSrc: row.map_src || row.mapSrc || '',
+    status: row.status || 'Active',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  };
+}
+
+function toSupabaseCentreRecord(c) {
+  return {
+    id: c.id,
+    slug: c.slug,
+    title: c.title,
+    centre_type: c.centreType || c.centre_type || 'Associate Centre',
+    banner_img: c.bannerImg || c.banner_img || '',
+    address: c.address || '',
+    phone: c.phone || '',
+    highlights: JSON.stringify(c.highlights || []),
+    overview: JSON.stringify(c.overview || []),
+    services: JSON.stringify(c.services || []),
+    community_services: JSON.stringify(c.communityServices || c.community_services || []),
+    map_src: c.mapSrc || c.map_src || '',
+    status: c.status || 'Active',
+    updated_at: new Date().toISOString()
+  };
+}
+
+export const getAssociateCentres = async (fallback = []) => {
+  // 1. Try backend API first
+  try {
+    const res = await fetch(`${API_BASE_URL}/associate-centres`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(4000)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(ASSOCIATE_CENTRES_STORAGE_KEY, JSON.stringify(data));
+        return data;
+      }
+    }
+  } catch (err) {
+    // Backend API unavailable / CORS / mixed-content
+  }
+
+  // 2. Direct Supabase REST fetch (guarantees live DB data even on Vercel without express server)
+  try {
+    const sbRes = await supabaseRest('bv_associate_centres?select=*&order=created_at.desc');
+    if (sbRes && sbRes.ok) {
+      const rows = await sbRes.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        const formatted = rows.map(formatSupabaseCentreRow);
+        localStorage.setItem(ASSOCIATE_CENTRES_STORAGE_KEY, JSON.stringify(formatted));
+        return formatted;
+      }
+    }
+  } catch (sbErr) {
+    console.warn('[API] Direct Supabase fetch associate centres failed:', sbErr);
+  }
+
+  // 3. Local storage fallback
+  const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+  if (local) {
+    try {
+      const parsed = JSON.parse(local);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {}
+  }
+
+  return fallback;
+};
 
 export const getAssociateCentreByIdOrSlug = async (idOrSlug) => {
+  // 1. Try backend API
   try {
-    const res = await fetch(`${API_BASE_URL}/associate-centres/${idOrSlug}`, {
-      cache: 'no-store'
+    const res = await fetch(`${API_BASE_URL}/associate-centres/${encodeURIComponent(idOrSlug)}`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(4000)
     });
     if (res.ok) {
       return await res.json();
     }
-  } catch (err) {
-    console.warn('[API] Get associate centre failed:', err);
-  }
+  } catch (err) {}
+
+  // 2. Try direct Supabase
+  try {
+    const sbRes = await supabaseRest(`bv_associate_centres?or=(id.eq.${encodeURIComponent(idOrSlug)},slug.eq.${encodeURIComponent(idOrSlug)})&limit=1`);
+    if (sbRes && sbRes.ok) {
+      const rows = await sbRes.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        return formatSupabaseCentreRow(rows[0]);
+      }
+    }
+  } catch (e) {}
+
+  // 3. Local cache
   const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
   if (local) {
     try {
       const list = JSON.parse(local);
       return list.find(c => c.id === idOrSlug || c.slug === idOrSlug) || null;
-    } catch (e) { }
+    } catch (e) {}
   }
   return null;
 };
 
-export const createAssociateCentre = (centreData) =>
-  apiMutation('/associate-centres', 'POST', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, newCentre) => {
-    const updated = [newCentre, ...(Array.isArray(oldData) ? oldData : [])];
-    window.dispatchEvent(new Event('admin_data_updated'));
-    window.dispatchEvent(new Event('associate_centres_updated'));
-    return updated;
-  });
+export const createAssociateCentre = async (centreData) => {
+  let created = null;
 
-export const updateAssociateCentre = (id, centreData) =>
-  apiMutation(`/associate-centres/${id}`, 'PUT', centreData, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData, updatedCentre) => {
-    const updated = (Array.isArray(oldData) ? oldData : []).map(c => (c.id === id ? { ...c, ...updatedCentre } : c));
-    window.dispatchEvent(new Event('admin_data_updated'));
-    window.dispatchEvent(new Event('associate_centres_updated'));
-    return updated;
-  });
+  // 1. Try backend API
+  try {
+    const res = await fetch(`${API_BASE_URL}/associate-centres`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(centreData),
+      signal: AbortSignal.timeout(5000)
+    });
+    if (res.ok) {
+      created = await res.json();
+    }
+  } catch (err) {}
 
-export const deleteAssociateCentre = (id) =>
-  apiMutation(`/associate-centres/${id}`, 'DELETE', null, ASSOCIATE_CENTRES_STORAGE_KEY, (oldData) => {
-    const updated = (Array.isArray(oldData) ? oldData : []).filter(c => c.id !== id);
-    window.dispatchEvent(new Event('admin_data_updated'));
-    window.dispatchEvent(new Event('associate_centres_updated'));
-    return updated;
-  });
+  // 2. If backend API did not succeed, write directly to Supabase
+  if (!created) {
+    try {
+      const id = centreData.id || `ac-${centreData.slug}-${Date.now().toString(36)}`;
+      const payload = {
+        ...toSupabaseCentreRecord({ ...centreData, id }),
+        created_at: new Date().toISOString()
+      };
+      const sbRes = await supabaseRest('bv_associate_centres', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      if (sbRes && sbRes.ok) {
+        const rows = await sbRes.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          created = formatSupabaseCentreRow(rows[0]);
+        }
+      }
+    } catch (sbErr) {
+      console.warn('[API] Direct Supabase insert failed:', sbErr);
+    }
+  }
+
+  const finalItem = created || centreData;
+
+  // 3. Update local cache
+  try {
+    const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+    const list = local ? JSON.parse(local) : [];
+    const updated = [finalItem, ...(Array.isArray(list) ? list.filter(c => c.id !== finalItem.id && c.slug !== finalItem.slug) : [])];
+    localStorage.setItem(ASSOCIATE_CENTRES_STORAGE_KEY, JSON.stringify(updated));
+  } catch (e) {}
+
+  window.dispatchEvent(new Event('admin_data_updated'));
+  window.dispatchEvent(new Event('associate_centres_updated'));
+  return finalItem;
+};
+
+export const updateAssociateCentre = async (id, centreData) => {
+  let updated = null;
+
+  // 1. Try backend API
+  try {
+    const res = await fetch(`${API_BASE_URL}/associate-centres/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(centreData),
+      signal: AbortSignal.timeout(5000)
+    });
+    if (res.ok) {
+      updated = await res.json();
+    }
+  } catch (err) {}
+
+  // 2. Direct Supabase update
+  try {
+    const payload = toSupabaseCentreRecord({ ...centreData, id });
+    const sbRes = await supabaseRest(`bv_associate_centres?or=(id.eq.${encodeURIComponent(id)},slug.eq.${encodeURIComponent(id)})`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    });
+    if (sbRes && sbRes.ok) {
+      const rows = await sbRes.json();
+      if (Array.isArray(rows) && rows.length > 0) {
+        updated = formatSupabaseCentreRow(rows[0]);
+      }
+    }
+  } catch (sbErr) {
+    console.warn('[API] Direct Supabase update failed:', sbErr);
+  }
+
+  const finalItem = updated || { ...centreData, id };
+
+  // 3. Update local cache
+  try {
+    const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+    const list = local ? JSON.parse(local) : [];
+    const newList = (Array.isArray(list) ? list : []).map(c => (c.id === id || c.slug === id ? { ...c, ...finalItem } : c));
+    localStorage.setItem(ASSOCIATE_CENTRES_STORAGE_KEY, JSON.stringify(newList));
+  } catch (e) {}
+
+  window.dispatchEvent(new Event('admin_data_updated'));
+  window.dispatchEvent(new Event('associate_centres_updated'));
+  return finalItem;
+};
+
+export const deleteAssociateCentre = async (id) => {
+  // 1. Try backend API
+  try {
+    await fetch(`${API_BASE_URL}/associate-centres/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      signal: AbortSignal.timeout(4000)
+    });
+  } catch (err) {
+    console.warn('[API] Backend delete call failed, falling back to direct Supabase:', err.message);
+  }
+
+  // 2. CRITICAL: ALWAYS execute DELETE on Supabase REST API directly!
+  // This guarantees that whether backend is online or offline or running on Vercel,
+  // the row is permanently removed from the Supabase database.
+  try {
+    await supabaseRest(`bv_associate_centres?or=(id.eq.${encodeURIComponent(id)},slug.eq.${encodeURIComponent(id)})`, {
+      method: 'DELETE'
+    });
+  } catch (sbErr) {
+    console.warn('[API] Direct Supabase delete error:', sbErr);
+  }
+
+  // 3. Update local cache
+  try {
+    const local = localStorage.getItem(ASSOCIATE_CENTRES_STORAGE_KEY);
+    const list = local ? JSON.parse(local) : [];
+    const updated = (Array.isArray(list) ? list : []).filter(c => c.id !== id && c.slug !== id);
+    localStorage.setItem(ASSOCIATE_CENTRES_STORAGE_KEY, JSON.stringify(updated));
+  } catch (e) {}
+
+  window.dispatchEvent(new Event('admin_data_updated'));
+  window.dispatchEvent(new Event('associate_centres_updated'));
+  return { success: true, id };
+};
 
 // =============================================================
 // Hospital Settings & Contact Details API

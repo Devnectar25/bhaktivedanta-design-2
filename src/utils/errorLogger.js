@@ -1,6 +1,7 @@
 import { addAppError } from './api';
 
 let isLogging = false;
+const recentLoggedErrors = new Map();
 
 /**
  * Report an exception to the Application Errors system (Backend API + LocalStorage fallback)
@@ -8,10 +9,24 @@ let isLogging = false;
 export async function logException(error, source = 'Client Runtime Exception', level = 'Error', endpoint = '') {
   // Prevent recursive error logging loop if addAppError fails
   if (isLogging) return;
+
+  const message = error?.message || (typeof error === 'string' ? error : 'Unhandled application exception');
+  const path = endpoint || (typeof window !== 'undefined' ? window.location.pathname : '/');
+
+  // De-duplicate recent errors within 30 seconds to prevent endless loops & log spam
+  const dedupeKey = `${source}:${path}:${message}`;
+  const now = Date.now();
+  if (recentLoggedErrors.has(dedupeKey)) {
+    const lastLogged = recentLoggedErrors.get(dedupeKey);
+    if (now - lastLogged < 30000) {
+      return; // Suppress duplicate error report
+    }
+  }
+  recentLoggedErrors.set(dedupeKey, now);
+
   isLogging = true;
 
   try {
-    const message = error?.message || (typeof error === 'string' ? error : 'Unhandled application exception');
     const stack = error?.stack || (error?.details ? String(error.details) : '');
 
     const errorItem = {
@@ -20,13 +35,16 @@ export async function logException(error, source = 'Client Runtime Exception', l
       level: level,
       source: source,
       message: message,
-      endpoint: endpoint || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+      endpoint: path,
       status: 'Investigating',
       details: stack ? `Stacktrace: ${stack.substring(0, 500)}` : `URL: ${typeof window !== 'undefined' ? window.location.href : ''}`
     };
 
     // Send exception to database table first via API POST request
-    await addAppError(errorItem).catch(() => {});
+    await addAppError(errorItem).catch(() => { });
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('admin_data_updated'));
+    }
   } catch (err) {
     console.error('Failed to report application error to database:', err);
   } finally {

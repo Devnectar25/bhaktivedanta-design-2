@@ -75,7 +75,11 @@ const ApplicationErrors = () => {
 
     fetchErrors();
     window.addEventListener('admin_data_updated', fetchErrors);
-    return () => window.removeEventListener('admin_data_updated', fetchErrors);
+    window.addEventListener('app_errors_updated', fetchErrors);
+    return () => {
+      window.removeEventListener('admin_data_updated', fetchErrors);
+      window.removeEventListener('app_errors_updated', fetchErrors);
+    };
   }, []);
 
   const handleClearAll = async () => {

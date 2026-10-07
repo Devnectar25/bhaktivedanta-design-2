@@ -639,11 +639,11 @@ export default function AssociateCentres() {
           )}
 
           {/* Quick Stats Chips */}
-          <span className="hidden xl:inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50/80 border border-blue-200/70 px-2 py-0.5 rounded-md">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 bg-blue-50/80 border border-blue-200/70 px-2 py-0.5 rounded-md">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
             {centres.filter(c => c.status === 'Active').length} Active
           </span>
-          <span className="hidden 2xl:inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 bg-purple-50/80 border border-purple-200/70 px-2 py-0.5 rounded-md">
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-purple-700 bg-purple-50/80 border border-purple-200/70 px-2 py-0.5 rounded-md">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
             {centres.filter(c => (c.centreType || '').toLowerCase().includes('hospital')).length} Hospitals
           </span>
